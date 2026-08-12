@@ -47,6 +47,19 @@ def load_skill(skill_name: str) -> tuple[dict[str, object], str]:
 
 
 class SkillStructureTests(unittest.TestCase):
+    def test_repository_global_instructions_are_not_auto_discovered(self) -> None:
+        instruction_path = REPO_ROOT / "config" / "global-agents.md"
+        self.assertTrue(instruction_path.is_file())
+        self.assertNotEqual(instruction_path.name, "AGENTS.md")
+        self.assertGreater(instruction_path.stat().st_size, 0)
+
+    def test_gitignore_covers_generated_python_artifacts(self) -> None:
+        ignored = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+        self.assertIn("__pycache__/", ignored)
+        self.assertIn("*.py[cod]", ignored)
+        self.assertIn(".mypy_cache/", ignored)
+        self.assertIn(".ruff_cache/", ignored)
+
     def test_expected_skill_set_is_exact(self) -> None:
         actual = {path.name for path in SKILLS_ROOT.iterdir() if path.is_dir()}
         self.assertEqual(actual, EXPECTED_SKILLS)
