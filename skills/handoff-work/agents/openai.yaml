@@ -1,0 +1,6 @@
+interface:
+  display_name: "Handoff Work"
+  short_description: "Preserve unfinished work across contexts"
+  default_prompt: "Use $handoff-work to preserve this unfinished work for continuation."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Test First"
+  short_description: "Develop behavior in verified TDD slices"
+  default_prompt: "Use $test-first to implement this behavior through TDD."
+policy:
+  allow_implicit_invocation: true

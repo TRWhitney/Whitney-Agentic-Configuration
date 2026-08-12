@@ -1,0 +1,6 @@
+interface:
+  display_name: "Wayfind Work"
+  short_description: "Resolve decisions in significant efforts"
+  default_prompt: "Use $wayfind-work to map and resolve this significant effort."
+policy:
+  allow_implicit_invocation: true

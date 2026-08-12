@@ -1,0 +1,6 @@
+interface:
+  display_name: "Plan Work"
+  short_description: "Create specs and executable work graphs"
+  default_prompt: "Use $plan-work to turn settled intent into executable work items."
+policy:
+  allow_implicit_invocation: true
