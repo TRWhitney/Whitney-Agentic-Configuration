@@ -6,6 +6,9 @@ Glossary:
 * "User": A consumer of the app, typically me, but may reach a wider audience.
 * "Agent": An AI agent, usually you.
 
+Communication:
+* If I ask a question, then it is not a request for work. It represents genuine uncertainty that I believe needs resolution, before I am able to move forward. Answer the question if able, discuss with me if not, and until we come to a conclusion or I provide explicit instruction to do otherwise, do not move forward.
+
 Code Style:
 * Do not be afraid to refactor as it makes sense and requirements change and expand.
 * Utilize dependency injection.
