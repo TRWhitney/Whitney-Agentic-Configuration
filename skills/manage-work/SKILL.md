@@ -1,6 +1,6 @@
 ---
 name: manage-work
-description: Use when a request may modify a repository and must be classified as a fix, tweak, or significant feature before work begins.
+description: Use when a request may modify a repository and must be classified as a fix, tweak, or significant feature before work begins; return feedback on an active prototype to prototype exploration instead of reclassifying it.
 ---
 
 # Manage Work
@@ -22,6 +22,8 @@ Own request classification, phase transitions, focus, progress visibility, and t
    - **Significant-feature route**: the effort spans multiple contexts, introduces a substantial capability or subsystem, or contains unresolved product, UX, data, or architecture decisions. Use `$wayfind-work`; when its completion gate passes, advance automatically through `$plan-work` and `$implement-work`.
 
 If one consequential answer would make a request a tweak, ask that one question. Otherwise prefer the significant-feature route over silently inventing decisions.
+
+When an active prototype is answering a wayfinding decision, return feedback to `$prototype-decision`. Do not reclassify prototype iteration as a fix or tweak merely because the artifact changes repository files, behaves incorrectly, or needs a small host scaffold. Resume production routing only after the prototype is accepted or abandoned.
 
 ## Keep the work moving
 

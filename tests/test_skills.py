@@ -238,6 +238,65 @@ class WorkflowContractTests(unittest.TestCase):
             },
         )
 
+    def test_prototype_uses_the_repository_host_without_rebuilding_it(self) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "prototype-decision",
+            {
+                "minimum shared host scaffold",
+                "normal repository locations",
+                "do not recreate the dependency tree",
+                "decision-bearing prototype behavior",
+                "source links",
+            },
+        )
+
+    def test_prototype_iteration_resists_process_and_scope_expansion(self) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "prototype-decision",
+            {
+                "smallest decision-bearing revision",
+                "scope, infrastructure, controls, instrumentation, or process",
+                "do not route prototype iteration through",
+                "$diagnose-fix",
+                "$implement-work",
+                "$test-first",
+                "$verify-change",
+                "$review-change",
+                "$document-change",
+            },
+        )
+        self.assert_skill_contains_case_insensitive(
+            "manage-work",
+            {
+                "active prototype",
+                "return feedback to `$prototype-decision`",
+                "do not reclassify",
+            },
+        )
+        _, diagnosis_body = load_skill("diagnose-fix")
+        diagnosis_metadata, _ = load_skill("diagnose-fix")
+        diagnosis_description = diagnosis_metadata["description"]
+        self.assertIsInstance(diagnosis_description, str)
+        self.assertIn("production behavior", cast(str, diagnosis_description))
+        self.assertIn("prototype feedback", diagnosis_body.casefold())
+        self.assert_skill_contains_case_insensitive(
+            "test-first",
+            {
+                "even when the prototype uses shared repository host scaffolding",
+                "direct verification belongs to `$prototype-decision`",
+            },
+        )
+
+    def test_prototype_support_apparatus_is_optional(self) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "prototype-decision",
+            {
+                "only when it directly improves the named decision",
+                "do not build it preemptively",
+                "outside the prototype UI",
+            },
+        )
+
     def test_review_uses_clean_read_only_contexts(self) -> None:
         self.assert_skill_contains(
             "review-change",

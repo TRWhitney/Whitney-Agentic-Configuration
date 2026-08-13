@@ -1,6 +1,6 @@
 ---
 name: diagnose-fix
-description: Use when intended behavior is reported broken, failing, throwing, slow, intermittent, or regressed and the cause is not already proven.
+description: Use when intended production behavior is reported broken, failing, throwing, slow, intermittent, or regressed and the cause is not already proven; do not use for feedback during active throwaway prototype exploration.
 ---
 
 # Diagnose Fix
@@ -9,7 +9,7 @@ Prove the symptom and cause before changing production behavior, then hand the m
 
 ## Ownership
 
-Own symptom reproduction, minimization, causal investigation, and the pre-fix regression test. `$implement-work` owns the production fix and completion gates.
+Own symptom reproduction, minimization, causal investigation, and the pre-fix regression test. `$implement-work` owns the production fix and completion gates. Prototype feedback belongs to `$prototype-decision` while exploration is active, including feedback that an iteration did not produce its intended effect.
 
 ## Build a red-capable loop
 

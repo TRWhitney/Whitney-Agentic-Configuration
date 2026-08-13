@@ -25,7 +25,7 @@ For each vertical slice:
 
 Use the formatter, linter, type checker, and narrow affected tests frequently for feedback, but leave the complete verification matrix to `$verify-change`.
 
-Accepted prototypes are exempt from this loop only while they remain isolated prototype artifacts. Any production behavior derived from them enters through this loop.
+Prototype exploration and settlement are exempt from this loop, even when the prototype uses shared repository host scaffolding. Direct verification belongs to `$prototype-decision`. Any behavior entering production from an accepted prototype enters through this loop.
 
 ## Completion
 
