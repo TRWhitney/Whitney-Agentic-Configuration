@@ -1,11 +1,13 @@
 ---
 name: document-change
-description: Use when repository behavior, interfaces, architecture, terminology, or accepted product intent may require durable documentation changes.
+description: Use when production behavior, interfaces, architecture, terminology, or accepted intent may require durable documentation changes; do not use for active prototype iteration.
 ---
 
 # Document Change
 
 Perform a documentation-impact pass and update only knowledge that future work must rely on.
+
+Do not invoke this skill during active prototype iteration. `$prototype-decision` owns settlement and preservation until the prototype is accepted or abandoned.
 
 ## Assess impact
 

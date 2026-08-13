@@ -3,4 +3,4 @@ interface:
   short_description: "Prototype and settle product decisions"
   default_prompt: "Use $prototype-decision to explore and settle this design question."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

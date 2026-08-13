@@ -3,4 +3,4 @@ interface:
   short_description: "Prove changes meet their acceptance checks"
   default_prompt: "Use $verify-change to prove this change meets its acceptance checks."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

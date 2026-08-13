@@ -3,4 +3,4 @@ interface:
   short_description: "Review intent and engineering independently"
   default_prompt: "Use $review-change to independently review this change."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

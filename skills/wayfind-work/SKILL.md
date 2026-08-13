@@ -22,7 +22,7 @@ If the destination is already clear, no consequential decisions remain, and the 
 
 ## Converse through the frontier
 
-Handle one primary question per user exchange. Keep each exchange small:
+Lead with one primary question per user exchange. When two or three tightly coupled questions use the same evidence and answering them together reduces delay without obscuring the decision, group them in one exchange. Never serialize questions whose answers can be supplied reliably together. Keep each exchange focused:
 
 1. Show one status line using this shape:
 
@@ -31,7 +31,7 @@ Handle one primary question per user exchange. Keep each exchange small:
 2. Name the current decision and why it gates progress.
 3. Present only the evidence and tradeoffs needed to answer it.
 4. Give a recommended answer and explain the decisive reason.
-5. Ask the one primary question, then wait.
+5. Ask the primary question and any tightly coupled questions, then wait.
 
 Do not paste the decision map into chat. Give a fuller recap only when the destination or remaining route materially changes. Never estimate a percentage or a fixed question count because resolving a decision can reveal or remove terrain.
 

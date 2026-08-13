@@ -3,4 +3,4 @@ interface:
   short_description: "Maintain durable knowledge after changes"
   default_prompt: "Use $document-change to assess and update affected documentation."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

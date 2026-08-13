@@ -103,7 +103,11 @@ class SkillStructureTests(unittest.TestCase):
                 self.assertIsInstance(short_description, str)
                 self.assertGreaterEqual(len(cast(str, short_description)), 25)
                 self.assertLessEqual(len(cast(str, short_description)), 64)
-                self.assertIs(policy_mapping.get("allow_implicit_invocation"), True)
+                expected_implicit_invocation = skill_name == "manage-work"
+                self.assertIs(
+                    policy_mapping.get("allow_implicit_invocation"),
+                    expected_implicit_invocation,
+                )
 
     def test_local_markdown_links_resolve(self) -> None:
         for skill_name in EXPECTED_SKILLS:
@@ -203,6 +207,7 @@ class WorkflowContractTests(unittest.TestCase):
             "wayfind-work",
             {
                 "one primary question",
+                "tightly coupled questions",
                 "decisions settled",
                 "visible frontier",
                 "remaining fog",
@@ -287,6 +292,66 @@ class WorkflowContractTests(unittest.TestCase):
             },
         )
 
+    def test_prototype_iteration_has_a_repeated_failure_circuit_breaker(self) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "prototype-decision",
+            {
+                "invalidate the previous verification",
+                "same requested effect fails twice",
+                "do not make another edit",
+                "causal explanation",
+                "do not claim that the instructions were sufficient",
+            },
+        )
+
+    def test_prototype_iteration_proves_the_latest_requested_delta(self) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "prototype-decision",
+            {
+                "latest explicit feedback",
+                "observable delta",
+                "before and after",
+                "unaffected qualities",
+                "only the states, themes, and viewports",
+            },
+        )
+        prototype_forms = (
+            SKILLS_ROOT / "prototype-decision" / "references" / "prototype-forms.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("initial alternatives", prototype_forms.casefold())
+        self.assertIn("applying explicit feedback", prototype_forms.casefold())
+
+    def test_workflow_profiles_keep_prototype_and_focused_work_proportionate(
+        self,
+    ) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "manage-work",
+            {
+                "prototype-iteration profile",
+                "focused-production profile",
+                "full-production profile",
+                "current explicit feedback",
+                "standing production quality rules do not apply",
+            },
+        )
+        self.assert_skill_contains_case_insensitive(
+            "implement-work",
+            {
+                "completion profile",
+                "focused-production",
+                "full-production",
+                "risk-based",
+            },
+        )
+        self.assert_skill_contains_case_insensitive(
+            "verify-change",
+            {
+                "focused-production",
+                "full-production",
+                "unrelated pre-existing failures",
+            },
+        )
+
     def test_prototype_support_apparatus_is_optional(self) -> None:
         self.assert_skill_contains_case_insensitive(
             "prototype-decision",
@@ -297,17 +362,31 @@ class WorkflowContractTests(unittest.TestCase):
             },
         )
 
-    def test_review_uses_clean_read_only_contexts(self) -> None:
+    def test_review_is_risk_based_and_respects_subagent_authority(self) -> None:
         self.assert_skill_contains(
             "review-change",
             {
-                "two read-only subagents",
                 "Intent reviewer",
                 "Engineering reviewer",
                 "must not edit",
                 "objective defects",
+                "focused-production",
+                "full-production",
+                "user permits subagents",
+                "do not claim clean-context independence",
             },
         )
+
+    def test_production_completion_skills_exclude_active_prototypes(self) -> None:
+        for skill_name in {"document-change", "review-change", "verify-change"}:
+            with self.subTest(skill=skill_name):
+                metadata, _ = load_skill(skill_name)
+                description = metadata["description"]
+                self.assertIsInstance(description, str)
+                self.assertIn(
+                    "do not use for active prototype",
+                    cast(str, description).casefold(),
+                )
 
     def test_testing_and_verification_have_distinct_gates(self) -> None:
         self.assert_skill_contains(
@@ -320,7 +399,7 @@ class WorkflowContractTests(unittest.TestCase):
                 "formatter",
                 "linter",
                 "type checker",
-                "full test suite",
+                "full regression suite",
                 "exact triggering action",
                 "exact target element",
                 "exact post-action state",
