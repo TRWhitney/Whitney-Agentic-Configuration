@@ -19,8 +19,9 @@ Own exploration, direct prototype verification, settlement, and permanent preser
 4. Skip automated tests for the throwaway artifact. Verify it directly against its question, including all relevant interactions and states.
 5. For visual work, provide meaningfully different structures rather than cosmetic variants. Exercise responsive sizes and light and dark themes when the product supports them.
 6. When the decision contains meaningful tunable dimensions, add compact tweak controls for the few high-impact levers rather than requiring code edits. Keep defaults easy to restore and show current values.
-7. Provide an **Export preferences** action that copies or downloads an agent-readable Markdown record of the chosen variant, control values, qualitative likes and dislikes, and unresolved notes. Make the export self-contained enough to paste into a Codex conversation.
-8. Let the user react and iterate until a direction is accepted.
+7. When feedback may involve several visual or interactive elements, include an optional element identification mode when it will reduce ambiguity. Prefer a clearly labeled toggle that reveals concise hover labels without shifting the layout or blocking interaction. Give elements stable names and use the same names in feedback prompts and exports.
+8. Provide an **Export preferences** action that copies or downloads an agent-readable Markdown record of the chosen variant, control values, qualitative likes and dislikes, and unresolved notes. Make the export self-contained enough to paste into a Codex conversation.
+9. Let the user react and iterate until a direction is accepted.
 
 ## Settle
 

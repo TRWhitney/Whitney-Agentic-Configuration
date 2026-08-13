@@ -8,6 +8,8 @@ Use existing components and styling infrastructure where that improves fidelity.
 
 When several values could plausibly define the result, expose a small adjustment panel for the decision-bearing levers, such as density, scale, spacing, contrast, information amount, motion, or layout proportions. Prefer named presets plus a few bounded controls over a large design-system editor. Include reset and make every choice visible.
 
+When visual feedback might otherwise depend on descriptions such as "the area on the left," add a low-friction identification aid. Prefer an opt-in toggle that reveals short element names on hover and keyboard focus. Use persistent overlays when hover is unavailable. Keep the aid from shifting layout, obscuring important content, or intercepting prototype interactions. Reuse the exact names in qualitative feedback fields and the exported record so the user and agent share one vocabulary.
+
 Provide an export action that produces Markdown with:
 
 - prototype name and revision;

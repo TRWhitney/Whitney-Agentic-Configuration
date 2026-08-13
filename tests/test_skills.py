@@ -227,6 +227,17 @@ class WorkflowContractTests(unittest.TestCase):
             },
         )
 
+    def test_prototype_feedback_can_reference_named_elements(self) -> None:
+        self.assert_skill_contains_case_insensitive(
+            "prototype-decision",
+            {
+                "element identification",
+                "hover labels",
+                "stable names",
+                "same names",
+            },
+        )
+
     def test_review_uses_clean_read_only_contexts(self) -> None:
         self.assert_skill_contains(
             "review-change",
