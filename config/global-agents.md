@@ -44,13 +44,15 @@ Commit and squash liberally, but be smart about it. Ask yourself the following q
 * Is the upstream (if any) updated? If not, then we have more freedom to squash.
 * Did you make significant design or behavior assumptions or take liberties that I may have to provide input on before committing?
 * Is the work done, or issues fixed, tweaks made, something that should or could have been part of the previous commit?
-* Did I make changes which can logically be included in your changes?
-* Are the changes in the working tree two distinct logical units of work? Does it make sense to be multiple commits or one?
+* Did I make changes which can logically be included in your changes? If so, do it. If not, can it be committed by itself? If so, do it.
+* Can each commit be accurately described by one specific outcome? If a subject would need to omit a distinct outcome or become vague, split the changes. If multiple commits describe the same outcome, consider squashing them.
 
 Commit messages should be descriptive but terse (sub 50 characters), tailored for human readability:
-* All commits should include a slug first, one of: [Feature] (for significant features), [Fix] (for bugs), [Tweak] (for minor changes), [Refactor] (for refactoring tasks), [Optimization] (for performance changes), [Documentation] (for primarily documentation related changes), [Design] (for documentation work pre-implementation for features), [Cleanup] (for tidying unused files), and [Chore] (for bumping versions, scaffolding, and other non-development work not covered by other categories).
-* Use the imperative style messages, active verbs to describe a command to the repo (Ex: "Add login page" instead of 'Added login page')
-* Focus on clarity, is there ambiguity with the phrasing? Would someone with no technical knowledge of the codebase know what changed?
+* All commits should include a slug first, one of: [Feature] (for significant features), [Fix] (for bugs), [Tweak] (for minor changes), [Refactor] (for refactoring tasks), [Optimization] (for performance changes), [Documentation] (for primarily documentation related changes, just because something is markdown does not mean it's documentation, consider its role in the repository), [Design] (for documentation work pre-implementation for features), [Cleanup] (for tidying unused files), and [Chore] (for bumping versions, scaffolding, and other non-development work not covered by other categories).
+* After the slug, use an imperative verb to describe a command to the repository, such as “Add login page,” not “Added login page.”
+* Describe the concrete behavioral or repository outcome, not merely the edited file, component, implementation mechanism, or general area.
+* Use terminology a developer unfamiliar with the diff can interpret. Name what became possible, corrected, prevented, or different when the implementation term alone would be ambiguous.
+* Read the subject without the diff for context. If a reader could not reasonably predict the practical change, rewrite it.
 
 Harness Usage:
 * Use 'request_user_input' liberally when you have access to it, but never add a timeout for it, I will get to answering and would always prefer to answer
