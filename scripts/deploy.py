@@ -189,6 +189,76 @@ def _atomic_replace_tree(source: Path, destination: Path) -> None:
             shutil.rmtree(temporary)
 
 
+def _resolve_codex_home(source_root: Path, codex_home: Path) -> Path:
+    expanded_codex_home = codex_home.expanduser()
+    if expanded_codex_home.is_symlink():
+        _fail(f"Refusing symlinked Codex home: {expanded_codex_home}")
+    resolved_codex_home = expanded_codex_home.resolve()
+    unsafe_targets = {
+        Path(resolved_codex_home.anchor),
+        Path.home().resolve(),
+        source_root.resolve(),
+    }
+    if (
+        resolved_codex_home in unsafe_targets
+        or source_root.resolve() in resolved_codex_home.parents
+    ):
+        _fail(f"Unsafe Codex home target: {resolved_codex_home}")
+    return resolved_codex_home
+
+
+def purge_skills(
+    source_root: Path,
+    codex_home: Path,
+    *,
+    dry_run: bool = False,
+    force: bool = False,
+) -> tuple[str, ...]:
+    codex_home = _resolve_codex_home(source_root, codex_home)
+
+    state_path = codex_home / STATE_FILENAME
+    instructions_hash, managed_skills = _load_state(state_path)
+    destination_skills = codex_home / "skills"
+    if destination_skills.is_symlink():
+        _fail(f"Refusing symlinked skills destination: {destination_skills}")
+
+    removals: list[tuple[str, Path]] = []
+    for name, deployed_hash in sorted(managed_skills.items()):
+        destination = destination_skills / name
+        if destination.is_symlink():
+            _fail(f"Invalid skill destination: {destination}")
+        if not destination.exists():
+            continue
+        if not destination.is_dir():
+            _fail(f"Invalid skill destination: {destination}")
+        _reject_symlinks(destination)
+        if _hash_tree(destination) != deployed_hash and not force:
+            message = (
+                f"Refusing to remove locally modified managed skill {name}; "
+                "rerun with --force"
+            )
+            _fail(message)
+        removals.append((name, destination))
+
+    actions = tuple(f"REMOVE managed skill {name}" for name, _ in removals)
+
+    if dry_run:
+        return actions
+
+    for _, destination in removals:
+        shutil.rmtree(destination)
+    if managed_skills:
+        _atomic_write_json(
+            state_path,
+            {
+                "instructions_hash": instructions_hash,
+                "managed_skills": {},
+                "version": STATE_VERSION,
+            },
+        )
+    return actions
+
+
 def deploy(
     source_root: Path,
     codex_home: Path,
@@ -197,13 +267,7 @@ def deploy(
     force: bool = False,
 ) -> tuple[str, ...]:
     source_root = source_root.resolve()
-    expanded_codex_home = codex_home.expanduser()
-    if expanded_codex_home.is_symlink():
-        _fail(f"Refusing symlinked Codex home: {expanded_codex_home}")
-    codex_home = expanded_codex_home.resolve()
-    unsafe_targets = {Path(codex_home.anchor), Path.home().resolve(), source_root}
-    if codex_home in unsafe_targets or source_root in codex_home.parents:
-        _fail(f"Unsafe Codex home target: {codex_home}")
+    codex_home = _resolve_codex_home(source_root, codex_home)
     instructions, source_skills = _validate_sources(source_root)
     state_path = codex_home / STATE_FILENAME
     previous_instructions_hash, previous_hashes = _load_state(state_path)
@@ -321,7 +385,10 @@ def deploy(
 
 def _parse_args(arguments: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Deploy repository-owned Codex instructions and skills."
+        description=(
+            "Deploy repository-owned Codex instructions and skills, or purge only "
+            "the skills."
+        )
     )
     parser.add_argument(
         "--codex-home",
@@ -335,7 +402,12 @@ def _parse_args(arguments: Sequence[str]) -> argparse.Namespace:
     parser.add_argument(
         "--force",
         action="store_true",
-        help="Overwrite conflicting instructions or managed skill directories.",
+        help="Overwrite conflicting content or remove modified managed skills.",
+    )
+    parser.add_argument(
+        "--purge-skills",
+        action="store_true",
+        help="Remove repository-managed skills without removing global AGENTS.md.",
     )
     return parser.parse_args(arguments)
 
@@ -344,17 +416,30 @@ def main(arguments: Sequence[str] | None = None) -> int:
     options = _parse_args(sys.argv[1:] if arguments is None else arguments)
     repository_root = Path(__file__).resolve().parents[1]
     try:
-        actions = deploy(
-            repository_root,
-            options.codex_home,
-            dry_run=options.dry_run,
-            force=options.force,
-        )
+        if options.purge_skills:
+            actions = purge_skills(
+                repository_root,
+                options.codex_home,
+                dry_run=options.dry_run,
+                force=options.force,
+            )
+        else:
+            actions = deploy(
+                repository_root,
+                options.codex_home,
+                dry_run=options.dry_run,
+                force=options.force,
+            )
     except DeploymentError as error:
         print(f"Deployment failed: {error}", file=sys.stderr)
         return 1
     if not actions:
-        print("Codex workflow is already current.")
+        message = (
+            "No repository-managed skills are installed."
+            if options.purge_skills
+            else "Codex workflow is already current."
+        )
+        print(message)
         return 0
     prefix = "Would " if options.dry_run else ""
     for action in actions:

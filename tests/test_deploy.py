@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.deploy import STATE_FILENAME, DeploymentError, deploy
+from scripts.deploy import STATE_FILENAME, DeploymentError, deploy, purge_skills
 
 REPO_ROOT = Path(__file__).parents[1]
 
@@ -111,6 +111,93 @@ class DeployTests(unittest.TestCase):
         deploy(self.source_root, self.codex_home)
 
         self.assertEqual(deploy(self.source_root, self.codex_home), ())
+
+    def test_purge_removes_only_managed_skills_and_preserves_instructions(
+        self,
+    ) -> None:
+        deploy(self.source_root, self.codex_home)
+        instructions = self.codex_home / "AGENTS.md"
+        instructions.write_text("locally edited instructions\n", encoding="utf-8")
+        unrelated = self.codex_home / "skills" / "unrelated"
+        unrelated.mkdir()
+        (unrelated / "keep.txt").write_text("keep\n", encoding="utf-8")
+        system_skill = self.codex_home / "skills" / ".system" / "built-in"
+        system_skill.mkdir(parents=True)
+        (system_skill / "keep.txt").write_text("keep\n", encoding="utf-8")
+
+        actions = purge_skills(self.source_root, self.codex_home)
+
+        self.assertEqual(
+            actions,
+            ("REMOVE managed skill alpha", "REMOVE managed skill beta"),
+        )
+        self.assertFalse((self.codex_home / "skills" / "alpha").exists())
+        self.assertFalse((self.codex_home / "skills" / "beta").exists())
+        self.assertTrue((unrelated / "keep.txt").is_file())
+        self.assertTrue((system_skill / "keep.txt").is_file())
+        self.assertEqual(
+            instructions.read_text(encoding="utf-8"), "locally edited instructions\n"
+        )
+        state = json.loads(
+            (self.codex_home / STATE_FILENAME).read_text(encoding="utf-8")
+        )
+        self.assertEqual(state["managed_skills"], {})
+        self.assertIsInstance(state["instructions_hash"], str)
+
+    def test_purge_dry_run_reports_removals_without_writing(self) -> None:
+        deploy(self.source_root, self.codex_home)
+        state_before = (self.codex_home / STATE_FILENAME).read_text(encoding="utf-8")
+
+        actions = purge_skills(self.source_root, self.codex_home, dry_run=True)
+
+        self.assertEqual(
+            actions,
+            ("REMOVE managed skill alpha", "REMOVE managed skill beta"),
+        )
+        self.assertTrue((self.codex_home / "skills" / "alpha").is_dir())
+        self.assertTrue((self.codex_home / "skills" / "beta").is_dir())
+        self.assertEqual(
+            (self.codex_home / STATE_FILENAME).read_text(encoding="utf-8"),
+            state_before,
+        )
+
+    def test_purge_requires_force_for_a_locally_modified_managed_skill(
+        self,
+    ) -> None:
+        deploy(self.source_root, self.codex_home)
+        first_skill = self.codex_home / "skills" / "alpha"
+        modified_skill = self.codex_home / "skills" / "beta"
+        (modified_skill / "SKILL.md").write_text("locally modified\n", encoding="utf-8")
+
+        with self.assertRaisesRegex(
+            DeploymentError, "locally modified managed skill beta"
+        ):
+            purge_skills(self.source_root, self.codex_home)
+
+        self.assertTrue(first_skill.is_dir())
+        self.assertTrue(modified_skill.is_dir())
+        actions = purge_skills(self.source_root, self.codex_home, force=True)
+        self.assertIn("REMOVE managed skill beta", actions)
+        self.assertFalse(first_skill.exists())
+        self.assertFalse(modified_skill.exists())
+
+    def test_purge_rejects_the_repository_as_a_codex_home(self) -> None:
+        with self.assertRaisesRegex(DeploymentError, "Unsafe Codex home"):
+            purge_skills(self.source_root, self.source_root, dry_run=True)
+
+    def test_purge_rejects_symlinked_managed_skill_content(self) -> None:
+        deploy(self.source_root, self.codex_home)
+        external = Path(self.temporary_directory.name) / "external"
+        external.mkdir()
+        (self.codex_home / "skills" / "alpha" / "linked").symlink_to(
+            external, target_is_directory=True
+        )
+
+        with self.assertRaisesRegex(DeploymentError, "symlinked source or target"):
+            purge_skills(self.source_root, self.codex_home, force=True)
+
+        self.assertTrue((self.codex_home / "skills" / "alpha").is_dir())
+        self.assertTrue((self.codex_home / "skills" / "beta").is_dir())
 
     def test_invalid_skill_fails_before_writing(self) -> None:
         (self.source_root / "skills" / "alpha" / "SKILL.md").write_text(
@@ -264,6 +351,30 @@ class DeployTests(unittest.TestCase):
             },
             {path.name for path in (REPO_ROOT / "skills").iterdir() if path.is_dir()},
         )
+
+    def test_cli_purges_repository_skills_without_removing_agents_file(self) -> None:
+        deploy(self.source_root, self.codex_home)
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(REPO_ROOT / "scripts" / "deploy.py"),
+                "--codex-home",
+                str(self.codex_home),
+                "--purge-skills",
+            ],
+            cwd=REPO_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("REMOVE managed skill alpha", result.stdout)
+        self.assertIn("REMOVE managed skill beta", result.stdout)
+        self.assertTrue((self.codex_home / "AGENTS.md").is_file())
+        self.assertFalse((self.codex_home / "skills" / "alpha").exists())
+        self.assertFalse((self.codex_home / "skills" / "beta").exists())
 
 
 if __name__ == "__main__":
