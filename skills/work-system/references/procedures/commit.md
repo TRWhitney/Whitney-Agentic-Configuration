@@ -19,16 +19,23 @@ The procedure remains required even when it returns a blocker instead of a commi
 Inspect the working tree, staged changes, relevant diffs, recent commits, current branch, and
 upstream before deciding how to commit.
 
-- Group changes by completed outcome, not authorship, file boundaries, or implementation order.
+Partition the final work before staging:
+
+1. Derive candidate commits from independently complete outcomes, not from the overall request,
+   work session, plan, or affected subsystem.
+2. Keep changes together when they must travel together to deliver one valid result. Include the
+   implementation, tests, migrations, and documentation required by that result.
+3. Split changes when either group could remain a complete, valid, independently describable
+   outcome without the other. Being requested together or touching the same subsystem is not
+   sufficient reason to combine them.
+4. Draft a subject for each candidate outcome. If one subject would name a broad area, summarize
+   the overall task, or omit an independently useful result, split the candidate before staging.
+
+- Treat changes by outcome, regardless of authorship or when they first appeared. Include my
+  changes with yours when they contribute to the same outcome. When my changes do not, commit them separately. Do not disregard this because my changes were pre-existed work.
 - Fold work into an earlier local commit when it completes or corrects that same outcome.
 - Squash local commits that describe the same outcome when they have not reached the upstream.
   Do not rewrite published commits without my direction.
-- Include my changes with yours when they contribute to the same outcome. Commit them separately
-  when they form another complete outcome. Don't disregard this rule because the change was pre-existing before work.
-- Draft a subject for each proposed commit. Split changes when one accurate subject would become
-  vague or omit a distinct outcome; combine commits when their subjects describe the same one.
-
-Preserve unrelated and unfinished changes exactly as found.
 
 ## Write the subject
 
@@ -50,6 +57,10 @@ Start the description with an imperative verb, as if giving a command to the rep
 the practical result rather than only the edited file, component, mechanism, or general area. A
 developer unfamiliar with the diff should be able to predict what became possible, corrected,
 prevented, or different.
+
+Do not use an umbrella subject to conceal multiple outcomes. If the practical result cannot be
+named concretely within 50 characters, revisit the commit partition instead of making the subject
+more abstract.
 
 ## Result
 
