@@ -1,0 +1,6 @@
+interface:
+  display_name: "Work System"
+  short_description: "Handle repository questions and work"
+  default_prompt: "Use $work-system to handle this repository prompt."
+policy:
+  allow_implicit_invocation: true

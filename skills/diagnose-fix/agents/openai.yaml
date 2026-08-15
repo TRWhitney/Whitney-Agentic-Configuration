@@ -1,6 +1,0 @@
-interface:
-  display_name: "Diagnose Fix"
-  short_description: "Reproduce and resolve reported defects"
-  default_prompt: "Use $diagnose-fix to reproduce and resolve this defect."
-policy:
-  allow_implicit_invocation: false

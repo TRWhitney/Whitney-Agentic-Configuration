@@ -1,0 +1,90 @@
+name: novel-work
+entry-state: planning
+persistence: durable
+work-record: storage/local-work-store.md
+states:
+  planning:
+    formats:
+      planning-artifacts:
+        cue: Use when recording or updating the accepted specification and implementation tickets.
+    procedures:
+      domain-modeling:
+        status: triggered
+        cue: Use when shared terminology or a consequential architecture decision becomes clear.
+        formats:
+          domain-modeling:
+            cue: Use when recording an accepted domain term or architecture decision.
+      interface-design:
+        status: triggered
+        cue: Use when novel work creates or materially reshapes an interface and its visual direction must be established.
+        related-procedures:
+          - prototype
+      prototype:
+        status: triggered
+        cue: Use when a cheap faithful artifact can settle a planning decision.
+        related-procedures:
+          - interface-design
+      research:
+        status: allowed
+        cue: Use for a bounded investigation that benefits from dedicated research.
+      wayfinding:
+        status: triggered
+        cue: Use when the route contains more decisions than direct coordination can resolve reliably.
+        related-procedures:
+          - research
+          - prototype
+          - domain-modeling
+          - interface-design
+        formats:
+          wayfinding:
+            cue: Use when creating or updating a decision map or decision ticket.
+    transitions:
+      plan-ready: implementation
+  implementation:
+    procedures:
+      delegate:
+        status: allowed
+        cue: Use when independently owned implementation work benefits from fresh context.
+      interface-design:
+        status: triggered
+        cue: Use when accepted work creates or materially reshapes an interface.
+      research:
+        status: allowed
+        cue: Use for a bounded investigation needed by the implementation.
+      testing:
+        status: required
+        cue: Develop behavior-changing work test first and preserve focused regression coverage.
+    transitions:
+      implemented: validation
+      plan-gap: planning
+      decision-gap: planning
+      misunderstood-requirement: planning
+  validation:
+    procedures: {}
+    transitions:
+      passed: delivery
+      implementation-defect: implementation
+      plan-gap: planning
+      decision-gap: planning
+      misunderstood-requirement: planning
+      validation-setup-failure: validation
+  delivery:
+    procedures:
+      documentation:
+        status: required
+        cue: Resolve the implementation's effect on durable project knowledge.
+      review:
+        status: required
+        cue: Review the validated work against accepted intent and engineering risk.
+      commit:
+        status: required
+        cue: Commit the completed work as coherent repository outcomes.
+    transitions:
+      ticket-delivered: implementation
+      effort-delivered: complete
+      implementation-defect: implementation
+      evidence-gap: validation
+      plan-gap: planning
+      decision-gap: planning
+      misunderstood-requirement: planning
+      delivery-artifact-failure: delivery

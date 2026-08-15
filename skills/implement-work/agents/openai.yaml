@@ -1,6 +1,0 @@
-interface:
-  display_name: "Implement Work"
-  short_description: "Execute focused work through completion"
-  default_prompt: "Use $implement-work to execute the available work items through completion."
-policy:
-  allow_implicit_invocation: false

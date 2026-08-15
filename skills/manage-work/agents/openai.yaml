@@ -1,6 +1,0 @@
-interface:
-  display_name: "Manage Work"
-  short_description: "Route and coordinate repository work"
-  default_prompt: "Use $manage-work to classify and coordinate this repository change."
-policy:
-  allow_implicit_invocation: true
