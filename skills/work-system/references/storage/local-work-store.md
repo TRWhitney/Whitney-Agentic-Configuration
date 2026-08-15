@@ -60,14 +60,15 @@ After delivery, retain the committed effort directory as the history and handoff
 accepted domain terms and architecture decisions in their durable project locations rather than
 duplicating them under `.work/`.
 
-Research entries committed during delivery preserve reports whose evidence, reasoning, or citations
-future work will need to revisit. Keep other findings in their owning artifact. Link external and
-repository sources from the report rather than copying full source trees.
+Retain research reports after delivery when future work will need to revisit their evidence,
+reasoning, or citations. Keep other findings in their owning artifact. Link external and repository
+sources from the report rather than copying full source trees.
 
-Prototype entries committed during delivery preserve accepted self-contained artifacts or link to
-accepted prototype source hosted elsewhere in the repository. Keep that source in normal repository
-history and clearly isolated from production paths. Remove rejected alternatives, temporary build
-products, disposable data, and instrumentation when they no longer provide evidence.
+Retain accepted, self-contained prototype artifacts after delivery. When an accepted prototype
+source is hosted elsewhere in the repository, link to it instead. Keep that source in normal
+repository history and clearly isolated from production paths. Remove rejected alternatives,
+temporary build products, disposable data, and instrumentation when they no longer provide
+evidence.
 
 Redact secrets and sensitive values from commands, output, screenshots, traces, payloads, and
 linked artifacts before committing the record.

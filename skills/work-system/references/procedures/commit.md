@@ -32,9 +32,10 @@ Partition the final work before staging:
    the overall task, or omit an independently useful result, split the candidate before staging.
 
 - Treat changes by outcome, regardless of authorship or when they first appeared. Include my
-  changes with yours when they contribute to the same outcome. When my changes do not, commit them separately. Do not disregard this because my changes were pre-existed work.
+  changes with yours when they contribute to the same outcome. When my changes do not, commit them
+  separately. Do not disregard my changes because they predate this work.
 - Fold work into an earlier local commit when it completes or corrects that same outcome.
-- Squash local commits that describe the same outcome when they have not reached the upstream.
+- Squash local commits that describe the same outcome when they have not been pushed upstream.
   Do not rewrite published commits without my direction.
 
 ## Write the subject
@@ -53,9 +54,9 @@ Use the form `[Slug] Imperative outcome` and keep the entire subject under 50 ch
 | `[Cleanup]` | Removing or tidying unused content. |
 | `[Chore]` | Version bumps, scaffolding, and other non-development work. |
 
-Start the description with an imperative verb, as if giving a command to the repository. Name
-the practical result rather than only the edited file, component, mechanism, or general area. A
-developer unfamiliar with the diff should be able to predict what became possible, corrected,
+Start the text after the slug with an imperative verb, as if giving a command to the repository.
+Name the practical result rather than only the edited file, component, mechanism, or general area.
+A developer unfamiliar with the diff should be able to predict what became possible, corrected,
 prevented, or different.
 
 Do not use an umbrella subject to conceal multiple outcomes. If the practical result cannot be

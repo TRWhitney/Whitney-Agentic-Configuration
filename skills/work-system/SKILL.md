@@ -1,6 +1,7 @@
 ---
 name: work-system
-description: Use when working in a code repository and I ask a question or request work.
+description: Route repository questions and work requests through stateful workflows with
+  state-authorized guidance. Use whenever I ask a question or request work in a code repository.
 ---
 
 # Work System
@@ -17,9 +18,9 @@ I, me, my, you, your, user, and agent retain their established meanings.
 - **Workflow**: The sequence selected to handle my prompt.
 - **State**: The active stage of a workflow.
 - **Procedure**: Reusable guidance that may be loaded only when the active state authorizes it.
-- **Procedure result**: The evidence, artifacts, decisions, or blockers a procedure gives back to
-  the active state.
-- **Transition**: Movement the agent requests after meeting continuation criteria.
+- **Procedure result**: The evidence, artifacts, decisions, or blockers a procedure returns to the
+  active state.
+- **Transition**: A state change the agent requests after meeting continuation criteria.
 - **Continuation criteria**: The conditions that must be satisfied before leaving a state.
 - **Null state**: The condition in which no workflow is active.
 
@@ -35,8 +36,8 @@ I, me, my, you, your, user, and agent retain their established meanings.
      behavior before implementation.
    - **Novel work**: I request substantial capability or work with unresolved product, UX,
      data, or architecture decisions.
-3. Ask one clarifying question when its answer would establish that bounded work is a tweak or fix.
-   Otherwise choose novel work rather than inventing consequential decisions.
+3. Ask one clarifying question when its answer would establish whether bounded work qualifies as a
+   tweak or fix. Otherwise choose novel work rather than inventing consequential decisions.
 4. Switch a tweak or fix to novel work when later evidence shows that its scope or uncertainty no
    longer fits the bounded workflow.
 
@@ -65,8 +66,8 @@ the procedures related to it:
 
 Load an allowed or triggered procedure only through an exact command displayed by the active
 state or another authorized procedure. Do not construct a procedure command independently. Return
-to the active state after completing it. State and procedure output lists any associated formats;
-load them only through the displayed navigator command.
+to the active state after completing it. The output for each state and procedure lists any
+associated formats; load them only through the displayed navigator command.
 
 ## Handle procedure results
 

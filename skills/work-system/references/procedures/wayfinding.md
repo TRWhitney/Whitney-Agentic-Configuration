@@ -29,10 +29,10 @@ Do not paste the decision map into conversation or repeat a full recap after eve
 larger recap when the destination or remaining route materially changes. Do not estimate a
 completion percentage or fixed question count because one answer can expose or remove terrain.
 
-Resolve factual uncertainty through research and questions that benefit from concrete reaction
-through a prototype. A `task` is a prerequisite action needed to answer a decision, never
-production implementation. Do not resolve a choice that requires my judgment. When research is
-in progress, advance an unrelated frontier decision when one is available.
+Use research to resolve factual uncertainty and prototypes for questions that benefit from concrete
+reactions. A `task` is a prerequisite action needed to answer a decision, never production
+implementation. Do not resolve a choice that requires my judgment. When research is in progress,
+advance an unrelated frontier decision when one is available.
 
 ## Update the record
 

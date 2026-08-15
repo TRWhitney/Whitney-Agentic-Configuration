@@ -39,7 +39,7 @@ Develop each design axis deliberately:
   colors and decorative effects that have no semantic or atmospheric role.
 - **Composition:** Structure must communicate content relationships. Structural devices such as
   numbering, dividers, labels, and containers must encode real meaning. Numbering implies sequence
-  and belongs only when content actually has that order. Cards must represent genuine grouping
+  and belongs only when content actually has that order. Each card must represent a genuine group
   rather than serve as the default container. Use asymmetry, overlap, density, or negative space
   when the premise supports them, not as automatic signs of creativity.
 - **Motion:** Motion must serve the subject, hierarchy, or interaction. Prefer one orchestrated

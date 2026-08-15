@@ -22,9 +22,9 @@ legitimize it.
 - Keep each meaning in one place and link related records instead of copying their content.
 - Keep domain glossaries free of implementation detail and preserve the reasoning of superseded
   architecture decisions.
-- When a work record exists, update its ticket status, completion evidence, current
-  progress, and frontier. Keep it an index by linking specifications, decisions, research, and
-  prototypes rather than duplicating them.
+- When a work record exists, update its ticket status, completion evidence, progress, and frontier.
+  Keep it an index by linking specifications, decisions, research, and prototypes rather than
+  duplicating them.
 - Match the artifact's audience. Do not leak implementation considerations into consumer-facing
   prose.
 

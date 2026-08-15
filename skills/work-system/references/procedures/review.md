@@ -48,6 +48,6 @@ have changed.
 
 ## Result
 
-Include the reviewed outcome, which axes ran and whether they were independent, and a pass or fail
-for each axis. Include each validated finding with its evidence, impact, and classification, plus
-any unresolved judgment. State `no findings` explicitly for a clean axis.
+Include the reviewed outcome, the axes reviewed, whether each review was independent, and a pass
+or fail for each axis. Include each validated finding with its evidence, impact, and classification,
+plus any unresolved judgment. State `no findings` explicitly for a clean axis.

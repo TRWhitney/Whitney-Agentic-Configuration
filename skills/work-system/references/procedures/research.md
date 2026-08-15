@@ -25,7 +25,7 @@ context gathering and must not be replaced by delegation.
   unrelated project history.
 - Keep the subagent's Git access read-only. It must not stage, commit, alter repository history,
   discard changes, or expand its file scope. Have it return findings and citations.
-- Search through more than one approach and source when available. Try alternate terminology and
+- Use multiple search approaches and sources when available. Try alternate terminology and
   search paths before concluding that evidence does not exist. Prefer original, authoritative,
   and current sources; use secondary sources to add context or identify disagreements.
 - Follow material claims to their supporting source. Do not treat repeated copies of one claim as

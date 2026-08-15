@@ -14,7 +14,7 @@ Use a root `CONTEXT.md` as a glossary:
 ## Language
 
 **<Canonical term>**:
-<One or two sentence definition.>
+<One- or two-sentence definition.>
 _Avoid_: <misleading alternatives>
 ```
 

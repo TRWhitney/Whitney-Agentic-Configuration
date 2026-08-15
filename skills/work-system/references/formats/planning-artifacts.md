@@ -26,14 +26,15 @@ Store the accepted specification as `spec.md`:
 
 Use the project glossary and respect applicable architecture decisions. Capture the accepted
 behavior, boundaries, interfaces, schemas, interactions, and testing seams. Prefer the highest
-stable testing seam already present. Avoid file-by-file instructions and code snippets that will
-go stale. A concise prototype-derived state machine, schema, reducer, or type shape may be
+stable testing seam that already exists. Avoid file-by-file instructions and code snippets that
+will go stale. A concise prototype-derived state machine, schema, reducer, or type shape may be
 included when it preserves a decision more precisely than prose.
 
 Under `Implementation Decisions`, link each wayfinding decision and canonical domain or
 architecture record that constrains the specification. Preserve the accepted conclusion without
-copying its rationale or evidence. Each implementation ticket's `Accepted sources` links the
-specification and the decisions, research, prototypes, or canonical records needed for its slice.
+copying its rationale or evidence. Each implementation ticket's `Accepted sources` section links to
+the specification and the decisions, research, prototypes, or canonical records needed for its
+slice.
 
 ## Implementation ticket
 
@@ -62,7 +63,7 @@ Store one ticket per slice as `tickets/<NN>-<slug>.md`:
 Use `ready-for-agent`, `active`, `blocked`, and `complete` as the ticket lifecycle. Each ticket
 must fit one fresh context, cut a narrow but complete path through the required layers, and be
 independently demonstrable or verifiable. Use dependency order for numbering, but determine the
-frontier from completed blockers rather than ticket number.
+frontier from completed blockers rather than ticket numbers.
 
 Prefer vertical slices. For a mechanical change whose blast radius cannot remain green as one
 slice, use expand, migrate, and contract tickets with explicit blocking edges. Do not include

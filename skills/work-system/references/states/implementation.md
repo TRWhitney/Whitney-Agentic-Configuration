@@ -45,8 +45,8 @@ Apply these engineering preferences while building:
   locators, or construction buried inside domain behavior.
 - Preserve precise types and model meaningful states explicitly. Do not weaken types merely to make
   the change compile.
-- Handle failures at the boundary that can add useful context. Preserve actionable causes rather
-  than swallowing errors or exposing implementation details to consumers.
+- Handle failures at the boundary where useful context can be added. Preserve actionable causes
+  rather than swallowing errors or exposing implementation details to consumers.
 - Reuse established dependencies when they fit. Add a focused dependency when it removes meaningful
   owned complexity and belongs in the repository's stack. Do not recreate a capable dependency or
   introduce a broad framework for a narrow need.

@@ -31,7 +31,7 @@
         },
         "testing": {
           "status": "required",
-          "cue": "Develop behavior-changing work test first and preserve focused regression coverage."
+          "cue": "Develop behavior-changing work with a test-first approach and preserve focused regression coverage."
         }
       },
       "transitions": {
