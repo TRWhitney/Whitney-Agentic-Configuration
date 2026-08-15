@@ -1,24 +1,32 @@
 # Prototype Procedure
 
-Create a focused artifact that makes one unresolved decision easier to settle. An accepted
+Create a focused, runnable, inspectable artifact that makes one unresolved decision easier to
+settle. Let me operate it directly and experience the behavior under consideration. An accepted
 prototype is a source of intent, but it is not production implementation.
 
 ## Frame the decision
 
 State the question, the possibilities worth comparing, and the observable evidence that will
-settle it. Choose the cheapest form with enough fidelity to expose the relevant behavior or
-constraint. Do not prototype a broad area whose uncertainty cannot be expressed as one answerable
-question.
+settle it. Choose the simplest executable form with enough fidelity to expose the relevant
+behavior or constraint. Do not prototype a broad area whose uncertainty cannot be expressed as
+one answerable question.
 
 For an unsettled visual direction, compare meaningfully different structures, hierarchies, or
-primary interactions rather than cosmetic variants. For logic or state questions, prefer a small
-interactive artifact that exposes the relevant state and makes important transitions observable.
+primary interactions rather than cosmetic variants. Include at least the basic interaction needed
+to experience the decision-bearing flow, transition, or response. When a visual question has no
+inherent product interaction, make the relevant variants or states directly switchable inside the
+rendered artifact.
+
+A PNG, screenshot, generated image, video, static mock, or prose description may provide
+supporting evidence, but it must not substitute for the prototype. A static mock alone is
+insufficient because it prevents direct inspection of behavior, state, responsiveness, and
+interaction quality.
 
 ## Build and iterate
 
 - Reuse the repository's established stack, components, and tooling when they improve fidelity.
-  If a suitable host does not exist, add only the shared scaffold needed to exercise the question.
-  Keep dependencies and shared tooling at their normal repository boundary.
+  If a suitable host does not exist, add only the runnable scaffold needed to exercise the
+  question. Keep dependencies and shared tooling at their normal repository boundary.
 - Mark decision-bearing prototype behavior and disposable data as non-production. Isolate them
   from production paths with an appropriate route, module, fixture, query parameter, or feature
   flag. This is separation of purpose and execution path, not a separate Git history.
@@ -27,6 +35,9 @@ interactive artifact that exposes the relevant state and makes important transit
 - Exercise the decision-bearing behavior directly. Use the interactions, states, themes, and
   viewports that can materially change the result. Do not add production regression coverage or
   treat prototype checks as implementation testing or validation.
+- Launch the artifact and operate every decision-bearing interaction before presenting it. Supply
+  complete run instructions and any non-sensitive fixture data needed for me to reproduce that
+  experience without reconstructing the environment or implementation.
 - Add tweak controls, element identification, stable labels, or preference export only when they
   make comparison or feedback materially easier. Keep those aids bounded to the prototype
   question and use the same names in the artifact and recorded feedback.
@@ -56,7 +67,7 @@ used to accept the prototype.
 Preserve the accepted artifact in the effort's `prototypes/` directory when it is self-contained.
 When it relies on the repository's shared host, preserve the isolated source in its normal
 repository location and link it from the prototype record. Include the accepted source, contract,
-recorded preferences, visual evidence, and run instructions when applicable. Keep accepted
+recorded preferences, supporting visual evidence, and complete run instructions. Keep accepted
 prototype work uncommitted while the workflow is active so it can be committed with the completed
 outcome during delivery in normal repository history; do not create a dedicated branch merely
 because it is a prototype. Discard or clearly label rejected alternatives.
