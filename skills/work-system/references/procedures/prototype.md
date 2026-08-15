@@ -38,9 +38,13 @@ interaction quality.
 - Launch the artifact and operate every decision-bearing interaction before presenting it. Supply
   complete run instructions and any non-sensitive fixture data needed for me to reproduce that
   experience without reconstructing the environment or implementation.
-- Add tweak controls, element identification, stable labels, or preference export only when they
+- Add tweak controls, stable labels, or preference export only when they
   make comparison or feedback materially easier. Keep those aids bounded to the prototype
   question and use the same names in the artifact and recorded feedback.
+- Provide an element-identification mode that gives stable names to the regions and controls we
+  may discuss, so feedback can use agreed language instead of vague visual descriptions. Prefer a
+  prototype-only toggle that reveals names on mouse hover and keyboard focus without changing the
+  decision-bearing layout or behavior. Use the same names in the artifact and recorded feedback.
 - Let me react and iterate until the direction is accepted or the prototype is inconclusive.
   When feedback describes a missed effect, inspect the current artifact and execution path before
   editing again. Restate the observable change, identify why the prior attempt missed it, and make
