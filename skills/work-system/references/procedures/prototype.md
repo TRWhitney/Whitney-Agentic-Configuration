@@ -1,7 +1,7 @@
 # Prototype Procedure
 
-Create a focused artifact that makes one unresolved decision easier to settle. A prototype is a
-committed source of intent, but it is not production implementation.
+Create a focused artifact that makes one unresolved decision easier to settle. An accepted
+prototype is a source of intent, but it is not production implementation.
 
 ## Frame the decision
 
@@ -56,9 +56,10 @@ used to accept the prototype.
 Preserve the accepted artifact in the effort's `prototypes/` directory when it is self-contained.
 When it relies on the repository's shared host, preserve the isolated source in its normal
 repository location and link it from the prototype record. Include the accepted source, contract,
-recorded preferences, visual evidence, and run instructions when applicable. Keep prototype work
-in normal repository history; do not create a dedicated branch merely because it is a prototype.
-Discard or clearly label rejected alternatives.
+recorded preferences, visual evidence, and run instructions when applicable. Keep accepted
+prototype work uncommitted while the workflow is active so it can be committed with the completed
+outcome during delivery in normal repository history; do not create a dedicated branch merely
+because it is a prototype. Discard or clearly label rejected alternatives.
 
 Production implementation remains separate work and must meet its own testing, error handling,
 and verification requirements. Prototype acceptance does not make prototype code production-ready.

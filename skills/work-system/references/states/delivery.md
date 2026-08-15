@@ -34,8 +34,9 @@ scope, or conclusions may have changed.
 ## Preserve the result
 
 Commit only after documentation is resolved, every required review axis passes, and completion
-evidence still applies to the complete work. A commit blocker leaves the work in delivery until it
-is resolved.
+evidence still applies to the complete work. Include its accepted source artifacts and current work
+record in the complete outcome; do not commit them separately in an earlier state. A commit blocker
+leaves the work in delivery until it is resolved.
 
 When more accepted work remains in the active workflow, use the available continuation route after
 the current outcome is delivered. Complete the workflow only when no accepted work remains and its

@@ -4,13 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shlex
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, cast
-
-import yaml
 
 Status = Literal["allowed", "triggered", "required"]
 STATUSES: frozenset[str] = frozenset({"allowed", "triggered", "required"})
@@ -62,10 +61,13 @@ def names(value: object, label: str) -> tuple[str, ...]:
 
 
 def load_workflow(workflow_name: str) -> dict[str, object]:
-    path = WORKFLOWS_ROOT / f"{workflow_name}.yaml"
+    path = WORKFLOWS_ROOT / f"{workflow_name}.json"
     if not path.is_file():
         raise NavigationError(f"Unknown workflow: {workflow_name}")
-    loaded: object = yaml.safe_load(path.read_text(encoding="utf-8"))
+    try:
+        loaded: object = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise NavigationError(f"Invalid workflow JSON for {workflow_name}.") from error
     workflow = mapping(loaded, f"{workflow_name} workflow")
     if workflow.get("name") != workflow_name:
         raise NavigationError(f"Workflow name does not match {workflow_name}.")
@@ -111,29 +113,11 @@ def parse_access(name: str, value: object) -> ProcedureAccess:
 
 
 def procedures_for(
-    workflow: dict[str, object], state_name: str, variant_name: str | None
+    workflow: dict[str, object], state_name: str
 ) -> list[ProcedureAccess]:
     state = state_for(workflow, state_name)
     configured = mapping(state.get("procedures"), f"{state_name} procedures")
-    procedures = [parse_access(name, value) for name, value in configured.items()]
-
-    if variant_name is None:
-        return procedures
-
-    variants = mapping(workflow.get("variants", {}), "variants")
-    raw_variant = variants.get(variant_name)
-    if raw_variant is None:
-        raise NavigationError(f"Unknown variant for this workflow: {variant_name}")
-    variant = mapping(raw_variant, f"{variant_name} variant")
-    additions = mapping(variant.get("procedure-additions", {}), "procedure additions")
-    raw_state_additions = additions.get(state_name, {})
-    state_additions = mapping(raw_state_additions, f"{state_name} procedure additions")
-    existing = {procedure.name for procedure in procedures}
-    for name, value in state_additions.items():
-        if name in existing:
-            raise NavigationError(f"Variant repeats procedure: {name}")
-        procedures.append(parse_access(name, value))
-    return procedures
+    return [parse_access(name, value) for name, value in configured.items()]
 
 
 def formats_for_state(
@@ -147,12 +131,11 @@ def procedure_for(
     workflow: dict[str, object],
     state_name: str,
     procedure_name: str,
-    variant_name: str | None,
 ) -> ProcedureAccess:
     access = next(
         (
             procedure
-            for procedure in procedures_for(workflow, state_name, variant_name)
+            for procedure in procedures_for(workflow, state_name)
             if procedure.name == procedure_name
         ),
         None,
@@ -176,7 +159,6 @@ def procedure_command(
     workflow_name: str,
     state_name: str,
     procedure_name: str,
-    variant_name: str | None,
 ) -> str:
     arguments = [
         "python3",
@@ -186,8 +168,6 @@ def procedure_command(
         state_name,
         procedure_name,
     ]
-    if variant_name is not None:
-        arguments.extend(("--variant", variant_name))
     return " ".join(shlex.quote(argument) for argument in arguments)
 
 
@@ -195,7 +175,6 @@ def format_command(
     workflow_name: str,
     state_name: str,
     format_name: str,
-    variant_name: str | None,
     procedure_name: str | None,
 ) -> str:
     arguments = [
@@ -208,8 +187,6 @@ def format_command(
     ]
     if procedure_name is not None:
         arguments.extend(("--procedure", procedure_name))
-    if variant_name is not None:
-        arguments.extend(("--variant", variant_name))
     return " ".join(shlex.quote(argument) for argument in arguments)
 
 
@@ -217,7 +194,6 @@ def destination_command(
     workflow_name: str,
     state_name: str,
     destination: str,
-    variant_name: str | None,
 ) -> str:
     arguments = [
         "python3",
@@ -227,8 +203,17 @@ def destination_command(
         state_name,
         destination,
     ]
-    if variant_name is not None:
-        arguments.extend(("--variant", variant_name))
+    return " ".join(shlex.quote(argument) for argument in arguments)
+
+
+def resume_command(workflow_name: str, state_name: str) -> str:
+    arguments = [
+        "python3",
+        str(Path(__file__).resolve()),
+        "resume",
+        workflow_name,
+        state_name,
+    ]
     return " ".join(shlex.quote(argument) for argument in arguments)
 
 
@@ -236,15 +221,12 @@ def render_routes(
     workflow_name: str,
     state_name: str,
     state: dict[str, object],
-    variant_name: str | None,
 ) -> str:
     transitions = mapping(state.get("transitions"), f"{state_name} transitions")
     lines = ["## Available routes"]
     for reason, raw_destination in transitions.items():
         destination = text(raw_destination, f"{reason} destination")
-        command = destination_command(
-            workflow_name, state_name, destination, variant_name
-        )
+        command = destination_command(workflow_name, state_name, destination)
         lines.extend((f"- `{destination}` when `{reason}` applies.", f"  `{command}`"))
     return "\n".join(lines)
 
@@ -253,7 +235,6 @@ def render_formats(
     workflow_name: str,
     state_name: str,
     formats: tuple[FormatAccess, ...],
-    variant_name: str | None,
     procedure_name: str | None,
 ) -> str | None:
     if not formats:
@@ -264,7 +245,6 @@ def render_formats(
             workflow_name,
             state_name,
             format_access.name,
-            variant_name,
             procedure_name,
         )
         lines.extend(
@@ -281,7 +261,6 @@ def render_related_procedures(
     state_name: str,
     procedures: list[ProcedureAccess],
     access: ProcedureAccess,
-    variant_name: str | None,
 ) -> str | None:
     if not access.related_procedures:
         return None
@@ -300,9 +279,7 @@ def render_related_procedures(
         if related.status == "required":
             lines.append("  Already loaded with the active state.")
             continue
-        command = procedure_command(
-            workflow_name, state_name, related.name, variant_name
-        )
+        command = procedure_command(workflow_name, state_name, related.name)
         lines.append(f"  Load with `{command}`")
     return "\n".join(lines)
 
@@ -311,28 +288,24 @@ def render_state(
     workflow_name: str,
     workflow: dict[str, object],
     state_name: str,
-    variant_name: str | None,
     *,
     include_work_record: bool,
 ) -> str:
     state = state_for(workflow, state_name)
     state_guidance = read_markdown(STATES_ROOT / f"{state_name}.md", state_name)
-    procedures = procedures_for(workflow, state_name, variant_name)
+    procedures = procedures_for(workflow, state_name)
     sections = [state_guidance, "## Procedures"]
 
     for procedure in procedures:
         sections.append(f"- `{procedure.name}` ({procedure.status}): {procedure.cue}")
         if procedure.status != "required":
-            command = procedure_command(
-                workflow_name, state_name, procedure.name, variant_name
-            )
+            command = procedure_command(workflow_name, state_name, procedure.name)
             sections.append(f"  Load with `{command}`")
 
     state_formats = render_formats(
         workflow_name,
         state_name,
         formats_for_state(workflow, state_name),
-        variant_name,
         None,
     )
     if state_formats is not None:
@@ -349,7 +322,6 @@ def render_state(
                 workflow_name,
                 state_name,
                 procedure.formats,
-                variant_name,
                 procedure.name,
             )
             if procedure_formats is not None:
@@ -364,7 +336,14 @@ def render_state(
             )
         )
 
-    sections.append(render_routes(workflow_name, state_name, state, variant_name))
+    sections.extend(
+        (
+            "## Resume",
+            "Continue this state in a fresh context with "
+            f"`{resume_command(workflow_name, state_name)}`",
+            render_routes(workflow_name, state_name, state),
+        )
+    )
     return "\n\n".join(sections)
 
 
@@ -372,23 +351,19 @@ def render_procedure(
     workflow_name: str,
     state_name: str,
     procedure_name: str,
-    variant_name: str | None,
 ) -> str:
     workflow = load_workflow(workflow_name)
-    procedures = procedures_for(workflow, state_name, variant_name)
-    access = procedure_for(workflow, state_name, procedure_name, variant_name)
+    procedures = procedures_for(workflow, state_name)
+    access = procedure_for(workflow, state_name, procedure_name)
     guidance = read_markdown(PROCEDURES_ROOT / f"{procedure_name}.md", procedure_name)
     sections = [f"Procedure status: {access.status}", guidance]
-    related = render_related_procedures(
-        workflow_name, state_name, procedures, access, variant_name
-    )
+    related = render_related_procedures(workflow_name, state_name, procedures, access)
     if related is not None:
         sections.append(related)
     formats = render_formats(
         workflow_name,
         state_name,
         access.formats,
-        variant_name,
         procedure_name,
     )
     if formats is not None:
@@ -401,13 +376,12 @@ def render_format(
     state_name: str,
     format_name: str,
     procedure_name: str | None,
-    variant_name: str | None,
 ) -> str:
     workflow = load_workflow(workflow_name)
     if procedure_name is None:
         formats = formats_for_state(workflow, state_name)
     else:
-        procedure = procedure_for(workflow, state_name, procedure_name, variant_name)
+        procedure = procedure_for(workflow, state_name, procedure_name)
         formats = procedure.formats
     if format_name not in {format_access.name for format_access in formats}:
         source = procedure_name or state_name
@@ -451,38 +425,32 @@ def build_parser() -> argparse.ArgumentParser:
 
     start = subparsers.add_parser("start")
     start.add_argument("workflow")
-    start.add_argument("--variant")
 
     resume = subparsers.add_parser("resume")
     resume.add_argument("workflow")
     resume.add_argument("state")
-    resume.add_argument("--variant")
 
     procedure = subparsers.add_parser("procedure")
     procedure.add_argument("workflow")
     procedure.add_argument("state")
     procedure.add_argument("procedure")
-    procedure.add_argument("--variant")
 
     format_parser = subparsers.add_parser("format")
     format_parser.add_argument("workflow")
     format_parser.add_argument("state")
     format_parser.add_argument("format")
     format_parser.add_argument("--procedure")
-    format_parser.add_argument("--variant")
 
     move = subparsers.add_parser("move")
     move.add_argument("workflow")
     move.add_argument("state")
     move.add_argument("destination")
-    move.add_argument("--variant")
     return parser
 
 
 def run(args: argparse.Namespace) -> str:
     command = cast(str, args.command)
     workflow_name = cast(str, args.workflow)
-    variant_name = cast(str | None, args.variant)
     workflow = load_workflow(workflow_name)
 
     if command == "start":
@@ -491,7 +459,6 @@ def run(args: argparse.Namespace) -> str:
             workflow_name,
             workflow,
             entry_state,
-            variant_name,
             include_work_record=True,
         )
     if command == "resume":
@@ -499,7 +466,6 @@ def run(args: argparse.Namespace) -> str:
             workflow_name,
             workflow,
             cast(str, args.state),
-            variant_name,
             include_work_record=True,
         )
     if command == "procedure":
@@ -507,7 +473,6 @@ def run(args: argparse.Namespace) -> str:
             workflow_name,
             cast(str, args.state),
             cast(str, args.procedure),
-            variant_name,
         )
     if command == "format":
         return render_format(
@@ -515,7 +480,6 @@ def run(args: argparse.Namespace) -> str:
             cast(str, args.state),
             cast(str, args.format),
             cast(str | None, args.procedure),
-            variant_name,
         )
     if command == "move":
         current_state = cast(str, args.state)
@@ -529,7 +493,6 @@ def run(args: argparse.Namespace) -> str:
             next_workflow_name,
             next_workflow,
             next_state,
-            variant_name if next_workflow_name == workflow_name else None,
             include_work_record=next_workflow_name != workflow_name,
         )
     raise NavigationError(f"Unknown command: {command}")

@@ -31,14 +31,14 @@ I, me, my, you, your, user, and agent retain their established meanings.
    - **Question**: I ask for information or discussion.
    - **Tweak**: I request bounded repository work with a clear outcome and no unresolved
      consequential decision.
-   - **Fix variant**: I report that existing intended behavior is broken. Use the tweak
-     workflow with its diagnosis requirement.
+   - **Fix**: I report that existing intended behavior is broken. Diagnose the reported
+     behavior before implementation.
    - **Novel work**: I request substantial capability or work with unresolved product, UX,
      data, or architecture decisions.
-3. Ask one clarifying question when its answer would establish that the work is a tweak.
+3. Ask one clarifying question when its answer would establish that bounded work is a tweak or fix.
    Otherwise choose novel work rather than inventing consequential decisions.
-4. Switch a tweak to novel work when later evidence shows that its scope or uncertainty no
-   longer fits the tweak workflow.
+4. Switch a tweak or fix to novel work when later evidence shows that its scope or uncertainty no
+   longer fits the bounded workflow.
 
 ## Navigate
 
@@ -48,17 +48,16 @@ manifests or resolve resource files directly.
 Run the script with Python and the path relative to this `SKILL.md`:
 
 ```text
-python3 <skill-directory>/scripts/navigate.py start <workflow> [--variant fix]
-python3 <skill-directory>/scripts/navigate.py resume <workflow> <state> [--variant fix]
-python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destination> [--variant fix]
+python3 <skill-directory>/scripts/navigate.py start <workflow>
+python3 <skill-directory>/scripts/navigate.py resume <workflow> <state>
+python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destination>
 ```
 
-Use `question`, `tweak`, or `novel-work` as the workflow. Use the `fix` variant only with the
-tweak workflow.
+Use `question`, `tweak`, `fix`, or `novel-work` as the workflow.
 
-Enter a workflow with `start`. In a fresh context, use `resume` with the state from its
-continuation record before loading a procedure. The navigator returns the active state and the
-procedures related to it:
+Enter a workflow with `start`. Every active state displays its exact resume command. In a fresh
+context, use that command before loading a procedure. The navigator returns the active state and
+the procedures related to it:
 
 - **Allowed**: Load when it would help perform the state's work.
 - **Triggered**: Load when its displayed cue applies.
@@ -85,11 +84,13 @@ does not select another state or require a standalone completion response.
 
 ## Track state
 
-- Keep question and tweak state in conversation. When unfinished work must continue in a
-  fresh context, create a durable handoff.
+- Keep question, tweak, and fix state in conversation. Do not create a repository record for these
+  workflows. When one must continue in a fresh context, preserve its exact resume command, current
+  question or acceptance checks, decisive evidence and procedure results, owned uncommitted paths,
+  and next action in the continuation context.
 - Follow any workflow-record guidance returned by the navigator. When a durable record exists,
-  keep the workflow, state, accepted decisions, invalidated evidence, and next transition current.
-  Link source artifacts instead of copying them.
+  keep the exact resume command, accepted decisions, invalidated evidence, and next transition
+  current. Link source artifacts instead of copying them.
 
 ## Transition
 

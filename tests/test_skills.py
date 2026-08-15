@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
@@ -44,9 +45,9 @@ EXPECTED_PROCEDURES = {
     "wayfinding",
 }
 EXPECTED_FORMATS = {"domain-modeling", "planning-artifacts", "wayfinding"}
-EXPECTED_WORKFLOWS = {"novel-work", "question", "tweak"}
+EXPECTED_WORKFLOWS = {"fix", "novel-work", "question", "tweak"}
 WORKFLOW_MANIFESTS = {
-    name: WORKFLOWS_ROOT / f"{name}.yaml" for name in EXPECTED_WORKFLOWS
+    name: WORKFLOWS_ROOT / f"{name}.json" for name in EXPECTED_WORKFLOWS
 }
 
 
@@ -59,7 +60,9 @@ def load_yaml_mapping(path: Path) -> dict[str, object]:
 
 def load_workflows() -> dict[str, dict[str, object]]:
     return {
-        workflow_name: load_yaml_mapping(path)
+        workflow_name: cast(
+            dict[str, object], json.loads(path.read_text(encoding="utf-8"))
+        )
         for workflow_name, path in WORKFLOW_MANIFESTS.items()
     }
 
@@ -74,21 +77,6 @@ class WorkSystemStructureTests(unittest.TestCase):
             {"work-system"},
         )
         self.assertEqual(list(REFERENCES_ROOT.rglob("SKILL.md")), [])
-
-    def test_global_code_style_remains_standing_policy(self) -> None:
-        instructions = (REPO_ROOT / "config" / "global-agents.md").read_text(
-            encoding="utf-8"
-        )
-
-        for guidance in {
-            "Code Style:",
-            "Do not be afraid to refactor",
-            "Utilize dependency injection",
-            "Separate backend code from GUI code",
-            "Do not add or modify a README, LICENSE",
-            "Never attempt to support features which I ask you to remove",
-        }:
-            self.assertIn(guidance, instructions)
 
     def test_work_system_metadata_is_minimal_and_implicit(self) -> None:
         skill_path = WORK_SYSTEM_ROOT / "SKILL.md"
@@ -128,7 +116,7 @@ class WorkSystemStructureTests(unittest.TestCase):
         )
         self.assertEqual(
             {path.name for path in WORKFLOWS_ROOT.iterdir()},
-            {f"{name}.yaml" for name in EXPECTED_WORKFLOWS},
+            {f"{name}.json" for name in EXPECTED_WORKFLOWS},
         )
         self.assertEqual(
             {path.name for path in STATES_ROOT.iterdir()},
@@ -167,12 +155,23 @@ class WorkSystemStructureTests(unittest.TestCase):
             "Follow any workflow-record guidance returned by the navigator",
             skill_body,
         )
+        self.assertIn("Keep question, tweak, and fix state in conversation", skill_body)
+        self.assertIn("exact resume command", skill_body)
+        self.assertIn("Do not create a repository record", skill_body)
+        self.assertNotIn("--variant", skill_body)
         for workflow_name in EXPECTED_WORKFLOWS:
-            self.assertNotIn(f"references/workflows/{workflow_name}.yaml", skill_body)
+            self.assertNotIn(f"references/workflows/{workflow_name}.json", skill_body)
         for state_name in EXPECTED_STATES:
             self.assertNotIn(f"references/states/{state_name}.md", skill_body)
         for procedure_name in EXPECTED_PROCEDURES:
             self.assertNotIn(f"references/procedures/{procedure_name}.md", skill_body)
+
+    def test_navigator_uses_only_standard_library_manifest_loading(self) -> None:
+        navigator = NAVIGATOR_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("import json", navigator)
+        self.assertNotIn("import yaml", navigator)
+        self.assertNotIn(".yaml", navigator)
 
     def test_states_and_procedures_do_not_resolve_format_paths(self) -> None:
         for path in [*STATES_ROOT.glob("*.md"), *PROCEDURES_ROOT.glob("*.md")]:
@@ -590,9 +589,15 @@ class WorkSystemStructureTests(unittest.TestCase):
         normalized_prototype = " ".join(prototype.split())
         normalized_research = " ".join(research.split())
         self.assertIn("normal repository history", normalized_prototype)
+        self.assertIn(
+            "committed with the completed outcome during delivery", normalized_prototype
+        )
         self.assertIn("do not create a dedicated branch", normalized_prototype)
         self.assertNotIn("out of the main line", normalized_prototype)
         self.assertIn("normal repository history", normalized_research)
+        self.assertIn(
+            "commit it with the completed outcome during delivery", normalized_research
+        )
         self.assertNotIn("out of the main line", normalized_research)
         self.assertNotIn("research/<name>", normalized_research)
 
@@ -604,8 +609,6 @@ class WorkflowManifestTests(unittest.TestCase):
         for workflow_name, workflow in workflows.items():
             with self.subTest(workflow=workflow_name):
                 expected_keys = {"name", "entry-state", "persistence", "states"}
-                if workflow_name == "tweak":
-                    expected_keys.add("variants")
                 if workflow_name == "novel-work":
                     expected_keys.add("work-record")
                 self.assertEqual(set(workflow), expected_keys)
@@ -633,20 +636,6 @@ class WorkflowManifestTests(unittest.TestCase):
                     referenced_formats.update(
                         cast(dict[str, object], access.get("formats", {}))
                     )
-            variants = cast(dict[str, object], workflow.get("variants", {}))
-            for variant_value in variants.values():
-                variant = cast(dict[str, object], variant_value)
-                additions = cast(
-                    dict[str, dict[str, object]],
-                    variant.get("procedure-additions", {}),
-                )
-                for procedures in additions.values():
-                    referenced_procedures.update(procedures)
-                    for raw_access in procedures.values():
-                        access = cast(dict[str, object], raw_access)
-                        referenced_formats.update(
-                            cast(dict[str, object], access.get("formats", {}))
-                        )
 
         self.assertEqual(referenced_states, EXPECTED_STATES)
         self.assertGreaterEqual(referenced_procedures, EXPECTED_PROCEDURES)
@@ -698,11 +687,12 @@ class WorkflowManifestTests(unittest.TestCase):
                         format_access = cast(dict[str, object], raw_format)
                         self.assertEqual(set(format_access), {"cue"}, format_name)
 
-    def test_only_novel_work_loads_the_committed_local_record(self) -> None:
+    def test_only_novel_work_loads_the_local_record(self) -> None:
         workflows = load_workflows()
 
         self.assertNotIn("work-record", workflows["question"])
         self.assertNotIn("work-record", workflows["tweak"])
+        self.assertNotIn("work-record", workflows["fix"])
         self.assertEqual(
             workflows["novel-work"]["work-record"],
             "storage/local-work-store.md",
@@ -715,7 +705,10 @@ class WorkflowManifestTests(unittest.TestCase):
         record = record_path.read_text(encoding="utf-8")
         for phrase in {
             ".work/<effort-slug>/",
-            "Commit the effort directory",
+            "uncommitted continuation record",
+            "Commit the current effort record with the completed outcome "
+            "during delivery",
+            "Do not commit planning artifacts",
             "status.md",
             "map.md",
             "decisions/",
@@ -784,6 +777,13 @@ class WorkflowManifestTests(unittest.TestCase):
             set(cast(dict[str, object], tweak_discovery["procedures"])), {"research"}
         )
 
+        fix_states = cast(dict[str, object], workflows["fix"]["states"])
+        fix_discovery = cast(dict[str, object], fix_states["discovery"])
+        self.assertEqual(
+            set(cast(dict[str, object], fix_discovery["procedures"])),
+            {"diagnose", "research"},
+        )
+
         novel = workflows["novel-work"]
         self.assertEqual(novel["entry-state"], "planning")
         novel_states = cast(dict[str, object], novel["states"])
@@ -815,6 +815,7 @@ class WorkflowManifestTests(unittest.TestCase):
     def test_interface_design_is_triggered_only_for_design_work(self) -> None:
         workflows = load_workflows()
         expected_locations = {
+            ("fix", "implementation"),
             ("novel-work", "planning"),
             ("novel-work", "implementation"),
             ("tweak", "implementation"),
@@ -860,7 +861,7 @@ class WorkflowManifestTests(unittest.TestCase):
                     cast(dict[str, object], state_value)["procedures"],
                 )
                 if (
-                    workflow_name in {"tweak", "novel-work"}
+                    workflow_name in {"fix", "tweak", "novel-work"}
                     and state_name == "implementation"
                 ):
                     self.assertIn("delegate", procedures)
@@ -882,34 +883,37 @@ class WorkflowManifestTests(unittest.TestCase):
 
         self.assertGreaterEqual(len(authorizing_states), 2)
 
-    def test_fix_is_a_tweak_variant_that_adds_diagnosis(self) -> None:
-        tweak = load_workflows()["tweak"]
-        variants = cast(dict[str, object], tweak["variants"])
-        fix = cast(dict[str, object], variants["fix"])
-        additions = cast(dict[str, object], fix["procedure-additions"])
-
-        self.assertEqual(
-            set(cast(dict[str, object], additions["discovery"])), {"diagnose"}
-        )
-        diagnosis = cast(
-            dict[str, object],
-            cast(dict[str, object], additions["discovery"])["diagnose"],
-        )
+    def test_fix_is_a_first_class_workflow_with_required_diagnosis(self) -> None:
+        fix = load_workflows()["fix"]
+        self.assertEqual(fix["entry-state"], "discovery")
+        self.assertNotIn("variants", fix)
+        states = cast(dict[str, object], fix["states"])
+        discovery = cast(dict[str, object], states["discovery"])
+        diagnosis = cast(dict[str, object], discovery["procedures"])["diagnose"]
+        diagnosis = cast(dict[str, object], diagnosis)
         self.assertEqual(diagnosis["status"], "required")
 
     def test_validation_and_delivery_can_return_to_owning_states(self) -> None:
         workflows = load_workflows()
-        tweak_states = cast(dict[str, object], workflows["tweak"]["states"])
-        tweak_validation = cast(dict[str, object], tweak_states["validation"])
-        tweak_delivery = cast(dict[str, object], tweak_states["delivery"])
-        self.assertGreaterEqual(
-            set(cast(dict[str, str], tweak_validation["transitions"]).values()),
-            {"delivery", "implementation", "discovery", "validation"},
-        )
-        self.assertGreaterEqual(
-            set(cast(dict[str, str], tweak_delivery["transitions"]).values()),
-            {"complete", "implementation", "validation", "discovery", "delivery"},
-        )
+        for workflow_name in {"fix", "tweak"}:
+            states = cast(dict[str, object], workflows[workflow_name]["states"])
+            validation = cast(dict[str, object], states["validation"])
+            delivery = cast(dict[str, object], states["delivery"])
+            with self.subTest(workflow=workflow_name):
+                self.assertGreaterEqual(
+                    set(cast(dict[str, str], validation["transitions"]).values()),
+                    {"delivery", "implementation", "discovery", "validation"},
+                )
+                self.assertGreaterEqual(
+                    set(cast(dict[str, str], delivery["transitions"]).values()),
+                    {
+                        "complete",
+                        "implementation",
+                        "validation",
+                        "discovery",
+                        "delivery",
+                    },
+                )
 
         novel_states = cast(dict[str, object], workflows["novel-work"]["states"])
         novel_validation = cast(dict[str, object], novel_states["validation"])
@@ -970,6 +974,8 @@ class NavigatorTests(unittest.TestCase):
         self.assertIn("`research` (allowed)", output)
         self.assertIn("procedure question discovery research", output)
         self.assertIn("move question discovery answer", output)
+        self.assertIn("## Resume", output)
+        self.assertIn("resume question discovery", output)
         for unrelated in {
             "# Planning State",
             "# Implementation State",
@@ -1013,11 +1019,24 @@ class NavigatorTests(unittest.TestCase):
         for procedure_name in {"review", "documentation", "commit"}:
             self.assertIn(f"`{procedure_name}` (required)", output)
 
-    def test_fix_variant_preloads_diagnosis_during_discovery(self) -> None:
-        output = self.run_navigator("start", "tweak", "--variant", "fix").stdout
+    def test_fix_workflow_preloads_diagnosis_during_discovery(self) -> None:
+        output = self.run_navigator("start", "fix").stdout
 
         self.assertIn("`diagnose` (required)", output)
         self.assertIn("# Diagnose Procedure", output)
+        self.assertIn("resume fix discovery", output)
+        self.assertNotIn("--variant", output)
+
+    def test_every_active_state_exposes_an_exact_resume_command(self) -> None:
+        for workflow_name, workflow in load_workflows().items():
+            states = cast(dict[str, object], workflow["states"])
+            for state_name in states:
+                with self.subTest(workflow=workflow_name, state=state_name):
+                    output = self.run_navigator(
+                        "resume", workflow_name, state_name
+                    ).stdout
+                    self.assertIn("## Resume", output)
+                    self.assertIn(f"resume {workflow_name} {state_name}", output)
 
     def test_procedure_command_enforces_the_active_state_boundary(self) -> None:
         available = self.run_navigator(
@@ -1132,12 +1151,13 @@ class NavigatorTests(unittest.TestCase):
 
     def test_cross_workflow_move_loads_the_new_workflow_context(self) -> None:
         output = self.run_navigator(
-            "move", "tweak", "discovery", "novel-work.planning"
+            "move", "fix", "discovery", "novel-work.planning"
         ).stdout
 
         self.assertIn("# Planning State", output)
         self.assertIn("# Local Work Store", output)
         self.assertIn("procedure novel-work planning prototype", output)
+        self.assertIn("resume novel-work planning", output)
 
     def test_complete_move_returns_to_the_null_state(self) -> None:
         output = self.run_navigator("move", "question", "answer", "complete").stdout
@@ -1294,7 +1314,7 @@ class ProcedureQualityTests(unittest.TestCase):
             "report the gap instead of rewriting durable knowledge",
             "existing canonical source",
             "Keep each meaning in one place",
-            "committed work record exists",
+            "work record exists",
             "Keep it an index",
             "does not repeat implementation validation",
             "documentation-impact decision",
@@ -1375,6 +1395,7 @@ class ProcedureQualityTests(unittest.TestCase):
             "obtain my explicit confirmation",
             "effort's `prototypes/` directory",
             "normal repository history",
+            "committed with the completed outcome during delivery",
             "do not create a dedicated branch",
             "Production implementation remains separate work",
             "Prototype acceptance does not make prototype code production-ready",
@@ -1490,7 +1511,7 @@ class ProcedureQualityTests(unittest.TestCase):
             "evidence is insufficient",
             "dedicated report only when future work will need to revisit",
             "`.work/<effort-slug>/research/<research-slug>.md`",
-            "commit it with the effort in normal repository history",
+            "commit it with the completed outcome during delivery",
             "Link external and repository sources",
             "Otherwise keep the finding in its owning answer",
             "remains mine to resolve",

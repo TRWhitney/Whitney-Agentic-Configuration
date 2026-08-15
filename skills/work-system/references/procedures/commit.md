@@ -24,7 +24,7 @@ upstream before deciding how to commit.
 - Squash local commits that describe the same outcome when they have not reached the upstream.
   Do not rewrite published commits without my direction.
 - Include my changes with yours when they contribute to the same outcome. Commit them separately
-  when they form another complete outcome. Otherwise leave them untouched.
+  when they form another complete outcome. Don't disregard this rule because the change was pre-existing before work.
 - Draft a subject for each proposed commit. Split changes when one accurate subject would become
   vague or omit a distinct outcome; combine commits when their subjects describe the same one.
 

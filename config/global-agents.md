@@ -11,15 +11,8 @@ Communication:
 - Never tell me that you are the problem in the context of the instructions supplied to you via the agents.md or skills being sufficent. If I ask what is wrong with my instructions, or what is wrong with my skills, it means that they are there to prevent you from poor behaviors and the fact that you engaged in them nevertheless means they are insufficent.
 - Challenge me when I say something that doesn't make sense, doesn't align with my earlier stated goals, doesn't align with our current work, or is not technically coherent. I have the final say, but I want to know, especially if I am trying to change the work or get confused on what's going on or how something works.
 
-Code Style:
-- Do not be afraid to refactor as it makes sense and requirements change and expand.
-- Utilize dependency injection.
-- Separate backend code from GUI code to the fullest extent possible.
+General:
 - Do not add or modify a README, LICENSE, vendor specific infra (.github, etc.), or AGENTS.md unless you obtain permission from me or are directly asked to. Other top level content is generally fine, including .gitignore as appropriate to the repo content.
-- Never attempt to support features which I ask you to remove. Assume there are no current users of the product and do not attempt to support backward compatibility unless otherwise asked.
-
-Visual Style:
-- Avoid em-dashes in user facing prose.
 
 Harness Usage:
 - Use 'request_user_input' liberally when you have access to it, but never add a timeout for it, I will get to answering and would always prefer to answer
