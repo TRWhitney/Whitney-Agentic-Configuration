@@ -36,6 +36,8 @@ implementation loop with a known failing test.
   collaborators or assert call order unless the interaction itself is contractual behavior.
 - Avoid broad smoke tests, snapshots too large to explain a failure, and tests whose only purpose
   is proving that removed behavior remains absent.
+- Do not match human-authored prose in tests unless its exact wording is itself contractual. Test
+  behavior or structured contracts instead.
 - Keep the expected result independent from the algorithm used to produce it.
 
 ## Result
