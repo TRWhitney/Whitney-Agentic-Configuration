@@ -1,7 +1,7 @@
 # Commit Procedure
 
-Preserve completed work as clear, reviewable repository history. Commit and squash liberally,
-while keeping each commit focused on one concrete outcome.
+Preserve completed work as clear, reviewable repository history. Commit completed outcomes
+liberally, while keeping each commit focused on one concrete outcome.
 
 ## Decide whether to commit
 
@@ -30,6 +30,10 @@ Partition the final work before staging:
    sufficient reason to combine them.
 4. Draft a subject for each candidate outcome. If one subject would name a broad area, summarize
    the overall task, or omit an independently useful result, split the candidate before staging.
+
+Repeat this partitioning until no candidate contains more than one independently complete outcome.
+After staging each candidate, inspect the staged diff. Every staged change must be necessary for
+its subject; unstage and repartition anything that is not.
 
 - Treat changes by outcome, regardless of authorship or when they first appeared. Include my
   changes with yours when they contribute to the same outcome. When my changes do not, commit them
