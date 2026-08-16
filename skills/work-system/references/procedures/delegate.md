@@ -17,6 +17,9 @@ Provide the accepted ticket, relevant artifact paths, and the context needed to 
 Exclude unrelated history and unresolved reasoning. Do not delegate work whose outcome,
 authority, or writable scope cannot be bounded.
 
+Include the exact navigator command that starts `subagent-implementation`. That command
+establishes the workflow context for the assignment.
+
 For behavior-changing work, delegate only after its focused test has failed for the expected
 reason. The subagent implements the assigned behavior; it does not establish the test-first
 boundary on the delegating agent's behalf.

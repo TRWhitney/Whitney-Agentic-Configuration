@@ -24,6 +24,15 @@ I, me, my, you, your, user, and agent retain their established meanings.
 - **Continuation criteria**: The conditions that must be satisfied before leaving a state.
 - **Null state**: The condition in which no workflow is active.
 
+## Route spawned implementation subagents
+
+Apply this section only when system or developer instructions identify you as a spawned subagent
+whose current assignment authorizes repository changes. It does not apply to the primary agent,
+including when I ask the primary agent to delegate work.
+
+- Use the exact navigator command supplied with the assignment.
+- When that command or the assignment boundary is missing, report the missing context.
+
 ## Route the prompt
 
 1. Keep the active workflow until it completes or I replace or cancel it. Treat my feedback
@@ -54,7 +63,8 @@ python3 <skill-directory>/scripts/navigate.py resume <workflow> <state>
 python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destination>
 ```
 
-Use `question`, `tweak`, `fix`, or `novel-work` as the workflow.
+Use `question`, `tweak`, `fix`, or `novel-work` as standard workflows. Use
+`subagent-implementation` only under the spawned-implementation-subagent rule.
 
 Enter a workflow with `start`. Every active state displays its exact resume command. In a fresh
 context, use that command before loading a procedure. The navigator returns the active state and

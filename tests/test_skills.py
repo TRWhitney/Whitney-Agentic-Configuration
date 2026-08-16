@@ -30,6 +30,8 @@ EXPECTED_STATES = {
     "discovery",
     "implementation",
     "planning",
+    "subagent-handoff",
+    "subagent-implementation",
     "validation",
 }
 EXPECTED_PROCEDURES = {
@@ -42,11 +44,18 @@ EXPECTED_PROCEDURES = {
     "prototype",
     "research",
     "review",
+    "subagent-testing",
     "testing",
     "wayfinding",
 }
 EXPECTED_FORMATS = {"domain-modeling", "planning-artifacts", "wayfinding"}
-EXPECTED_WORKFLOWS = {"fix", "novel-work", "question", "tweak"}
+EXPECTED_WORKFLOWS = {
+    "fix",
+    "novel-work",
+    "question",
+    "subagent-implementation",
+    "tweak",
+}
 WORKFLOW_MANIFESTS = {
     name: WORKFLOWS_ROOT / f"{name}.json" for name in EXPECTED_WORKFLOWS
 }
@@ -254,6 +263,7 @@ class WorkflowManifestTests(unittest.TestCase):
         self.assertNotIn("work-record", workflows["question"])
         self.assertNotIn("work-record", workflows["tweak"])
         self.assertNotIn("work-record", workflows["fix"])
+        self.assertNotIn("work-record", workflows["subagent-implementation"])
         self.assertEqual(
             workflows["novel-work"]["work-record"],
             "storage/local-work-store.md",
@@ -399,6 +409,37 @@ class WorkflowManifestTests(unittest.TestCase):
                     self.assertIn("delegate", procedures)
                 else:
                     self.assertNotIn("delegate", procedures)
+
+    def test_subagent_implementation_is_isolated(self) -> None:
+        workflow = load_workflows()["subagent-implementation"]
+        states = cast(dict[str, object], workflow["states"])
+
+        self.assertEqual(workflow["entry-state"], "subagent-implementation")
+        self.assertEqual(
+            set(states), {"subagent-implementation", "subagent-handoff"}
+        )
+
+        implementation = cast(dict[str, object], states["subagent-implementation"])
+        procedures = cast(dict[str, object], implementation["procedures"])
+        self.assertEqual(set(procedures), {"subagent-testing"})
+        self.assertEqual(
+            cast(dict[str, object], procedures["subagent-testing"])["status"],
+            "required",
+        )
+        self.assertEqual(
+            cast(dict[str, str], implementation["transitions"]),
+            {
+                "implemented": "subagent-handoff",
+                "assignment-blocked": "subagent-handoff",
+            },
+        )
+
+        handoff = cast(dict[str, object], states["subagent-handoff"])
+        self.assertEqual(cast(dict[str, object], handoff["procedures"]), {})
+        self.assertEqual(
+            cast(dict[str, str], handoff["transitions"]),
+            {"reported": "complete"},
+        )
 
     def test_research_is_reusable_but_explicitly_allowlisted(self) -> None:
         authorizing_states: set[str] = set()
@@ -625,6 +666,23 @@ class NavigatorTests(unittest.TestCase):
 
         self.assertIn("resume tweak delivery", valid)
         self.assertTrue(invalid.stderr.strip())
+
+    def test_subagent_implementation_rejects_primary_destinations(self) -> None:
+        for destination in {
+            "discovery",
+            "implementation",
+            "planning",
+            "validation",
+            "delivery",
+        }:
+            with self.subTest(destination=destination):
+                self.run_navigator(
+                    "move",
+                    "subagent-implementation",
+                    "subagent-implementation",
+                    destination,
+                    expected_returncode=2,
+                )
 
     def test_cross_workflow_move_loads_the_new_workflow_context(self) -> None:
         output = self.run_navigator(

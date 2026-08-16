@@ -1,0 +1,25 @@
+{
+  "name": "subagent-implementation",
+  "entry-state": "subagent-implementation",
+  "persistence": "conversation",
+  "states": {
+    "subagent-implementation": {
+      "procedures": {
+        "subagent-testing": {
+          "status": "required",
+          "cue": "Preserve the assignment's focused test boundary and run its named checks."
+        }
+      },
+      "transitions": {
+        "implemented": "subagent-handoff",
+        "assignment-blocked": "subagent-handoff"
+      }
+    },
+    "subagent-handoff": {
+      "procedures": {},
+      "transitions": {
+        "reported": "complete"
+      }
+    }
+  }
+}
