@@ -17,9 +17,10 @@ context gathering and must not be replaced by delegation.
 
 - Use a fresh-context subagent when available for external multi-source investigation, comparison
   of technologies or standards, an unfamiliar domain, conflicting claims, or a bounded experiment
-  whose independence improves the answer. Do not delegate repository orientation or reading a
-  handful of relevant files. A subagent may supplement a larger repository investigation only
-  after you have inspected its decision-bearing sources directly.
+  whose independence improves the answer. If another agent delegated the current work to you,
+  perform the research yourself; do not delegate it again. Do not delegate repository orientation
+  or reading a handful of relevant files. A subagent may supplement a larger repository
+  investigation only after you have inspected its decision-bearing sources directly.
 - Give the subagent the exact question, scope, relevant artifacts, source constraints, and
   expected form of the result. Do not supply a preferred conclusion, an unverified hypothesis, or
   unrelated project history.
