@@ -1,0 +1,59 @@
+# Concept Integration Procedure
+
+Curate a network of concepts, methods, models, and ideas rather than a collection of source
+summaries.
+
+## Choose conceptual homes
+
+Prefer an existing note when material fits its conceptual scope. Create a note only when a concept
+has enough independent explanatory value, substance, and practical importance to stand on its own.
+Avoid narrow variations until they become independently useful. One source may update one broad
+note, add tailored treatments to several notes, justify new concepts, or require no new note.
+
+Let specific concepts reveal useful broader concepts and links. Broad notes must remain useful
+explanations, not link directories. Preserve meaningful overlap between notes with different
+purposes. Surface weak distinctions, consolidation candidates, useful splits, missing broader
+concepts, scope problems, conceptual gaps, terminology inconsistency, and tag overlap; do not enact
+identity-changing operations without approval.
+
+## Preserve viewpoints and evidence
+
+Treat existing uncited prose as a viewpoint of uncertain provenance, not automatically my view,
+authoritative, wrong, or disposable. Improve framing only when no meaningful distinction,
+wording, viewpoint, or provenance is lost. Preserve disagreement and explain contextual scope only
+when sources support it; do not invent reconciliation.
+
+Keep descriptive observations, factual claims, methods, models, heuristics, recommendations,
+practices, inference, and synthesis distinct. Preserve claim strength and conditions. Paraphrase by
+default; retain exact quotations or examples only when their form materially helps, with
+provenance. Summary, comparison, contrast, grouping, and source-supported relationships are normal
+editorial work. A new principle, model, implication, or conclusion not established by a source is
+novel synthesis and requires approval before becoming established knowledge.
+
+## Fit the vault
+
+Use descriptive titles, established templates and section vocabulary, contextual `[[wikilinks]]`,
+and established tags as cross-cutting facets. Do not create link spam or duplicate the concept
+hierarchy in tags. Keep metadata minimal and purposeful. Retain the vault's standard Table of
+Contents, Overview, Image Gallery, and Sources sections; add subject-specific sections naturally.
+
+Use an Obsidian plugin or core capability when its blocks or features represent the material more
+clearly or usefully than plain Markdown. For example, use a guitar-chord block for chord material
+when its plugin is installed and enabled. Follow verified syntax and established vault examples;
+fall back to plain Markdown when the capability is unavailable or does not improve the note.
+
+Maintain a complete `Sources` section and compact body citations sufficient for intuitive
+traceability. Keep video timestamps useful for returning to the exact material and distinguish
+external verification from the new source.
+
+## Work
+
+Make low-risk, additive, reversible changes autonomously. Consolidate redundancy within a note only
+when all meaning remains. Use the safest reversible placement for minor uncertainty and flag it
+afterward. Queue substantive exclusions, novel synthesis as established knowledge, material prose
+rewrites, renames, merges, deletion/archive, and structurally risky changes.
+
+## Result
+
+Include changed notes, created notes, cited sources, selected visuals, safe uncertainty choices,
+and the batched decisions that remain.

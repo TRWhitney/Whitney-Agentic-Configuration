@@ -1,0 +1,29 @@
+{
+  "name": "question",
+  "entry-state": "discovery",
+  "persistence": "conversational",
+  "states": {
+    "discovery": {
+      "procedures": {
+        "vault-discovery": {
+          "status": "required",
+          "cue": "Establish the relevant vault evidence and conventions without changing the vault."
+        },
+        "research": {
+          "status": "allowed",
+          "cue": "Use when a bounded factual investigation would materially improve discovery."
+        }
+      },
+      "transitions": {
+        "evidence-ready": "answer"
+      }
+    },
+    "answer": {
+      "procedures": {},
+      "transitions": {
+        "answered": "complete",
+        "missing-evidence": "discovery"
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "name": "ingest",
+  "entry-state": "acquisition",
+  "persistence": "conversational",
+  "states": {
+    "discovery": {
+      "procedures": {
+        "vault-discovery": {
+          "status": "required",
+          "cue": "Establish the vault, relevant conventions, capabilities, and conceptual neighborhood."
+        },
+        "research": {
+          "status": "allowed",
+          "cue": "Use when a bounded factual investigation would materially improve discovery."
+        }
+      },
+      "transitions": {
+        "ready": "integration",
+        "source-mismatch": "acquisition"
+      }
+    },
+    "acquisition": {
+      "procedures": {
+        "youtube": {
+          "status": "triggered",
+          "cue": "Use when the source is a YouTube video."
+        },
+        "visual-sourcing": {
+          "status": "triggered",
+          "cue": "Use when a visual artifact must be found, captured, extracted, or created."
+        },
+        "research": {
+          "status": "allowed",
+          "cue": "Use when a bounded factual investigation would materially improve acquisition."
+        }
+      },
+      "transitions": {
+        "source-acquired": "discovery"
+      }
+    },
+    "integration": {
+      "procedures": {
+        "source-preservation": {
+          "status": "required",
+          "cue": "Create an independent faithful source record before integrating knowledge.",
+          "formats": {
+            "source-note": {
+              "cue": "Use when turning acquired source evidence into the canonical source note."
+            }
+          }
+        },
+        "concept-integration": {
+          "status": "required",
+          "cue": "Integrate substantive source knowledge into the concept network."
+        },
+        "verification": {
+          "status": "allowed",
+          "cue": "Use when factual claims can practically benefit from bounded external verification."
+        },
+        "research": {
+          "status": "allowed",
+          "cue": "Use when a bounded factual investigation would materially improve integration."
+        },
+        "visual-assessment": {
+          "status": "triggered",
+          "cue": "Use when an available visual artifact is being considered for retention or use."
+        }
+      },
+      "transitions": {
+        "safe-work-complete": "review",
+        "source-evidence-gap": "acquisition",
+        "scope-mismatch": "discovery"
+      }
+    },
+    "review": {
+      "formats": {
+        "completion-report": {
+          "cue": "Use for the terse change log and batched decision queue."
+        }
+      },
+      "procedures": {},
+      "transitions": {
+        "reviewed": "complete",
+        "decision-resolved": "integration",
+        "source-record-defect": "integration",
+        "source-evidence-gap": "acquisition",
+        "evidence-gap": "discovery"
+      }
+    }
+  }
+}

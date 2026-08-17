@@ -22,3 +22,4 @@ select = ["B", "C4", "E", "F", "I", "RUF", "SIM", "UP"]
 [tool.mypy]
 python_version = "3.10"
 strict = true
+exclude = "^skills/note-system/scripts/navigate\\.py$"

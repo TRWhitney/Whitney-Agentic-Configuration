@@ -1,0 +1,59 @@
+{
+  "name": "curate",
+  "entry-state": "discovery",
+  "persistence": "conversational",
+  "states": {
+    "discovery": {
+      "procedures": {
+        "vault-discovery": {
+          "status": "required",
+          "cue": "Establish the relevant vault evidence, conceptual neighborhood, and conventions before editing."
+        },
+        "research": {
+          "status": "allowed",
+          "cue": "Use when a bounded factual investigation would materially improve discovery."
+        }
+      },
+      "transitions": {
+        "ready": "integration"
+      }
+    },
+    "integration": {
+      "procedures": {
+        "concept-integration": {
+          "status": "required",
+          "cue": "Integrate or maintain concept-centered knowledge while preserving meaning and approval boundaries."
+        },
+        "verification": {
+          "status": "allowed",
+          "cue": "Use when factual claims can practically benefit from bounded external verification."
+        },
+        "research": {
+          "status": "allowed",
+          "cue": "Use when a bounded factual investigation would materially improve integration."
+        },
+        "visual-assessment": {
+          "status": "triggered",
+          "cue": "Use when an available visual artifact is being considered for retention or use."
+        }
+      },
+      "transitions": {
+        "safe-work-complete": "review",
+        "scope-mismatch": "discovery"
+      }
+    },
+    "review": {
+      "formats": {
+        "completion-report": {
+          "cue": "Use for the terse change log and batched decision queue."
+        }
+      },
+      "procedures": {},
+      "transitions": {
+        "reviewed": "complete",
+        "decision-resolved": "integration",
+        "evidence-gap": "discovery"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Note System"
+  short_description: "Handle Obsidian vault questions and knowledge work"
+  default_prompt: "Use $note-system to handle this Obsidian vault prompt."
+policy:
+  allow_implicit_invocation: true
