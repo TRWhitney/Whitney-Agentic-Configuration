@@ -12,6 +12,10 @@ sources. Inspect enough of the current implementation to avoid planning against 
 Define the problem, affected actors, desired observable behavior, constraints, important failure
 and edge cases, and what is out of scope.
 
+When the outcome accepts an open input domain or exposes a public composition or extension seam,
+state its supported boundary and the responsibilities that remain with consumers when those facts
+materially bound acceptance.
+
 Distinguish among:
 
 - Facts that can be established through inspection or research.

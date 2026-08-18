@@ -50,6 +50,10 @@ prototypes instead of copying their detail. Record the exact resume command and 
 current branch, relevant commits, owned uncommitted paths, and redacted verification results when
 continuation requires them.
 
+Keep the index current by replacing superseded state, blockers, next actions, and verification
+summaries. Do not append a chronological narration of implementation, validation, or review
+cycles.
+
 When `map.md` exists, use `Frontier` to link the map rather than copying its decision list. Keep
 the full decision frontier canonical in the map and record the exact next action under
 `Continuation`.

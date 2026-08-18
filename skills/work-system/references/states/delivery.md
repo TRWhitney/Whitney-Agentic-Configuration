@@ -44,6 +44,6 @@ durable record is current.
 
 ## Continue
 
-Continue when documentation is resolved, review passes without an unresolved finding, required
-commits exist, completion evidence remains valid, and no decision or correction belongs to an
-earlier state.
+Continue when documentation is resolved, review passes without an unresolved blocking finding or
+judgment, required commits exist, completion evidence remains valid, and no decision or correction
+belongs to an earlier state.
