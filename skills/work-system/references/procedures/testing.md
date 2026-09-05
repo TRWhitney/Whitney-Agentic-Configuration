@@ -9,10 +9,12 @@ Start with one accepted behavior and the highest stable public seam that can dem
 Prefer an existing seam. Test caller or consumer-visible results, and derive expected values
 independently from the production implementation.
 
-For a diagnosed fix, use the focused failing regression test established by diagnosis as the red
-boundary. Otherwise write the focused test before changing production code and run it to observe
-the expected failure. A test that passes immediately, fails for the wrong reason, or cannot reach
-the behavior does not establish the boundary.
+For a diagnosed fix, use the regression boundary established during diagnosis. During
+implementation, write or reuse a focused regression test and confirm that it fails for the
+diagnosed behavior before changing production code. For other behavior-changing work, derive the
+test from the accepted behavior and confirm the expected failure before changing production code.
+A test that passes immediately, fails for the wrong reason, or cannot reach the behavior does not
+establish the boundary.
 
 ## Run the loop
 
