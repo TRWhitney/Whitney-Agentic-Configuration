@@ -392,7 +392,7 @@ class WorkflowManifestTests(unittest.TestCase):
         prototype = cast(dict[str, object], planning_procedures["prototype"])
         wayfinding = cast(dict[str, object], planning_procedures["wayfinding"])
         self.assertEqual(interface_design["related-procedures"], ["prototype"])
-        self.assertEqual(prototype["related-procedures"], ["interface-design"])
+        self.assertEqual(prototype.get("related-procedures", []), [])
         self.assertIn(
             "interface-design",
             cast(list[object], wayfinding["related-procedures"]),
@@ -635,6 +635,9 @@ class NavigatorTests(unittest.TestCase):
         planning = self.run_navigator(
             "procedure", "novel-work", "planning", "interface-design"
         ).stdout
+        prototype = self.run_navigator(
+            "procedure", "novel-work", "planning", "prototype"
+        ).stdout
         implementation = self.run_navigator(
             "procedure", "tweak", "implementation", "interface-design"
         ).stdout
@@ -647,6 +650,7 @@ class NavigatorTests(unittest.TestCase):
         )
 
         self.assertIn("procedure novel-work planning prototype", planning)
+        self.assertNotIn("procedure novel-work planning interface-design", prototype)
         self.assertNotIn("procedure tweak implementation prototype", implementation)
         self.assertTrue(implementation.strip())
         self.assertTrue(unavailable.stderr.strip())

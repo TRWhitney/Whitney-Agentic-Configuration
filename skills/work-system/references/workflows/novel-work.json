@@ -22,17 +22,14 @@
         },
         "interface-design": {
           "status": "triggered",
-          "cue": "Use when novel work creates or materially reshapes an interface and its visual direction must be established.",
+          "cue": "Load when the planning decision requires choosing the interface's visual direction, layout, or interaction design. A prototype with an incidental interface does not trigger this procedure.",
           "related-procedures": [
             "prototype"
           ]
         },
         "prototype": {
           "status": "triggered",
-          "cue": "Use when a cheap faithful artifact can settle a planning decision.",
-          "related-procedures": [
-            "interface-design"
-          ]
+          "cue": "Use when a cheap faithful artifact can settle a planning decision."
         },
         "research": {
           "status": "allowed",
