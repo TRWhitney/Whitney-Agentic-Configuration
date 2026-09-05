@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# Generated from scripts/navigator_source.py. Do not edit this copy.
-# Regenerate with: python3 scripts/sync_navigators.py
 """Expose only the workflow guidance relevant to an agent's requested location."""
 
 from __future__ import annotations

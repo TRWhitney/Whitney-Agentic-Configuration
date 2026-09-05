@@ -14,7 +14,6 @@ import yaml
 REPO_ROOT = Path(__file__).parents[1]
 SKILLS_ROOT = REPO_ROOT / "skills"
 WORK_SYSTEM_ROOT = SKILLS_ROOT / "work-system"
-NOTE_SYSTEM_ROOT = SKILLS_ROOT / "note-system"
 REFERENCES_ROOT = WORK_SYSTEM_ROOT / "references"
 WORKFLOWS_ROOT = REFERENCES_ROOT / "workflows"
 STATES_ROOT = REFERENCES_ROOT / "states"
@@ -79,19 +78,6 @@ def load_workflows() -> dict[str, dict[str, object]]:
 
 
 class WorkSystemStructureTests(unittest.TestCase):
-    def test_only_root_system_skills_are_discoverable(self) -> None:
-        skill_files = set(SKILLS_ROOT.glob("*/SKILL.md"))
-
-        self.assertEqual(
-            skill_files,
-            {WORK_SYSTEM_ROOT / "SKILL.md", NOTE_SYSTEM_ROOT / "SKILL.md"},
-        )
-        self.assertEqual(
-            {path.name for path in SKILLS_ROOT.iterdir() if path.is_dir()},
-            {"note-system", "work-system"},
-        )
-        self.assertEqual(list(REFERENCES_ROOT.rglob("SKILL.md")), [])
-
     def test_work_system_metadata_is_minimal_and_implicit(self) -> None:
         skill_path = WORK_SYSTEM_ROOT / "SKILL.md"
         text = skill_path.read_text(encoding="utf-8")

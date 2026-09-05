@@ -25,6 +25,12 @@ Only the active state and explicitly selected procedures or formats should enter
 manifests classify procedure and format availability, and the navigator provides their load
 commands; state and procedure prose do not duplicate that dispatch responsibility.
 
+Both skills ship ordinary, standalone navigator files generated from
+`scripts/navigator_source.py`. Update them with `python3 scripts/sync_navigators.py`; use
+`python3 scripts/sync_navigators.py --check` to check for drift without writing. Deployment runs
+the same check before destination writes. Installed skills require no shared repository files or
+symlinks.
+
 Discovery identifies the vault root, the requested scope, relevant conceptual neighborhood,
 established templates and examples, attachment location, naming/link/tag/metadata conventions, and
 capabilities suggested by the prompt, relevant vault examples, or available source evidence.

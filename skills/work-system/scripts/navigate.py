@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Generated from scripts/navigator_source.py. Do not edit this copy.
+# Regenerate with: python3 scripts/sync_navigators.py
 """Expose only the workflow guidance relevant to an agent's requested location."""
 
 from __future__ import annotations
@@ -419,7 +421,7 @@ def resolve_destination(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Navigate work-system states and procedures."
+        description=f"Navigate {SKILL_ROOT.name} states and procedures."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 

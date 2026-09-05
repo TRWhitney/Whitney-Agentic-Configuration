@@ -9,6 +9,7 @@ import unittest
 from pathlib import Path
 
 from scripts.deploy import STATE_FILENAME, DeploymentError, deploy, purge_skills
+from scripts.sync_navigators import sync_navigators
 
 REPO_ROOT = Path(__file__).parents[1]
 
@@ -351,6 +352,63 @@ class DeployTests(unittest.TestCase):
             },
             {path.name for path in (REPO_ROOT / "skills").iterdir() if path.is_dir()},
         )
+
+    def test_deploy_rejects_stale_navigators_before_writing_even_with_force(
+        self,
+    ) -> None:
+        scripts = self.source_root / "scripts"
+        scripts.mkdir()
+        shutil.copy2(REPO_ROOT / "scripts" / "navigator_source.py", scripts)
+        write_skill(self.source_root, "work-system")
+        targets = sync_navigators(self.source_root)
+        deploy(self.source_root, self.codex_home)
+        before = {
+            path.relative_to(self.codex_home): path.read_bytes()
+            for path in self.codex_home.rglob("*")
+            if path.is_file()
+        }
+        (self.source_root / "config" / "global-agents.md").write_text(
+            "new instructions\n"
+        )
+        targets[0].write_text("stale navigator\n")
+        for dry_run in (False, True):
+            for force in (False, True):
+                with (
+                    self.subTest(dry_run=dry_run, force=force),
+                    self.assertRaisesRegex(DeploymentError, "sync_navigators.py"),
+                ):
+                    deploy(
+                        self.source_root,
+                        self.codex_home,
+                        dry_run=dry_run,
+                        force=force,
+                    )
+        self.assertEqual(
+            before,
+            {
+                path.relative_to(self.codex_home): path.read_bytes()
+                for path in self.codex_home.rglob("*")
+                if path.is_file()
+            },
+        )
+        self.assertEqual(targets[0].read_text(), "stale navigator\n")
+
+    def test_deploy_requires_navigator_source_and_copy_but_purge_does_not(self) -> None:
+        write_skill(self.source_root, "note-system")
+        with self.assertRaisesRegex(DeploymentError, "navigator source"):
+            deploy(self.source_root, self.codex_home)
+        self.assertFalse(self.codex_home.exists())
+        scripts = self.source_root / "scripts"
+        scripts.mkdir()
+        shutil.copy2(REPO_ROOT / "scripts" / "navigator_source.py", scripts)
+        with self.assertRaisesRegex(DeploymentError, "Missing or stale"):
+            deploy(self.source_root, self.codex_home)
+        self.assertFalse(self.codex_home.exists())
+        sync_navigators(self.source_root)
+        deploy(self.source_root, self.codex_home)
+        shutil.rmtree(scripts)
+        actions = purge_skills(self.source_root, self.codex_home)
+        self.assertIn("REMOVE managed skill note-system", actions)
 
     def test_cli_purges_repository_skills_without_removing_agents_file(self) -> None:
         deploy(self.source_root, self.codex_home)

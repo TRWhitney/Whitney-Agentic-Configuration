@@ -14,6 +14,11 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import NoReturn
 
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from scripts.sync_navigators import NavigatorSyncError, sync_navigators
+
 STATE_FILENAME = ".whitney-workflow-deployment.json"
 STATE_VERSION = 1
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -99,6 +104,10 @@ def _validate_sources(source_root: Path) -> tuple[Path, dict[str, Path]]:
         skills[name] = skill_dir
     if not skills:
         _fail("No deployable skills found")
+    try:
+        sync_navigators(source_root, check=True)
+    except NavigatorSyncError as error:
+        _fail(str(error))
     return instructions, skills
 
 
