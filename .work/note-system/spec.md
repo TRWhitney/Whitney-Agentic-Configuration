@@ -81,6 +81,11 @@ narrow relationships, meaningful overlap, existing viewpoints of uncertain prove
 type/strength/scope, disagreements, terminology, and source traceability. It uses tailored prose in
 multiple relevant notes rather than identical duplication, contextually useful wikilinks, existing
 tags and section vocabulary, minimal purposeful metadata, and the established note template.
+Concept notes preserve the template's mandatory sections and their names. If the template does not
+exist, use Table of Contents, Overview, Image Gallery, and Sources. Mandatory sections may remain
+empty; optional sections are added only when they have useful content. Suggested method sections
+are Steps, Examples, and Limitations; suggested concept sections are How it works, Uses, and
+Comparisons. Source notes retain their separate template and preservation requirements.
 When an installed and enabled Obsidian plugin or core capability provides blocks or features that
 fit the material, integration uses its verified syntax when it improves the note and otherwise
 falls back to plain Markdown.

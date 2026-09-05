@@ -34,17 +34,26 @@ novel synthesis and requires approval before becoming established knowledge.
 
 Use descriptive titles, established templates and section vocabulary, contextual `[[wikilinks]]`,
 and established tags as cross-cutting facets. Do not create link spam or duplicate the concept
-hierarchy in tags. Keep metadata minimal and purposeful. Retain the vault's standard Table of
-Contents, Overview, Image Gallery, and Sources sections; add subject-specific sections naturally.
+hierarchy in tags. Keep metadata minimal and purposeful.
+
+Use the vault's concept-note template and preserve its mandatory sections and section names. If
+the template does not exist, use Table of Contents, Overview, Image Gallery, and Sources.
+
+Add sections when they help explain the subject. For a method, consider Steps, Examples, and
+Limitations. For a concept, consider How it works, Uses, and Comparisons. Choose headings that fit
+the material; these suggestions are not a checklist.
+
+Keep mandatory sections even when they have no content yet. Do not add decorative images or filler
+to populate them. Add optional sections only when there is useful content for them.
 
 Use an Obsidian plugin or core capability when its blocks or features represent the material more
 clearly or usefully than plain Markdown. For example, use a guitar-chord block for chord material
 when its plugin is installed and enabled. Follow verified syntax and established vault examples;
 fall back to plain Markdown when the capability is unavailable or does not improve the note.
 
-Maintain a complete `Sources` section and compact body citations sufficient for intuitive
-traceability. Keep video timestamps useful for returning to the exact material and distinguish
-external verification from the new source.
+Keep complete source references and compact body citations sufficient for traceability. Keep video
+timestamps useful for returning to the exact material and distinguish external verification from
+the new source.
 
 ## Work
 

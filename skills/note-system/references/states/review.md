@@ -9,7 +9,8 @@ defects; return to the responsible state.
 Check the actual changed files and relevant rendered or structural behavior when available:
 
 - the source note remains faithful and independent;
-- knowledge notes retain the established template and standard sections;
+- knowledge notes retain the template's mandatory sections, or the fallback sections if no template
+  exists;
 - wikilinks, citations, source references, timestamps, and attachment targets resolve;
 - original-source and external-verification provenance remain distinguishable;
 - selected visuals are useful, canonical, high quality, and source/timestamp linked;
