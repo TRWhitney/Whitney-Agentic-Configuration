@@ -27,7 +27,7 @@ affected tests green.
 
 ## Build the outcome
 
-For behavior-changing work, implementation and the required testing procedure form one loop.
+For behavior-changing work, use the testing procedure throughout implementation.
 Establish the focused test boundary before changing production behavior, then evolve the
 implementation while its focused and affected tests remain green.
 

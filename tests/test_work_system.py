@@ -561,6 +561,25 @@ class NavigatorTests(unittest.TestCase):
         self.assertIn("resume fix discovery", output)
         self.assertNotIn("--variant", output)
 
+    def test_tweak_testing_loads_on_demand_while_fix_and_novel_require_it(self) -> None:
+        guidance = (PROCEDURES_ROOT / "testing.md").read_text(encoding="utf-8").strip()
+        tweak = self.run_navigator("resume", "tweak", "implementation").stdout
+
+        self.assertIn("`testing` (triggered):", tweak)
+        self.assertIn("procedure tweak implementation testing", tweak)
+        self.assertNotIn(guidance, tweak)
+        loaded = self.run_navigator(
+            "procedure", "tweak", "implementation", "testing"
+        ).stdout
+        self.assertIn(guidance, loaded)
+
+        for workflow_name in ("fix", "novel-work"):
+            with self.subTest(workflow=workflow_name):
+                output = self.run_navigator(
+                    "resume", workflow_name, "implementation"
+                ).stdout
+                self.assertIn(guidance, output)
+
     def test_every_active_state_exposes_an_exact_resume_command(self) -> None:
         for workflow_name, workflow in load_workflows().items():
             states = cast(dict[str, object], workflow["states"])
