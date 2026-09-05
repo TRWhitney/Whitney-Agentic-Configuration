@@ -27,7 +27,7 @@
         },
         "visual-sourcing": {
           "status": "triggered",
-          "cue": "Use when a visual artifact must be found, captured, extracted, or created."
+          "cue": "Use when a visual artifact must be found, captured, extracted, created, or corrected."
         },
         "research": {
           "status": "allowed",
@@ -69,6 +69,7 @@
       "transitions": {
         "safe-work-complete": "review",
         "source-evidence-gap": "acquisition",
+        "visual-preparation-needed": "acquisition",
         "scope-mismatch": "discovery"
       }
     },
@@ -84,6 +85,7 @@
         "decision-resolved": "integration",
         "source-record-defect": "integration",
         "source-evidence-gap": "acquisition",
+        "visual-preparation-needed": "acquisition",
         "evidence-gap": "discovery"
       }
     }

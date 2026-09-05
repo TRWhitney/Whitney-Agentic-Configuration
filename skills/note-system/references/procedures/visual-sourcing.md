@@ -1,7 +1,7 @@
 # Visual Sourcing Procedure
 
-Obtain or create visual candidates for a defined explanatory purpose without deciding that they
-belong in the vault.
+Obtain, create, or correct visual candidates for a defined explanatory purpose without deciding
+that they belong in the vault.
 
 ## Find a candidate
 
@@ -10,7 +10,8 @@ Choose a route appropriate to the requested candidate:
 - preserve a screenshot, diagram, slide, comparison, example, or demonstration from a source;
 - capture a suitable high-quality frame from source media;
 - obtain a reference photograph when a visual distinction matters;
-- create an informational diagram or infographic for the defined explanatory purpose.
+- create an informational diagram or infographic for the defined explanatory purpose;
+- correct a temporary copy of an existing candidate using the assessment's findings.
 
 ## Prepare the artifact
 
@@ -25,8 +26,9 @@ constraints. For a generated informational visual, base every claim and relation
 knowledge, preserve its generation provenance, and distinguish it from source evidence. Do not use
 visibly watermarked content.
 
-Keep newly sourced candidates temporary and outside the permanent attachment hierarchy until they
-have been assessed. Do not embed, canonize, or duplicate a candidate as part of sourcing.
+Keep prepared candidates temporary and outside the permanent attachment hierarchy until they
+have been assessed. Retain the original and record any corrections for reassessment. Do not embed,
+canonize, replace a vault attachment, or create permanent duplicates as part of sourcing.
 
 ## Result
 

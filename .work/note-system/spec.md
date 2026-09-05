@@ -18,7 +18,8 @@ equivalent to the established `work-system` interface:
 - `curate`: `discovery` -> `integration` -> `review` -> complete;
 - `ingest`: `acquisition` -> `discovery` -> `integration` -> `review` -> complete.
 
-Any curation state can route a newly introduced source to `ingest.acquisition`.
+Curation can move from integration or review to `visual-preparation`, then return to integration
+for assessment. Any curation state can route a newly introduced source to `ingest.acquisition`.
 
 Only the active state and explicitly selected procedures or formats should enter context. Workflow
 manifests classify procedure and format availability, and the navigator provides their load
@@ -41,8 +42,9 @@ workspace without writing to the vault. It precedes discovery so the later state
 acquired material rather than predict what it will contain. Source-specific procedures own the
 inspection needed to discover evidence carried by their source. Visual sourcing separately finds,
 captures, extracts, or creates requested candidates from source media, reference imagery, or
-generation without deciding whether an artifact belongs in the vault. Curation does not acquire
-new visual assets.
+generation without deciding whether an artifact belongs in the vault. It can also correct a
+temporary copy of a candidate for reassessment. Curation uses its visual-preparation state for this
+work without requiring a new source record unless an independent source is introduced.
 
 When introducing a source, integration first preserves an independent, faithful source record,
 then changes knowledge notes.

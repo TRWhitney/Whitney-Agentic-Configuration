@@ -31,6 +31,12 @@ Review may return to integration after I resolve a queued decision or when the s
 defect. Missing or unsuitable source evidence returns ingestion to acquisition. Safe work should
 complete before either transition is needed.
 
+The skill audit added a curation-only `visual-preparation` state for obtaining or correcting visual
+candidates. Integration or review can enter it, and prepared candidates return to integration for
+assessment. This avoids requiring a source record for visual work on existing knowledge. If an
+independent source is introduced, every curation state provides a route to `ingest.acquisition` so
+the source can be preserved before integration.
+
 Keep workflow state conversational. Media preparation uses an explicit temporary workspace whose
 path is reported when work fails and which is removed after successful review; do not add workflow
 status to vault notes or maintain a permanent vault-local process database.

@@ -23,7 +23,14 @@ FRONTMATTER_PATTERN = re.compile(r"\A---\n(?P<yaml>.*?)\n---\n", re.DOTALL)
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]*]\(([^)]+)\)")
 
 EXPECTED_WORKFLOWS = {"curate", "ingest", "question"}
-EXPECTED_STATES = {"acquisition", "answer", "discovery", "integration", "review"}
+EXPECTED_STATES = {
+    "acquisition",
+    "answer",
+    "discovery",
+    "integration",
+    "review",
+    "visual-preparation",
+}
 EXPECTED_PROCEDURES = {
     "concept-integration",
     "research",
@@ -259,6 +266,7 @@ class NoteSystemNavigatorTests(unittest.TestCase):
 
         expected = {
             ("ingest", "acquisition", "visual-sourcing"),
+            ("curate", "visual-preparation", "visual-sourcing"),
             ("curate", "integration", "visual-assessment"),
             ("ingest", "integration", "visual-assessment"),
         }
@@ -314,8 +322,33 @@ class NoteSystemNavigatorTests(unittest.TestCase):
         self.assertIn("move curate review complete", output)
         self.assertIn("move curate review integration", output)
 
+    def test_curation_can_prepare_and_reassess_visuals_without_ingestion(self) -> None:
+        for origin in ("integration", "review"):
+            with self.subTest(origin=origin):
+                output = self.run_navigator("resume", "curate", origin).stdout
+                self.assertIn(f"move curate {origin} visual-preparation", output)
+                prepared = self.run_navigator(
+                    "move", "curate", origin, "visual-preparation"
+                ).stdout
+                self.assertIn(
+                    "procedure curate visual-preparation visual-sourcing", prepared
+                )
+                self.assertNotIn("youtube", prepared)
+                self.assertNotIn("source-preservation", prepared)
+                self.assertNotIn("# Visual Sourcing Procedure", prepared)
+
+        integrated = self.run_navigator(
+            "move", "curate", "visual-preparation", "integration"
+        ).stdout
+        self.assertIn("# Concept Integration Procedure", integrated)
+        self.assertIn("procedure curate integration visual-assessment", integrated)
+        self.assertNotIn("source-preservation", integrated)
+        self.reject_navigator(
+            "procedure", "curate", "integration", "source-preservation"
+        )
+
     def test_curation_can_route_a_new_source_into_ingestion(self) -> None:
-        for origin in ("discovery", "integration", "review"):
+        for origin in ("discovery", "integration", "visual-preparation", "review"):
             with self.subTest(origin=origin):
                 output = self.run_navigator("resume", "curate", origin).stdout
                 self.assertIn(f"move curate {origin} ingest.acquisition", output)

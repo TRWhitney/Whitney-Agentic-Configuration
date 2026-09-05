@@ -21,6 +21,10 @@ Check the actual changed files and relevant rendered or structural behavior when
 After the result passes, remove downloaded video, audio, bulk frames, contact sheets, and other
 temporary preparation artifacts. Do not remove a failed workspace needed for diagnosis or retry.
 
+## Continue
+
 Continue to completion when review passes and the report is ready. Return to integration when I
 resolve a queued decision or a source record has a defect, acquisition when source evidence must be
-prepared again, or discovery for missing scope evidence.
+prepared again, or discovery for missing scope evidence. Use the displayed preparation route when
+a visual needs to be obtained or corrected. If curation introduces a source that must be preserved,
+use the route to ingestion.

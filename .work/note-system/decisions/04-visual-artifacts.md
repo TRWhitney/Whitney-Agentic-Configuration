@@ -24,12 +24,14 @@ storyboards alongside the transcript rather than assuming the transcript describ
 visual. Its result includes candidate timestamps and coverage without deciding their place in the
 vault.
 
-Visual sourcing belongs exclusively to acquisition. It may preserve a screenshot, diagram, slide,
-comparison, example, or demonstration from supplied or acquired material; capture a high-quality
-source-media frame; obtain a reference photograph; or create a generated informational visual. It
-keeps candidates temporary, and its result includes their purpose, source, timestamp, generation
-provenance, and usage constraints without deciding that they belong in the vault. Curation does not
-acquire new visual assets.
+Visual sourcing belongs to ingestion's acquisition state or curation's visual-preparation state.
+It may preserve a screenshot, diagram, slide, comparison, example, or demonstration from supplied
+or acquired material; capture a high-quality source-media frame; obtain a reference photograph;
+create a generated informational visual; or correct a temporary copy of a candidate. It keeps
+candidates temporary, and its result includes their purpose, source, timestamp, generation
+provenance, corrections, and usage constraints without deciding that they belong in the vault.
+Curation returns prepared candidates to integration for assessment. It switches to ingestion only
+when an independent source must be preserved.
 
 Visual assessment during integration separately decides whether an available candidate materially
 improves understanding and is faithful, supported, contextualized, legible, suitable quality,
@@ -44,6 +46,10 @@ Clean temporary media after successful processing. Preserve it on failure only l
 diagnosis or a safe retry possible.
 
 ## Evidence
+
+During the skill audit, I approved a preparation route for curation so obtaining or correcting a
+visual does not require introducing a source record. This replaces the original restriction of
+visual sourcing to ingestion.
 
 The original expanded draft required visual inspection and canonical reuse of valuable source
 frames while keeping attachments in the vault's separate hierarchy. The requested pipeline also

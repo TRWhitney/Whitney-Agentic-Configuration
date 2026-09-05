@@ -24,9 +24,9 @@ and deterministic media preparation should load only when relevant.
 - [Transcript fallback](decisions/03-transcript-fallback.md): Prefer authored and platform captions,
   then use an explicitly configured local `whisper.cpp` backend without installing at ingestion
   time.
-- [Visual artifact lifecycle](decisions/04-visual-artifacts.md): Keep visual sourcing exclusive to
-  acquisition and artifact assessment in integration; keep candidates temporary and retain only
-  useful, canonical, provenance-linked visuals in the vault.
+- [Visual artifact lifecycle](decisions/04-visual-artifacts.md): Prepare visuals during ingestion's
+  acquisition or curation's visual preparation, then assess them during integration. Keep
+  candidates temporary and retain only useful, canonical, provenance-linked visuals in the vault.
 - [Vault convention and capability discovery](decisions/05-vault-capabilities.md): Discover live
   vault conventions and capabilities when needed without creating a persistent inventory.
 - [Workflow model and approval loop](decisions/06-workflow-model.md): Route questions, curation,

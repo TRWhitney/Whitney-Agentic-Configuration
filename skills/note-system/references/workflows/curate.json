@@ -41,6 +41,20 @@
       "transitions": {
         "safe-work-complete": "review",
         "scope-mismatch": "discovery",
+        "visual-preparation-needed": "visual-preparation",
+        "source-introduced": "ingest.acquisition"
+      }
+    },
+    "visual-preparation": {
+      "procedures": {
+        "visual-sourcing": {
+          "status": "triggered",
+          "cue": "Use when a visual artifact must be found, captured, extracted, created, or corrected."
+        }
+      },
+      "transitions": {
+        "visuals-prepared": "integration",
+        "scope-mismatch": "discovery",
         "source-introduced": "ingest.acquisition"
       }
     },
@@ -55,6 +69,7 @@
         "reviewed": "complete",
         "decision-resolved": "integration",
         "evidence-gap": "discovery",
+        "visual-preparation-needed": "visual-preparation",
         "source-introduced": "ingest.acquisition"
       }
     }
