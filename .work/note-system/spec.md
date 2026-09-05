@@ -18,6 +18,8 @@ equivalent to the established `work-system` interface:
 - `curate`: `discovery` -> `integration` -> `review` -> complete;
 - `ingest`: `acquisition` -> `discovery` -> `integration` -> `review` -> complete.
 
+Any curation state can route a newly introduced source to `ingest.acquisition`.
+
 Only the active state and explicitly selected procedures or formats should enter context. Workflow
 manifests classify procedure and format availability, and the navigator provides their load
 commands; state and procedure prose do not duplicate that dispatch responsibility.
@@ -42,7 +44,8 @@ captures, extracts, or creates requested candidates from source media, reference
 generation without deciding whether an artifact belongs in the vault. Curation does not acquire
 new visual assets.
 
-Integration first preserves an independent, faithful source record, then changes knowledge notes.
+When introducing a source, integration first preserves an independent, faithful source record,
+then changes knowledge notes.
 Metadata may be normalized, but the source body retains wording, order, qualifications, and useful
 timestamps without summary, deduplication, restructuring, inline annotation, silent correction, or
 later-source revision. Obvious filler may be ignored during knowledge integration but remains in

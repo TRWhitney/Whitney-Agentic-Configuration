@@ -157,7 +157,18 @@ class NoteSystemWorkflowTests(unittest.TestCase):
                     )
                 for destination in cast(dict[str, str], state["transitions"]).values():
                     if destination != "complete":
-                        self.assertIn(destination, states)
+                        if "." in destination:
+                            target_workflow, target_state = destination.split(".", 1)
+                            self.assertIn(target_workflow, workflows)
+                            self.assertIn(
+                                target_state,
+                                cast(
+                                    dict[str, object],
+                                    workflows[target_workflow]["states"],
+                                ),
+                            )
+                        else:
+                            self.assertIn(destination, states)
 
         self.assertEqual(referenced_states, EXPECTED_STATES)
         self.assertEqual(referenced_procedures, EXPECTED_PROCEDURES)
@@ -303,6 +314,24 @@ class NoteSystemNavigatorTests(unittest.TestCase):
         self.assertIn("move curate review complete", output)
         self.assertIn("move curate review integration", output)
 
+    def test_curation_can_route_a_new_source_into_ingestion(self) -> None:
+        for origin in ("discovery", "integration", "review"):
+            with self.subTest(origin=origin):
+                output = self.run_navigator("resume", "curate", origin).stdout
+                self.assertIn(f"move curate {origin} ingest.acquisition", output)
+                acquired = self.run_navigator(
+                    "move", "curate", origin, "ingest.acquisition"
+                ).stdout
+                self.assertIn("resume ingest acquisition", acquired)
+                self.assertIn("procedure ingest acquisition youtube", acquired)
+
+        self.run_navigator("move", "ingest", "acquisition", "discovery")
+        integrated = self.run_navigator(
+            "move", "ingest", "discovery", "integration"
+        ).stdout
+        self.assertIn("# Source Preservation Procedure", integrated)
+        self.assertIn("# Concept Integration Procedure", integrated)
+
     def test_every_transition_procedure_and_format_is_publicly_reachable(self) -> None:
         for workflow_name, workflow in load_workflows().items():
             states = cast(dict[str, object], workflow["states"])
@@ -320,8 +349,13 @@ class NoteSystemNavigatorTests(unittest.TestCase):
                         if destination == "complete":
                             self.assertIn("Workflow complete", output)
                         else:
+                            target_workflow, target_state = (
+                                destination.split(".", 1)
+                                if "." in destination
+                                else (workflow_name, destination)
+                            )
                             self.assertIn(
-                                f"resume {workflow_name} {destination}", output
+                                f"resume {target_workflow} {target_state}", output
                             )
 
                 procedures = cast(dict[str, object], state["procedures"])

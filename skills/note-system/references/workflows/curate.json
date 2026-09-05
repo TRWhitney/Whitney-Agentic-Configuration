@@ -15,7 +15,8 @@
         }
       },
       "transitions": {
-        "ready": "integration"
+        "ready": "integration",
+        "source-introduced": "ingest.acquisition"
       }
     },
     "integration": {
@@ -39,7 +40,8 @@
       },
       "transitions": {
         "safe-work-complete": "review",
-        "scope-mismatch": "discovery"
+        "scope-mismatch": "discovery",
+        "source-introduced": "ingest.acquisition"
       }
     },
     "review": {
@@ -52,7 +54,8 @@
       "transitions": {
         "reviewed": "complete",
         "decision-resolved": "integration",
-        "evidence-gap": "discovery"
+        "evidence-gap": "discovery",
+        "source-introduced": "ingest.acquisition"
       }
     }
   }
