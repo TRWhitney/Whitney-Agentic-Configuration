@@ -13,17 +13,6 @@ for its current state.
 
 I, me, my, you, your, user, and agent retain their established meanings.
 
-- **Prompt**: Anything I communicate, including a question, work request, feedback, or
-  clarification.
-- **Workflow**: The sequence selected to handle my prompt.
-- **State**: The active stage of a workflow.
-- **Procedure**: Reusable guidance that may be loaded only when the active state authorizes it.
-- **Procedure result**: The evidence, artifacts, decisions, or blockers a procedure returns to the
-  active state.
-- **Transition**: A state change the agent requests after meeting continuation criteria.
-- **Continuation criteria**: The conditions that must be satisfied before leaving a state.
-- **Null state**: The condition in which no workflow is active.
-
 ## Route spawned implementation subagents
 
 Apply this section only when system or developer instructions identify you as a spawned subagent
@@ -37,7 +26,7 @@ including when I ask the primary agent to delegate work.
 
 1. Keep the active workflow until it completes or I replace or cancel it. Treat my feedback
    and related questions as part of that workflow.
-2. In the null state, classify my prompt by intent, uncertainty, and scope:
+2. When no workflow is active, classify my prompt by intent, uncertainty, and scope:
    - **Question**: I ask for information or discussion.
    - **Tweak**: I request bounded repository work with a clear outcome and no unresolved
      consequential decision.
@@ -79,19 +68,23 @@ state or another authorized procedure. Do not construct a procedure command inde
 to the active state after completing it. The output for each state and procedure lists any
 associated formats; load them only through the displayed navigator command.
 
-## Handle procedure results
+## Procedure results and transitions
 
-A procedure result belongs to the active state. Use it to continue the state's work; the result
-does not select another state or require a standalone completion response.
+Loading a procedure does not change the active state. Use its result to continue that state's
+work. Run `resume` again only when the state guidance is missing from context.
 
-- Keep conversational results available until the workflow completes. Record results needed for
-  continuation in the durable work record when one exists.
-- Tell me immediately when a result requires my decision or prevents meaningful progress. Do not
-  defer a blocker until workflow completion.
-- When the workflow completes, give me one final response summarizing the overall outcome, direct
-  proof, material procedure results, documentation impact, commits, and unresolved issues. Link
-  durable artifacts instead of copying them, and omit internal detail that does not affect the
-  outcome.
+Keep findings needed for continuation in conversation and, when one exists, the durable work
+record. Report blockers and decisions that need my input when they arise.
+
+Move only along a route displayed by the navigator, after meeting the conditions in the active
+state's `Continue` section. If new evidence invalidates earlier work, record what changed and
+return to the earliest state responsible for resolving it. Preserve valid work and repeat checks
+whose evidence may have changed.
+
+Complete the workflow only when the active state permits completion and its required evidence
+remains valid. Give one final response covering the outcome, proof, material findings,
+documentation impact, commits, and unresolved issues. Omit categories that do not apply and link
+durable artifacts instead of copying them. Then clear the active workflow.
 
 ## Track state
 
@@ -102,20 +95,3 @@ does not select another state or require a standalone completion response.
 - Follow any workflow-record guidance returned by the navigator. When a durable record exists,
   keep the exact resume command, accepted decisions, invalidated evidence, and next transition
   current. Link source artifacts instead of copying them.
-
-## Transition
-
-Leave a state only when its continuation criteria are satisfied. Choose the appropriate
-destination from the routes returned by the navigator, then use its `move` command. When a state
-reveals an earlier problem:
-
-1. Record the problem and the evidence or assumption it invalidates.
-2. Use the navigator to return to the earliest state responsible for resolving it.
-3. Preserve accepted work that remains valid.
-4. Repeat every later check whose evidence may have changed.
-
-## Completion
-
-Complete the workflow when the active state permits movement to `complete` and all required
-evidence remains valid. Report it according to the procedure-result convention, then return to
-the null state.

@@ -10,11 +10,11 @@ has enough independent explanatory value, substance, and practical importance to
 Avoid narrow variations until they become independently useful. One source may update one broad
 note, add tailored treatments to several notes, justify new concepts, or require no new note.
 
-Let specific concepts reveal useful broader concepts and links. Broad notes must remain useful
+Look for useful broader concepts and link related notes. Broad notes must remain useful
 explanations, not link directories. Preserve meaningful overlap between notes with different
-purposes. Surface weak distinctions, consolidation candidates, useful splits, missing broader
-concepts, scope problems, conceptual gaps, terminology inconsistency, and tag overlap; do not enact
-identity-changing operations without approval.
+purposes. Flag weak distinctions, possible merges and useful splits, missing broader
+concepts, scope problems, conceptual gaps, inconsistent terms, and overlapping tags. Get approval
+before changes that alter a note's identity.
 
 ## Preserve viewpoints and evidence
 
@@ -32,9 +32,9 @@ novel synthesis and requires approval before becoming established knowledge.
 
 ## Fit the vault
 
-Use descriptive titles, established templates and section vocabulary, contextual `[[wikilinks]]`,
-and established tags as cross-cutting facets. Do not create link spam or duplicate the concept
-hierarchy in tags. Keep metadata minimal and purposeful.
+Use descriptive titles, established templates and section names, and contextual `[[wikilinks]]`.
+Use established tags for properties shared across concepts. Avoid excessive links and do not
+duplicate the concept hierarchy in tags. Keep only metadata that helps use or maintain the note.
 
 Use the vault's concept-note template and preserve its mandatory sections and section names. If
 the template does not exist, use Table of Contents, Overview, Image Gallery, and Sources.
@@ -57,12 +57,12 @@ the new source.
 
 ## Work
 
-Make low-risk, additive, reversible changes autonomously. Consolidate redundancy within a note only
-when all meaning remains. Use the safest reversible placement for minor uncertainty and flag it
-afterward. Queue substantive exclusions, novel synthesis as established knowledge, material prose
+Make low-risk, additive, reversible changes autonomously. Remove repetition within a note only
+when all meaning is preserved. Use the safest reversible placement for minor uncertainty and
+flag it afterward. Queue substantive exclusions, novel synthesis as established knowledge, material prose
 rewrites, renames, merges, deletion/archive, and structurally risky changes.
 
 ## Result
 
-Include changed notes, created notes, cited sources, selected visuals, safe uncertainty choices,
-and the batched decisions that remain.
+Include changed and created notes, cited sources, selected visuals, how you handled minor
+uncertainty, and the batched decisions that remain.

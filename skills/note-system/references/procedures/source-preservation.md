@@ -1,6 +1,6 @@
 # Source Preservation Procedure
 
-Maintain a clean boundary between source evidence and integrated knowledge.
+Keep preserved source evidence separate from integrated knowledge.
 
 ## Preserve faithful evidence
 

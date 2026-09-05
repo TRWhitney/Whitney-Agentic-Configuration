@@ -3,9 +3,8 @@
 Assess whether an available visual candidate should be retained and used. Do not obtain, generate,
 extract, edit, move, or replace artifacts during assessment.
 
-Use visuals sparingly but proactively when they materially improve understanding. Reject a visual
-that is merely available, decorative, redundant with clear prose, or part of unnecessary image
-saturation.
+Look for visuals that make the subject easier to understand, and use them sparingly. Reject
+decorative or redundant images, and do not add an image just because it is available.
 
 ## Assess the candidate
 
@@ -24,12 +23,12 @@ Check whether the candidate:
 - can live in the vault's established attachment hierarchy rather than alongside knowledge notes.
 
 Classify the candidate as suitable, unsuitable, correctable, or requiring my judgment. For a
-suitable candidate, identify its material contribution, canonical attachment destination or
-existing attachment path, provenance to retain, and every note that can reuse it. Identify
-sourcing, editing, or evidence needs for the owning state rather than satisfying them here.
+suitable candidate, explain what it helps the reader understand. Identify its canonical attachment
+destination or existing attachment path, provenance to retain, and every note that can reuse it.
+Identify sourcing, editing, or evidence needs for the owning state rather than satisfying them here.
 
 ## Result
 
-Include the classification, material contribution or rejection reason, fidelity and quality
+Include the classification, explanatory value or rejection reason, fidelity and quality
 findings, provenance, canonical-reuse decision, intended attachment destination, affected notes,
 and any correction or judgment still required.

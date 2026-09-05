@@ -27,8 +27,9 @@ knowledge, preserve its generation provenance, and distinguish it from source ev
 visibly watermarked content.
 
 Keep prepared candidates temporary and outside the permanent attachment hierarchy until they
-have been assessed. Retain the original and record any corrections for reassessment. Do not embed,
-canonize, replace a vault attachment, or create permanent duplicates as part of sourcing.
+have been assessed. Retain the original and record any corrections for reassessment. Do not embed
+or save candidates permanently, replace a vault attachment, or create permanent duplicates as part
+of sourcing.
 
 ## Result
 

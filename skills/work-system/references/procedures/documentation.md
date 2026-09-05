@@ -1,6 +1,6 @@
 # Documentation Procedure
 
-Reconcile completed work with the repository's durable knowledge. This required procedure may
+Bring repository documentation up to date with the completed work. This required procedure may
 conclude that no documentation change is needed.
 
 ## Decide the impact
@@ -12,13 +12,13 @@ term, or accepted architectural reason.
 
 Do not document temporary process, narrate the diff, restate code, or create an artifact merely
 because files changed. If the completed behavior conflicts with an accepted specification,
-domain term, or architecture decision, report the gap instead of rewriting durable knowledge to
-legitimize it.
+domain term, or architecture decision, report the conflict. Do not rewrite accepted documentation to
+justify the implementation.
 
 ## Update canonical knowledge
 
-- Edit the existing canonical source when one exists. Create the narrowest appropriate artifact
-  only when the knowledge must survive and has no current home.
+- Edit the existing canonical source when one exists. If information needs to be kept and no
+  existing document fits, create the smallest document that serves that purpose.
 - Keep each meaning in one place and link related records instead of copying their content.
 - Keep domain glossaries free of implementation detail and preserve the reasoning of superseded
   architecture decisions.
@@ -33,6 +33,6 @@ covers the documentation changes; it does not repeat implementation validation.
 
 ## Result
 
-Include the documentation-impact decision, changed canonical records, and work-record updates.
-If nothing changed, include why existing knowledge remains sufficient. Include any decision or
-behavior gap that prevents an accurate update.
+State whether documentation needed changes, which canonical records changed, and any work-record
+updates. If nothing changed, explain why the existing documentation is sufficient. Include any
+decision or behavior gap that prevents an accurate update.
