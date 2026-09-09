@@ -1,0 +1,4 @@
+[submodule "external/pstack"]
+	path = external/pstack
+	url = https://github.com/backnotprop/pstack.git
+	branch = main

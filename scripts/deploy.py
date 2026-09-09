@@ -8,9 +8,12 @@ import os
 import re
 import shutil
 import stat
+import subprocess
 import sys
 import tempfile
-from collections.abc import Sequence
+from collections.abc import Iterator, Mapping, Sequence
+from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
 from typing import NoReturn
 
@@ -21,6 +24,7 @@ from scripts.sync_navigators import NavigatorSyncError, sync_navigators
 
 STATE_FILENAME = ".whitney-workflow-deployment.json"
 STATE_VERSION = 1
+EXTERNAL_SKILLS_FILENAME = "external-skills.json"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 FRONTMATTER_NAME_PATTERN = re.compile(
     r"^name:\s*[\"']?([^\"'\s]+)[\"']?\s*$", re.MULTILINE
@@ -32,6 +36,13 @@ FRONTMATTER_PATTERN = re.compile(
 
 class DeploymentError(RuntimeError):
     """Raised when deployment cannot proceed without risking unmanaged data."""
+
+
+@dataclass(frozen=True)
+class ExternalSkillSpec:
+    name: str
+    submodule: Path
+    path: Path
 
 
 def _fail(message: str) -> NoReturn:
@@ -71,7 +82,27 @@ def _hash_tree(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _validate_sources(source_root: Path) -> tuple[Path, dict[str, Path]]:
+def _validate_skill(name: str, skill_dir: Path, *, require_metadata: bool) -> None:
+    skill_file = skill_dir / "SKILL.md"
+    metadata_file = skill_dir / "agents" / "openai.yaml"
+    if not skill_file.is_file() or (require_metadata and not metadata_file.is_file()):
+        required = "SKILL.md and agents/openai.yaml" if require_metadata else "SKILL.md"
+        _fail(f"Skill {name} must contain {required}")
+    skill_text = skill_file.read_text(encoding="utf-8")
+    frontmatter_match = FRONTMATTER_PATTERN.match(skill_text)
+    name_match = (
+        FRONTMATTER_NAME_PATTERN.search(frontmatter_match.group("frontmatter"))
+        if frontmatter_match is not None
+        else None
+    )
+    if name_match is None or name_match.group(1) != name:
+        _fail(f"Skill frontmatter name must match directory name: {name}")
+
+
+def _validate_sources(
+    source_root: Path,
+    external_skills: Mapping[str, Path] | None = None,
+) -> tuple[Path, dict[str, Path]]:
     instructions = source_root / "config" / "global-agents.md"
     skills_root = source_root / "skills"
     if not instructions.is_file():
@@ -88,19 +119,13 @@ def _validate_sources(source_root: Path) -> tuple[Path, dict[str, Path]]:
         name = skill_dir.name
         if SKILL_NAME_PATTERN.fullmatch(name) is None:
             _fail(f"Invalid skill directory name: {name}")
-        skill_file = skill_dir / "SKILL.md"
-        metadata_file = skill_dir / "agents" / "openai.yaml"
-        if not skill_file.is_file() or not metadata_file.is_file():
-            _fail(f"Skill {name} must contain SKILL.md and agents/openai.yaml")
-        skill_text = skill_file.read_text(encoding="utf-8")
-        frontmatter_match = FRONTMATTER_PATTERN.match(skill_text)
-        name_match = (
-            FRONTMATTER_NAME_PATTERN.search(frontmatter_match.group("frontmatter"))
-            if frontmatter_match is not None
-            else None
-        )
-        if name_match is None or name_match.group(1) != name:
-            _fail(f"Skill frontmatter name must match directory name: {name}")
+        _validate_skill(name, skill_dir, require_metadata=True)
+        skills[name] = skill_dir
+    for name, skill_dir in sorted((external_skills or {}).items()):
+        if name in skills:
+            _fail(f"External skill conflicts with repository skill: {name}")
+        _reject_symlinks(skill_dir)
+        _validate_skill(name, skill_dir, require_metadata=False)
         skills[name] = skill_dir
     if not skills:
         _fail("No deployable skills found")
@@ -109,6 +134,260 @@ def _validate_sources(source_root: Path) -> tuple[Path, dict[str, Path]]:
     except NavigatorSyncError as error:
         _fail(str(error))
     return instructions, skills
+
+
+def _relative_path(value: object, *, field: str, name: str) -> Path:
+    if not isinstance(value, str) or not value:
+        _fail(f"External skill {name} has invalid {field}")
+    path = Path(value)
+    if path.is_absolute() or any(part in {"", ".", ".."} for part in path.parts):
+        _fail(f"External skill {name} has unsafe {field}: {value}")
+    return path
+
+
+def _load_external_skill_specs(source_root: Path) -> tuple[ExternalSkillSpec, ...]:
+    manifest = source_root / "config" / EXTERNAL_SKILLS_FILENAME
+    if not manifest.exists():
+        return ()
+    if manifest.is_symlink() or not manifest.is_file():
+        _fail(f"Invalid external skill manifest: {manifest}")
+    try:
+        loaded = json.loads(manifest.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as error:
+        _fail(f"Cannot read external skill manifest {manifest}: {error}")
+    if not isinstance(loaded, dict):
+        _fail(f"External skill manifest must contain an object: {manifest}")
+
+    specs: list[ExternalSkillSpec] = []
+    for name, value in sorted(loaded.items()):
+        if not isinstance(name, str) or SKILL_NAME_PATTERN.fullmatch(name) is None:
+            _fail(f"Invalid external skill name in {manifest}: {name}")
+        if not isinstance(value, dict) or set(value) != {"path", "submodule"}:
+            _fail(f"External skill {name} must define path and submodule")
+        specs.append(
+            ExternalSkillSpec(
+                name=name,
+                submodule=_relative_path(
+                    value["submodule"], field="submodule", name=name
+                ),
+                path=_relative_path(value["path"], field="path", name=name),
+            )
+        )
+    return tuple(specs)
+
+
+def _git(
+    repository: Path,
+    arguments: Sequence[str],
+    *,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    try:
+        result = subprocess.run(
+            ["git", "-c", "protocol.file.allow=always", *arguments],
+            cwd=repository,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+    except OSError as error:
+        _fail(f"Cannot run Git in {repository}: {error}")
+    if check and result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip() or "unknown Git error"
+        _fail(f"Git command failed in {repository}: {detail}")
+    return result
+
+
+def _submodule_configuration(source_root: Path, path: Path) -> tuple[str, str | None]:
+    modules_file = source_root / ".gitmodules"
+    if modules_file.is_symlink() or not modules_file.is_file():
+        _fail(f"External skill submodule is not configured: {path}")
+    configured = _git(
+        source_root,
+        [
+            "config",
+            "--file",
+            str(modules_file),
+            "--get-regexp",
+            r"^submodule\..*\.path$",
+        ],
+    ).stdout.splitlines()
+    key = next(
+        (
+            line.split(maxsplit=1)[0]
+            for line in configured
+            if len(line.split(maxsplit=1)) == 2
+            and line.split(maxsplit=1)[1] == path.as_posix()
+        ),
+        None,
+    )
+    if key is None:
+        _fail(f"External skill submodule is not configured: {path}")
+    prefix = key.removesuffix(".path")
+    url = _git(
+        source_root,
+        ["config", "--file", str(modules_file), "--get", f"{prefix}.url"],
+    ).stdout.strip()
+    if not url:
+        _fail(f"External skill submodule has no URL: {path}")
+    branch_result = _git(
+        source_root,
+        ["config", "--file", str(modules_file), "--get", f"{prefix}.branch"],
+        check=False,
+    )
+    branch = branch_result.stdout.strip() if branch_result.returncode == 0 else None
+    return url, branch
+
+
+def _submodule_is_initialized(path: Path) -> bool:
+    if not path.is_dir():
+        return False
+    result = _git(path, ["rev-parse", "--show-toplevel"], check=False)
+    return (
+        result.returncode == 0
+        and Path(result.stdout.strip()).resolve() == path.resolve()
+    )
+
+
+def _require_clean_submodule(path: Path) -> None:
+    changes = _git(path, ["status", "--porcelain"]).stdout.strip()
+    if changes:
+        _fail(f"Refusing to use locally modified external skill submodule: {path}")
+
+
+def _submodule_revision(path: Path) -> str:
+    return _git(path, ["rev-parse", "HEAD"]).stdout.strip()
+
+
+def _pinned_submodule_revision(source_root: Path, path: Path) -> str:
+    result = _git(source_root, ["ls-files", "--stage", "--", path.as_posix()])
+    fields = result.stdout.split()
+    if (
+        len(fields) < 3
+        or fields[0] != "160000"
+        or not re.fullmatch(r"[0-9a-fA-F]{40,64}", fields[1])
+    ):
+        _fail(f"External skill path is not a tracked Git submodule: {path}")
+    return fields[1]
+
+
+def _clone_submodule(
+    source_root: Path,
+    spec: ExternalSkillSpec,
+    destination: Path,
+    *,
+    update: bool,
+) -> Path:
+    url, branch = _submodule_configuration(source_root, spec.submodule)
+    clone_arguments = ["clone", "--quiet"]
+    if update and branch:
+        clone_arguments.extend(["--branch", branch, "--single-branch"])
+    clone_arguments.extend(["--", url, str(destination)])
+    _git(source_root, clone_arguments)
+    if not update:
+        revision = _pinned_submodule_revision(source_root, spec.submodule)
+        _git(destination, ["checkout", "--quiet", "--detach", revision])
+    return destination
+
+
+def _external_skill_path(submodule: Path, spec: ExternalSkillSpec) -> Path:
+    if submodule.is_symlink():
+        _fail(f"Refusing symlinked external skill path: {submodule}")
+    skill = submodule
+    for part in spec.path.parts:
+        skill /= part
+        if skill.is_symlink():
+            _fail(f"Refusing symlinked external skill path: {skill}")
+    resolved_submodule = submodule.resolve()
+    resolved_skill = skill.resolve()
+    if (
+        resolved_skill != resolved_submodule
+        and resolved_submodule not in resolved_skill.parents
+    ):
+        _fail(f"External skill path escapes its submodule: {skill}")
+    return skill
+
+
+@contextmanager
+def _external_skill_sources(
+    source_root: Path,
+    *,
+    update: bool,
+    dry_run: bool,
+) -> Iterator[tuple[dict[str, Path], tuple[str, ...]]]:
+    specs = _load_external_skill_specs(source_root)
+    if not specs:
+        yield {}, ()
+        return
+
+    submodules = sorted({spec.submodule for spec in specs})
+    pinned_revisions: dict[Path, str] = {}
+    current_revisions: dict[Path, str | None] = {}
+    for submodule in submodules:
+        _submodule_configuration(source_root, submodule)
+        pinned_revisions[submodule] = _pinned_submodule_revision(source_root, submodule)
+        checked_out = source_root / submodule
+        if _submodule_is_initialized(checked_out):
+            _require_clean_submodule(checked_out)
+            current_revisions[submodule] = _submodule_revision(checked_out)
+        else:
+            current_revisions[submodule] = None
+
+    with tempfile.TemporaryDirectory(prefix="external-skills-") as temporary_name:
+        temporary_root = Path(temporary_name)
+        prepared: dict[Path, Path] = {}
+        actions: list[str] = []
+        if dry_run:
+            for spec in specs:
+                if spec.submodule in prepared:
+                    continue
+                checked_out = source_root / spec.submodule
+                current_revision = current_revisions[spec.submodule]
+                pinned_revision = pinned_revisions[spec.submodule]
+                if not update and current_revision == pinned_revision:
+                    prepared[spec.submodule] = checked_out
+                else:
+                    clone_destination = temporary_root / f"submodule-{len(prepared)}"
+                    prepared[spec.submodule] = _clone_submodule(
+                        source_root,
+                        spec,
+                        clone_destination,
+                        update=update,
+                    )
+                desired_revision = _submodule_revision(prepared[spec.submodule])
+                if current_revision is None:
+                    actions.append(f"INITIALIZE external source {spec.submodule}")
+                elif current_revision != desired_revision:
+                    verb = "UPDATE" if update else "RESET"
+                    actions.append(f"{verb} external source {spec.submodule}")
+        else:
+            paths = [path.as_posix() for path in submodules]
+            arguments = ["submodule", "update", "--init"]
+            if update:
+                arguments.append("--remote")
+            arguments.extend(["--checkout", "--", *paths])
+            _git(source_root, arguments)
+            for submodule in submodules:
+                checked_out = source_root / submodule
+                if not _submodule_is_initialized(checked_out):
+                    _fail(
+                        f"Git did not initialize external skill submodule: {submodule}"
+                    )
+                _require_clean_submodule(checked_out)
+                prepared[submodule] = checked_out
+                new_revision = _submodule_revision(checked_out)
+                old_revision = current_revisions[submodule]
+                if old_revision is None:
+                    actions.append(f"INITIALIZE external source {submodule}")
+                elif old_revision != new_revision:
+                    verb = "UPDATE" if update else "RESET"
+                    actions.append(f"{verb} external source {submodule}")
+
+        sources = {
+            spec.name: _external_skill_path(prepared[spec.submodule], spec)
+            for spec in specs
+        }
+        yield sources, tuple(actions)
 
 
 def _load_state(path: Path) -> tuple[str | None, dict[str, str]]:
@@ -268,16 +547,15 @@ def purge_skills(
     return actions
 
 
-def deploy(
+def _deploy_validated(
     source_root: Path,
     codex_home: Path,
+    instructions: Path,
+    source_skills: Mapping[str, Path],
     *,
     dry_run: bool = False,
     force: bool = False,
 ) -> tuple[str, ...]:
-    source_root = source_root.resolve()
-    codex_home = _resolve_codex_home(source_root, codex_home)
-    instructions, source_skills = _validate_sources(source_root)
     state_path = codex_home / STATE_FILENAME
     previous_instructions_hash, previous_hashes = _load_state(state_path)
     destination_skills = codex_home / "skills"
@@ -392,6 +670,33 @@ def deploy(
     return tuple(actions)
 
 
+def deploy(
+    source_root: Path,
+    codex_home: Path,
+    *,
+    dry_run: bool = False,
+    force: bool = False,
+    update_external_skills: bool = False,
+) -> tuple[str, ...]:
+    source_root = source_root.resolve()
+    codex_home = _resolve_codex_home(source_root, codex_home)
+    with _external_skill_sources(
+        source_root,
+        update=update_external_skills,
+        dry_run=dry_run,
+    ) as (external_skills, external_actions):
+        instructions, source_skills = _validate_sources(source_root, external_skills)
+        deployment_actions = _deploy_validated(
+            source_root,
+            codex_home,
+            instructions,
+            source_skills,
+            dry_run=dry_run,
+            force=force,
+        )
+        return external_actions + deployment_actions
+
+
 def _parse_args(arguments: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -413,17 +718,31 @@ def _parse_args(arguments: Sequence[str]) -> argparse.Namespace:
         action="store_true",
         help="Overwrite conflicting content or remove modified managed skills.",
     )
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--purge-skills",
         action="store_true",
         help="Remove repository-managed skills without removing global AGENTS.md.",
     )
+    mode.add_argument(
+        "--update-external-skills",
+        action="store_true",
+        help=(
+            "Advance external skill submodules to their tracked branches, deploy "
+            "them, and leave the new revisions for commit."
+        ),
+    )
     return parser.parse_args(arguments)
 
 
-def main(arguments: Sequence[str] | None = None) -> int:
+def main(
+    arguments: Sequence[str] | None = None,
+    *,
+    repository_root: Path | None = None,
+) -> int:
     options = _parse_args(sys.argv[1:] if arguments is None else arguments)
-    repository_root = Path(__file__).resolve().parents[1]
+    if repository_root is None:
+        repository_root = Path(__file__).resolve().parents[1]
     try:
         if options.purge_skills:
             actions = purge_skills(
@@ -438,6 +757,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
                 options.codex_home,
                 dry_run=options.dry_run,
                 force=options.force,
+                update_external_skills=options.update_external_skills,
             )
     except DeploymentError as error:
         print(f"Deployment failed: {error}", file=sys.stderr)
