@@ -37,14 +37,15 @@ Use established tags for properties shared across concepts. Avoid excessive link
 duplicate the concept hierarchy in tags. Keep only metadata that helps use or maintain the note.
 
 Use the vault's concept-note template and preserve its mandatory sections and section names. If
-the template does not exist, use Table of Contents, Overview, Image Gallery, and Sources.
+the template does not exist, use Overview, Image Gallery, and Sources.
 
 Add sections when they help explain the subject. For a method, consider Steps, Examples, and
 Limitations. For a concept, consider How it works, Uses, and Comparisons. Choose headings that fit
 the material; these suggestions are not a checklist.
 
-Keep mandatory sections even when they have no content yet. Do not add decorative images or filler
-to populate them. Add optional sections only when there is useful content for them.
+Keep mandatory sections even when they have no content yet, with a short visible prompt explaining
+what belongs there. Do not add decorative images or filler to populate them. Add optional sections
+only when there is useful content for them.
 
 Use an Obsidian plugin or core capability when its blocks or features represent the material more
 clearly or usefully than plain Markdown. For example, use a guitar-chord block for chord material
