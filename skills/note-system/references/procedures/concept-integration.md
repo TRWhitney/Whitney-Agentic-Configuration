@@ -55,6 +55,13 @@ Keep mandatory sections even when they have no content yet, with a short visible
 what belongs there. Do not add decorative images or filler to populate them. Add optional sections
 only when there is useful content for them.
 
+Use images to supplement the note's text. Embed each selected image in the body beside the
+explanation, example, or comparison it supports, with enough surrounding prose or a caption to
+explain its relevance. Also include every image used in the note in its Image Gallery, following
+the vault's established gallery or carousel format. Both placements must reference the same
+canonical attachment. The gallery is an additional way to browse the images, not their sole
+placement in the note.
+
 Use an Obsidian plugin or core capability when its blocks or features represent the material more
 clearly or usefully than plain Markdown. For example, use a guitar-chord block for chord material
 when its plugin is installed and enabled. Follow verified syntax and established vault examples;

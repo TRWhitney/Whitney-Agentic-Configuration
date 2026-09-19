@@ -16,6 +16,8 @@ Check the actual changed files and relevant rendered or structural behavior when
   without files dumped in the vault root, duplicate attachments, or files left awaiting sorting;
 - original-source and external-verification provenance remain distinguishable;
 - selected visuals are useful, canonical, high quality, and source/timestamp linked;
+- each image used in a knowledge note supplements nearby body text and also appears in that
+  note's Image Gallery, with both embeds referencing the same canonical attachment;
 - no unapproved rename, merge, deletion, archive, material rewrite, or risky structural change
   occurred;
 - every substantive exclusion, novel synthesis, uncertain placement, discrepancy, and structural
