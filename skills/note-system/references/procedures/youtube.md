@@ -25,6 +25,11 @@ The tool leaves a preparation manifest, raw source metadata, selected transcript
 Markdown transcript body, the downloaded video, interval frames, scene frames, and paginated
 contact sheets. On failure it keeps the workspace and reports the failing boundary.
 
+For platform automatic captions, the tool removes confirmed rolling-display repeats from the
+Markdown transcript using caption timing and structure. It preserves spoken repetition and
+ambiguous cases, and leaves the raw caption evidence unchanged. Authored captions and local ASR
+do not receive this cleanup.
+
 ## Prepare source evidence
 
 Inspect the manifest and transcript evidence. Preserve the transcript-origin label and local ASR

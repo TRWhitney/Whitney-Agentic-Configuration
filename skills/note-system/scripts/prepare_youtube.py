@@ -22,9 +22,10 @@ CommandRunner = Callable[[list[str]], subprocess.CompletedProcess[str]]
 CommandResolver = Callable[[str], str | None]
 TIMING_PATTERN = re.compile(
     r"^(?P<start>(?:\d{2}:)?\d{2}:\d{2}\.\d{3})\s+-->\s+"
-    r"(?P<end>(?:\d{2}:)?\d{2}:\d{2}\.\d{3})(?:\s+.*)?$"
+    r"(?P<end>(?:\d{2}:)?\d{2}:\d{2}\.\d{3})(?P<settings>(?:\s+.*)?)$"
 )
 INLINE_TAG_PATTERN = re.compile(r"<[^>]+>")
+INLINE_TIME_PATTERN = re.compile(r"<((?:\d{2}:)?\d{2}:\d{2}\.\d{3})>")
 SCENE_TIME_PATTERN = re.compile(r"pts_time:(?P<time>\d+(?:\.\d+)?)")
 
 
@@ -51,6 +52,31 @@ class CaptionSelection:
     origin: str
     language: str
     automatic: bool
+
+
+@dataclass(frozen=True)
+class CaptionLine:
+    text: str
+    word_times: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class CaptionCue:
+    start_label: str
+    start_ms: int
+    end_ms: int
+    settings: tuple[str, ...]
+    lines: tuple[CaptionLine, ...]
+
+    def has_word_times(self, line: CaptionLine) -> bool:
+        return bool(line.word_times) and (
+            self.start_ms <= line.word_times[0]
+            and line.word_times[-1] <= self.end_ms
+            and all(
+                a <= b
+                for a, b in zip(line.word_times, line.word_times[1:], strict=False)
+            )
+        )
 
 
 @dataclass(frozen=True)
@@ -323,11 +349,11 @@ def strip_vtt_markup(line: str) -> str:
     return html.unescape(INLINE_TAG_PATTERN.sub("", line))
 
 
-def vtt_to_markdown(vtt: str, source_url: str) -> str:
-    """Convert VTT control structure while retaining every cue and payload line."""
+def parse_vtt(vtt: str) -> list[CaptionCue]:
+    """Retain display and word timings until caption normalization is complete."""
     normalized = vtt.lstrip("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
-    blocks = re.split(r"\n{2,}", normalized.strip())
-    rendered: list[str] = []
+    blocks = re.split(r"\n{2,}", normalized.strip("\n"))
+    cues: list[CaptionCue] = []
     for block in blocks:
         lines = block.splitlines()
         timing_index = next(
@@ -338,12 +364,89 @@ def vtt_to_markdown(vtt: str, source_url: str) -> str:
             continue
         match = TIMING_PATTERN.match(lines[timing_index])
         assert match is not None
-        payload = [strip_vtt_markup(line) for line in lines[timing_index + 1 :]]
-        start = match.group("start")
-        link = timestamp_url(source_url, timestamp_seconds(start))
-        rendered.append(f"[{timestamp_label(start)}]({link})\n" + "\n".join(payload))
-    if not rendered:
+        cues.append(
+            CaptionCue(
+                start_label=timestamp_label(match.group("start")),
+                start_ms=round(timestamp_seconds(match.group("start")) * 1000),
+                end_ms=round(timestamp_seconds(match.group("end")) * 1000),
+                settings=tuple(sorted(match.group("settings").split())),
+                lines=tuple(
+                    CaptionLine(
+                        text=strip_vtt_markup(line),
+                        word_times=tuple(
+                            round(timestamp_seconds(value) * 1000)
+                            for value in INLINE_TIME_PATTERN.findall(line)
+                        ),
+                    )
+                    for line in lines[timing_index + 1 :]
+                ),
+            )
+        )
+    if not cues:
         raise PreparationError("The selected VTT contained no transcript cues.")
+    return cues
+
+
+def normalize_rolling_captions(cues: list[CaptionCue]) -> list[CaptionCue]:
+    """Remove confirmed YouTube roll-up display repeats, preserving ambiguous text."""
+    normalized: list[CaptionCue] = []
+    previous: CaptionCue | None = None
+    previous_spoken_line: CaptionLine | None = None
+    previous_refresh = False
+    for cue in cues:
+        lines = tuple(line for line in cue.lines if line.text.strip())
+        spoken_line = lines[-1] if lines and cue.has_word_times(lines[-1]) else None
+        refresh = False
+        carried = (
+            previous is not None
+            and previous_spoken_line is not None
+            and lines
+            and not lines[0].word_times
+            and lines[0].text == previous_spoken_line.text
+            and cue.start_ms == previous.end_ms
+            and cue.settings == previous.settings
+            and "align:start" in cue.settings
+            and any(setting.startswith("position:") for setting in cue.settings)
+        )
+        if carried:
+            # YouTube briefly displays the completed line above an empty lower row.
+            refresh = (
+                len(lines) == 1
+                and 0 < cue.end_ms - cue.start_ms <= 10
+                and bool(cue.lines)
+                and not cue.lines[-1].text.strip()
+            )
+            if refresh:
+                spoken_line = previous_spoken_line
+                lines = ()
+            elif len(lines) == 2 and (spoken_line is not None or previous_refresh):
+                # A new lower row may be a single word without inline timestamps.
+                spoken_line = lines[-1]
+                lines = lines[1:]
+        if lines:
+            normalized.append(
+                CaptionCue(
+                    cue.start_label, cue.start_ms, cue.end_ms, cue.settings, lines
+                )
+            )
+        previous = cue
+        previous_spoken_line = spoken_line
+        previous_refresh = refresh
+    return normalized
+
+
+def vtt_to_markdown(
+    vtt: str, source_url: str, *, platform_auto_captions: bool = False
+) -> str:
+    """Render faithful speech, collapsing verified platform caption display repeats."""
+    cues = parse_vtt(vtt)
+    if platform_auto_captions:
+        cues = normalize_rolling_captions(cues)
+    rendered: list[str] = []
+    for cue in cues:
+        link = timestamp_url(source_url, cue.start_ms / 1000)
+        payload = "\n".join(line.text for line in cue.lines)
+        rendered.append(f"[{cue.start_label}]({link})\n{payload}")
     return "\n\n".join(rendered) + "\n"
 
 
@@ -697,7 +800,11 @@ def prepare_youtube(
     source_url = canonical_source_url(metadata, configuration.url)
     transcript_markdown = configuration.workspace / "transcript.md"
     transcript_markdown.write_text(
-        vtt_to_markdown(transcript_path.read_text(encoding="utf-8"), source_url),
+        vtt_to_markdown(
+            transcript_path.read_text(encoding="utf-8"),
+            source_url,
+            platform_auto_captions=selection.origin == "platform-auto-caption",
+        ),
         encoding="utf-8",
     )
 

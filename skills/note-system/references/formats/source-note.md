@@ -8,8 +8,9 @@ invariants, not a replacement template.
   fields or a compact source header.
 - For local ASR, record the engine version and model identity. State that the transcript is
   generated and may contain recognition or timing errors.
-- Preserve the transcript body in cue order with wording and line distinctions intact. Retain a
-  useful timestamp for each cue or coherent caption block, preferably linked to the video.
+- Preserve spoken wording, order, and line distinctions, subject to the source-preservation rules
+  for confirmed rolling-caption display repeats. Retain a useful timestamp for each remaining cue
+  or coherent caption block, preferably linked to the video.
 - Keep observations made while preparing source evidence, verification, summaries, derived-note
   inventories, visual-assessment findings, and later corrections out of the source body.
 - Preserve the vault's expected source sections without inventing parallel section names.

@@ -29,6 +29,40 @@ try:
 finally:
     sys.dont_write_bytecode = ORIGINAL_DONT_WRITE_BYTECODE
 
+ROLLING_CAPTIONS = """WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.719 --> 00:00:02.389 align:start position:0%
+\x20
+First<00:00:01.360><c> spoken</c><00:00:01.520><c> line.</c>
+
+00:00:02.389 --> 00:00:02.399 align:start position:0%
+First spoken line.
+\x20
+
+00:00:02.399 --> 00:00:04.150 align:start position:0%
+First spoken line.
+Very,<00:00:02.619><c> very</c><00:00:03.000><c> clear.</c>
+
+00:00:04.150 --> 00:00:04.160 align:start position:0%
+Very, very clear.
+\x20
+
+00:00:04.160 --> 00:00:05.510 align:start position:0%
+Very, very clear.
+Yes.
+
+00:00:05.510 --> 00:00:05.520 align:start position:0%
+Yes.
+\x20
+
+00:00:05.520 --> 00:00:06.950 align:start position:0%
+Yes.
+First<00:00:05.920><c> spoken</c><00:00:06.160><c> line.</c>
+
+"""
+
 
 class CaptionSelectionTests(unittest.TestCase):
     def test_authored_caption_wins_over_automatic_caption(self) -> None:
@@ -77,6 +111,133 @@ class CaptionSelectionTests(unittest.TestCase):
 
 
 class TranscriptConversionTests(unittest.TestCase):
+    def test_final_display_refresh_does_not_repeat_the_last_spoken_line(self) -> None:
+        vtt = """WEBVTT
+
+00:00:00.000 --> 00:00:01.000 align:start position:0%
+Final<00:00:00.500><c> words.</c>
+
+00:00:01.000 --> 00:00:01.010 align:start position:0%
+Final words.
+\x20
+
+"""
+        markdown = youtube_preparation.vtt_to_markdown(
+            vtt, "https://www.youtube.com/watch?v=abc", platform_auto_captions=True
+        )
+
+        self.assertEqual(markdown.count("Final words."), 1)
+        self.assertNotIn("[00:00:01.000]", markdown)
+
+    def test_caption_normalization_requires_platform_auto_origin(self) -> None:
+        markdown = youtube_preparation.vtt_to_markdown(
+            ROLLING_CAPTIONS, "https://www.youtube.com/watch?v=abc"
+        )
+
+        self.assertEqual(markdown.count("First spoken line."), 4)
+        self.assertEqual(markdown.count("Very, very clear."), 3)
+        self.assertIn("[00:00:02.389]", markdown)
+
+    def test_fresh_word_timings_preserve_consecutive_spoken_repetition(self) -> None:
+        vtt = """WEBVTT
+
+00:00:00.000 --> 00:00:01.000 align:start position:0%
+Say<00:00:00.500><c> again.</c>
+
+00:00:01.000 --> 00:00:01.010 align:start position:0%
+Say again.
+\x20
+
+00:00:01.010 --> 00:00:02.000 align:start position:0%
+Say again.
+Say<00:00:01.500><c> again.</c>
+
+"""
+
+        markdown = youtube_preparation.vtt_to_markdown(
+            vtt, "https://www.youtube.com/watch?v=abc", platform_auto_captions=True
+        )
+
+        self.assertEqual(markdown.count("Say again."), 2)
+        self.assertIn("[00:00:00.000]", markdown)
+        self.assertIn("[00:00:01.010]", markdown)
+        self.assertNotIn("[00:00:01.000]", markdown)
+
+    def test_ambiguous_caption_repetition_is_preserved(self) -> None:
+        for name, first_line, next_start, next_end, settings, next_payload in [
+            (
+                "no word timings",
+                "Say again.",
+                "01.000",
+                "02.000",
+                "align:start position:0%",
+                "Say again.\nNew<00:00:01.500><c> words.</c>",
+            ),
+            (
+                "gap between cues",
+                "Say<00:00:00.500><c> again.</c>",
+                "05.000",
+                "06.000",
+                "align:start position:0%",
+                "Say again.\nNew<00:00:05.500><c> words.</c>",
+            ),
+            (
+                "different display position",
+                "Say<00:00:00.500><c> again.</c>",
+                "01.000",
+                "02.000",
+                "align:start position:50%",
+                "Say again.\nNew<00:00:01.500><c> words.</c>",
+            ),
+            (
+                "fresh speech without carryover",
+                "Say<00:00:00.500><c> again.</c>",
+                "01.000",
+                "02.000",
+                "align:start position:0%",
+                "Say<00:00:01.500><c> again.</c>",
+            ),
+            (
+                "long unmarked repeated cue",
+                "Say<00:00:00.500><c> again.</c>",
+                "01.000",
+                "02.000",
+                "align:start position:0%",
+                "Say again.\n ",
+            ),
+            (
+                "short cue without a blank display row",
+                "Say<00:00:00.500><c> again.</c>",
+                "01.000",
+                "01.010",
+                "align:start position:0%",
+                "Say again.",
+            ),
+            (
+                "word timing outside cue",
+                "Say<00:00:05.500><c> again.</c>",
+                "01.000",
+                "01.010",
+                "align:start position:0%",
+                "Say again.\n ",
+            ),
+        ]:
+            with self.subTest(name=name):
+                vtt = (
+                    "WEBVTT\n\n"
+                    "00:00:00.000 --> 00:00:01.000 align:start position:0%\n"
+                    f"{first_line}\n\n"
+                    f"00:00:{next_start} --> 00:00:{next_end} {settings}\n"
+                    f"{next_payload}\n\n"
+                )
+                markdown = youtube_preparation.vtt_to_markdown(
+                    vtt,
+                    "https://www.youtube.com/watch?v=abc",
+                    platform_auto_captions=True,
+                )
+
+                self.assertEqual(markdown.count("Say again."), 2)
+
     def test_vtt_conversion_preserves_cue_order_lines_and_repetition(self) -> None:
         vtt = """WEBVTT
 
@@ -113,8 +274,13 @@ First line
 
 
 class FakeRunner:
-    def __init__(self, metadata: dict[str, object]) -> None:
+    def __init__(
+        self,
+        metadata: dict[str, object],
+        captions: str = "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nFaithful words\n",
+    ) -> None:
         self.metadata = metadata
+        self.captions = captions
         self.calls: list[list[str]] = []
 
     def __call__(self, arguments: list[str]) -> subprocess.CompletedProcess[str]:
@@ -129,7 +295,7 @@ class FakeRunner:
             assert output_template is not None
             transcript = Path(output_template.replace("%(ext)s", "en.vtt"))
             transcript.write_text(
-                "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nFaithful words\n",
+                self.captions,
                 encoding="utf-8",
             )
             return subprocess.CompletedProcess(arguments, 0, "", "")
@@ -190,6 +356,42 @@ class PreparationTests(unittest.TestCase):
         if command in {"ffmpeg", "ffprobe", "yt-dlp"}:
             return f"/tools/{command}"
         return None
+
+    def test_auto_captions_preserve_speech_without_display_repeats(self) -> None:
+        workspace = self.root / "workspace"
+        runner = FakeRunner(
+            {
+                "id": "abc",
+                "language": "en",
+                "webpage_url": "https://www.youtube.com/watch?v=abc",
+                "automatic_captions": {"en-orig": [{"ext": "vtt"}]},
+            },
+            captions=ROLLING_CAPTIONS,
+        )
+
+        manifest_path = youtube_preparation.prepare_youtube(
+            youtube_preparation.Configuration(
+                url="https://youtu.be/abc", workspace=workspace
+            ),
+            runner=runner,
+            resolver=self.resolver,
+        )
+
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["transcript"]["origin"], "platform-auto-caption")
+        evidence = workspace / manifest["transcript"]["evidence"]
+        self.assertEqual(evidence.read_text(encoding="utf-8"), ROLLING_CAPTIONS)
+        self.assertEqual(
+            (workspace / "transcript.md").read_text(encoding="utf-8"),
+            "[00:00:00.719](https://www.youtube.com/watch?v=abc&t=0s)\n"
+            "First spoken line.\n\n"
+            "[00:00:02.399](https://www.youtube.com/watch?v=abc&t=2s)\n"
+            "Very, very clear.\n\n"
+            "[00:00:04.160](https://www.youtube.com/watch?v=abc&t=4s)\n"
+            "Yes.\n\n"
+            "[00:00:05.520](https://www.youtube.com/watch?v=abc&t=5s)\n"
+            "First spoken line.\n",
+        )
 
     def test_missing_base_dependency_fails_before_creating_workspace(self) -> None:
         workspace = self.root / "workspace"
