@@ -32,6 +32,7 @@ EXPECTED_STATES = {
     "visual-preparation",
 }
 EXPECTED_PROCEDURES = {
+    "commit",
     "concept-integration",
     "research",
     "source-preservation",
@@ -321,6 +322,22 @@ class NoteSystemNavigatorTests(unittest.TestCase):
 
         self.assertIn("move curate review complete", output)
         self.assertIn("move curate review integration", output)
+
+    def test_commit_guidance_is_required_only_in_mutating_workflow_review(self) -> None:
+        for workflow_name, workflow in load_workflows().items():
+            states = cast(dict[str, object], workflow["states"])
+            for state_name, raw_state in states.items():
+                with self.subTest(workflow=workflow_name, state=state_name):
+                    arguments = ("procedure", workflow_name, state_name, "commit")
+                    if workflow_name in {"curate", "ingest"} and state_name == "review":
+                        state = cast(dict[str, object], raw_state)
+                        procedures = cast(dict[str, object], state["procedures"])
+                        access = cast(dict[str, object], procedures["commit"])
+                        self.assertEqual(access["status"], "required")
+                        output = self.run_navigator(*arguments).stdout
+                        self.assertIn("Procedure status: required", output)
+                    else:
+                        self.reject_navigator(*arguments)
 
     def test_curation_can_prepare_and_reassess_visuals_without_ingestion(self) -> None:
         for origin in ("integration", "review"):

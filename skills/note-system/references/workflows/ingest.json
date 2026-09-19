@@ -79,7 +79,12 @@
           "cue": "Use for the terse change log and batched decision queue."
         }
       },
-      "procedures": {},
+      "procedures": {
+        "commit": {
+          "status": "required",
+          "cue": "After review and cleanup pass, commit completed outcomes in a Git-tracked vault or report that Git does not apply."
+        }
+      },
       "transitions": {
         "reviewed": "complete",
         "decision-resolved": "integration",
