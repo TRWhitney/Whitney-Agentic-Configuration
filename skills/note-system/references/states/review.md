@@ -12,6 +12,8 @@ Check the actual changed files and relevant rendered or structural behavior when
 - knowledge notes retain the template's mandatory sections, or the fallback sections if no template
   exists;
 - wikilinks, citations, source references, timestamps, and attachment targets resolve;
+- new notes and retained attachments are filed in appropriate folders with descriptive filenames,
+  without files dumped in the vault root, duplicate attachments, or files left awaiting sorting;
 - original-source and external-verification provenance remain distinguishable;
 - selected visuals are useful, canonical, high quality, and source/timestamp linked;
 - no unapproved rename, merge, deletion, archive, material rewrite, or risky structural change

@@ -12,6 +12,7 @@ authorization or enabled behavior.
 Inspect the narrow relevant set of:
 
 - existing notes, backlinks, aliases, and conceptual neighbors;
+- folder organization and the established locations for concept notes, source notes, and attachments;
 - relevant established templates and their mandatory sections;
 - standard section names, frontmatter fields, tags, citation style, and naming patterns;
 - attachment-folder configuration and representative embeds;

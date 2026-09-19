@@ -32,6 +32,14 @@ novel synthesis and requires approval before becoming established knowledge.
 
 ## Fit the vault
 
+Organize files into folders as part of making notes. Do not dump new notes or attachments in the
+vault root. Save concept notes in folders suited to their subject, source notes in the source
+folder, and retained images in the attachment hierarchy, using descriptive filenames. Follow the
+vault's existing folder organization and create an appropriate folder when none fits. Reuse
+existing canonical attachments. Choose each destination before writing and finish filing new
+files before completing the task. Follow the minor-uncertainty and approval rules below when
+placement is unclear or organizing existing files would require renames or structural changes.
+
 Use descriptive titles, established templates and section names, and contextual `[[wikilinks]]`.
 Use established tags for properties shared across concepts. Avoid excessive links and do not
 duplicate the concept hierarchy in tags. Keep only metadata that helps use or maintain the note.
