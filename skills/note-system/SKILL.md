@@ -1,8 +1,7 @@
 ---
 name: note-system
-description: Route Obsidian knowledge-vault questions and work requests through stateful workflows
-  with state-authorized guidance. Use whenever I ask a question or request knowledge work in an
-  Obsidian vault.
+description: Route questions and knowledge work on content in an Obsidian vault through stateful
+  workflows. Use work-system for code-repository work, including changes to this skill.
 ---
 
 # Note System
