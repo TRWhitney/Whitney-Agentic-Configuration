@@ -18,6 +18,11 @@ Inspect the narrow relevant set of:
 - attachment-folder configuration and representative embeds;
 - relevant enabled plugin or core capability evidence.
 
+Look in the vault's top-level `Plugins and Usage/` directory for plugin guidance. Note titles
+describe when to use each plugin, like skill descriptions; the note bodies contain detailed usage
+instructions. Scan the titles for cases relevant to the current task, then read the matching notes
+before using those plugins. Use this guidance alongside the live capability checks below.
+
 Prefer the official Obsidian CLI for live plugin, theme, snippet, and vault information when it is
 available and configured. Otherwise inspect `.obsidian` settings, enabled-plugin lists, manifests,
 templates, and examples read-only. An installed manifest describes a plugin; it does not prove the
