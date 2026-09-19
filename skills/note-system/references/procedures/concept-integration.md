@@ -62,6 +62,9 @@ the vault's established gallery or carousel format. Both placements must referen
 canonical attachment. The gallery is an additional way to browse the images, not their sole
 placement in the note.
 
+When an image is relevant to several notes, embed the same canonical attachment in each note.
+Do not send readers to another note just to see an image that supports the current note.
+
 Use an Obsidian plugin or core capability when its blocks or features represent the material more
 clearly or usefully than plain Markdown. For example, use a guitar-chord block for chord material
 when its plugin is installed and enabled. Follow verified syntax and established vault examples;
