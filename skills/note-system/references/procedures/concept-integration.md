@@ -45,7 +45,27 @@ Use established tags for properties shared across concepts. Avoid excessive link
 duplicate the concept hierarchy in tags. Keep only metadata that helps use or maintain the note.
 
 Use the vault's concept-note template and preserve its mandatory sections and section names. If
-the template does not exist, use Overview, Image Gallery, and Sources.
+the template does not exist, use Overview, Image Gallery, and Sources. Definition notes are an
+exception. Use the vault's definition-note template when it exists. Otherwise use only the
+canonical title and a definition paragraph. Do not add concept-note sections to definition notes.
+
+Create a definition note when a specialized or ambiguous term can be explained in one to three
+plain-language sentences. Use the exact technical term when it improves precision, then link it to
+the definition rather than replacing it with a long paraphrase.
+
+Store definition notes under the top-level `Definitions/` directory, using subject subdirectories
+when useful. A finished definition note contains only its title and definition paragraph. Do not
+add YAML, properties, aliases, Overview, Related, See also, Sources, or Image Gallery sections.
+
+Backlinks provide the list of notes that use a definition. Do not copy or maintain that list inside
+the definition note. Use wikilink display text when the sentence needs a plural, grammatical
+variant, synonym, or plainer surface phrase.
+
+Link the first meaningful occurrence in a note or section. Do not link every repetition.
+
+Identify source-specific terminology in the definition paragraph itself. If the subject needs
+examples, substantial sourcing, competing definitions, limitations, or argument, create or extend
+a concept note instead.
 
 Add sections when they help explain the subject. For a method, consider Steps, Examples, and
 Limitations. For a concept, consider How it works, Uses, and Comparisons. Choose headings that fit

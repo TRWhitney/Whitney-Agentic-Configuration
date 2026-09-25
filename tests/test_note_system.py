@@ -42,7 +42,7 @@ EXPECTED_PROCEDURES = {
     "visual-sourcing",
     "youtube",
 }
-EXPECTED_FORMATS = {"completion-report", "source-note"}
+EXPECTED_FORMATS = {"completion-report", "definition-note", "source-note"}
 
 
 def load_workflows() -> dict[str, dict[str, object]]:
@@ -316,6 +316,74 @@ class NoteSystemNavigatorTests(unittest.TestCase):
             self.assertIn("Procedure status: allowed", research)
 
         self.reject_navigator("procedure", "question", "discovery", "verification")
+
+    def test_definition_note_format_is_available_through_concept_integration(
+        self,
+    ) -> None:
+        expected = {
+            ("curate", "integration", "concept-integration"),
+            ("ingest", "integration", "concept-integration"),
+        }
+        for workflow_name in ("curate", "ingest"):
+            with self.subTest(workflow=workflow_name):
+                procedure = self.run_navigator(
+                    "procedure",
+                    workflow_name,
+                    "integration",
+                    "concept-integration",
+                ).stdout
+                self.assertIn(
+                    f"format {workflow_name} integration definition-note "
+                    "--procedure concept-integration",
+                    procedure,
+                )
+                format_guidance = self.run_navigator(
+                    "format",
+                    workflow_name,
+                    "integration",
+                    "definition-note",
+                    "--procedure",
+                    "concept-integration",
+                ).stdout
+                self.assertIn("# Definition note", format_guidance)
+
+        for workflow_name, workflow in load_workflows().items():
+            states = cast(dict[str, object], workflow["states"])
+            for state_name, raw_state in states.items():
+                self.reject_navigator(
+                    "format", workflow_name, state_name, "definition-note"
+                )
+                procedures = cast(
+                    dict[str, object], cast(dict[str, object], raw_state)["procedures"]
+                )
+                for procedure_name in procedures:
+                    location = (workflow_name, state_name, procedure_name)
+                    if location in expected:
+                        continue
+                    self.reject_navigator(
+                        "format",
+                        workflow_name,
+                        state_name,
+                        "definition-note",
+                        "--procedure",
+                        procedure_name,
+                    )
+
+    def test_definition_changes_trigger_verification_guidance(self) -> None:
+        workflows = load_workflows()
+        for workflow_name in ("curate", "ingest"):
+            with self.subTest(workflow=workflow_name):
+                verification = self.run_navigator(
+                    "procedure", workflow_name, "review", "verification"
+                ).stdout
+                self.assertIn("Procedure status: triggered", verification)
+                states = cast(dict[str, object], workflows[workflow_name]["states"])
+                review = cast(dict[str, object], states["review"])
+                procedures = cast(dict[str, object], review["procedures"])
+                access = cast(dict[str, object], procedures["verification"])
+                cue = cast(str, access["cue"])
+                for operation in ("creating", "correcting", "consolidating", "relinking"):
+                    self.assertIn(operation, cue)
 
     def test_review_can_complete_or_return_to_integration(self) -> None:
         output = self.run_navigator("resume", "curate", "review").stdout

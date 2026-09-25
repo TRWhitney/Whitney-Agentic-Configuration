@@ -22,10 +22,12 @@ I, me, my, you, your, user, and agent retain their established meanings.
    - **Curate**: I request knowledge integration, organization, connection, or maintenance without
      introducing a new source that must be preserved.
    - **Ingest**: I provide or identify a new source to preserve and integrate into the vault.
-3. Ask one clarifying question when its answer would establish whether the work introduces a new
+3. Treat creating, correcting, consolidating, and relinking definition notes as Curate work unless
+   the request introduces an external source that must first be preserved.
+4. Ask one clarifying question when its answer would establish whether the work introduces a new
    source that must be preserved. Otherwise preserve the source before changing vault knowledge
    rather than inventing consequential decisions.
-4. Switch to `ingest` when later evidence shows that the work introduces a source that must be
+5. Switch to `ingest` when later evidence shows that the work introduces a source that must be
    preserved.
 
 ## Navigate

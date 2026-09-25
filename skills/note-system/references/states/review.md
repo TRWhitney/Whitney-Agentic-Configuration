@@ -9,8 +9,10 @@ defects; return to the responsible state.
 Check the actual changed files and relevant rendered or structural behavior when available:
 
 - the source note remains faithful and independent;
-- knowledge notes retain the template's mandatory sections, or the fallback sections if no template
+- concept notes retain the template's mandatory sections, or the fallback sections if no template
   exists;
+- definitions created, corrected, consolidated, or relinked pass the definition checks in the
+  verification procedure;
 - wikilinks, citations, source references, timestamps, and attachment targets resolve;
 - new notes and retained attachments are filed in appropriate folders with descriptive filenames,
   without files dumped in the vault root, duplicate attachments, or files left awaiting sorting;

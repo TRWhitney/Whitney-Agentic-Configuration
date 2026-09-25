@@ -51,7 +51,12 @@
         },
         "concept-integration": {
           "status": "required",
-          "cue": "Integrate substantive source knowledge into the concept network."
+          "cue": "Integrate substantive source knowledge into the concept network.",
+          "formats": {
+            "definition-note": {
+              "cue": "Use when creating, correcting, consolidating, or relinking definition notes."
+            }
+          }
         },
         "verification": {
           "status": "allowed",
@@ -80,6 +85,10 @@
         }
       },
       "procedures": {
+        "verification": {
+          "status": "triggered",
+          "cue": "Use after creating, correcting, consolidating, or relinking definition notes."
+        },
         "commit": {
           "status": "required",
           "cue": "After review and cleanup pass, commit completed outcomes in a Git-tracked vault or report that Git does not apply."

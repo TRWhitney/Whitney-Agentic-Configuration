@@ -18,6 +18,12 @@ Inspect the narrow relevant set of:
 - attachment-folder configuration and representative embeds;
 - relevant enabled plugin or core capability evidence.
 
+When the relevant notes contain specialized, ambiguous, or source-specific vocabulary, inspect
+the top-level `Definitions/` directory and `Templates/Definition Note.md`. Definition notes
+intentionally have no properties or related-note lists. Search canonical filenames and existing
+link targets before creating another definition. Use display text for plurals, grammatical
+variants, alternate spellings, and synonyms.
+
 Look in the vault's top-level `Plugins and Usage/` directory for plugin guidance. Note titles
 describe when to use each plugin, like skill descriptions; the note bodies contain detailed usage
 instructions. Scan the titles for cases relevant to the current task, then read the matching notes
