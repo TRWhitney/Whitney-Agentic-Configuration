@@ -14,6 +14,7 @@ Check the actual changed files and relevant rendered or structural behavior when
 - definitions created, corrected, consolidated, or relinked pass the definition checks in the
   verification procedure;
 - wikilinks, citations, source references, timestamps, and attachment targets resolve;
+- Markdown tables contain no aliased wikilinks or embeds with unescaped pipe characters;
 - new notes and retained attachments are filed in appropriate folders with descriptive filenames,
   without files dumped in the vault root, duplicate attachments, or files left awaiting sorting;
 - original-source and external-verification provenance remain distinguishable;
@@ -24,6 +25,10 @@ Check the actual changed files and relevant rendered or structural behavior when
   occurred;
 - every substantive exclusion, novel synthesis, uncertain placement, discrepancy, and structural
   proposal is represented in the decision queue.
+
+Run `python3 <skill-directory>/scripts/check_markdown_tables.py FILE [FILE ...]` and pass every
+task-owned Markdown file explicitly. Do not derive the file set from Git. Exit status 1 reports a
+table-link violation; exit status 2 reports invalid input or an unreadable file.
 
 After the result passes, remove downloaded video, audio, bulk frames, contact sheets, and other
 temporary preparation artifacts. Do not remove a failed workspace needed for diagnosis or retry.

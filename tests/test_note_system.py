@@ -382,7 +382,12 @@ class NoteSystemNavigatorTests(unittest.TestCase):
                 procedures = cast(dict[str, object], review["procedures"])
                 access = cast(dict[str, object], procedures["verification"])
                 cue = cast(str, access["cue"])
-                for operation in ("creating", "correcting", "consolidating", "relinking"):
+                for operation in (
+                    "creating",
+                    "correcting",
+                    "consolidating",
+                    "relinking",
+                ):
                     self.assertIn(operation, cue)
 
     def test_review_can_complete_or_return_to_integration(self) -> None:
@@ -390,6 +395,14 @@ class NoteSystemNavigatorTests(unittest.TestCase):
 
         self.assertIn("move curate review complete", output)
         self.assertIn("move curate review integration", output)
+
+    def test_review_runs_markdown_table_checker_on_explicit_paths(self) -> None:
+        for workflow_name in ("curate", "ingest"):
+            with self.subTest(workflow=workflow_name):
+                output = self.run_navigator("resume", workflow_name, "review").stdout
+                self.assertIn("scripts/check_markdown_tables.py", output)
+                self.assertIn("task-owned Markdown", output)
+                self.assertIn("explicitly", output)
 
     def test_commit_guidance_is_required_only_in_mutating_workflow_review(self) -> None:
         for workflow_name, workflow in load_workflows().items():

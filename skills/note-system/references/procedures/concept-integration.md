@@ -44,6 +44,10 @@ Use descriptive titles, established templates and section names, and contextual 
 Use established tags for properties shared across concepts. Avoid excessive links and do not
 duplicate the concept hierarchy in tags. Keep only metadata that helps use or maintain the note.
 
+Inside Markdown tables, escape the separator in aliased wikilinks and embeds:
+`[[Target\|display text]]` and `![[image.png\|200]]`. Outside tables, use unescaped separators:
+`[[Target|display text]]` and `![[image.png|200]]`.
+
 Use the vault's concept-note template and preserve its mandatory sections and section names. If
 the template does not exist, use Overview, Image Gallery, and Sources. Definition notes are an
 exception. Use the vault's definition-note template when it exists. Otherwise use only the
