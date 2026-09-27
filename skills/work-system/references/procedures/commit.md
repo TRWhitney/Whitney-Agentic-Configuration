@@ -42,6 +42,8 @@ its subject; unstage and repartition anything that is not.
 - Squash local commits that describe the same outcome when they have not been pushed upstream.
   Do not rewrite published commits without my direction.
 
+After committing, the working tree must be clean unless I explicitly told you otherwise.
+
 ## Write the subject
 
 Use the form `[Slug] Imperative outcome` and keep the entire subject under 50 characters.
