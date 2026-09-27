@@ -6,6 +6,13 @@ extract, edit, move, or replace artifacts during assessment.
 Look for visuals that make the subject easier to understand, and use them sparingly. Reject
 decorative or redundant images, and do not add an image just because it is available.
 
+Inspect the candidate's content directly. When a relevant enabled plugin or core capability would
+improve how the candidate's content is presented or used, prefer to use the plugin or capability
+for the candidate's pertinent information. Reassess the candidate if the plugin or capability is
+used, and use the candidate as well if it still provides additional value. If the plugin or
+capability is not a closer fit for the information under scrutiny and does not provide more value
+to a user, use the candidate when it provides value on its own.
+
 ## Assess the candidate
 
 Check whether the candidate:
