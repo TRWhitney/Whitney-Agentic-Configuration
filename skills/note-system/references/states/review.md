@@ -11,10 +11,14 @@ Check the actual changed files and relevant rendered or structural behavior when
 - the source note remains faithful and independent;
 - concept notes retain the template's mandatory sections, or the fallback sections if no template
   exists;
-- definitions created, corrected, consolidated, or relinked pass the definition checks in the
-  verification procedure and have no tags;
-- useful established tags were considered for changed non-definition notes, and applied tags match
-  their established meaning, spelling, and nested form;
+- definitions created, corrected, consolidated, relinked, or tagged pass the definition checks in
+  the verification procedure and have no tags unless I explicitly requested them;
+- templates and plugin example notes have no tags, and plugin guidance remains untagged unless I
+  explicitly requested tags for it;
+- tags on changed eligible notes represent substantial subjects, including multiple broad subjects
+  where supported, and match established meanings, spelling, and nested form;
+- when backfilling tags, every note in the requested scope was considered, subject coverage and
+  spelling are consistent, and excluded notes remain untagged;
 - no unapproved new tag was applied, and proposed tags are in the decision queue;
 - wikilinks, citations, source references, timestamps, and attachment targets resolve;
 - Markdown tables contain no aliased wikilinks or embeds with unescaped pipe characters;

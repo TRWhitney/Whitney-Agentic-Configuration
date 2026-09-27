@@ -1,6 +1,7 @@
 # Verification Procedure
 
-Verify changed definition notes whenever a task creates, corrects, consolidates, or relinks them.
+Verify changed definition notes whenever a task creates, corrects, consolidates, relinks, or tags
+them.
 Perform bounded external research only when it practically improves factual accuracy or resolves a
 material discrepancy. Verification supports note-taking; it must not overwhelm the source or turn
 routine vault work into an open-ended research project.
@@ -18,9 +19,10 @@ original source.
 
 Verify that each definition:
 
-- has no YAML or properties;
+- has no YAML or properties unless I explicitly requested tags, in which case `tags` is its only
+  property;
 - has no `Related`, `See also`, or backlink-maintenance section;
-- begins with the canonical term as its title;
+- begins its body with the canonical term as its title;
 - gives a self-contained definition in one to three sentences;
 - has at least one incoming link;
 - has no competing definition note for a spelling or grammatical variant;

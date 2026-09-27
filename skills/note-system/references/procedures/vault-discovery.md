@@ -19,15 +19,16 @@ Inspect the narrow relevant set of:
 - attachment-folder configuration and representative embeds;
 - relevant enabled plugin or core capability evidence.
 
-For non-definition notes, inspect existing tag names and representative uses before choosing tags.
+When tagging is in scope, inspect existing tag names and representative uses before choosing tags.
 Use the Tags view or Obsidian CLI when available, then check notes to establish what each relevant
-tag means. Record when the vault has no tags. Do not infer a tag's meaning from its name alone.
+tag means. Do not infer a tag's meaning from its name alone. If the vault has no tags, inspect
+representative concept, case-study, and source notes for substantial recurring subjects.
 
 When the relevant notes contain specialized, ambiguous, or source-specific vocabulary, inspect
 the top-level `Definitions/` directory and `Templates/Definition Note.md`. Definition notes
-intentionally have no properties or related-note lists. Search canonical filenames and existing
-link targets before creating another definition. Use display text for plurals, grammatical
-variants, alternate spellings, and synonyms.
+normally have no properties or related-note lists; add tags only if I explicitly request them.
+Search canonical filenames and existing link targets before creating another definition. Use
+display text for plurals, grammatical variants, alternate spellings, and synonyms.
 
 Look in the vault's top-level `Plugins and Usage/` directory for plugin guidance. Note titles
 describe when to use each plugin, like skill descriptions; the note bodies contain detailed usage

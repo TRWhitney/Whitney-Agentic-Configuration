@@ -42,16 +42,23 @@ placement is unclear or organizing existing files would require renames or struc
 
 Use descriptive titles, established templates and section names, and contextual `[[wikilinks]]`.
 Avoid excessive links.
-For each non-definition note created or substantively updated, consider whether a tag would help
-find it alongside notes outside its folder. Reuse an established tag when its usage fits the note;
-use its established spelling and nested form. Do not add a tag just to fill an empty property,
-repeat the folder, note type, or concept hierarchy, or duplicate a child with its parent solely for
-parent searches. Keep only metadata that helps use or maintain the note.
+For concept, case-study, and source notes created, substantively updated, or included in a requested
+backfill, choose applicable tags for substantial subjects in their content, independent of file
+path. A tag may match a folder name, and multiple broad topic tags are welcome when each represents
+a substantial subject. A passing example, incidental mention, or contextual pressure does not
+justify a tag. Leave templates and plugin example notes untagged. Leave definitions and plugin
+guidance untagged unless I explicitly request otherwise.
+
+Reuse an established tag when its usage fits the note; use its established spelling and nested
+form. Do not add a tag just to fill an empty property, duplicate a child with its parent solely for
+parent searches, or copy every linked concept into the tags of a source note. Links to concept
+notes are clues to a source's subjects, not automatic tags. Keep only metadata that helps use or
+maintain the note.
 
 If no established tag covers a useful shared property, propose a new tag with its intended meaning
 and example notes in the decision queue. Leave that property untagged until I approve the tag. If
-the vault has no tags, propose a small starter set drawn from the relevant notes. Never tag
-definition notes.
+the vault has no tags, propose a broad subject vocabulary from representative note content; avoid
+workflow labels and narrow variations.
 
 Inside Markdown tables, escape the separator in aliased wikilinks and embeds:
 `[[Target\|display text]]` and `![[image.png\|200]]`. Outside tables, use unescaped separators:
@@ -67,8 +74,9 @@ plain-language sentences. Use the exact technical term when it improves precisio
 the definition rather than replacing it with a long paraphrase.
 
 Store definition notes under the top-level `Definitions/` directory, using subject subdirectories
-when useful. A finished definition note contains only its title and definition paragraph. Do not
-add YAML, properties, aliases, Overview, Related, See also, Sources, or Image Gallery sections.
+when useful. A finished definition note contains only its title and definition paragraph unless I
+explicitly request tags. Then add only the requested `tags` property in YAML frontmatter. Do not add
+other properties, aliases, Overview, Related, See also, Sources, or Image Gallery sections.
 
 Backlinks provide the list of notes that use a definition. Do not copy or maintain that list inside
 the definition note. Use wikilink display text when the sentence needs a plural, grammatical

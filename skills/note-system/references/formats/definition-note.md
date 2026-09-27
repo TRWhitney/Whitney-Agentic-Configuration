@@ -11,8 +11,9 @@ Define the term in one to three plain-language sentences. State the distinction 
 prevent misunderstanding.
 ```
 
-Do not add frontmatter, properties, aliases, maintenance sections, source sections, related-note
-lists, or an image gallery.
+Do not add frontmatter or properties unless I explicitly request tags; then add only the requested
+`tags` property in YAML frontmatter. Do not add aliases, maintenance sections, source sections,
+related-note lists, or an image gallery.
 
 Choose one canonical filename. Express variants through wikilink display text rather than
 properties:
