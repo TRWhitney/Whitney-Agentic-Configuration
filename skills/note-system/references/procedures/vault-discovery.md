@@ -21,8 +21,10 @@ Inspect the narrow relevant set of:
 
 When tagging is in scope, inspect existing tag names and representative uses before choosing tags.
 Use the Tags view or Obsidian CLI when available, then check notes to establish what each relevant
-tag means. Do not infer a tag's meaning from its name alone. If the vault has no tags, inspect
-representative concept, case-study, and source notes for substantial recurring subjects.
+tag means. Search the established vocabulary for each substantial subject in the note; finding one
+matching tag does not finish discovery. Do not infer a tag's meaning from its name alone. If the
+vault has no tags, inspect representative concept, case-study, and source notes for substantial
+recurring subjects.
 
 When the relevant notes contain specialized, ambiguous, or source-specific vocabulary, inspect
 the top-level `Definitions/` directory and `Templates/Definition Note.md`. Definition notes

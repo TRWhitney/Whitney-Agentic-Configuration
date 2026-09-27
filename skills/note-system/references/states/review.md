@@ -15,8 +15,14 @@ Check the actual changed files and relevant rendered or structural behavior when
   the verification procedure and have no tags unless I explicitly requested them;
 - templates and plugin example notes have no tags, and plugin guidance remains untagged unless I
   explicitly requested tags for it;
-- tags on changed eligible notes represent substantial subjects, including multiple broad subjects
-  where supported, and match established meanings, spelling, and nested form;
+- every substantial subject in each changed eligible note was checked against the established tag
+  vocabulary, and every applicable tag was added with its established meaning, spelling, and
+  nested form;
+- each eligible note has multiple tags when it develops multiple substantial subjects covered by
+  the vocabulary; each single-tag note has a specific explanation in the task result showing that
+  a complete subject pass found no second applicable established tag;
+- repeated single-tag results trigger another discovery and integration pass unless the individual
+  explanations demonstrate that the notes each develop only one covered substantial subject;
 - when backfilling tags, every note in the requested scope was considered, subject coverage and
   spelling are consistent, and excluded notes remain untagged;
 - no unapproved new tag was applied, and proposed tags are in the decision queue;
@@ -45,8 +51,8 @@ After review and cleanup pass, complete the required commit procedure.
 ## Continue
 
 Continue to completion when review passes, the commit procedure has no blocker, and the report
-is ready. Return to integration when I
-resolve a queued decision or a source record has a defect, acquisition when source evidence must be
-prepared again, or discovery for missing scope evidence. Use the displayed preparation route when
-a visual needs to be obtained or corrected. If curation introduces a source that must be preserved,
-use the route to ingestion.
+is ready. Return to integration when I resolve a queued decision, a source record has a defect, or
+tag assignments need correction. Return to discovery when scope evidence, the subject inventory,
+or relevant tag usage is incomplete. Return to acquisition when source evidence must be prepared
+again. Use the displayed preparation route when a visual needs to be obtained or corrected. If
+curation introduces a source that must be preserved, use the route to ingestion.

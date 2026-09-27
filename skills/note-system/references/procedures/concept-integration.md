@@ -49,8 +49,14 @@ a substantial subject. A passing example, incidental mention, or contextual pres
 justify a tag. Leave templates and plugin example notes untagged. Leave definitions and plugin
 guidance untagged unless I explicitly request otherwise.
 
+Before writing tags, inventory the substantial subjects developed in the note's overview, headings,
+claims, and recurring examples. Evaluate every subject against the established vocabulary; do not
+stop after finding the first valid tag. Apply every established tag whose subject is substantial to
+the note. Expect multiple tags whenever the note develops multiple substantial subjects covered by
+the vocabulary. Use a single tag only when this complete pass finds exactly one such subject.
+
 Reuse an established tag when its usage fits the note; use its established spelling and nested
-form. Do not add a tag just to fill an empty property, duplicate a child with its parent solely for
+form. Do not add a tag just to increase the count, duplicate a child with its parent solely for
 parent searches, or copy every linked concept into the tags of a source note. Links to concept
 notes are clues to a source's subjects, not automatic tags. Keep only metadata that helps use or
 maintain the note.
@@ -125,4 +131,5 @@ rewrites, renames, merges, deletion/archive, and structurally risky changes.
 ## Result
 
 Include changed and created notes, cited sources, selected visuals, how you handled minor
-uncertainty, and the batched decisions that remain.
+uncertainty, and the batched decisions that remain. Identify each eligible note left with one tag
+and explain why no other established tag represents a substantial subject in it.
