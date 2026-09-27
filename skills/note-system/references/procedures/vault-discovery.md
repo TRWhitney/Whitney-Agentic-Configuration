@@ -14,9 +14,14 @@ Inspect the narrow relevant set of:
 - existing notes, backlinks, aliases, and conceptual neighbors;
 - folder organization and the established locations for concept notes, source notes, and attachments;
 - relevant established templates and their mandatory sections;
-- standard section names, frontmatter fields, tags, citation style, and naming patterns;
+- standard section names, frontmatter fields, citation style, and naming patterns;
+- relevant existing tags, their use in representative notes, and nested naming conventions;
 - attachment-folder configuration and representative embeds;
 - relevant enabled plugin or core capability evidence.
+
+For non-definition notes, inspect existing tag names and representative uses before choosing tags.
+Use the Tags view or Obsidian CLI when available, then check notes to establish what each relevant
+tag means. Record when the vault has no tags. Do not infer a tag's meaning from its name alone.
 
 When the relevant notes contain specialized, ambiguous, or source-specific vocabulary, inspect
 the top-level `Definitions/` directory and `Templates/Definition Note.md`. Definition notes

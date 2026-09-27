@@ -12,7 +12,10 @@ Check the actual changed files and relevant rendered or structural behavior when
 - concept notes retain the template's mandatory sections, or the fallback sections if no template
   exists;
 - definitions created, corrected, consolidated, or relinked pass the definition checks in the
-  verification procedure;
+  verification procedure and have no tags;
+- useful established tags were considered for changed non-definition notes, and applied tags match
+  their established meaning, spelling, and nested form;
+- no unapproved new tag was applied, and proposed tags are in the decision queue;
 - wikilinks, citations, source references, timestamps, and attachment targets resolve;
 - Markdown tables contain no aliased wikilinks or embeds with unescaped pipe characters;
 - new notes and retained attachments are filed in appropriate folders with descriptive filenames,

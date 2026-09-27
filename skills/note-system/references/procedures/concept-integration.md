@@ -41,8 +41,17 @@ files before completing the task. Follow the minor-uncertainty and approval rule
 placement is unclear or organizing existing files would require renames or structural changes.
 
 Use descriptive titles, established templates and section names, and contextual `[[wikilinks]]`.
-Use established tags for properties shared across concepts. Avoid excessive links and do not
-duplicate the concept hierarchy in tags. Keep only metadata that helps use or maintain the note.
+Avoid excessive links.
+For each non-definition note created or substantively updated, consider whether a tag would help
+find it alongside notes outside its folder. Reuse an established tag when its usage fits the note;
+use its established spelling and nested form. Do not add a tag just to fill an empty property,
+repeat the folder, note type, or concept hierarchy, or duplicate a child with its parent solely for
+parent searches. Keep only metadata that helps use or maintain the note.
+
+If no established tag covers a useful shared property, propose a new tag with its intended meaning
+and example notes in the decision queue. Leave that property untagged until I approve the tag. If
+the vault has no tags, propose a small starter set drawn from the relevant notes. Never tag
+definition notes.
 
 Inside Markdown tables, escape the separator in aliased wikilinks and embeds:
 `[[Target\|display text]]` and `![[image.png\|200]]`. Outside tables, use unescaped separators:
