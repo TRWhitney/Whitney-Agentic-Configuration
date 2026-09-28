@@ -12,6 +12,10 @@
         "diagnose": {
           "status": "required",
           "cue": "Reproduce the reported symptom and establish its supported cause."
+        },
+        "tracking": {
+          "status": "triggered",
+          "cue": "My request selects or changes the project tracker."
         }
       },
       "transitions": {

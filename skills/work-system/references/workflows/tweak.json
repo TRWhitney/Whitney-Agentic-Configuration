@@ -8,6 +8,10 @@
         "research": {
           "status": "allowed",
           "cue": "Use for a bounded investigation that benefits from dedicated research."
+        },
+        "tracking": {
+          "status": "triggered",
+          "cue": "My request selects or changes the project tracker."
         }
       },
       "transitions": {

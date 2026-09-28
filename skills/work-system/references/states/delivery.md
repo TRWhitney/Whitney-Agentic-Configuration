@@ -29,9 +29,11 @@ validation and delivery work whose evidence, scope, or conclusions may have chan
 ## Preserve the result
 
 Commit after documentation is resolved, every required review axis passes, and completion
-evidence covers the complete work. Include accepted source artifacts and the current work record
-in that outcome; do not commit them separately in an earlier state. Remain in delivery while a
-commit blocker remains.
+evidence covers the complete work. Preserve accepted artifacts and completion records according
+to the work-record guidance. Remain in delivery while a commit blocker remains.
+
+Complete all required delivery procedures. If a procedure returns a handoff, save its continuation
+and yield. Keep that work pending until its delivery conditions are met.
 
 After delivering the current outcome, use the continuation route if accepted work remains.
 Complete the workflow only when no accepted work remains and its durable record is current.

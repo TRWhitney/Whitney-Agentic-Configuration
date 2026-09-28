@@ -3,8 +3,10 @@ from __future__ import annotations
 import ast
 import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from typing import cast
@@ -19,7 +21,7 @@ WORKFLOWS_ROOT = REFERENCES_ROOT / "workflows"
 STATES_ROOT = REFERENCES_ROOT / "states"
 PROCEDURES_ROOT = REFERENCES_ROOT / "procedures"
 FORMATS_ROOT = REFERENCES_ROOT / "formats"
-STORAGE_ROOT = REFERENCES_ROOT / "storage"
+PROVIDERS_ROOT = REFERENCES_ROOT / "providers"
 NAVIGATOR_PATH = WORK_SYSTEM_ROOT / "scripts" / "navigate.py"
 FRONTMATTER_PATTERN = re.compile(r"\A---\n(?P<yaml>.*?)\n---\n", re.DOTALL)
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]*]\(([^)]+)\)")
@@ -36,6 +38,7 @@ EXPECTED_STATES = {
 }
 EXPECTED_PROCEDURES = {
     "commit",
+    "tracking",
     "delegate",
     "diagnose",
     "domain-modeling",
@@ -107,7 +110,7 @@ class WorkSystemStructureTests(unittest.TestCase):
     def test_root_delegates_navigation_without_exposing_manifests(self) -> None:
         self.assertEqual(
             {path.name for path in REFERENCES_ROOT.iterdir() if path.is_dir()},
-            {"formats", "procedures", "states", "storage", "workflows"},
+            {"formats", "procedures", "states", "providers", "workflows"},
         )
         self.assertEqual(
             {path.name for path in WORKFLOWS_ROOT.iterdir()},
@@ -126,7 +129,8 @@ class WorkSystemStructureTests(unittest.TestCase):
             {"domain-modeling.md", "planning-artifacts.md", "wayfinding.md"},
         )
         self.assertEqual(
-            {path.name for path in STORAGE_ROOT.iterdir()}, {"local-work-store.md"}
+            {path.name for path in PROVIDERS_ROOT.iterdir()},
+            {"local", "github"},
         )
         self.assertEqual(
             [path for path in REFERENCES_ROOT.iterdir() if path.is_file()], []
@@ -134,7 +138,9 @@ class WorkSystemStructureTests(unittest.TestCase):
         self.assertTrue(NAVIGATOR_PATH.is_file())
 
     def test_navigator_uses_only_standard_library_manifest_loading(self) -> None:
-        tree = ast.parse(NAVIGATOR_PATH.read_text(encoding="utf-8"))
+        tree = ast.parse(
+            (WORK_SYSTEM_ROOT / "scripts" / "project.py").read_text(encoding="utf-8")
+        )
         imports = {
             alias.name
             for node in ast.walk(tree)
@@ -169,8 +175,6 @@ class WorkflowManifestTests(unittest.TestCase):
         for workflow_name, workflow in workflows.items():
             with self.subTest(workflow=workflow_name):
                 expected_keys = {"name", "entry-state", "persistence", "states"}
-                if workflow_name == "novel-work":
-                    expected_keys.add("work-record")
                 self.assertEqual(set(workflow), expected_keys)
                 self.assertEqual(workflow["name"], workflow_name)
                 self.assertNotIn("workflows", workflow)
@@ -222,7 +226,13 @@ class WorkflowManifestTests(unittest.TestCase):
                         access = cast(dict[str, object], raw_access)
                         self.assertLessEqual(
                             set(access),
-                            {"status", "cue", "formats", "related-procedures"},
+                            {
+                                "status",
+                                "cue",
+                                "formats",
+                                "related-procedures",
+                                "tracker",
+                            },
                         )
                         self.assertGreaterEqual(set(access), {"status", "cue"})
                         self.assertIn(
@@ -247,21 +257,18 @@ class WorkflowManifestTests(unittest.TestCase):
                         format_access = cast(dict[str, object], raw_format)
                         self.assertEqual(set(format_access), {"cue"}, format_name)
 
-    def test_only_novel_work_loads_the_local_record(self) -> None:
-        workflows = load_workflows()
-
-        self.assertNotIn("work-record", workflows["question"])
-        self.assertNotIn("work-record", workflows["tweak"])
-        self.assertNotIn("work-record", workflows["fix"])
-        self.assertNotIn("work-record", workflows["subagent-implementation"])
-        self.assertEqual(
-            workflows["novel-work"]["work-record"],
-            "storage/local-work-store.md",
-        )
-        record_path = REFERENCES_ROOT / cast(
-            str, workflows["novel-work"]["work-record"]
-        )
-        self.assertTrue(record_path.is_file())
+    def test_providers_own_records_and_workflows_remain_shared(self) -> None:
+        for workflow in load_workflows().values():
+            self.assertNotIn("work-record", workflow)
+        for name in ("local", "github"):
+            provider = json.loads((PROVIDERS_ROOT / name / "provider.json").read_text())
+            records = provider["records"]
+            self.assertEqual(
+                set(records),
+                {"novel-work"} if name == "local" else {"novel-work", "tweak", "fix"},
+            )
+            for path in records.values():
+                self.assertTrue((PROVIDERS_ROOT / name / path).is_file())
 
     def test_entries_and_transitions_resolve(self) -> None:
         workflows = load_workflows()
@@ -306,14 +313,15 @@ class WorkflowManifestTests(unittest.TestCase):
         tweak_states = cast(dict[str, object], workflows["tweak"]["states"])
         tweak_discovery = cast(dict[str, object], tweak_states["discovery"])
         self.assertEqual(
-            set(cast(dict[str, object], tweak_discovery["procedures"])), {"research"}
+            set(cast(dict[str, object], tweak_discovery["procedures"])),
+            {"research", "tracking"},
         )
 
         fix_states = cast(dict[str, object], workflows["fix"]["states"])
         fix_discovery = cast(dict[str, object], fix_states["discovery"])
         self.assertEqual(
             set(cast(dict[str, object], fix_discovery["procedures"])),
-            {"diagnose", "research"},
+            {"diagnose", "research", "tracking"},
         )
 
         novel = workflows["novel-work"]
@@ -325,6 +333,7 @@ class WorkflowManifestTests(unittest.TestCase):
         self.assertEqual(
             set(cast(dict[str, object], planning["procedures"])),
             {
+                "tracking",
                 "domain-modeling",
                 "interface-design",
                 "prototype",
@@ -508,17 +517,160 @@ class WorkflowManifestTests(unittest.TestCase):
 
 class NavigatorTests(unittest.TestCase):
     def run_navigator(
-        self, *arguments: str, expected_returncode: int = 0
+        self, *arguments: str, expected_returncode: int = 0, cwd: Path | None = None
     ) -> subprocess.CompletedProcess[str]:
         result = subprocess.run(
             [sys.executable, str(NAVIGATOR_PATH), *arguments],
-            cwd=REPO_ROOT,
+            cwd=cwd or REPO_ROOT,
             check=False,
             capture_output=True,
             text=True,
         )
         self.assertEqual(result.returncode, expected_returncode, result.stderr)
         return result
+
+    def test_default_local_and_saved_github_select_the_store(self) -> None:
+        local = (PROVIDERS_ROOT / "local" / "record.md").read_text().strip()
+        github = (PROVIDERS_ROOT / "github" / "record.md").read_text().strip()
+        babysit = (PROVIDERS_ROOT / "github" / "delivery.md").read_text().strip()
+        with tempfile.TemporaryDirectory() as directory:
+            cwd = Path(directory)
+            output = self.run_navigator("start", "novel-work", cwd=cwd).stdout
+            self.assertIn(local, output)
+            self.assertNotIn(github, output)
+            output = self.run_navigator(
+                "resume", "novel-work", "delivery", cwd=cwd
+            ).stdout
+            self.assertNotIn(babysit, output)
+            self.assertNotIn("`publish`", output)
+            self.run_navigator(
+                "procedure",
+                "novel-work",
+                "delivery",
+                "publish",
+                cwd=cwd,
+                expected_returncode=2,
+            )
+            (cwd / ".work").mkdir()
+            settings = cwd / ".work" / "project.json"
+            settings.write_text('{"tracker": "github", "repository": "owner/repo"}')
+            for name in ("novel-work", "tweak", "fix"):
+                output = self.run_navigator("start", name, cwd=cwd).stdout
+                self.assertIn(github, output)
+                self.assertNotIn(local, output)
+                output = self.run_navigator("resume", name, "delivery", cwd=cwd).stdout
+                self.assertIn(babysit, output)
+                self.run_navigator("procedure", name, "delivery", "publish", cwd=cwd)
+                self.run_navigator(
+                    "procedure",
+                    name,
+                    "implementation",
+                    "publish",
+                    cwd=cwd,
+                    expected_returncode=2,
+                )
+            settings.write_text('{"tracker": "local"}')
+            output = self.run_navigator("start", "novel-work", cwd=cwd).stdout
+            self.assertIn(local, output)
+            self.assertNotIn(github, output)
+            for name in ("tweak", "fix"):
+                output = self.run_navigator("start", name, cwd=cwd).stdout
+                self.assertNotIn(local, output)
+                self.assertNotIn(github, output)
+
+    def test_bad_settings_do_not_silently_select_local(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            cwd = Path(directory)
+            (cwd / ".work").mkdir()
+            for body in ("{", "[]", '{"tracker": "unknown"}', '{"tracker": "github"}'):
+                (cwd / ".work" / "project.json").write_text(body)
+                self.run_navigator(
+                    "start", "novel-work", cwd=cwd, expected_returncode=2
+                )
+
+    def test_subdirectory_and_worktree_use_one_project_setting(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            primary = root / "primary"
+            primary.mkdir()
+
+            def git(*args: str) -> None:
+                subprocess.run(
+                    ["git", *args],
+                    cwd=primary,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+
+            git("init", "-q")
+            git(
+                "-c",
+                "user.name=Test",
+                "-c",
+                "user.email=test@example.invalid",
+                "-c",
+                "core.hooksPath=/dev/null",
+                "commit",
+                "--allow-empty",
+                "-qm",
+                "initial",
+            )
+            git("worktree", "add", "-qb", "parallel", str(root / "parallel"))
+            (primary / ".git" / "work-system.json").write_text(
+                '{"tracker": "github", "repository": "owner/repo"}'
+            )
+            (primary / "nested").mkdir()
+            github = (PROVIDERS_ROOT / "github" / "record.md").read_text().strip()
+            for cwd in (primary, primary / "nested", root / "parallel"):
+                output = self.run_navigator("start", "novel-work", cwd=cwd).stdout
+                self.assertIn(github, output)
+                self.assertIn(str(primary / ".git" / "work-system.json"), output)
+
+    def test_tracking_procedures_respect_state_boundaries(self) -> None:
+        for name in ("novel-work", "tweak", "fix"):
+            entry = "planning" if name == "novel-work" else "discovery"
+            self.run_navigator("procedure", name, entry, "tracking")
+            setup = self.run_navigator("provider", name, entry, "github").stdout
+            self.assertIn("GitHub", setup)
+            self.run_navigator(
+                "provider", name, "validation", "github", expected_returncode=2
+            )
+        for procedure in ("tracking", "publish"):
+            self.run_navigator(
+                "procedure", "question", "discovery", procedure, expected_returncode=2
+            )
+
+    def test_unselected_provider_is_not_read_or_advertised(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            cwd = Path(directory)
+            skill = cwd / "skill"
+            shutil.copytree(WORK_SYSTEM_ROOT, skill)
+            (
+                skill / "references" / "providers" / "github" / "provider.json"
+            ).write_text("invalid")
+            for args in (
+                ("start", "novel-work"),
+                ("resume", "novel-work", "delivery"),
+                ("format", "novel-work", "planning", "planning-artifacts"),
+                ("procedure", "novel-work", "planning", "tracking"),
+            ):
+                result = subprocess.run(
+                    [
+                        sys.executable,
+                        "-I",
+                        str(skill / "scripts" / "navigate.py"),
+                        *args,
+                    ],
+                    cwd=cwd,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertNotIn("github", result.stdout.lower())
+                self.assertNotIn("gitlab", result.stdout.lower())
+                self.assertNotIn("scripts/navigation.py", result.stdout)
 
     def test_start_returns_only_the_entry_state_context(self) -> None:
         output = self.run_navigator("start", "question").stdout

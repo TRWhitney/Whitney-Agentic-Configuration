@@ -1,0 +1,18 @@
+{
+  "workflows": [
+    "novel-work",
+    "tweak",
+    "fix"
+  ],
+  "required-settings": [],
+  "records": {
+    "novel-work": "record.md"
+  },
+  "formats": {
+    "planning-artifacts": "planning-artifacts.md",
+    "wayfinding": "wayfinding.md"
+  },
+  "procedures": {},
+  "states": {},
+  "setup": "setup.md"
+}

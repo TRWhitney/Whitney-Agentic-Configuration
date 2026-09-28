@@ -1,71 +1,13 @@
-# Planning Artifact Formats
+# Planning artifacts
 
-## Specification
+A specification records the accepted problem, outcome, user stories, design decisions, testing,
+and scope. Use the project glossary and link the decisions that constrain the work. Keep evidence
+and reasoning in their owning records.
 
-Store the accepted specification as `spec.md`:
+Each implementation ticket describes one observable result, its acceptance checks, prerequisites,
+accepted sources, and completion evidence. Size it for one fresh implementation context and an
+independently verifiable result. Order work by dependencies.
 
-```markdown
-# <Outcome>
-
-## Problem Statement
-
-## Solution
-
-## User Stories
-
-1. As an <actor>, I want <behavior>, so that <benefit>.
-
-## Implementation Decisions
-
-## Testing Decisions
-
-## Out of Scope
-
-## Further Notes
-```
-
-Use the project glossary and respect applicable architecture decisions. Capture the accepted
-behavior, boundaries, interfaces, schemas, interactions, and testing seams. Prefer the highest
-stable testing seam that already exists. Avoid file-by-file instructions and code snippets that
-will go stale. A concise prototype-derived state machine, schema, reducer, or type shape may be
-included when it preserves a decision more precisely than prose.
-
-Under `Implementation Decisions`, link each wayfinding decision and canonical domain or
-architecture record that constrains the specification. Preserve the accepted conclusion without
-copying its rationale or evidence. Each implementation ticket's `Accepted sources` section links to
-the specification and the decisions, research, prototypes, or canonical records needed for its
-slice.
-
-## Implementation ticket
-
-An implementation ticket is a self-contained unit of accepted work sized for one fresh
-implementation context.
-
-Store one ticket per slice as `tickets/<NN>-<slug>.md`:
-
-```markdown
-# <NN> <Ticket title>
-
-**What to build:** <observable end-to-end behavior>
-
-**Blocked by:** <ticket links or none>
-
-**Status:** ready-for-agent
-
-- [ ] <acceptance criterion>
-- [ ] <acceptance criterion>
-
-## Accepted sources
-
-## Completion evidence
-```
-
-Use `ready-for-agent`, `active`, `blocked`, and `complete` as the ticket lifecycle. Each ticket
-must fit one fresh context, cut a narrow but complete path through the required layers, and be
-independently demonstrable or verifiable. Use dependency order for numbering, but determine the
-frontier from completed blockers rather than ticket numbers.
-
-Prefer vertical slices. For a mechanical change whose blast radius cannot remain green as one
-slice, use expand, migrate, and contract tickets with explicit blocking edges. Do not include
-specific file paths or code snippets unless a prototype-derived fragment is itself an accepted
-source.
+Prefer vertical slices. For a mechanical change that cannot stay green in one slice, use expand,
+migrate, and contract tickets with explicit dependencies. Include file paths or code snippets only
+when an accepted prototype needs them to state a decision precisely.

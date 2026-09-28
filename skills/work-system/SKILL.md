@@ -88,8 +88,8 @@ durable artifacts instead of copying them. Then clear the active workflow.
 
 ## Track state
 
-- Keep question, tweak, and fix state in conversation. Do not create a repository record for these
-  workflows. When one must continue in a fresh context, preserve its exact resume command, current
+- Keep conversational workflow state in conversation. Use the work-record guidance for workflows
+  with durable records. When one must continue in a fresh context, preserve its exact resume command, current
   question or acceptance checks, decisive evidence and procedure results, owned uncommitted paths,
   and next action in the continuation context.
 - Follow any workflow-record guidance returned by the navigator. When a durable record exists,

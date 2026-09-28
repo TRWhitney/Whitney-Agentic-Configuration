@@ -9,6 +9,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 NAVIGATOR_SKILLS = ("note-system", "work-system")
+NAVIGATOR_FILES = {"note-system": "navigate.py", "work-system": "navigation.py"}
 GENERATED_NOTICE = (
     b"# Generated from scripts/navigator_source.py. Do not edit this copy.\n"
     b"# Regenerate with: python3 scripts/sync_navigators.py\n"
@@ -22,7 +23,7 @@ class NavigatorSyncError(RuntimeError):
 
 def sync_navigators(source_root: Path, *, check: bool = False) -> tuple[Path, ...]:
     targets = [
-        source_root / "skills" / name / "scripts" / "navigate.py"
+        source_root / "skills" / name / "scripts" / NAVIGATOR_FILES[name]
         for name in NAVIGATOR_SKILLS
         if (source_root / "skills" / name).is_dir()
     ]

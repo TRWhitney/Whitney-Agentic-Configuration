@@ -2,7 +2,6 @@
   "name": "novel-work",
   "entry-state": "planning",
   "persistence": "durable",
-  "work-record": "storage/local-work-store.md",
   "states": {
     "planning": {
       "formats": {
@@ -49,6 +48,10 @@
               "cue": "Use when creating or updating a decision map or decision ticket."
             }
           }
+        },
+        "tracking": {
+          "status": "triggered",
+          "cue": "My request selects or changes the project tracker."
         }
       },
       "transitions": {

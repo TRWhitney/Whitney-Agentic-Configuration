@@ -1,0 +1,40 @@
+{
+  "workflows": [
+    "novel-work",
+    "tweak",
+    "fix"
+  ],
+  "required-settings": [
+    "repository"
+  ],
+  "records": {
+    "novel-work": "record.md",
+    "tweak": "record.md",
+    "fix": "record.md"
+  },
+  "formats": {
+    "planning-artifacts": "planning-artifacts.md",
+    "wayfinding": "wayfinding.md"
+  },
+  "procedures": {
+    "publish": "delivery.md"
+  },
+  "states": {
+    "delivery": {
+      "procedures": {
+        "publish": {
+          "status": "required",
+          "cue": "Validation, review, and commit are complete."
+        }
+      }
+    }
+  },
+  "setup": "setup.md",
+  "workflow-transitions": {
+    "novel-work": {
+      "delivery": {
+        "independent-ticket-ready-after-handoff": "implementation"
+      }
+    }
+  }
+}

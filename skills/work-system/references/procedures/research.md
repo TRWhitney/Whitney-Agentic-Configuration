@@ -45,9 +45,7 @@ recommendations, and unresolved uncertainty. State when the available evidence i
 rather than filling the gap with an assumption.
 
 Create a dedicated report only when future work will need to revisit the evidence, reasoning, or
-citations. When a durable effort exists, store that report under
-`.work/<effort-slug>/research/<research-slug>.md` uncommitted; commit it with the completed outcome
-during delivery in normal repository history. Include the question, scope, conclusion, evidence,
+citations. Store it according to the work-record guidance. Include the question, scope, conclusion, evidence,
 source links, conflicts, limitations, and implications. Link external and repository sources rather
 than copying material. Otherwise keep the finding in its owning answer, decision, specification, or
 ticket.
