@@ -11,8 +11,17 @@ checks and reviews, including review bots that run after a push.
 
 ## Watch and respond
 
-Watch checks, published reviews, open threads, merge conflicts, and relevant base changes. Read
-existing feedback on entry. Check findings against the current code and accepted scope.
+Stay in the active session and repeat this cycle while the PR is open:
+
+1. Read the PR state, head revision, base, checks, PR comments, reviews, open review threads,
+   and mergeability. Read existing feedback on entry and check findings against the current code
+   and accepted scope.
+2. Address actionable changes using the rules below. After every push, including a rewritten
+   branch, start a fresh cycle. Earlier readiness results do not apply to the new head. Refresh
+   affected evidence when the base changes.
+3. When no action is needed, sleep or use a waiting tool for 30 to 60 seconds, then check again.
+   Keep polling after checks pass or the PR becomes ready to merge. Do not end the turn just
+   because the current feedback has been addressed.
 
 Fix valid findings. Explain incorrect or out-of-scope findings in the PR. Take changes to accepted
 intent back to planning or discovery. Close addressed threads under the repository's review rules.
@@ -24,22 +33,24 @@ Read failed check logs before fixing code or retrying. Apply the existing valida
 repository failures. Retry temporary service failures up to three times, then report the blocker.
 Refresh affected evidence after updating the base.
 
-Use watch tools or paced polling while checks and reviews run. Save the revision, pending feedback,
-and next action when an access failure or a needed human decision stops progress.
+Ask for needed decisions while continuing to watch. If access prevents further checks, report the
+blocker and save the revision, pending feedback, and next polling action in the owning issue.
+Record an interrupted watch as unfinished and resume the full cycle when continuing the work.
 
-## Handoff
+## Ready to merge
 
 Read the PR head again. Check that required checks and reviews pass, expected bot reviews have
 finished, no actionable feedback is open, and the PR can merge. Repeat on the new revision if the
 head changes during this check.
 
-Mark the ticket `awaiting-merge`, keep it open, and report the PR URL and check/review results.
-Save the next action and stop watching. Leave merging to me. Do not enable auto-merge or add the PR
-to a merge queue.
+Mark the ticket `awaiting-merge`, keep it open, and report the PR URL and check/review results in a
+progress update. Continue waiting and checking. If new feedback, failing checks, or changes make
+the PR unready, update its ticket status and address them. Leave merging to me. Do not enable
+auto-merge or add the PR to a merge queue.
 
-On continuation, check the PR's current state. After merge, update the ticket and its dependents.
-For new feedback or changes on an open PR, return to watching. Report closed, unmerged work without
-marking its outcome complete.
+## Stop watching
 
-After a ready-for-merge handoff, another independent ticket may proceed. Keep work that depends on
-an unmerged change blocked. Finish the effort after its accepted changes have merged.
+Stop when the PR is merged or closed, or when I explicitly stop the watch. After merge, update the
+ticket and its dependents. Report closed, unmerged work without marking its outcome complete.
+Keep work that depends on an unmerged change blocked. Finish the effort after its accepted changes
+have merged.
