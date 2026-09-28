@@ -4,26 +4,34 @@ Use the repository in the project's settings for `gh` commands. Add issues to `p
 
 ## Records
 
-Store the specification in a parent issue and each implementation ticket in a sub-issue. A tweak
-or fix uses one issue. Use the shared artifact formats with issue URLs in place of local paths.
+Use one parent issue for the effort's specification and status. Store decision tickets and
+implementation tickets as sub-issues of that parent. A tweak or fix uses one issue. Use native
+dependencies for blockers. Do not create `.work/` or repository copies of these tracking records.
 
-Store a wayfinding map in a separate issue with decision sub-issues. Keep answers and evidence in
-the decision that owns them. Use native dependencies for blockers and sub-issues for membership.
+Keep planning maps, research reports, and prototype notes in repository documentation. Link that
+documentation from the issues that use it. Use the shared wayfinding format for the map and decision
+tickets, with issue URLs for ticket links.
 
-Read issue bodies, comments, dependencies, and linked PRs before updating work. Put accepted sources
-in the issue or link files at a published revision. Keep machine paths and temporary state local.
+Read issue bodies, comments, dependencies, and linked PRs before updating work. Link accepted
+documentation and executable sources at published revisions when available. Use system temporary
+files for command input and remove them after use.
 
-Update tickets on GitHub. Keep converted local files as history with links to their issues. Use
-`--body-file` for multiline writes. Save returned URLs and check created records. After an uncertain
+Use `--body-file` for multiline writes. Save returned URLs and check created records. After an uncertain
 response, look for the record before retrying creation.
 
 ## Status
 
 Use `ready-for-agent`, `active`, `blocked`, or `awaiting-merge` labels on open implementation tickets.
-Reuse equivalent repository labels. Omit Status from the issue body. Project fields follow the labels.
+Reuse equivalent repository labels. Omit Status from implementation issue bodies. Project fields
+follow the labels. Decision tickets use the status field in their shared format.
 
 Close a ticket as completed after its PR merges and its acceptance checks are met. Cancellation
 needs a separate decision about dependent work. Close the parent when its accepted outcome is done.
 
-Keep the workflow, state, next action, revision, and evidence links on the issue or PR. Keep exact
-installed navigator commands in the local continuation record.
+## Continuation
+
+Store status and continuation only in the parent issue, or the single issue for a tweak or fix.
+Update its `Continuation` section with the workflow, state, exact resume command, next action, branch, relevant
+commits, owned uncommitted paths, and verification results needed to continue. Link decision
+tickets, the planning map, accepted sources, and any PR. Replace stale details rather than appending
+a running log. Keep ticket-specific progress on its existing issue; do not create a status issue.

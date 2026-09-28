@@ -68,13 +68,11 @@ Show me a concise interpretation and obtain my explicit confirmation that the co
 what matters. Record the exact flows, states, actions, target elements, and resulting conditions
 used to accept the prototype.
 
-Preserve the accepted artifact in the effort's `prototypes/` directory when it is self-contained.
-When it relies on the repository's shared host, preserve the isolated source in its normal
-repository location and link it from the prototype record. Include the accepted source, contract,
-recorded preferences, supporting visual evidence, and complete run instructions. Keep accepted
-prototype work uncommitted while the workflow is active so it can be committed with the completed
-outcome during delivery in normal repository history; do not create a dedicated branch merely
-because it is a prototype. Discard or clearly label rejected alternatives.
+Store prototype notes in the repository's documentation, following its existing layout or using
+`docs/prototypes/<prototype-slug>.md`. Include the acceptance contract, recorded preferences,
+supporting evidence, and complete run instructions. Link the accepted executable source from these
+notes. Preserve that source in a suitable repository location, isolated from production paths.
+Discard or clearly label rejected alternatives.
 
 Production implementation remains separate work and must meet its own testing, error handling,
 and verification requirements. Prototype acceptance does not make prototype code production-ready.

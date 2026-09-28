@@ -45,7 +45,8 @@ recommendations, and unresolved uncertainty. State when the available evidence i
 rather than filling the gap with an assumption.
 
 Create a dedicated report only when future work will need to revisit the evidence, reasoning, or
-citations. Store it according to the work-record guidance. Include the question, scope, conclusion, evidence,
+citations. Store it in the repository's research documentation, following its existing layout or
+using `docs/research/<research-slug>.md`. Include the question, scope, conclusion, evidence,
 source links, conflicts, limitations, and implications. Link external and repository sources rather
 than copying material. Otherwise keep the finding in its owning answer, decision, specification, or
 ticket.

@@ -9,8 +9,7 @@
     "novel-work": "record.md"
   },
   "formats": {
-    "planning-artifacts": "planning-artifacts.md",
-    "wayfinding": "wayfinding.md"
+    "planning-artifacts": "planning-artifacts.md"
   },
   "procedures": {},
   "states": {},
