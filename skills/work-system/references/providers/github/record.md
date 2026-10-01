@@ -3,6 +3,8 @@
 Use the repository in the project's settings for `gh` commands. Add issues to `project_url` when set.
 
 Prefix issue bodies and comments with your model name, e.g. `[GPT-6.1-Sol]`.
+Before posting updates or finishing, read and address all issue and PR comments and reviews
+added or edited since your last read, across all pages. Your own posts do not advance that checkpoint.
 
 ## Records
 
