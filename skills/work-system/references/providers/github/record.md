@@ -2,6 +2,8 @@
 
 Use the repository in the project's settings for `gh` commands. Add issues to `project_url` when set.
 
+Prefix issue bodies and comments with your model name, e.g. `[GPT-6.1-Sol]`.
+
 ## Records
 
 Use one parent issue for the effort's specification and status. Store decision tickets and
