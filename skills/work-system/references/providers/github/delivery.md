@@ -33,8 +33,9 @@ Read failed check logs before fixing code or retrying. Apply the existing valida
 repository failures. Retry temporary service failures up to three times, then report the blocker.
 Refresh affected evidence after updating the base.
 
-Ask for needed decisions while continuing to watch. If access prevents further checks, report the
-blocker and save the revision, pending feedback, and next polling action in the owning issue.
+Ask for needed decisions in the PR and read my replies while continuing to watch. Keep work that
+depends on my answer pending. If access prevents further checks, report the blocker in chat and
+save the revision, pending feedback, and next polling action in the owning issue when accessible.
 Record an interrupted watch as unfinished and resume the full cycle when continuing the work.
 
 ## Ready to merge

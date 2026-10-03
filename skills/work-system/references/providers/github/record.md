@@ -2,9 +2,24 @@
 
 Use the repository in the project's settings for `gh` commands. Add issues to `project_url` when set.
 
-Prefix issue bodies and comments with your model name, e.g. `[GPT-6.1-Sol]`.
+Prefix issue bodies, issue comments, and PR comments with your model name, e.g. `[GPT-6.1-Sol]`.
 Before posting updates or finishing, read and address all issue and PR comments and reviews
 added or edited since your last read, across all pages. Your own posts do not advance that checkpoint.
+
+## Questions and discussion
+
+Find the open PR for the current work from the work item's links or the working branch. When one
+exists, keep questions, clarification, decision requests, and work discussion in its comments.
+Reply in the relevant review thread when the discussion concerns that finding; otherwise use a
+PR conversation comment. Read the existing discussion before asking or replying.
+
+Check the PR for my replies and continue the discussion there. Keep work that needs my answer
+pending until I respond, while continuing independent work and the PR watch. A posted question
+or elapsed time is not an answer or approval. In chat, link the PR discussion when an update is
+needed rather than repeating the question.
+
+When no open PR exists for the current work, ask in chat. If GitHub access prevents posting or
+reading the discussion, report that blocker in chat and ask there for any input needed to proceed.
 
 ## Records
 
