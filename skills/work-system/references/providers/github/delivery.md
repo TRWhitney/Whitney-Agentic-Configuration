@@ -11,7 +11,12 @@ checks and reviews, including review bots that run after a push.
 
 ## Watch and respond
 
-Stay in the active session and repeat this cycle while the PR is open:
+Use a monitoring or wake-up mechanism provided by the harness or environment when available.
+Register the PR and follow that mechanism's waiting instructions, including yielding the turn
+when it will wake you automatically. If no provided mechanism is available, stay in the active
+session and poll every 30 to 60 seconds.
+
+Run this cycle on entry and whenever monitoring reports an update or a poll is due:
 
 1. Read the PR state, head revision, base, checks, PR comments, reviews, open review threads,
    and mergeability. Read existing feedback on entry and check findings against the current code
@@ -19,9 +24,10 @@ Stay in the active session and repeat this cycle while the PR is open:
 2. Address actionable changes using the rules below. After every push, including a rewritten
    branch, start a fresh cycle. Earlier readiness results do not apply to the new head. Refresh
    affected evidence when the base changes.
-3. When no action is needed, sleep or use a waiting tool for 30 to 60 seconds, then check again.
-   Keep polling after checks pass or the PR becomes ready to merge. Do not end the turn just
-   because the current feedback has been addressed.
+3. When no action is needed, wait using the selected monitoring mechanism. For polling, sleep or
+   use a waiting tool for 30 to 60 seconds, then check again. Keep monitoring after checks pass
+   or the PR becomes ready to merge. Yield for an automatic wake-up only after registration;
+   when polling, do not end the turn just because the current feedback has been addressed.
 
 Fix valid findings. Explain incorrect or out-of-scope findings in the PR. Take changes to accepted
 intent back to planning or discovery. Close addressed threads under the repository's review rules.
@@ -35,7 +41,7 @@ Refresh affected evidence after updating the base.
 
 Ask for needed decisions in the PR and read my replies while continuing to watch. Keep work that
 depends on my answer pending. If access prevents further checks, report the blocker in chat and
-save the revision, pending feedback, and next polling action in the owning issue when accessible.
+save the revision, pending feedback, and next monitoring action in the owning issue when accessible.
 Record an interrupted watch as unfinished and resume the full cycle when continuing the work.
 
 ## Ready to merge
