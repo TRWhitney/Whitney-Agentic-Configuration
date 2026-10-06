@@ -13,6 +13,11 @@ exists, keep questions, clarification, decision requests, and work discussion in
 Reply in the relevant review thread when the discussion concerns that finding; otherwise use a
 PR conversation comment. Read the existing discussion before asking or replying.
 
+A request to rewrite or clarify a PR description authorizes editing that description. It does not,
+by itself, authorize repository changes or a commit or push. Establish a separate implementation
+need within the accepted scope before expanding the work. If that need would change the scope,
+ask me in the PR before proceeding.
+
 Check the PR for my replies and continue the discussion there. Keep work that needs my answer
 pending until I respond, while continuing independent work and the PR watch. A posted question
 or elapsed time is not an answer or approval. In chat, link the PR discussion when an update is
