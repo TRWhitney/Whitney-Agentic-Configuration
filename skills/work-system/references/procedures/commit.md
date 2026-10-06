@@ -69,6 +69,18 @@ Do not use an umbrella subject to conceal multiple outcomes. If the practical re
 named concretely within 50 characters, revisit the commit partition instead of making the subject
 more abstract.
 
+## Credit agent contributions
+
+Include a `Co-authored-by` trailer for agents that implemented the committed work:
+
+- For OpenAI Codex, use `Co-authored-by: Codex <noreply@openai.com>`.
+- For Claude, use its actual model name with `<noreply@anthropic.com>`.
+- For other providers, use their verified attribution convention rather than inventing an email.
+
+Preserve existing human and agent trailers. Add each applicable credit exactly once, with one
+blank line between the commit body and the trailer block. Keep the repository's configured
+author and committer identity.
+
 ## Result
 
 Include each commit identifier and subject, any intentionally uncommitted changes, and whether
