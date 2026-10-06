@@ -2,12 +2,34 @@
 
 ## File or resume
 
-Check the issue, repository, head branch, and base. Find the branch's existing PR. Push the validated
-commits and create or update the PR with the problem, change, checks, and ticket link. After an
-uncertain creation response, look for the PR before retrying.
+For implementation delivery, check the issue, repository, head branch, and base. Find the branch's
+existing PR. Push the validated commits and create or update the PR using the description guidance
+below. After an uncertain creation response, look for the PR before retrying.
 
 Save the PR URL, head revision, base, and next action on the work item. Read the repository's required
 checks and reviews, including review bots that run after a push.
+
+## PR description
+
+Apply this guidance when creating, rewriting, or clarifying a GitHub PR description. Explain the
+problem and what this PR makes possible or changes compared with existing behavior, including
+earlier slices of the same feature. Link the ticket and report the checks and their results.
+
+For behavior changes:
+
+- Show a concrete consumer action and its observable result. Explain what previously failed or
+  behaved differently. An API declaration or list of supported signatures alone does not
+  demonstrate functionality.
+- Use examples that exercise the claimed change. An unchanged example can explain setup, but
+  cannot demonstrate a newly delivered capability.
+- Link relevant documentation and runnable examples or acceptance fixtures at the reviewed
+  revision. Explain what each demonstrates. Verify that the linked material supports the claim;
+  do not present general setup or earlier functionality as evidence of the new behavior.
+- State required setup, supported environments, and material limitations when they affect usage.
+
+Scale detail to the change. Use plain, concrete language and include only what helps a reviewer
+understand or use the result. A small change may need only a few sentences and validation. Do not
+turn every PR into a long checklist.
 
 ## Watch and respond
 
