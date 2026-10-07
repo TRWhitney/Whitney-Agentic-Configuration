@@ -38,6 +38,14 @@ Register the PR and follow that mechanism's waiting instructions, including yiel
 when it will wake you automatically. If no provided mechanism is available, stay in the active
 session and poll every 30 to 60 seconds.
 
+Green CI, completed reviews, and merge readiness are progress within the watch. They do not
+complete delivery or authorize handing the PR back. Keep handling feedback and monitoring until
+one of the conditions under Stop watching applies.
+
+When yielding to a built-in watcher, leave the watch registered and resume the full cycle on each
+wake-up. Yielding for automatic monitoring is not a handoff. Do not invoke an unwatch-before-handoff
+instruction merely because checks pass or the PR is ready to merge.
+
 Run this cycle on entry and whenever monitoring reports an update or a poll is due:
 
 1. Read the PR state, head revision, base, checks, PR comments, reviews, open review threads,
@@ -73,13 +81,14 @@ finished, no actionable feedback is open, and the PR can merge. Repeat on the ne
 head changes during this check.
 
 Mark the ticket `awaiting-merge`, keep it open, and report the PR URL and check/review results in a
-progress update. Continue waiting and checking. If new feedback, failing checks, or changes make
-the PR unready, update its ticket status and address them. Leave merging to me. Do not enable
-auto-merge or add the PR to a merge queue.
+progress update, keeping the watch active. Continue waiting and checking. If new feedback, failing
+checks, or changes make the PR unready, update its ticket status and address them. Leave merging to
+me. Do not enable auto-merge or add the PR to a merge queue.
 
 ## Stop watching
 
-Stop when the PR is merged or closed, or when I explicitly stop the watch. After merge, update the
-ticket and its dependents. Report closed, unmerged work without marking its outcome complete.
+Stop only when the PR is merged or closed, or when I explicitly stop the watch. Unregister any
+built-in watcher when stopping. After merge, update the ticket and its dependents. Report closed,
+unmerged work without marking its outcome complete.
 Keep work that depends on an unmerged change blocked. Finish the effort after its accepted changes
 have merged.
