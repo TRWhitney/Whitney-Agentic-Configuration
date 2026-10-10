@@ -19,6 +19,14 @@ The procedure remains required even when it returns a blocker instead of a commi
 Inspect the working tree, staged changes, relevant diffs, recent commits, current branch, and
 upstream before deciding how to commit.
 
+Before every commit, inspect generated file counts and sizes, untracked and ignored outputs, and
+staged additions with `git diff --cached --stat` and `git diff --cached --numstat`. Inspect large
+and binary additions directly. Remove task-generated disposable material, including session
+transcripts, per-run JSON, screenshots, logs, duplicate snapshots, hash inventories, and evidence
+manifests, unless I explicitly requested retention. Keep concise findings and reusable source or
+checks. Ignoring output or planning a later cleanup does not satisfy this check. Preserve unrelated
+files and my work; do not create a cleanup inventory or replacement archive.
+
 Partition the final work before staging:
 
 1. Derive candidate commits from independently complete outcomes, not from the overall request,

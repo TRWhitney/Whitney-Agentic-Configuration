@@ -24,8 +24,8 @@ delegation.
   reading a handful of relevant notes. A subagent may supplement a larger vault investigation only
   after you have inspected its decision-bearing sources directly.
 - Give the subagent the exact question, scope, relevant artifacts, source constraints, and expected
-  form of the result. Do not supply a preferred conclusion, an unverified hypothesis, or unrelated
-  vault history.
+  form of the result, including retention rules and any explicitly requested exceptions. Do not
+  supply a preferred conclusion, an unverified hypothesis, or unrelated vault history.
 - Keep the subagent's vault and Git access read-only. It must not edit notes, configuration, or
   attachments; stage, commit, alter repository history, or discard changes; or expand its file
   scope. Have it return findings and citations.
@@ -36,8 +36,10 @@ delegation.
   independent confirmation. Cite vault paths and locations or direct external sources.
 - Investigate conflicts instead of selecting the convenient source. Check publication dates,
   applicable versions, assumptions, and whether the sources address the same conditions.
-- Keep searches and experiments bounded to the question. Record the setup, decisive observations,
-  and limitations needed to interpret or reproduce their result.
+- Keep searches and experiments bounded to the question. Generate raw outputs in temporary
+  directories outside the vault or checkout. Record a concise setup, measured comparisons,
+  failures, and limitations so useful checks can be rerun. Do not retain per-run captures for exact
+  historical replay unless I explicitly request it.
 
 ## Assess and preserve
 
@@ -47,10 +49,16 @@ and unresolved uncertainty. State when the available evidence is insufficient ra
 the gap with an assumption.
 
 Research remains read-only. When later work will need to revisit the evidence, reasoning, or
-citations, return a report-ready record for the owning state instead of creating a note. Include the
+citations, return a report-ready record for the owning state instead of creating a note. Default
+to one report of at most 500 words plus a compact results table per study; expand only at my
+explicit request. Update existing findings when they fit. Include the
 question, scope, conclusion, evidence, source links, conflicts, limitations, and implications. Link
 external and vault sources rather than copying material. Otherwise keep the finding in its owning
 work.
+
+After inspection and required review, delete disposable captures. Keep reusable checks and concise
+findings. Do not commit raw outputs or create evidence manifests, deletion inventories, or
+substitute archives. Requested canonical source notes remain governed by source preservation.
 
 ## Result
 

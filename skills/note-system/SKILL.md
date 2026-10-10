@@ -13,6 +13,15 @@ authorized for its current state.
 
 I, me, my, you, your, user, and agent retain their established meanings.
 
+## Evidence retention
+
+Discard agent-generated research and preparation outputs by default. Use temporary directories
+outside the vault or checkout, keep captures through required inspection and review, then delete
+them before delivery. Retain concise findings and reusable checks; retain raw captures only at my
+explicit request. Carry these rules into delegated tasks. Requested source notes, source
+transcripts, and selected canonical attachments are deliverables; session transcripts and bulk
+preparation output are disposable.
+
 ## Route the prompt
 
 1. Keep the active workflow until it completes or I replace or cancel it. Treat my feedback

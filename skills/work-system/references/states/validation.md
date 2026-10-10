@@ -15,6 +15,8 @@ or infeasible intent to the earliest available state that can resolve it.
 
 Map each accepted check to the strongest practical command, interaction, or artifact that proves
 it directly.
+Generate disposable evidence in temporary directories outside the checkout. Keep captures only
+through inspection and required review, or while needed for a concrete diagnosis or retry.
 Use configured repository commands. Select checks for the changed surface, dependencies, and risk:
 
 - formatting with no drift;
@@ -62,11 +64,12 @@ only when the correction cannot affect it.
 
 ## Record current evidence
 
-Record exact commands, concise outcomes, inspected flows, and visual observations. Link large
-non-screenshot artifacts only when needed to understand the evidence. Remove screenshots after
-inspection; do not commit or link them as durable artifacts. Avoid capturing secrets and redact
-sensitive values from commands, output, traces, payloads, and linked artifacts while preserving
-useful structure.
+Record exact commands, concise outcomes, failures, limitations, inspected flows, and visual
+observations in the existing record. Keep reusable checks. Give reviewers temporary evidence paths
+when needed; durable records must not depend on disposable captures. Delete raw outputs after
+inspection and required review, before delivery, unless I explicitly requested retention. This
+includes screenshots, logs, traces, and per-run JSON. Ignoring them does not satisfy cleanup.
+Avoid capturing secrets and redact sensitive values from evidence shared for inspection or review.
 
 When behavior, tests, tooling, dependencies, or the environment change, invalidate affected
 evidence and rerun the affected checks and their dependent checks.

@@ -22,8 +22,9 @@ context gathering and must not be replaced by delegation.
   or reading a handful of relevant files. A subagent may supplement a larger repository
   investigation only after you have inspected its decision-bearing sources directly.
 - Give the subagent the exact question, scope, relevant artifacts, source constraints, and
-  expected form of the result. Do not supply a preferred conclusion, an unverified hypothesis, or
-  unrelated project history.
+  expected form of the result, including the retention rules and any explicitly requested
+  exceptions. Do not supply a preferred conclusion, an unverified hypothesis, or unrelated project
+  history.
 - Keep the subagent's Git access read-only. It must not stage, commit, alter repository history,
   discard changes, or expand its file scope. Have it return findings and citations.
 - Use multiple search approaches and sources when available. Try alternate terminology and
@@ -34,8 +35,10 @@ context gathering and must not be replaced by delegation.
 - Investigate conflicts instead of selecting the convenient source. Check publication
   dates, applicable versions, assumptions, and whether the sources are addressing the same
   conditions.
-- Keep commands and experiments bounded to the question. Record the setup, decisive observations,
-  and limitations needed to interpret or reproduce their result.
+- Keep commands and experiments bounded to the question. Generate raw outputs in temporary
+  directories outside the checkout. Record a concise setup, measured comparisons, failures, and
+  limitations so useful checks can be rerun. Do not retain per-run captures for exact historical
+  replay unless I explicitly request it.
 
 ## Assess and preserve
 
@@ -46,10 +49,16 @@ rather than filling the gap with an assumption.
 
 Create a dedicated report only when future work will need to revisit the evidence, reasoning, or
 citations. Store it in the repository's research documentation, following its existing layout or
-using `docs/research/<research-slug>.md`. Include the question, scope, conclusion, evidence,
+using `docs/research/<research-slug>.md`. Default to one report of at most 500 words plus a compact
+results table per study; expand only at my explicit request. Update an existing report when it
+fits. Include the question, scope, conclusion, evidence,
 source links, conflicts, limitations, and implications. Link external and repository sources rather
 than copying material. Otherwise keep the finding in its owning answer, decision, specification, or
 ticket.
+
+After inspection and required review, delete disposable captures. Keep reusable source or checks
+and concise findings. Do not commit raw outputs or create evidence manifests, deletion inventories,
+or substitute archives.
 
 ## Result
 

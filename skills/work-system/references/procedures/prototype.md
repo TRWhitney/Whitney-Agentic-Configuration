@@ -72,7 +72,10 @@ Store prototype notes in the repository's documentation, following its existing 
 `docs/prototypes/<prototype-slug>.md`. Include the acceptance contract, recorded preferences,
 supporting evidence, and complete run instructions. Link the accepted executable source from these
 notes. Preserve that source in a suitable repository location, isolated from production paths.
-Discard or clearly label rejected alternatives.
+Discard rejected alternatives and disposable captures after inspection and required review,
+before delivery. Preserve the useful comparisons and rejection reasons in these notes. Retain raw
+captures only when I explicitly request it; accepted executable source does not require an archive
+of screenshots, logs, duplicate packages, or per-run outputs.
 
 Production implementation remains separate work and must meet its own testing, error handling,
 and verification requirements. Prototype acceptance does not make prototype code production-ready.

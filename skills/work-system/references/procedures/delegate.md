@@ -12,6 +12,9 @@ Give the subagent one independently completable outcome. Include:
 - Genuine blockers and dependencies.
 - Explicit writable file scope.
 - The existing tests or other checks the subagent must make pass.
+- Discard-by-default retention rules and any exceptions I explicitly requested. Generate raw
+  outputs outside the checkout, return concise findings, and identify temporary evidence needed
+  for integration or required review. The owner deletes it when that need ends, before delivery.
 
 Provide the accepted ticket, relevant artifact paths, and the context needed to interpret them.
 Exclude unrelated history and unresolved reasoning. Do not delegate work whose outcome,

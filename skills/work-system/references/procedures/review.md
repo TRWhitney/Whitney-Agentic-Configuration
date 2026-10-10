@@ -11,6 +11,10 @@ the task scope cannot be identified, do not dispatch review.
 Gather my request, acceptance checks, specification or ticket, accepted decisions and prototype
 contracts, current verification evidence, and affected public interfaces.
 
+Supply temporary evidence paths when needed and keep those captures available through required
+review. Include the retention rules and explicit exceptions in each reviewer assignment. Review
+does not require committed captures or exact historical replay unless I explicitly requested it.
+
 For the initial complete review, provide these sources without prior conclusions, suspected
 defects, or unrelated project history. For a correction review, also provide the admitted blocking
 findings, the correction, and renewed evidence. Bound that review to those findings, the correction,
@@ -76,6 +80,10 @@ review only when remediation materially changes accepted behavior, public interf
 architecture, or the task-owned surface enough that the earlier review no longer applies.
 
 ## Result
+
+Return concise findings for the owning record. Do not retain reviewer transcripts, evidence
+manifests, or elaborate review records. The owning agent deletes disposable evidence after required
+review and before delivery.
 
 Include the reviewed outcome, the axes reviewed, whether each review was independent, and a pass
 or fail for each axis. Include each blocking finding with its evidence, impact, and classification,

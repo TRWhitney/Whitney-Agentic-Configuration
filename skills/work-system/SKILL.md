@@ -13,6 +13,14 @@ for its current state.
 
 I, me, my, you, your, user, and agent retain their established meanings.
 
+## Evidence retention
+
+Apply discard-by-default from the start of every workflow. Keep concise conclusions and reusable
+source or checks. Generate raw outputs outside the checkout, make them available for required
+inspection and review, then delete them before delivery. Preservation and reproducibility do not
+require a capture archive. Retain raw captures or exact historical replay only when I explicitly
+request it. Carry these rules into delegated tasks.
+
 ## Route spawned implementation subagents
 
 Apply this section only when system or developer instructions identify you as a spawned subagent

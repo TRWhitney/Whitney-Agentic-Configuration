@@ -9,8 +9,10 @@ to the vault or decide the vault's current knowledge representation.
 Preflight dependencies, source access, and evidence availability before downloading or
 transforming source evidence or visual candidates.
 
-Use an explicit temporary workspace for downloads, generated audio, bulk frames, storyboards, and
-machine-readable preparation data. Do not store those bulk artifacts in the attachment hierarchy.
+Use an explicit temporary workspace outside the vault or checkout for downloads, generated audio,
+bulk frames, storyboards, and machine-readable preparation data. Keep it through required
+inspection and review, then delete disposable outputs before delivery unless I explicitly
+requested retention. Do not store those bulk artifacts in the attachment hierarchy.
 Keep every source independent, including items in one series or course.
 
 ## Continue

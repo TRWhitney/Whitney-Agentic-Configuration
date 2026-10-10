@@ -6,7 +6,7 @@ outside the source's applicable terms.
 
 ## Preflight and prepare
 
-Choose an explicit empty temporary workspace outside the permanent note and attachment hierarchy.
+Choose an explicit empty temporary workspace outside the vault or checkout.
 Run the tool with the video URL and workspace. It requires `yt-dlp`, `ffmpeg`, and `ffprobe` on
 `PATH`. Do not install them automatically.
 
@@ -46,4 +46,5 @@ Record useful candidate timestamps and keep the sampled frames temporary.
 
 Include the preparation-manifest path, prepared transcript path, transcript origin and limitations,
 visual coverage and candidates, and temporary workspace path. Keep the workspace until the complete
-result passes review.
+result passes review, then delete disposable preparation outputs before delivery unless I
+explicitly requested retention. Keep a failed workspace only while needed for diagnosis or retry.

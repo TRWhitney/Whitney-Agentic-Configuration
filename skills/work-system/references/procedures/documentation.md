@@ -20,6 +20,10 @@ justify the implementation.
 - Edit the existing canonical source when one exists. If information needs to be kept and no
   existing document fits, create the smallest document that serves that purpose.
 - Keep each meaning in one place and link related records instead of copying their content.
+- Keep study findings to one report of at most 500 words plus a compact results table unless I
+  explicitly request more. Preserve comparisons, failures, limitations, decisions, and reusable
+  checks. Do not document raw captures or replace removed archives with deletion inventories,
+  provenance maps, cleanup evidence, or elaborate review records.
 - Keep domain glossaries free of implementation detail and preserve the reasoning of superseded
   architecture decisions.
 - When a work record exists, update its ticket status, completion evidence, progress, and frontier.

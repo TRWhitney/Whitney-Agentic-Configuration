@@ -64,13 +64,16 @@ accepted domain terms and architecture decisions in their durable project locati
 duplicating them under `.work/`.
 
 Retain planning maps, research reports, and prototype notes as repository documentation after
-delivery. Link them from the work record rather than copying their content.
+delivery. Keep each study to one report of at most 500 words plus a compact results table unless I
+explicitly request more. Link canonical findings from the work record rather than copying them.
 
 Retain accepted, self-contained prototype artifacts after delivery. When an accepted prototype
 source is hosted elsewhere in the repository, link to it instead. Keep that source in normal
 repository history and clearly isolated from production paths. Remove rejected alternatives,
-temporary build products, disposable data, and instrumentation when they no longer provide
-evidence.
+temporary build products, disposable data, and instrumentation after inspection and required
+review, before delivery. Keep conclusions about rejected alternatives in the existing notes.
 
-Redact secrets and sensitive values from commands, output, screenshots, traces, payloads, and
-linked artifacts before committing the record.
+Do not commit raw captures, transcripts, per-run JSON, screenshots, logs, duplicate snapshots,
+hash inventories, or evidence manifests unless I explicitly requested retention. Preserve concise
+findings and reusable source or checks. Do not replace deleted outputs with cleanup inventories or
+elaborate review records. Redact secrets from the concise evidence retained in the record.
