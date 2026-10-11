@@ -24,10 +24,13 @@ Keep each source until its destination content and links have been checked.
    with their source IDs so an interrupted creation can be checked.
 3. Copy misplaced documentation to its destination and update links. Match tracking source IDs
    against open and closed GitHub issues. Publish the specification and
-   effort status in the parent issue, including its `Continuation` section. Publish decision and
-   implementation tickets as sub-issues. Reuse existing matches and save each URL. Check uncertain
-   responses and duplicate matches before creating another issue. Preserve hierarchy, blockers,
-   statuses, and evidence links. Link the repository documentation rather than copying it into issues.
+   effort status in the parent issue, including its `Continuation` section. Apply the work store's
+   ownership rules: consolidate research and planning into one issue per distinct feature, and
+   publish implementation tickets for logical units of work. Multiple question or decision source
+   records may share one feature destination. Reuse existing matches and save each URL. Check uncertain
+   responses and duplicate matches before creating another issue. Preserve material decisions,
+   genuine blockers, and evidence links; synchronize native issue state with the current status.
+   Link repository documentation rather than copying it into issues.
 4. Read back the issues and destination documents and compare them with their sources. Check for
    edits made during conversion and include them before switching trackers. Verify rewritten links.
 5. Save the GitHub project setting in Git metadata. Remove only source copies whose content and

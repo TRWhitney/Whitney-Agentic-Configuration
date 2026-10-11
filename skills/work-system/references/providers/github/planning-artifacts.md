@@ -30,9 +30,12 @@ stable testing seam that already exists. Avoid file-by-file instructions and cod
 will go stale. A concise prototype-derived state machine, schema, reducer, or type shape may be
 included when it preserves a decision more precisely than prose.
 
-Under `Implementation Decisions`, link each wayfinding decision and canonical domain or
-architecture record that constrains the specification. Preserve the accepted conclusion without
-copying its rationale or evidence. Each implementation ticket's `Accepted sources` section links to
+Under `Implementation Decisions`, maintain the current design contract and group its related
+questions and accepted answers in its feature's combined research-and-planning issue. For a
+multi-feature effort, link those feature issues from the parent specification. Link canonical
+domain or architecture records that constrain it. Record the first deliverable and its
+deferred scope under `Solution` and `Out of Scope`. Preserve accepted conclusions without copying
+linked rationale or evidence. Each implementation ticket's `Accepted sources` section links to
 the specification and the decisions, research, prototypes, or canonical records needed for its
 slice.
 
@@ -41,7 +44,10 @@ slice.
 An implementation ticket is a self-contained unit of accepted work sized for one fresh
 implementation context.
 
-Use a sub-issue for each implementation ticket:
+Decompose implementation into logical units of work with useful deliverables, acceptance checks,
+and genuine dependencies. Several implementation tickets may deliver one feature. Check existing
+ownership before opening a sub-issue for a delivery unit. Design questions and refinements update
+the feature's combined research-and-planning issue. For an implementation ticket, use:
 
 ```markdown
 # <NN> <Ticket title>

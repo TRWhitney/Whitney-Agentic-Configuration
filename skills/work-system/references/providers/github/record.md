@@ -28,13 +28,38 @@ reading the discussion, report that blocker in chat and ask there for any input 
 
 ## Records
 
-Use one parent issue for the effort's specification and status. Store decision tickets and
-implementation tickets as sub-issues of that parent. A tweak or fix uses one issue. Use native
-dependencies for blockers. Do not create `.work/` or repository copies of these tracking records.
+Use one parent issue for the effort's specification and status. Each distinct feature has one
+combined research-and-planning issue owning all its questions, investigations, subcontracts, and
+accepted design. For a single-feature effort, the parent may serve as that feature issue. For a
+multi-feature effort, use feature sub-issues. Reuse existing owners. A tweak or fix uses one owning
+issue rather than creating another planning issue for an existing feature.
+
+Decompose actual implementation into logical units of work, each with its own useful deliverable,
+acceptance checks, and genuine dependencies. Store these implementation tickets as sub-issues of
+the effort. One feature may need several implementation tickets. Use native dependencies for
+genuine blockers. Do not create `.work/` or repository copies of these tracking records.
+
+Before creating any issue, inspect existing owners, including any parent, related open and closed
+issues, their discussions, and linked planning maps or specifications. Extend the existing design
+issue or ticket when the subject belongs to its feature. Reopen a resolved feature-planning issue
+if its design becomes unsettled again; do not create a successor for each refinement. Only a
+distinct feature qualifies for a separate research-and-planning issue. A question, subcontract,
+architecture concern, method, evidence requirement, or context limit within a feature does not.
+State the distinct feature in a new planning issue's body and why existing feature issues do not
+own it. For a new implementation issue, state its logical delivery unit and check for duplicate
+ownership of that work. The feature-only rule for planning does not restrict implementation
+decomposition.
+
+When a contract settles and before a planning handoff, check for fragmented or duplicate ownership.
+Fold useful questions and accepted answers into the current owning design issue, ticket, or linked
+canonical contract. Preserve material rationale and source links rather than every conversational
+step. Update map links, native blockers, and dependent accepted sources, then close superseded
+issues with a replacement link. Reuse an existing owner where possible; consolidation does not
+require another maintenance issue. Changing nesting or closing issues alone is not consolidation.
 
 Keep planning maps, research reports, and prototype notes in repository documentation. Link that
 documentation from the issues that use it. Use the shared wayfinding format for the map and decision
-tickets, with issue URLs for ticket links.
+records, with issue URLs or section links for their owners.
 
 Read issue bodies, comments, dependencies, and linked PRs before updating work. Link accepted
 documentation and executable sources at published revisions when available. Use system temporary
@@ -47,10 +72,18 @@ response, look for the record before retrying creation.
 
 Use `ready-for-agent`, `active`, `blocked`, or `awaiting-merge` labels on open implementation tickets.
 Reuse equivalent repository labels. Omit Status from implementation issue bodies. Project fields
-follow the labels. Decision tickets use the status field in their shared format.
+follow the labels. Feature research-and-planning issues use the status field in their shared format.
 
-Close a ticket as completed after its PR merges and its acceptance checks are met. Cancellation
-needs a separate decision about dependent work. Close the parent when its accepted outcome is done.
+Keep native issue state aligned with the decision record. `open` and `claimed` decisions remain
+open. When a feature's planning is settled, record its accepted contract and evidence, set
+`resolved`, and close its planning issue as completed without requiring a PR. Close an `out-of-scope`
+or superseded planning issue as not planned, with its reason and any replacement link. Keep
+unresolved feature planning open. Resolving a design section within the parent does not close the
+parent while its accepted outcome remains unfinished.
+
+Close an implementation ticket as completed after its PR merges and its acceptance checks are met.
+Before cancelling or superseding work, reconcile dependent work and blockers; cancellation does
+not itself require another issue. Close the parent when its accepted outcome is done.
 
 ## Continuation
 
