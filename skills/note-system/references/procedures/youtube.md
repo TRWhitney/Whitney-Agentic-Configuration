@@ -46,6 +46,19 @@ profile; read-only access is sufficient. A configured profile that is hidden by 
 an access problem, not a missing browser selection. See
 [Flatpak filesystem access](https://docs.flatpak.org/en/latest/sandbox-permissions.html#filesystem-access).
 
+YouTube extraction also needs a supported JavaScript runtime and EJS challenge solver scripts.
+Check installed runtimes in the acquisition environment, including configured absolute paths,
+before reporting a missing dependency. An installed runtime outside `PATH` may still be usable.
+Deno is enabled by default; Node requires `--js-runtimes node` or
+`--js-runtimes "node:<absolute-runtime-path>"` in local yt-dlp configuration. Run the selected
+runtime's `--version` in that environment and check compatibility against
+[yt-dlp's EJS setup guide](https://github.com/yt-dlp/yt-dlp/wiki/EJS).
+
+The EJS scripts are a separate dependency from the runtime. Use the compatible installed
+`yt-dlp-ejs` package or the user's configured `--remote-components ejs:github` setting, which
+allows yt-dlp to fetch its official solver scripts. Diagnose runtime discovery and solver
+availability separately from browser-cookie access and the site's reported error.
+
 Transcript priority is authored captions, original-language platform automatic captions, then
 local transcription. For the fallback, supply both a preinstalled `whisper-cli` and an explicit
 model path. Do not implicitly download a model. If the video's original language is ambiguous,
