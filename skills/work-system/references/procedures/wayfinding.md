@@ -1,74 +1,68 @@
 # Wayfinding procedure
 
-Turn a large or foggy outcome into settled intent through a visible decision map. Plan decisions,
-not production work. Use the associated wayfinding format for the map and decision records.
+Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
+here, not production code. Use the displayed format for the map and feature tickets.
 
-## Establish the destination
+## Define the goal
 
-State the destination in one or two observable sentences that make clear where the effort ends.
-For a broad outcome, establish the first useful deliverable and its acceptance boundary before
-decomposing decisions. Keep later work visible as deferred scope without making it a planning gate.
-Record explicit exclusions under `Out of scope`. Keep uncertain terrain under `Not yet specified`
-only while it may affect this deliverable.
+Describe the finished result in one or two sentences. For broad work, agree on the first useful
+deliverable and its acceptance checks before listing decisions. Put later work under `Out of
+scope` for this deliverable. Put unclear topics under `Not yet specified` only if they may
+affect it.
 
-Group questions by distinct feature. Keep each feature's questions, research, subcontracts,
-refinements, and accepted answers in one combined research-and-planning ticket. Create another
-planning ticket only for another distinct feature under the provider's ownership rules. Questions,
-technical concerns, and different evidence within a feature cannot receive their own planning
-tickets. Identify how each feature's open questions will be settled and their genuine blockers.
-Do not enumerate speculative questions merely to make the fog look complete.
+Group questions by feature. Keep each feature's questions, research, detailed requirements,
+refinements, and agreed answers in one combined research-and-planning ticket. Create another
+planning ticket only for a distinct feature under the tracker's rules. Identify how to answer
+its open questions and what blocks them. Do not add speculative questions just to fill the map.
 
-## Work the frontier
+## Work through the next decisions
 
-The frontier consists of precise, unresolved, unblocked decisions that prevent specifying or
-building the first deliverable. They may be sections of one design issue. Claim a separate ticket
-before working it. During coordination, use a compact status line:
+Choose precise, unanswered, unblocked questions that prevent specifying or building the first
+deliverable. They may be sections of one design issue. Claim a ticket before working on it. Use
+a compact progress line during discussion:
 
-`Wayfinding · <n> resolved · <n> visible · fog: <themes or none>`
+`Planning: <n> decided, <n> ready, unspecified: <topics or none>`
 
-Name the current decision and why it gates progress. Present only the evidence and tradeoffs
-needed to decide it, recommend an answer with the decisive reason, and ask one primary question.
-Group tightly coupled questions when they rely on the same evidence and answering them together
-is clearer. Do not serialize questions that I can answer reliably together. Asking them separately
-does not require separate records.
+Name the current decision and what it blocks. Give the facts and tradeoffs needed to decide,
+recommend an answer with its reason, and ask one main question. Group questions that use the
+same facts and are clearer to answer together. Do not split questions I can reliably answer
+together. Separate questions do not need separate records.
 
-Do not paste the decision map into conversation or repeat a full recap after every answer. Give a
-larger recap when the destination or remaining route materially changes. Do not estimate a
-completion percentage or fixed question count because one answer can expose or remove terrain.
+Do not paste the map into conversation or recap everything after each answer. Give a larger
+update when the goal or remaining work changes significantly. Do not estimate a percentage or
+fixed question count, since an answer can reveal or remove work.
 
-Use research to resolve factual uncertainty and prototypes for questions that benefit from concrete
-reactions. A `task` is a prerequisite action needed to answer a decision, never production
-implementation. Use established conventions and judgment I have delegated for reversible details
-within accepted behavior. Record the resulting contract in its owner without a separate approval
-ticket. Do not resolve a choice that requires my judgment. When research is in progress, advance
-an unrelated frontier decision when one is available.
+Use research for factual questions and prototypes when trying something will help us decide. A
+`task` is an action needed to answer a question, never production implementation. Use project
+conventions and delegated judgment for reversible details within the agreed behavior. Record the
+choice in its feature ticket without a separate approval ticket. Leave decisions that need my
+judgment to me. While research runs, work on another unblocked decision if one is available.
 
-## Update the record
+## Update the map and tickets
 
-After each answer, update the current contract and supporting evidence in its owning record.
-Keep the feature's planning unresolved while any blocking question remains. When its planning is
-settled, mark it resolved, synchronize native issue state under the provider's rules, and link the
-conclusion from the map. Recompute the frontier and remaining fog. Promote fog to a question within its feature ticket
-only when it is precise and blocks the deliverable. A new question gets a new planning ticket
-only if it establishes another distinct feature.
+After each answer, update the requirements and supporting sources in the feature ticket. Keep
+its planning open while a blocking question remains. Once settled, mark it resolved, update its
+issue state under the tracker's rules, and link the conclusion from the map.
 
-When a contract settles and before a planning handoff, consolidate related refinements and
-superseded records into their current owner. Preserve material accepted decisions, rationale, and
-source links. Retire redundant records and update map links and blockers. Renesting issues or
-closing settled questions without consolidating their content does not complete this pass.
+Reassess the next decisions and unspecified topics. Add a question to its feature ticket when it
+is precise and blocks the deliverable. Create a new planning ticket only for a distinct feature.
 
-Link research, accepted prototypes, and other evidence instead of copying them. When a resolution
-establishes durable domain terminology or an architecture decision, use domain modeling to record
-the canonical knowledge and link it from the owning record.
+When requirements settle and before a planning handoff, move useful decisions, reasons, and
+source links from redundant records into the existing feature ticket. Close or remove redundant
+records under the tracker's rules and update map links and blockers. Merely renesting or closing
+issues does not combine their useful content.
 
-Keep the map an index rather than a transcript or specification. Decision records resolve intent
-and must not become production implementation tickets. Wayfinding is complete when the deliverable
-is specific, its consequential decisions are resolved, no blocking fog remains, and a fresh context
-could produce its specification and implementation tickets without inventing intent. Deferred
-decisions must not affect its acceptance boundary or be reported as resolved.
+Link research and agreed prototypes instead of copying them. Use domain modeling to document
+project terms or architecture decisions that future work needs, then link those documents from
+the feature ticket.
+
+Keep the map an index. Feature planning records requirements; implementation tickets describe
+work to build them. Finish when the deliverable is clear, its blocking decisions are settled,
+and a fresh context can write its specification and implementation tickets without guessing my
+intent. Deferred choices must not affect its acceptance checks or be reported as resolved.
 
 ## Result
 
-Include the destination, first deliverable, current contract links, explicit exclusions, deferred
-concerns, remaining fog, and visible frontier. When wayfinding is complete, report zero blocking
-decisions and no remaining fog for the deliverable.
+Report the goal, first deliverable, links to agreed requirements, exclusions, deferred work, and
+remaining unspecified topics and ready decisions. When finished, report that no blocking
+decision or unspecified topic remains for the deliverable.

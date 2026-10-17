@@ -1,37 +1,37 @@
 # Delegate Procedure
 
-Delegate a bounded outcome when fresh context or parallel execution helps. Remain responsible
-for scope and integration.
+Delegate a limited task when fresh context or parallel work helps. You remain responsible for
+its scope and for combining the result with the rest of the work.
 
 ## Define the assignment
 
-Give the subagent one independently completable outcome. Include:
+Give the subagent one task it can finish on its own. Include:
 
 - The observable result and its acceptance checks.
-- Accepted decisions and source artifacts needed to act without rediscovery.
+- Agreed decisions and source documents or code needed to work without repeating discovery.
 - Genuine blockers and dependencies.
 - Explicit writable file scope.
 - The existing tests or other checks the subagent must make pass.
-- Discard-by-default retention rules and any exceptions I explicitly requested. Generate raw
-  outputs outside the checkout, return concise findings, and identify temporary evidence needed
-  for integration or required review. The owner deletes it when that need ends, before delivery.
+- The cleanup rules and any exceptions I explicitly requested. Generate raw outputs outside the
+  checkout, return concise findings, and identify temporary files needed for integration or
+  review. The parent agent deletes them when that need ends, before delivery.
 
-Provide the accepted ticket, relevant artifact paths, and the context needed to interpret them.
-Exclude unrelated history and unresolved reasoning. Do not delegate work whose outcome,
-authority, or writable scope cannot be bounded.
+Provide the agreed ticket, source paths, and the context needed to understand them. Exclude
+unrelated history and unresolved reasoning. Do not delegate until its result, permissions, and
+writable paths are clear.
 
 Include the exact navigator command that starts `subagent-implementation`. That command
 establishes the workflow context for the assignment.
 
 For behavior-changing work, delegate only after its focused test has failed for the expected
-reason. The subagent implements the assigned behavior; it does not establish the test-first
-boundary on the delegating agent's behalf.
+reason. The subagent implements the assigned behavior; it does not choose or prove the failing
+test on the delegating agent's behalf.
 
-## Protect ownership
+## Avoid conflicting edits
 
 - Give each change and writable path one owner at a time.
 - Do not delegate overlapping scopes in parallel or modify a delegated scope while it is active.
-- Delegate only unblocked work and sequence dependent assignments.
+- Delegate only unblocked work and run dependent assignments in order.
 - Restrict the subagent to read-only Git inspection. It must not stage, commit, change branches,
   rewrite history, discard changes, or otherwise mutate repository state through Git.
 - Require the subagent to report scope gaps, conflicts, or invalid assumptions instead of
@@ -40,14 +40,14 @@ boundary on the delegating agent's behalf.
 ## Integrate the result
 
 Have the subagent run the named assignment checks until they pass. Do not ask it to add broader
-coverage or perform unassigned linting, type checking, or validation. Passing checks supports
-only the bounded result; it does not validate the integrated outcome.
+coverage or perform unassigned linting, type checking, or validation. Passing checks proves only
+the assigned result. The combined work still needs validation.
 
-Inspect the returned changes and check results against the assignment. Do not accept a completion
-summary as proof. Resolve integration issues and preserve unrelated work.
+Inspect the returned changes and check results against the assignment. Do not accept a
+completion summary as proof. Resolve integration problems without overwriting unrelated changes.
+Apply the commit procedure to all completed work during delivery.
 
-Treat work discovered outside the assignment as a new bounded outcome rather than silently
-absorbing it into the delegation.
+Handle work found outside the assignment as a separate task instead of silently adding it.
 
 ## Result
 

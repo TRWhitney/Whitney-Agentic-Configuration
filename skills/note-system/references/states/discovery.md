@@ -1,20 +1,19 @@
 # Discovery State
 
-Establish the vault, relevant evidence, and conventions needed to answer the question or perform
-safe knowledge work. Discovery is read-only: do not edit notes, configuration, or attachments.
+Confirm the vault, find relevant notes and sources, and check its conventions before answering
+or editing. Discovery is read-only. Do not edit notes, configuration, or attachments.
 
-## Establish scope
+## Check the scope
 
-Confirm the working directory is the intended vault rather than assuming Agent Client context is
-sufficient. Identify the prompt's concrete scope and the smallest conceptual neighborhood that can
-establish fit. Separate my intent, observed vault facts, minor reversible interpretations, and
-material judgments that remain mine.
+Confirm that the working directory is the intended vault. Agent Client context alone is not
+enough. Identify the requested changes and the related notes needed to place them. Separate my
+request, facts in the vault, minor reversible choices, and decisions that need my judgment.
 
-Inspect relevant notes and backlinks rather than the entire vault. Keep active-note context as a
-clue, not proof of the requested destination.
+Read relevant notes and backlinks rather than the entire vault. The active note is a clue to
+where the work belongs, not proof.
 
 ## Continue
 
-For a question, continue when vault evidence can support a direct answer and no write has occurred.
-For work, continue when the affected notes, live conventions, safe boundaries, and acceptance
-outcome are concrete enough to proceed without inventing material intent.
+For a question, continue when the vault supports a direct answer and you have made no edits. For
+work, continue when the affected notes, conventions, permitted edits, and expected result are
+clear enough to proceed without guessing my intent.

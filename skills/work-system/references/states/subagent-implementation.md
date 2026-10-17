@@ -1,45 +1,40 @@
 # Subagent Implementation State
 
-Turn one accepted assignment into a coherent, maintainable repository change within its stated
-authority. This state owns the assigned production changes, supporting tests, and named checks. It
-does not choose missing intent or enlarge the assignment.
+Build the assigned change, its tests, and named checks within the permitted scope. Do not invent
+missing requirements or expand the assignment.
 
-## Establish the assignment
+## Check the assignment
 
-Begin from the observable result, acceptance checks, accepted sources, writable paths, named
-checks, and the supplied test boundary when behavior changes. Inspect the existing seams needed to
-understand and implement that result cleanly.
+Start with the requested result, acceptance checks, agreed sources, writable paths, named
+checks, and supplied test when behavior changes. Inspect the affected code and interfaces.
 
-Confirm that the assignment is internally consistent and that its writable scope contains the
-change it requires. When a source, check, or boundary is missing, contradictory, or no longer
-feasible, preserve the supported facts and identify the exact gap. Do not reinterpret the accepted
-result, add adjacent work, or modify paths outside the assignment.
+Check that these instructions agree and the permitted paths allow the required change. If a
+source, check, or permission is missing, contradictory, or impossible to follow, report what you
+found and what you need. Do not change the requested result, add adjacent work, or edit other
+paths.
 
-Preserve unrelated work already present in the repository. Keep Git inspection read-only: do not
-stage, commit, change branches, rewrite history, discard changes, or otherwise mutate repository
-state through Git.
+Leave unrelated file contents unchanged. Keep Git inspection read-only. Do not stage, commit,
+change branches, rewrite history, discard changes, or otherwise change Git state.
 
 ## Build the result
 
-For behavior-changing work, use the required testing procedure as the implementation loop. Confirm
-the supplied test boundary before changing production behavior, then keep the focused and named
-checks green while the implementation evolves.
+When changing behavior, use the required testing procedure. Check the supplied failing test
+before changing production code, then keep the focused and named checks passing as you build.
 
-Refactor within the assigned code and its directly coupled seams when doing so leaves the result
-clearer, more cohesive, or easier to maintain. Preserve behavior outside the assignment. Keep
-domain behavior separate from presentation concerns, make varying collaborators explicit, retain
-precise types, and preserve actionable failure causes. Use established dependencies when they fit,
-and add abstractions only for accepted behavior or demonstrated variation.
+Refactor the assigned code and directly connected interfaces when it makes the result clearer or
+easier to maintain. Keep other behavior unchanged. Separate domain logic from presentation,
+inject dependencies that may vary, use precise types, and keep error causes available for
+diagnosis. Reuse suitable dependencies and add abstractions only for required behavior or
+existing variation.
 
-Integrate every layer needed for the assigned observable result. Do not stop at an internal
-mechanism when the acceptance checks require consumer-visible behavior. Run the named checks until
-they pass, and investigate any failure that may have been caused by the assigned changes.
+Connect all layers needed for the user-visible result. Run the named checks until they pass and
+investigate failures that your changes may have caused.
 
 ## Continue
 
-Use the `implemented` route when the assigned result is complete, its focused and named checks
-pass, every change remains within the writable scope, and no known defect remains in the result.
+Use `implemented` when the assigned result is complete, focused and named checks pass, all
+changes are within the permitted paths, and no known defect remains in the result.
 
-Use the `assignment-blocked` route when missing authority, contradictory sources, an invalid test
-boundary, an unavoidable scope conflict, or unavailable evidence prevents trustworthy completion.
-State the exact blocker and preserve valid work without expanding the assignment.
+Use `assignment-blocked` when missing permission, conflicting sources, an invalid supplied test,
+files you cannot edit, or unavailable checks prevent completion. Report the exact blocker and
+leave correct work in place without expanding the assignment.

@@ -7,11 +7,11 @@
       "procedures": {
         "vault-discovery": {
           "status": "required",
-          "cue": "Establish the relevant vault evidence, conceptual neighborhood, and conventions before editing."
+          "cue": "Read related notes and check vault conventions before editing."
         },
         "research": {
           "status": "allowed",
-          "cue": "Use when a bounded factual investigation would materially improve discovery."
+          "cue": "Use when a limited factual investigation would help discovery."
         }
       },
       "transitions": {
@@ -23,7 +23,7 @@
       "procedures": {
         "concept-integration": {
           "status": "required",
-          "cue": "Integrate or maintain concept-centered knowledge while preserving meaning and approval boundaries.",
+          "cue": "Update concept notes without changing existing meaning or making decisions that need approval.",
           "formats": {
             "definition-note": {
               "cue": "Use when creating, correcting, consolidating, or relinking definition notes."
@@ -32,15 +32,15 @@
         },
         "verification": {
           "status": "allowed",
-          "cue": "Use when factual claims can practically benefit from bounded external verification."
+          "cue": "Use when checking external sources would help verify a factual claim."
         },
         "research": {
           "status": "allowed",
-          "cue": "Use when a bounded factual investigation would materially improve integration."
+          "cue": "Use when a limited factual investigation would help integration."
         },
         "visual-assessment": {
           "status": "triggered",
-          "cue": "Use when an available visual artifact is being considered for retention or use."
+          "cue": "Use when deciding whether an available image belongs in the vault."
         }
       },
       "transitions": {
@@ -54,7 +54,7 @@
       "procedures": {
         "visual-sourcing": {
           "status": "triggered",
-          "cue": "Use when a visual artifact must be found, captured, extracted, created, or corrected."
+          "cue": "Use when an image must be found, captured, extracted, created, or corrected."
         }
       },
       "transitions": {

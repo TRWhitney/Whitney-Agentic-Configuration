@@ -1,51 +1,53 @@
 # Vault Discovery Procedure
 
-Discover only the live conventions and capabilities needed by the active prompt.
+Check only the vault conventions and enabled features needed by the request.
 
 ## Confirm the vault
 
 Verify the intended vault root through `.obsidian`, context I provide, or supported Obsidian CLI
 output. Agent Client commonly supplies the vault as the working directory, but does not send an
-add-on inventory. Do not mistake the active note, current directory, or installed plugin files for
-authorization or enabled behavior.
+add-on inventory. Do not mistake the active note, current directory, or installed plugin files
+for authorization or enabled behavior.
 
 Inspect the narrow relevant set of:
 
-- existing notes, backlinks, aliases, and conceptual neighbors;
-- folder organization and the established locations for concept notes, source notes, and attachments;
+- existing notes, backlinks, aliases, and notes on related subjects;
+- folder organization and the established locations for concept notes, source notes, and
+  attachments;
 - relevant established templates and their mandatory sections;
 - standard section names, frontmatter fields, citation style, and naming patterns;
 - relevant existing tags, their use in representative notes, and nested naming conventions;
 - attachment-folder configuration and representative embeds;
 - relevant enabled plugin or core capability evidence.
 
-When tagging is in scope, inspect existing tag names and representative uses before choosing tags.
-Use the Tags view or Obsidian CLI when available, then check notes to establish what each relevant
-tag means. Search the established vocabulary for each substantial subject in the note; finding one
-matching tag does not finish discovery. Do not infer a tag's meaning from its name alone. If the
-vault has no tags, inspect representative concept, case-study, and source notes for substantial
-recurring subjects.
+When tagging is in scope, inspect existing tag names and representative uses before choosing
+tags. Use the Tags view or Obsidian CLI when available, then check notes to establish what each
+relevant tag means. Search the established vocabulary for each substantial subject in the note;
+finding one matching tag does not finish discovery. Do not infer a tag's meaning from its name
+alone. If the vault has no tags, inspect representative concept, case-study, and source notes
+for substantial recurring subjects.
 
 When the relevant notes contain specialized, ambiguous, or source-specific vocabulary, inspect
 the top-level `Definitions/` directory and `Templates/Definition Note.md`. Definition notes
 normally have no properties or related-note lists; add tags only if I explicitly request them.
-Search canonical filenames and existing link targets before creating another definition. Use
-display text for plurals, grammatical variants, alternate spellings, and synonyms.
+Search existing definition filenames and existing link targets before creating another
+definition. Use display text for plurals, grammatical variants, alternate spellings, and
+synonyms.
 
 Look in the vault's top-level `Plugins and Usage/` directory for plugin guidance. Note titles
-describe when to use each plugin, like skill descriptions; the note bodies contain detailed usage
-instructions. Scan the titles for cases relevant to the current task, then read the matching notes
-before using those plugins. Use this guidance alongside the live capability checks below.
+describe when to use each plugin, like skill descriptions; the note bodies contain detailed
+usage instructions. Scan the titles for cases relevant to the current task, then read the
+matching notes before using those plugins. Use this guidance alongside the live capability
+checks below.
 
-Prefer the official Obsidian CLI for live plugin, theme, snippet, and vault information when it is
-available and configured. Otherwise inspect `.obsidian` settings, enabled-plugin lists, manifests,
-templates, and examples read-only. An installed manifest describes a plugin; it does not prove the
-plugin is enabled or that undocumented syntax works. Follow capability evidence suggested by the
-prompt, relevant vault examples, or available source evidence; do not inventory unrelated
-capabilities.
+Prefer the official Obsidian CLI for live plugin, theme, snippet, and vault information when it
+is available and configured. Otherwise inspect `.obsidian` settings, enabled-plugin lists,
+manifests, templates, and examples read-only. An installed manifest describes a plugin; it does
+not prove the plugin is enabled or that undocumented syntax works. Check features suggested by
+the request, vault examples, or source content; do not inventory unrelated capabilities.
 
 ## Result
 
-Include the vault root, relevant conventions with example paths, verified capabilities, conceptual
-neighborhood, and any material ambiguity. Keep this discovery in the active workflow only. Do not
-create a persistent capability inventory or modify configuration.
+Include the vault root, relevant conventions with example paths, verified capabilities, related
+notes, and any uncertainty that affects the work. Keep this discovery in the active workflow
+only. Do not create a persistent capability inventory or modify configuration.

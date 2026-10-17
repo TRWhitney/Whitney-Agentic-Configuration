@@ -1,51 +1,44 @@
 # Delivery State
 
-Deliver validated work through current documentation, independent review, and repository history.
-Corrections to intent, implementation, or validation evidence belong to earlier states.
+Finish documentation, independent review, and commits for the validated work. Return to earlier
+states for changes to requirements, implementation, or validation.
 
-## Assemble the complete work
+## Gather the work
 
-Gather the implementation, tests, accepted artifacts, and current completion evidence. Include
-every task-owned change needed for the outcome.
+Include all code, tests, agreed documents or prototypes, and check results needed for this task.
+Update documentation and any work record before review. Include these updates in the review. Do
+not use delivery edits to hide defects, missing checks, or unresolved decisions.
 
-Resolve documentation impact and update any durable work record before review. Include all
-documentation, completion records, and other expected artifacts in the review. Do not conceal an
-implementation defect, evidence gap, or unresolved decision through delivery work.
+## Handle failures
 
-## Adjudicate delivery results
+Review the complete work after its documents and records are up to date. Route problems by type:
 
-Review the complete work after its delivery artifacts are current. Route failed procedures and
-validated findings by responsibility:
-
-- Keep documentation, review-execution, history-shaping, and commit problems in delivery.
-- Return missing, stale, or inadequate completion evidence to validation.
+- Keep documentation, review, commit grouping, and commit problems in delivery.
+- Return missing, outdated, or inadequate checks to validation.
 - Return incorrect, incomplete, or unsafe behavior to implementation.
-- Route misunderstood intent, missing acceptance criteria, or unresolved consequential decisions
-  to the earliest available state that can resolve them.
+- Return misunderstood requirements and unresolved decisions to the first state that can settle
+  them.
 
-Use the displayed route before correcting earlier work. Preserve valid results and repeat
-validation and delivery work whose evidence, scope, or conclusions may have changed.
+Use the displayed route before correcting earlier work. Keep work that is still correct and
+repeat checks or review affected by the correction.
 
-## Preserve the result
+## Commit and finish
 
-Commit after documentation is resolved, every required review axis passes, and completion
-evidence covers the complete work. Preserve accepted artifacts and completion records according
-to the work-record guidance. Remain in delivery while a commit blocker remains.
+Commit after documentation is up to date, both required review axes pass, and validation covers
+the complete change. Save agreed documents and completion records as the work-record guidance
+requires. Stay in delivery while a commit blocker remains.
 
 Apply the commit procedure to the entire working tree, including my pre-existing changes and
-unrelated outcomes. Commit each completed outcome and verify the entire working tree is clean
-before completion unless I explicitly instructed you to leave specific changes uncommitted.
-Task ownership does not exempt changes from this requirement.
+unrelated completed work. Commit each completed result and check that the entire tree is clean
+unless I explicitly told you to leave specific changes uncommitted. Changes outside your task
+still need commits.
 
-Complete all required delivery procedures before marking the outcome delivered. Keep work pending
-until its delivery conditions are met.
-
-After delivering the current outcome, use the continuation route if accepted work remains.
-Complete the workflow only when no accepted work remains and its durable record is current.
+Complete every required delivery procedure before marking the work delivered. Use the
+continuation route if agreed work remains. Complete the workflow only when all agreed work is
+done and its work record is up to date.
 
 ## Continue
 
-Continue when documentation is resolved, review has no unresolved blocking finding or judgment,
-required commits exist, the final repository-wide working-tree check passes under the commit
-procedure, completion evidence remains valid, and no decision or correction belongs to an earlier
-state.
+Continue when documentation is up to date, review has no blocking finding or unresolved
+judgment, required commits exist, the commit procedure's final status check passes, validation
+still covers the finished work, and no correction or decision needs an earlier state.

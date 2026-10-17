@@ -1,4 +1,4 @@
-# Planning Artifact Formats
+# Planning document formats
 
 ## Specification
 
@@ -25,19 +25,18 @@ Use the parent issue body for the specification:
 ```
 
 Use the project glossary and respect applicable architecture decisions. Capture the accepted
-behavior, boundaries, interfaces, schemas, interactions, and testing seams. Prefer the highest
-stable testing seam that already exists. Avoid file-by-file instructions and code snippets that
-will go stale. A concise prototype-derived state machine, schema, reducer, or type shape may be
-included when it preserves a decision more precisely than prose.
+behavior, supported uses, interfaces, schemas, interactions, and test interfaces. Prefer testing
+through the highest stable interface already available. Avoid file-by-file instructions and code
+snippets that will go stale. A concise prototype-derived state machine, schema, reducer, or type
+shape may be included when it states a decision more precisely than prose.
 
-Under `Implementation Decisions`, maintain the current design contract and group its related
+Under `Implementation Decisions`, maintain the agreed requirements and group its related
 questions and accepted answers in its feature's combined research-and-planning issue. For a
-multi-feature effort, link those feature issues from the parent specification. Link canonical
-domain or architecture records that constrain it. Record the first deliverable and its
-deferred scope under `Solution` and `Out of Scope`. Preserve accepted conclusions without copying
-linked rationale or evidence. Each implementation ticket's `Accepted sources` section links to
-the specification and the decisions, research, prototypes, or canonical records needed for its
-slice.
+multi-feature effort, link those feature issues from the parent specification. Link domain terms
+or architecture decisions that constrain it. Record the first deliverable and its deferred scope
+under `Solution` and `Out of Scope`. State agreed conclusions without copying linked rationale
+or evidence. Each implementation ticket's `Accepted sources` section links to the specification
+and the decisions, research, prototypes, or project documents needed for its result.
 
 ## Implementation ticket
 
@@ -46,8 +45,8 @@ implementation context.
 
 Decompose implementation into logical units of work with useful deliverables, acceptance checks,
 and genuine dependencies. Several implementation tickets may deliver one feature. Check existing
-ownership before opening a sub-issue for a delivery unit. Design questions and refinements update
-the feature's combined research-and-planning issue. For an implementation ticket, use:
+ownership before opening a sub-issue for a delivery unit. Design questions and refinements
+update the feature's combined research-and-planning issue. For an implementation ticket, use:
 
 ```markdown
 # <NN> <Ticket title>
@@ -64,12 +63,13 @@ the feature's combined research-and-planning issue. For an implementation ticket
 ## Completion evidence
 ```
 
-Use the issue lifecycle described by the work store. Each ticket
-must fit one fresh context, cut a narrow but complete path through the required layers, and be
-independently demonstrable or verifiable. Use dependency order for numbering, but determine the
-frontier from completed blockers rather than ticket numbers.
+Use the issue lifecycle described by the work store. Each ticket must fit one fresh context,
+connect the layers needed for one working result, and be independently demonstrable or
+verifiable. Use dependency order for numbering, but choose the next tickets by which
+dependencies are complete, not ticket numbers.
 
-Prefer vertical slices. For a mechanical change whose blast radius cannot remain green as one
-slice, use expand, migrate, and contract tickets with explicit blocking edges. Do not include
+Prefer tickets that each deliver a working result across all needed layers. For a mechanical
+change too large to keep tests passing in one ticket, split it into adding the new structure,
+moving callers, and removing the old structure. Make their dependencies explicit. Do not include
 specific file paths or code snippets unless a prototype-derived fragment is itself an accepted
 source.

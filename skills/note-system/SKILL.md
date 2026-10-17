@@ -6,43 +6,43 @@ description: Route questions and knowledge work on content in an Obsidian vault 
 
 # Note System
 
-Route each Obsidian knowledge-vault prompt through one workflow while loading only the guidance
-authorized for its current state.
+Use one workflow per Obsidian vault request. Load only the instructions available in its current
+state.
 
 ## Glossary
 
-I, me, my, you, your, user, and agent retain their established meanings.
+I, me, my, you, your, user, and agent have their meanings from my global instructions.
 
 ## Evidence retention
 
-Discard agent-generated research and preparation outputs by default. Use temporary directories
-outside the vault or checkout, keep captures through required inspection and review, then delete
-them before delivery. Retain concise findings and reusable checks; retain raw captures only at my
-explicit request. Carry these rules into delegated tasks. Requested source notes, source
-transcripts, and selected canonical attachments are deliverables; session transcripts and bulk
-preparation output are disposable.
+Keep conclusions and reusable checks. Generate research and preparation outputs in temporary
+directories outside the vault or checkout. Keep them for required inspection and review, then
+delete them before delivery unless I explicitly request them. Requested source notes, source
+transcripts, and selected attachments belong in the vault. Agent session transcripts and bulk
+preparation outputs do not. Include these rules in delegated assignments.
 
 ## Route the prompt
 
-1. Keep the active workflow until it completes or I replace or cancel it. Treat my feedback
-   and related questions as part of that workflow.
+1. Keep the active workflow until it completes or I replace or cancel it. Treat my feedback and
+   related questions as part of that workflow.
 2. When no workflow is active, classify my prompt by intent, uncertainty, and scope:
    - **Question**: I ask for information or discussion.
-   - **Curate**: I request knowledge integration, organization, connection, or maintenance without
-     introducing a new source that must be preserved.
-   - **Ingest**: I provide or identify a new source to preserve and integrate into the vault.
-3. Treat creating, correcting, consolidating, and relinking definition notes as Curate work unless
-   the request introduces an external source that must first be preserved.
+   - **Curate**: I request knowledge integration, organization, connection, or maintenance
+     without introducing a new source that needs its own source note.
+   - **Ingest**: I provide or identify a new source to save as a source note and use in the
+     vault.
+3. Treat creating, correcting, consolidating, and relinking definition notes as Curate work
+   unless the request introduces an external source that first needs its own source note.
 4. Ask one clarifying question when its answer would establish whether the work introduces a new
-   source that must be preserved. Otherwise preserve the source before changing vault knowledge
-   rather than inventing consequential decisions.
+   source that needs its own source note. Otherwise use `ingest` and save the source note before
+   changing knowledge notes rather than guessing.
 5. Switch to `ingest` when later evidence shows that the work introduces a source that must be
-   preserved.
+   saved in a source note.
 
 ## Navigate
 
-Use `scripts/navigate.py` for all state, procedure, and format navigation. Do not open workflow
-manifests or resolve resource files directly.
+Use `scripts/navigate.py` to load states, procedures, and formats. Do not read workflow
+manifests or their referenced instructions directly.
 
 Run the script with Python and the path relative to this `SKILL.md`:
 
@@ -63,9 +63,9 @@ the procedures related to it:
 - **Required**: The navigator loads it with the state. Complete it before leaving the state.
 
 Load an allowed or triggered procedure only through an exact command displayed by the active
-state or another authorized procedure. Do not construct a procedure command independently. Return
-to the active state after completing it. The output for each state and procedure lists any
-associated formats; load them only through the displayed navigator command.
+state or another authorized procedure. Do not construct a procedure command independently.
+Return to the active state after completing it. The output for each state and procedure lists
+any associated formats; load them only through the displayed navigator command.
 
 ## Procedure results and transitions
 
@@ -76,19 +76,19 @@ Keep findings needed for continuation in conversation. Report blockers and decis
 my input when they arise.
 
 Move only along a route displayed by the navigator, after meeting the conditions in the active
-state's `Continue` section. If new evidence invalidates earlier work, record what changed and
-return to the earliest state responsible for resolving it. Preserve valid work and repeat checks
-whose evidence may have changed.
+state's `Continue` section. If new findings show earlier work is wrong, record what changed and
+return to the first state that can correct it. Keep work that is still correct and rerun
+affected checks.
 
 Complete the workflow only when the active state permits completion and its required evidence
-remains valid. Give one final response covering the outcome, direct proof, material findings, and
-unresolved decisions. Link durable artifacts instead of copying them and omit internal detail
-that does not affect the outcome. Then clear the active workflow.
+still matches the completed work. Give one final response covering the result, direct proof,
+findings, and unresolved decisions. Link saved notes or attachments instead of copying them.
+Omit internal details that do not affect the result. Then clear the active workflow.
 
 ## Track state
 
-- Keep question, curate, and ingest state in conversation. Do not create a vault record for these
-  workflows. When one must continue in a fresh context, preserve its exact resume command, vault
-  root, current question or requested outcome, decisive evidence and procedure results, owned
-  temporary paths, and next action in the continuation context.
+- Keep question, curate, and ingest state in conversation. Do not create a vault record for
+  these workflows. For a fresh context, include the exact resume command, vault root, question
+  or requested result, key findings and procedure results, this task's temporary paths, and next
+  action in the handoff.
 - Do not add workflow status to the prose of vault notes.

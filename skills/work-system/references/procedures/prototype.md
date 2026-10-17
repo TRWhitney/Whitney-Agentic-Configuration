@@ -1,86 +1,81 @@
 # Prototype Procedure
 
-Create a focused, runnable, inspectable artifact that makes one unresolved decision easier to
-settle. Let me operate it directly and experience the behavior under consideration. An accepted
-prototype is a source of intent, but it is not production implementation.
+Build a runnable prototype to help settle one open decision. Let me operate it and try the
+proposed behavior. An agreed prototype defines requirements for later production work; it is not
+production implementation.
 
-## Frame the decision
+## Define the question
 
-State the question, the possibilities worth comparing, and the observable evidence that will
-settle it. Choose the simplest executable form with enough fidelity to expose the relevant
-behavior or constraint. Do not prototype a broad area whose uncertainty cannot be expressed as
-one answerable question.
+State the question, alternatives worth comparing, and what we need to observe to decide. Choose
+the simplest runnable form that shows the behavior or constraint. Do not prototype a broad topic
+that cannot be stated as one answerable question.
 
-For an unsettled visual direction, compare meaningfully different structures, hierarchies, or
-primary interactions rather than cosmetic variants. Include at least the basic interaction needed
-to experience the decision-bearing flow, transition, or response. When a visual question has no
-inherent product interaction, make the relevant variants or states directly switchable inside the
-rendered artifact.
+For visual decisions, compare different layouts, hierarchies, or main interactions rather than
+cosmetic variants. Include enough interaction to try the flow, transition, or response in
+question. If the visual choice has no product interaction, provide a way to switch between its
+variants or states inside the prototype.
 
-A PNG, screenshot, generated image, video, static mock, or prose description may provide
-supporting evidence, but it must not substitute for the prototype. A static mock alone is
-insufficient because it prevents direct inspection of behavior, state, responsiveness, and
-interaction quality.
+Images, screenshots, videos, static mockups, and descriptions can support the comparison. They
+cannot replace a prototype that lets us inspect behavior, state, responsiveness, and
+interaction.
 
-## Build and iterate
+## Build and try it
 
-- Reuse the repository's established stack, components, and tooling when they improve fidelity.
-  If a suitable host does not exist, add only the runnable scaffold needed to exercise the
-  question. Keep dependencies and shared tooling at their normal repository boundary.
-- Mark decision-bearing prototype behavior and disposable data as non-production. Isolate them
-  from production paths with an appropriate route, module, fixture, query parameter, or feature
-  flag. This is separation of purpose and execution path, not a separate Git history.
-- Build only what affects the decision. Omit production hardening, persistence, compatibility,
-  and surrounding features unless they are part of the question.
-- Exercise the decision-bearing behavior directly. Use the interactions, states, themes, and
-  viewports that can materially change the result. Do not add production regression coverage or
-  treat prototype checks as implementation testing or validation.
-- Launch the artifact and operate every decision-bearing interaction before presenting it. Supply
-  complete run instructions and any non-sensitive fixture data needed for me to reproduce that
-  experience without reconstructing the environment or implementation.
-- Add tweak controls, stable labels, or preference export only when they
-  make comparison or feedback materially easier. Keep those aids bounded to the prototype
-  question and use the same names in the artifact and recorded feedback.
-- Provide an element-identification mode that gives stable names to the regions and controls we
-  may discuss, so feedback can use agreed language instead of vague visual descriptions. Prefer a
-  prototype-only toggle that reveals names on mouse hover and keyboard focus without changing the
-  decision-bearing layout or behavior. Use the same names in the artifact and recorded feedback.
-- Let me react and iterate until the direction is accepted or the prototype is inconclusive.
-  When feedback describes a missed effect, inspect the current artifact and execution path before
-  editing again. Restate the observable change, identify why the prior attempt missed it, and make
-  the smallest supported revision. If the same effect fails twice, determine the causal and
-  workflow gap before another attempt.
+- Reuse the project's stack, components, and tools when they help show the proposed behavior. If
+  there is no suitable place to run it, add only the setup needed for the question. Keep
+  dependencies and shared tools in their normal project locations.
+- Label prototype behavior and sample data as non-production. Use a separate route, module,
+  fixture, query parameter, or feature flag to keep them out of production use. Use normal Git
+  history rather than a separate history for the prototype.
+- Build only what affects the decision. Leave out production hardening, storage, compatibility,
+  and surrounding features unless the question needs them.
+- Try the relevant interactions, states, themes, and display sizes yourself. Do not add
+  production regression tests or count these checks as production implementation tests or
+  validation.
+- Launch and operate every interaction relevant to the decision before presenting it. Provide
+  complete run instructions and any non-sensitive sample data so I can try it without rebuilding
+  the environment or code.
+- Add adjustment controls, stable labels, or preference export only when they help comparison or
+  feedback. Keep them limited to the question. Use the same names in the prototype and notes.
+- Provide a way to identify regions and controls by stable names so we can discuss them. Prefer
+  a prototype-only toggle showing names on hover and keyboard focus without changing the layout
+  or behavior being compared. Use the same names in recorded feedback.
+- Iterate with my feedback until we agree or the prototype is inconclusive. If feedback says an
+  effect is missing, inspect the running prototype and code before editing again. State the
+  expected change, find why the last attempt missed it, and make the smallest correction
+  supported by what you found. After two failed attempts at the same effect, diagnose the cause
+  and the process that missed it before trying again.
 
-Classify the result as supporting a possibility, rejecting it, or remaining inconclusive. Do not
-turn an inconclusive result into an accepted decision.
+State whether the result supports an alternative, rejects it, or remains inconclusive. Do not
+turn an inconclusive result into an agreed decision.
 
-## Settle and preserve
+## Record the decision and save the source
 
-Treat an accepted prototype as a binding primary source, not disposable inspiration. Record a
-proportionate acceptance contract that distinguishes:
+Treat an agreed prototype as a requirement for production work. Record what production must
+match and what it may change:
 
-- **Binding qualities:** the behavior, hierarchy, relationships, interactions, states, responsive
-  treatment, themes, and intentional absences that production work must preserve.
-- **Flexible qualities:** placeholder content, disposable data, implementation technique, and
-  details I have allowed production work to reinterpret.
+- Required behavior, hierarchy, relationships, interactions, states, responsive layout, themes,
+  and things intentionally left out.
+- Flexible placeholder content, sample data, implementation choices, and details I allowed you
+  to change.
 
-Show me a concise interpretation and obtain my explicit confirmation that the contract captures
-what matters. Record the exact flows, states, actions, target elements, and resulting conditions
-used to accept the prototype.
+Show me this interpretation and obtain explicit confirmation that it captures what matters.
+Record the flows, states, actions, target elements, and results we used to accept the prototype.
 
-Store prototype notes in the repository's documentation, following its existing layout or using
-`docs/prototypes/<prototype-slug>.md`. Include the acceptance contract, recorded preferences,
-supporting evidence, and complete run instructions. Link the accepted executable source from these
-notes. Preserve that source in a suitable repository location, isolated from production paths.
-Discard rejected alternatives and disposable captures after inspection and required review,
-before delivery. Preserve the useful comparisons and rejection reasons in these notes. Retain raw
-captures only when I explicitly request it; accepted executable source does not require an archive
-of screenshots, logs, duplicate packages, or per-run outputs.
+Save notes in the repository's existing prototype documentation or
+`docs/prototypes/<prototype-slug>.md`. Include the agreed requirements, preferences, supporting
+findings, and complete run instructions. Link the runnable source. Keep that source in the
+repository, separate from production use.
 
-Production implementation remains separate work and must meet its own testing, error handling,
-and verification requirements. Prototype acceptance does not make prototype code production-ready.
+After inspection and required review, delete rejected alternatives and temporary captures before
+delivery. Keep useful comparisons and rejection reasons in the existing notes. Save raw captures
+only if I explicitly request them. Keeping runnable source does not require archiving
+screenshots, logs, duplicate packages, or per-run outputs.
+
+Production work still needs its own tests, error handling, and validation. Agreement on the
+prototype does not make its code ready for production.
 
 ## Result
 
-Include the question, accepted decision or inconclusive verdict, acceptance contract, direct
-evidence, retained artifact links, limitations, and unresolved uncertainty.
+Report the question, decision or inconclusive result, agreed requirements, direct observations,
+links to saved files, limitations, and remaining uncertainty.

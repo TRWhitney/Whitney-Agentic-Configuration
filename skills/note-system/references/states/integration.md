@@ -1,21 +1,21 @@
 # Integration State
 
-Integrate useful knowledge into the vault's concept network. Complete safe, low-risk work while
-preserving source evidence, existing meaning, and every material judgment for review.
+Add useful knowledge to related concept notes. Keep source records unchanged and do not change
+the meaning of existing notes. Collect decisions that need approval for review.
 
-When adding a new source, create its canonical faithful record before changing knowledge notes.
+For a new source, save its faithful source note before changing knowledge notes.
 
-Do not rename, merge, delete, or archive notes; materially rewrite specifically worded existing
-prose; deliberately exclude substantive source material; or present novel agent synthesis as
-established knowledge without approval. Continue other safe work and collect those decisions rather
-than interrupting repeatedly.
+Get approval before renaming, merging, deleting, or archiving notes; substantially rewriting
+existing wording; leaving out substantive source material; or treating a new agent-created
+conclusion as established knowledge. Continue other low-risk work and batch these decisions
+instead of asking repeatedly.
 
 ## Continue
 
-Use the displayed preparation route when a visual needs to be obtained or corrected, then assess
-the prepared candidate here. If curation introduces a source that must be preserved, use the route
-to ingestion before changing knowledge notes with that source.
+Use the displayed preparation route when an image needs obtaining or correcting, then assess it
+here. If curation introduces a source that needs its own source note, use the ingestion route
+before adding its knowledge to concept notes.
 
-Continue to review when every substantive item has either been integrated safely or entered in the
-decision queue with its reason and affected note, and all changed notes preserve traceable source
-scope. For new sources, the canonical source record must also exist.
+Continue to review when each substantive item is integrated or listed for approval with its
+reason and affected note. Changed passages must still identify their sources and the conditions
+their claims depend on. For new sources, the source note must exist.

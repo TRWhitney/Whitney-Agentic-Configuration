@@ -12,7 +12,7 @@
       "procedures": {
         "domain-modeling": {
           "status": "triggered",
-          "cue": "Use when shared terminology or a consequential architecture decision becomes clear.",
+          "cue": "Use when the project agrees on shared terms or an important architecture decision.",
           "formats": {
             "domain-modeling": {
               "cue": "Use when recording an accepted domain term or architecture decision."
@@ -28,7 +28,7 @@
         },
         "prototype": {
           "status": "triggered",
-          "cue": "Use when a cheap faithful artifact can settle a planning decision."
+          "cue": "Use when a small runnable prototype can settle a planning decision."
         },
         "research": {
           "status": "allowed",
@@ -36,7 +36,7 @@
         },
         "wayfinding": {
           "status": "triggered",
-          "cue": "Use when the route contains more decisions than direct coordination can resolve reliably.",
+          "cue": "Use when there are too many open decisions to track reliably in conversation.",
           "related-procedures": [
             "research",
             "prototype",
@@ -62,11 +62,11 @@
       "procedures": {
         "delegate": {
           "status": "allowed",
-          "cue": "Use when independently owned implementation work benefits from fresh context."
+          "cue": "Use when a task can be assigned separately and benefits from fresh context."
         },
         "interface-design": {
           "status": "triggered",
-          "cue": "Use when accepted work creates or materially reshapes an interface."
+          "cue": "Use when agreed work creates or substantially changes an interface."
         },
         "research": {
           "status": "allowed",
@@ -74,7 +74,7 @@
         },
         "testing": {
           "status": "required",
-          "cue": "Develop behavior-changing work with a test-first approach and preserve focused regression coverage."
+          "cue": "Write a failing test before changing behavior and keep focused regression tests."
         }
       },
       "transitions": {
@@ -99,15 +99,15 @@
       "procedures": {
         "documentation": {
           "status": "required",
-          "cue": "Resolve the implementation's effect on durable project knowledge."
+          "cue": "Update documentation affected by the implementation."
         },
         "review": {
           "status": "required",
-          "cue": "Review the validated work against accepted intent and engineering risk."
+          "cue": "Review the validated work against the request and look for engineering problems."
         },
         "commit": {
           "status": "required",
-          "cue": "Commit the completed work as coherent repository outcomes."
+          "cue": "Commit all completed changes, grouped by result."
         }
       },
       "transitions": {

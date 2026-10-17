@@ -1,74 +1,59 @@
 # Implementation State
 
-Turn the accepted outcome into a coherent, maintainable repository change. Implementation owns
-production changes, supporting tests, and refactoring that improves the code while the outcome is
-built. It does not own new product intent or completion evidence.
+Build the agreed behavior, its tests, and any refactoring needed to leave the affected code easy
+to maintain. Use earlier states for changes to requirements and validation for completion
+checks.
 
-## Establish the change
+## Understand the change
 
-Begin from the accepted outcome, concrete acceptance checks, and source artifacts that constrain
-the work. Inspect the existing seams and determine what must change to produce the observable result
-cleanly.
+Start with the agreed requirements, acceptance checks, and supporting documents or prototypes.
+Inspect the affected code and interfaces to determine what must change.
 
-When an acceptance check, source, or architectural constraint is missing, contradictory, or no
-longer feasible, identify the exact gap and use the earliest available route that can resolve it.
-Do not silently reinterpret accepted intent or enlarge the outcome.
+If a check, source, or architecture constraint is missing, contradictory, or impossible to
+follow, identify the problem and return to the first state that can settle it. Do not guess my
+intent or expand the task.
 
-Do not measure implementation quality by diff size. Refactor freely within the code and
-relationships involved in the accepted outcome. This includes code inspected or changed to
-implement the behavior and directly coupled code whose structure prevents a clean implementation.
+Refactor across files, layers, and interfaces when it improves the code involved in this change.
+Include code you inspect or change and directly connected code that prevents a clear
+implementation. Do not keep awkward structure merely to reduce the diff. Do not search unrelated
+code for cleanup opportunities or start a separate refactoring effort without my direction.
 
-Follow a refactoring across files, layers, and interfaces when necessary to leave that working set
-coherent and maintainable. Do not search unrelated parts of the repository for cleanup opportunities
-or begin a separate refactoring effort without my direction.
+Keep behavior outside the agreed change unchanged and keep affected tests passing.
 
-Keep behavior outside the accepted change stable while refactoring, and keep the focused and
-affected tests green.
+## Build the change
 
-## Build the outcome
+When changing behavior, use the testing procedure. Choose the test before changing production
+code, then keep the focused test and affected tests passing as you build.
 
-For behavior-changing work, use the testing procedure throughout implementation.
-Establish the focused test boundary before changing production behavior, then evolve the
-implementation while its focused and affected tests remain green.
+- Remove duplication, misleading abstractions, obsolete interfaces, and unnecessary complexity
+  in the involved code. Improve how it divides responsibilities and manages dependencies.
+- Keep domain and application logic separate from GUI rendering and interaction as far as
+  practical. Connect them through explicit interfaces and data.
+- Inject services, storage, time, and other dependencies that may vary. Do not hide them in
+  globals, service locators, or constructors inside domain logic.
+- Use precise types and explicit states. Do not weaken types merely to make the change compile.
+- Handle errors where you can add useful context. Keep the underlying cause available for
+  diagnosis without exposing implementation details to users.
+- Reuse suitable dependencies. Add a library when it removes substantial custom code and fits
+  the project's stack. Do not rebuild an existing library or add a broad framework for a narrow
+  need.
+- Add abstractions for required behavior or variation already needed by the project. Do not
+  design extension points for hypothetical uses.
+- When removing something, remove its deprecated paths, aliases, compatibility code, and
+  duplicate implementations unless the agreed requirements explicitly need them.
 
-Apply these engineering preferences while building:
+Connect all layers needed for the user-visible result. An internal helper alone does not satisfy
+an acceptance check that requires the complete feature.
 
-- Refactor the involved code when doing so improves maintainability, clarity, cohesion, boundaries,
-  dependency structure, or extensibility. Remove duplication, misleading abstractions, obsolete
-  boundaries, and accidental complexity revealed by the work. Do not preserve awkward structure
-  merely to keep the diff small.
-- Keep domain and application behavior independent of GUI rendering and interaction to the fullest
-  practical extent. Connect them through explicit interfaces and data rather than embedding
-  business behavior in presentation code.
-- Use dependency injection for services, infrastructure, time, storage, environment, and other
-  collaborators whose behavior may vary. Do not hide those dependencies in global state, service
-  locators, or construction buried inside domain behavior.
-- Preserve precise types and model meaningful states explicitly. Do not weaken types merely to make
-  the change compile.
-- Handle failures at the boundary where useful context can be added. Preserve actionable causes
-  rather than swallowing errors or exposing implementation details to consumers.
-- Reuse established dependencies when they fit. Add a focused dependency when it removes meaningful
-  owned complexity and belongs in the repository's stack. Do not recreate a capable dependency or
-  introduce a broad framework for a narrow need.
-- Add abstractions for accepted behavior or demonstrated variation, not hypothetical flexibility.
-  Keep extension seams clear without generalizing beyond evidence.
-- Treat removal as removal. Do not retain deprecated paths, compatibility behavior, aliases, or
-  shadow implementations unless the accepted outcome explicitly requires them.
-
-Integrate every layer needed for the observable outcome. Do not stop at an internal mechanism when
-the acceptance checks require consumer-visible behavior.
-
-Use authorized specialized procedures when their cues apply. Incorporate their results into the
-same coherent implementation rather than treating them as separate outcomes.
-
-Focused test results support the implementation loop but do not establish completion evidence.
+Use available specialist procedures when their cues apply and include their results in this
+change. Passing implementation tests supports development; validation still needs to check the
+final result.
 
 ## Continue
 
-Continue when every accepted behavior is implemented, focused and affected tests are green, the
-change is integrated across its relevant boundaries, and no known implementation defect or
-unresolved consequential decision remains.
+Continue when the agreed behavior works across the affected layers, focused and affected tests
+pass, and no known defect or unresolved product or architecture decision remains.
 
-Use the available route to the next state only when the completed implementation is ready for
-direct completion evidence. If implementation exposes an earlier misunderstanding or decision gap,
-use the route to the earliest state that can resolve it and preserve work that remains valid.
+Move to validation when the finished change is ready to check directly. If implementation
+reveals a misunderstood requirement or missing decision, return to the first state that can
+settle it. Keep parts of the implementation that are still correct.

@@ -1,19 +1,20 @@
 # Visual Preparation State
 
-Prepare visual candidates needed for curation. Use the explanatory purpose and any correction
-requirements established during integration or review.
+Prepare images needed for curation. Use the purpose and any corrections identified during
+integration or review.
 
-## Prepare the candidates
+## Prepare the images
 
-Check source access and required tools before preparing candidates in an explicit temporary
-workspace. Work on copies when correcting existing attachments. Keep provenance and the original
-artifact available for assessment. Do not write to the vault during preparation.
+Check source access and required tools, then prepare images in a temporary directory. Edit
+copies of existing attachments. Keep the original and record where it came from and what changed
+so the next assessment can compare them. Do not write to the vault here.
 
-This work does not require a new source note. If it introduces an independent source that must be
-preserved, use the route to ingestion before changing vault knowledge.
+This step does not require a new source note. If it introduces a separate source that needs one,
+use the ingestion route before changing knowledge notes.
 
 ## Continue
 
-Return to integration when the candidates are ready for assessment with temporary paths,
-provenance, and any remaining limitations. If preparation fails, preserve the workspace and report
-its path and the blocker. Return to discovery if the requested scope needs clarification.
+Return to integration when the images are ready to assess. Include temporary paths, source
+details, and remaining limitations. If preparation fails, keep the workspace for diagnosis or
+retry and report its path and blocker. Return to discovery if the requested scope needs
+clarification.

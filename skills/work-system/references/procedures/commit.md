@@ -1,108 +1,93 @@
 # Commit Procedure
 
-Preserve completed work as clear, reviewable repository history. Commit completed outcomes
-liberally, while keeping each commit focused on one concrete outcome.
+Commit completed work. Each commit should deliver one clear result.
 
-## Decide whether to commit
+## Decide what to commit
 
-This procedure covers the entire repository working tree, including my changes, pre-existing
-changes, and staged, unstaged, or untracked files. Task ownership limits implementation scope;
-it does not limit which completed outcomes you must commit.
+Include the entire repository working tree: my changes, pre-existing changes, and staged,
+unstaged, or untracked files. Your task limits what you change, not which completed changes you
+commit.
 
 Run `git status --short --untracked-files=all` from the repository root before deciding that no
-commit is needed. That result is valid only when the entire working tree is clean or every
-remaining change is explicitly exempted by me.
+commit is needed. That is true only when the tree is clean or I explicitly exempted every
+remaining change. If I told you to leave specific changes uncommitted, leave those changes and
+commit the rest.
 
-Honor explicit instructions to leave specific changes uncommitted as exceptions for those changes.
-Commit the other completed outcomes and include the permitted exceptions in the result.
-
-Commit only completed work whose prerequisites remain satisfied. Hold an outcome and report a
-concrete blocker when:
+Do not commit a result when:
 
 - I explicitly asked you to wait for confirmation before committing it.
-- A significant design or behavior assumption still needs my input.
-- Required verification is incomplete, invalid, or no longer matches the work.
+- A design or behavior decision still needs my input.
+- Required checks are unfinished, failed, or no longer cover the changed work.
 
-The procedure remains required even when it returns a blocker instead of a commit. Pre-existing
-changes, unrelated outcomes, and human authorship are not blockers. If an outcome is incomplete or
-cannot be verified, identify its affected paths, the exact unmet prerequisite, and the action
-needed. A blocker leaves delivery pending; it does not permit a completion claim. Other
-independently complete, verified outcomes can still be committed unless I asked you to pause
-committing.
+Report the affected paths, exact blocker, and what must happen next. Keep delivery pending while
+a blocker remains. You can still commit other completed, verified work unless I asked you to
+pause committing. A change's age, author, or lack of relation to your task is not a blocker.
 
-## Compose the commits
+## Group and inspect the changes
 
-Inspect the working tree, staged changes, relevant diffs, recent commits, current branch, and
-upstream before deciding how to commit.
+Inspect the full working tree, staged and unstaged diffs, recent commits, current branch, and
+upstream before grouping commits.
 
 Before every commit, inspect generated file counts and sizes, untracked and ignored outputs, and
-staged additions with `git diff --cached --stat` and `git diff --cached --numstat`. Inspect large
-and binary additions directly. Remove task-generated disposable material, including session
-transcripts, per-run JSON, screenshots, logs, duplicate snapshots, hash inventories, and evidence
-manifests, unless I explicitly requested retention. Keep concise findings and reusable source or
-checks. Ignoring output or planning a later cleanup does not satisfy this check. Preserve unrelated
-files and my work by retaining their content and committing completed outcomes. Do not discard,
-overwrite, stash, or newly ignore changes to make the working tree appear clean. Do not create a
-cleanup inventory or replacement archive.
+staged additions with `git diff --cached --stat` and `git diff --cached --numstat`. Open large
+and binary additions. Remove temporary outputs created for this task, including session
+transcripts, per-run JSON, screenshots, logs, duplicate snapshots, hash inventories, and
+evidence manifests, unless I explicitly requested them. Keep concise findings and reusable code
+or checks. Do not replace deleted outputs with cleanup inventories or archives.
 
-Partition the final work before staging:
+Keep unrelated file contents unchanged and commit completed work. Do not discard, overwrite,
+stash, or newly ignore changes to make the tree appear clean. Ignoring temporary outputs or
+promising later cleanup does not satisfy this check.
 
-1. Derive candidate commits from independently complete outcomes, not from the overall request,
-   work session, plan, or affected subsystem.
-2. Keep changes together when they must travel together to deliver one valid result. Include the
-   implementation, tests, migrations, and documentation required by that result.
-3. Split changes when either group could remain a complete, valid, independently describable
-   outcome without the other. Being requested together or touching the same subsystem is not
-   sufficient reason to combine them.
-4. Draft a subject for each candidate outcome. If one subject would name a broad area, summarize
-   the overall task, or omit an independently useful result, split the candidate before staging.
+Group commits by result before staging:
 
-Repeat this partitioning until no candidate contains more than one independently complete outcome.
-After staging each candidate, inspect the staged diff. Every staged change must be necessary for
-its subject; unstage and repartition anything that is not.
+1. Keep code, tests, migrations, and documentation together when they need each other to deliver
+   one working result.
+2. Split groups that each deliver a complete result on their own. Being part of one request,
+   session, plan, or subsystem does not make them one result.
+3. Draft a subject for each group. Split it again if the subject names only a broad area or
+   leaves out another independently useful result.
 
-- Treat changes by outcome, regardless of authorship or when they first appeared. Include my
-  changes with yours when they contribute to the same outcome. When my changes do not, commit them
-  separately. Do not disregard my changes because they predate this work.
-- Fold work into an earlier local commit when it completes or corrects that same outcome.
-- Squash local commits that describe the same outcome when they have not been pushed upstream.
-  Do not rewrite published commits without my direction.
+After staging each group, read the staged diff. Unstage and regroup anything its subject does
+not cover. Combine my changes with yours when they deliver the same result. Commit unrelated
+completed results separately, including changes that predate this task.
 
-## Verify completion
+Fold corrections or additions to the same result into an earlier local commit. Squash local
+commits that deliver the same result if they have not been pushed. Do not rewrite published
+commits without my direction.
 
-After the final commit and any hooks finish, run `git status --short --untracked-files=all` again
-from the repository root. The output must be empty unless I explicitly told you to leave specific
-changes uncommitted. Inspect every remaining entry and commit completed outcomes separately as
-needed. Do not substitute a task-path diff or a list of your own changes for this check.
+## Check the final status
 
-If any other entry remains, resolve it or report the concrete blocker and keep delivery pending.
-Merely listing leftover changes in the final response does not satisfy this requirement. Preserve
-existing ignored files; inspect ignored outputs separately for task-generated disposable material.
+After the final commit and its hooks finish, run `git status --short --untracked-files=all` from
+the repository root again. Its output must be empty unless I explicitly told you to leave
+specific changes uncommitted. Check every remaining entry and commit other completed results as
+needed. A diff limited to your task's files cannot replace this check.
+
+If another entry remains, finish handling it or report its blocker and keep delivery pending.
+Listing leftovers in a final response does not complete delivery. Leave existing ignored files
+alone; check them separately for temporary outputs created by this task.
 
 ## Write the subject
 
-Use the form `[Slug] Imperative outcome` and keep the entire subject under 50 characters.
+Use `[Slug] Imperative outcome` and keep the entire subject under 50 characters.
 
 | Slug | Use for |
 | --- | --- |
 | `[Feature]` | A significant new capability. |
 | `[Fix]` | Correcting broken intended behavior. |
 | `[Tweak]` | A minor behavior or repository improvement. |
-| `[Refactor]` | A structural change that preserves behavior. |
+| `[Refactor]` | Changing code structure without changing behavior. |
 | `[Optimization]` | A performance improvement. |
-| `[Documentation]` | Primarily documentation work. Classify by the artifact's role, not its file extension. |
-| `[Design]` | Pre-implementation design work for a feature. |
+| `[Documentation]` | Documentation work. Classify by the file's purpose, not its extension. |
+| `[Design]` | Design work before implementing a feature. |
 | `[Cleanup]` | Removing or tidying unused content. |
 | `[Chore]` | Version bumps, scaffolding, and other non-development work. |
 
-Start the text after the slug with an imperative verb, as if giving a command to the repository.
-Name the practical result rather than only the edited file, component, mechanism, or general area.
-A developer unfamiliar with the diff should be able to predict what became possible, corrected,
-prevented, or different.
+Start with an imperative verb after the slug. Name what becomes possible, corrected, prevented,
+or different. A reader unfamiliar with the diff should understand the result.
 
-Do not use an umbrella subject to conceal multiple outcomes. If the practical result cannot be
-named concretely within 50 characters, revisit the commit partition instead of making the subject
-more abstract.
+If one subject cannot describe the result clearly within 50 characters, reconsider the grouping.
+Do not hide multiple results behind an abstract subject.
 
 ## Credit agent contributions
 
@@ -112,14 +97,12 @@ Include a `Co-authored-by` trailer for agents that implemented the committed wor
 - For Claude, use its actual model name with `<noreply@anthropic.com>`.
 - For other providers, use their verified attribution convention rather than inventing an email.
 
-Preserve existing human and agent trailers. Add each applicable credit exactly once, with one
-blank line between the commit body and the trailer block. Keep the repository's configured
-author and committer identity.
+Keep existing human and agent trailers. Add each credit once, with one blank line between the
+commit body and trailers. Keep the repository's configured author and committer identity.
 
 ## Result
 
-Include each commit identifier and subject, the final working-tree check, and whether history was
-squashed. Report uncommitted changes only with my explicit instruction permitting them or the
-concrete blocker keeping delivery pending. If no commit was needed, state that the entire working
-tree was already clean or only my explicit exceptions remained. If committing was blocked,
-include the action needed to resolve it.
+Report each commit identifier and subject, the final status check, and whether you squashed
+history. For uncommitted changes, cite my explicit exception or the blocker keeping delivery
+pending. If no commit was needed, say the tree was already clean or only my explicit exceptions
+remained. For a blocked commit, explain what must happen next.

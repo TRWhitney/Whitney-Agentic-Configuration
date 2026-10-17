@@ -1,81 +1,70 @@
 # Research procedure
 
-Investigate factual uncertainty for the owning feature or accepted work.
-Related questions, comparisons, and experiments belong to the same investigation. Research and
-planning are methods within that work, not separate work items. Return findings to its owning
-state and record without making a product judgment, changing accepted intent, or expanding the task.
+Investigate factual questions for the current feature or agreed work. Related questions,
+comparisons, and experiments belong together. Return findings to the current state and work
+record without making product decisions, changing requirements, or expanding the task.
 
-## Frame the investigation
+## Define the question
 
-Identify the owning feature or work record and its existing research report. Each distinct feature
-has one combined research-and-planning ticket. Only a distinct feature can receive another such
-ticket. Its questions, subcontracts, and architecture concerns remain inside that owner, including
-follow-up findings. Different sources, methods, experiments, agents, or contexts do not create
-another planning or research ticket. Actual implementation is decomposed separately into logical
-units of work under the accepted feature design.
+Find the feature ticket or work record and its existing research report. Keep one combined
+research-and-planning ticket per feature, including follow-up questions and architecture
+concerns. A new source, method, experiment, agent, or context does not justify another planning
+ticket. Implementation is divided separately into tasks that deliver parts of the agreed
+feature.
 
-State the related questions, why their answers matter, scope and exclusions, needed evidence, and
-the stopping condition for the subject. Stop when the findings support the current planning or
-delivery decision. If the outcome depends on preference or product intent, research the factual
-parts and return the remaining judgment to me within the same work item.
+State the questions, why they matter, scope, exclusions, needed sources or checks, and when to
+stop. Stop when the findings support the current planning or delivery decision. Research facts
+and return preference or product decisions to me in the same work item.
 
-Inspect the current repository directly when the question can be answered from its relevant code,
-configuration, history, or a small set of project documents. Reading those sources is ordinary
-context gathering and must not be replaced by delegation.
+Read relevant code, configuration, history, and project documents yourself when they can answer
+the question. Do not delegate ordinary repository reading.
 
 ## Investigate
 
-- Use a fresh-context subagent when available for external multi-source investigation, comparison
-  of technologies or standards, an unfamiliar domain, conflicting claims, or a bounded experiment
-  whose independence improves the answer. If another agent delegated the current work to you,
-  perform the research yourself; do not delegate it again. Do not delegate repository orientation
-  or reading a handful of relevant files. A subagent may supplement a larger repository
-  investigation only after you have inspected its decision-bearing sources directly.
-- Give the subagent the subject, related questions, owning record, existing findings, scope,
-  relevant artifacts, source constraints, and expected form of the result, including the
-  retention rules and any explicitly requested exceptions. Do not supply a preferred conclusion,
-  an unverified hypothesis, or unrelated project
-  history. Delegate the subject's related research together rather than creating an assignment
-  for each question.
-- Keep the subagent's Git access read-only. It must not stage, commit, alter repository history,
-  discard changes, or expand its file scope. Have it return findings and citations.
-- Use multiple search approaches and sources when available. Try alternate terminology and
-  search paths before concluding that evidence does not exist. Prefer original, authoritative,
-  and current sources; use secondary sources to add context or identify disagreements.
-- Follow material claims to their supporting source. Do not treat repeated copies of one claim as
-  independent confirmation. Cite repository paths and locations or direct external sources.
-- Investigate conflicts instead of selecting the convenient source. Check publication
-  dates, applicable versions, assumptions, and whether the sources are addressing the same
-  conditions.
-- Keep commands and experiments bounded to the subject and its stopping condition. Generate raw
-  outputs in temporary directories outside the checkout. Record a concise setup, measured
-  comparisons, failures, and limitations so useful checks can be rerun. Do not retain per-run captures for exact historical
-  replay unless I explicitly request it.
+- Use a fresh-context subagent when available for research across external sources, technology
+  or standards comparisons, unfamiliar topics, conflicting claims, or experiments that benefit
+  from an independent investigator. If this work was delegated to you, do it yourself; do not
+  delegate again. Do not delegate basic orientation or reading a few files. For larger
+  investigations, read the sources that affect the decision yourself before delegating
+  additional research.
+- Give the subagent the question, scope, relevant sources, source restrictions, expected result,
+  cleanup rules, and any exceptions I requested. Do not suggest an answer, supply an untested
+  hypothesis, or include unrelated history. Keep a subject's related questions in one delegated
+  assignment.
+- Keep the subagent's Git access read-only. It must not stage, commit, alter history, discard
+  changes, or edit files outside its assigned scope. Require findings and citations in its
+  reply.
+- Try multiple search terms and sources before concluding that information is unavailable.
+  Prefer original, authoritative, current sources. Use secondary sources for context or
+  disagreements.
+- Check important claims against their original sources. Repeated copies of one claim are not
+  independent confirmation. Cite source paths and locations or direct external links.
+- Investigate disagreements. Compare dates, versions, assumptions, and the conditions each
+  source addresses instead of choosing the convenient answer.
+- Keep searches and experiments within the question and stop when they support the decision at
+  hand. Generate raw outputs in temporary directories outside the checkout. Record enough setup,
+  measured comparisons, failures, and limitations to rerun useful checks. Do not keep full run
+  captures for later replay unless I explicitly request them.
 
-## Assess and preserve
+## Check and record findings
 
-Inspect the original evidence behind consequential findings and confirm that each citation
-supports the claim attributed to it. Distinguish established facts, supported inferences,
-recommendations, and unresolved uncertainty. State when the available evidence is insufficient
+Inspect the sources behind important findings and confirm that citations support their claims.
+Separate facts, inferences, recommendations, and uncertainty. State when information is missing
 rather than filling the gap with an assumption.
 
-Create a dedicated report only when future work will need to revisit the evidence, reasoning, or
-citations and no existing report owns the subject. Store it in the repository's research
-documentation, following its existing layout or using `docs/research/<research-slug>.md`. Keep one
-current report for that subject, including later related questions and experiments.
-Default to at most 500 words plus a compact results table; expand only at my explicit request.
-Update its conclusions as research progresses rather than creating a report for each question or
-pass. Include the subject, related questions, scope, conclusion, evidence,
-source links, conflicts, limitations, and implications. Link external and repository sources rather
-than copying material. Otherwise keep the finding in its owning answer, decision, specification, or
-ticket.
+Create a research report only when future work needs its findings, reasons, or citations and no
+existing report covers the subject. Use the repository's research layout or
+`docs/research/<research-slug>.md`. Update that report for later questions and experiments. Keep
+it under 500 words plus a compact results table unless I explicitly request more. Include the
+question, scope, conclusion, supporting sources, disagreements, limitations, and effects on the
+work. Link sources rather than copying them. Otherwise record findings in the answer, decision,
+specification, or ticket that needs them.
 
-After inspection and required review, delete disposable captures. Keep reusable source or checks
-and concise findings. Do not commit raw outputs or create evidence manifests, deletion inventories,
-or substitute archives.
+After inspection and required review, delete temporary captures. Keep reusable code or checks
+and concise findings. Do not commit raw outputs or replace them with manifests, deletion
+inventories, or archives.
 
 ## Result
 
-Include the direct answer, supporting evidence and citations, conflicting evidence, uncertainty,
-and implications for the work that requested the research. Identify any judgment or next question
-that remains mine to resolve.
+Return the answer, sources, disagreements, uncertainty, and what the findings mean for the work.
+Identify decisions or questions that still need my judgment.

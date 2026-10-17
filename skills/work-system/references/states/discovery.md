@@ -1,31 +1,30 @@
 # Discovery State
 
-Establish the facts needed to answer my question or begin bounded work. Discovery is read-only.
-Do not choose new behavior, design a solution, or draft an implementation plan.
+Find the facts needed to answer my question or start limited work. Discovery is read-only. Do
+not choose new behavior, design a solution, or draft an implementation plan.
 
-## Frame the uncertainty
+## Identify what is missing
 
-For a question, identify what needs answering and the evidence needed to answer it.
+For a question, identify what needs answering and how to check it.
 
-For requested work, define the observable outcome, acceptance checks, and relevant constraints.
-Distinguish my stated intent, observed facts, unsupported assumptions, and decisions that require
-my judgment. Do not assume my description accurately represents the current implementation.
+For requested work, identify the expected behavior, acceptance checks, and constraints. Separate
+my request, observed facts, assumptions, and decisions that need my judgment. Check the current
+implementation rather than assuming my description matches it.
 
-## Establish the facts
+## Inspect the project
 
-Inspect relevant code, configuration, documentation, history, and runtime behavior. Start with the
-narrowest useful sources and expand when the evidence requires it. Read ordinary repository
-context yourself. Use authorized research when a dedicated investigation would help.
+Read the code, configuration, documentation, history, and runtime behavior that can answer the
+question. Start with the closest sources and expand as needed. Read repository context yourself.
+Use an available research procedure when a separate investigation would help.
 
-Keep decisive evidence and its location available for the next state.
+Keep key findings and source locations available for the next state.
 
 ## Continue
 
-- For a question, move to answer when the evidence supports a useful response and any remaining
-  uncertainty can be stated accurately.
-- For requested work, move to implementation when the current behavior, desired outcome,
-  acceptance checks, and constraints are clear enough to proceed without inventing consequential
-  intent.
+- For a question, move to answer when the findings support a useful response and you can explain
+  any remaining uncertainty.
+- For requested work, move to implementation when the current behavior, requested behavior,
+  acceptance checks, and constraints are clear enough to proceed without guessing my intent.
 
-Remain in discovery while necessary facts are missing. If requested work exceeds the bounded
-workflow or requires unresolved consequential decisions, use the route to novel-work planning.
+Stay in discovery while necessary facts are missing. If the work is too broad or needs product
+or architecture decisions, use the route to novel-work planning.

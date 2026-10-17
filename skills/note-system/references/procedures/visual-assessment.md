@@ -1,41 +1,34 @@
 # Visual Assessment Procedure
 
-Assess whether an available visual candidate should be retained and used. Do not obtain, generate,
-extract, edit, move, or replace artifacts during assessment.
+Decide whether an available image helps explain the subject. Do not obtain, generate, extract,
+edit, move, or replace files during assessment.
 
-Look for visuals that make the subject easier to understand, and use them sparingly. Reject
-decorative or redundant images, and do not add an image just because it is available.
+Use images sparingly. Reject decorative or redundant images. Inspect each image directly. If an
+enabled plugin or core feature presents its information more clearly or usefully, prefer that
+feature. Reassess whether the image still adds value alongside it. Use the image alone when it
+is the better explanation.
 
-Inspect the candidate's content directly. When a relevant enabled plugin or core capability would
-improve how the candidate's content is presented or used, prefer to use the plugin or capability
-for the candidate's pertinent information. Reassess the candidate if the plugin or capability is
-used, and use the candidate as well if it still provides additional value. If the plugin or
-capability is not a closer fit for the information under scrutiny and does not provide more value
-to a user, use the candidate when it provides value on its own.
+## Assess the image
 
-## Assess the candidate
+Check whether it:
 
-Check whether the candidate:
+- explains a diagram, comparison, example, demonstration, object, spatial relationship, or
+  visual distinction better than prose alone;
+- represents its source accurately, with enough context to avoid a misleading crop or
+  annotation;
+- supports each factual claim if generated, and is clearly identified as generated;
+- is legible and good enough for its intended placement;
+- records its source, creator, URL, timestamp, generation details, and usage limits as
+  applicable;
+- duplicates an attachment that should be reused;
+- belongs in the vault's attachment folders rather than beside knowledge notes.
 
-- communicates a diagram, comparison, example, demonstration, object, spatial relationship, or
-  visual distinction more effectively than prose alone;
-- faithfully represents its source and retains enough context to avoid a misleading crop, frame,
-  annotation, or implication;
-- is factually supported when generated, with source evidence and generated content clearly
-  distinguished;
-- is legible and suitable quality for its intended placement;
-- carries sufficient source, creator, URL, timestamp, generation, and usage provenance for its
-  origin;
-- duplicates an existing canonical attachment that should be reused instead;
-- can live in the vault's established attachment hierarchy rather than alongside knowledge notes.
-
-Classify the candidate as suitable, unsuitable, correctable, or requiring my judgment. For a
-suitable candidate, explain what it helps the reader understand. Identify its canonical attachment
-destination or existing attachment path, provenance to retain, and every note that can reuse it.
-Identify sourcing, editing, or evidence needs for the owning state rather than satisfying them here.
+Classify it as suitable, unsuitable, correctable, or needing my judgment. For a suitable image,
+explain what it helps readers understand, where to save it or which attachment to reuse, which
+source details to record, and which notes can use it. Report needed sourcing, corrections, or
+factual checks to the current state rather than doing them here.
 
 ## Result
 
-Include the classification, explanatory value or rejection reason, fidelity and quality
-findings, provenance, canonical-reuse decision, intended attachment destination, affected notes,
-and any correction or judgment still required.
+Report the classification, explanation or rejection reason, accuracy and quality, source
+details, attachment path, affected notes, and any corrections or decisions still needed.

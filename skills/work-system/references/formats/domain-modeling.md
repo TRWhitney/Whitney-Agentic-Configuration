@@ -1,6 +1,6 @@
 # Domain Documentation Formats
 
-Create domain documentation lazily as accepted knowledge emerges.
+Add domain documentation when the project agrees on a term or decision worth recording.
 
 ## Single context
 
@@ -13,13 +13,13 @@ Use a root `CONTEXT.md` as a glossary:
 
 ## Language
 
-**<Canonical term>**:
+**<Standard term>**:
 <One- or two-sentence definition.>
 _Avoid_: <misleading alternatives>
 ```
 
 Include only project-specific domain concepts. Define what a term is without implementation
-details. Prefer one canonical term and group related terms only when useful.
+details. Prefer one standard term and group related terms only when useful.
 
 ## Multiple contexts
 
@@ -39,5 +39,5 @@ Name ADRs `docs/adr/<NNNN>-<slug>.md`, numbered after the highest existing entry
 
 Create an ADR only when the decision is costly to reverse, surprising without context, and the
 result of a genuine tradeoff. Add `Status`, `Considered Options`, or `Consequences` only when
-they preserve information a future change needs. Supersede an obsolete ADR instead of erasing
-the reason it once governed the project.
+they explain something a future change needs. Mark an obsolete ADR as replaced and link the new
+one without deleting its original reason.

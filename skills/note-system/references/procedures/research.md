@@ -1,67 +1,61 @@
 # Research Procedure
 
-Answer one bounded factual question needed by the current work. Return findings to the owning
-state without making a knowledge-organization judgment, changing accepted intent, or expanding the
-prompt.
+Answer a limited factual question needed by the current work. Return findings to the current
+state. Do not decide how to organize knowledge, change requirements, or expand the request.
 
-## Frame the question
+## Define the question
 
-State the question, why its answer matters, its scope and exclusions, the needed evidence, and the
-stopping condition. If the outcome depends on preference or knowledge-organization intent, research
-the factual parts and return the remaining judgment to me.
+State the question, why it matters, scope, exclusions, needed sources or checks, and when to
+stop. Research facts and return preferences or knowledge-organization decisions to me.
 
-Inspect evidence already authorized by the owning state directly when the question can be answered
-from current artifacts, relevant notes, configuration, history, or a small set of supporting
-documents. Reading those sources is ordinary context gathering and must not be replaced by
-delegation.
+Read sources already available to the current state, including relevant notes, configuration,
+history, and supporting documents, when they can answer the question. Do not delegate ordinary
+vault reading.
 
 ## Investigate
 
-- Use a fresh-context subagent when available for external multi-source investigation, comparison
-  of technologies or standards, an unfamiliar domain, conflicting claims, or a bounded experiment
-  whose independence improves the answer. If another agent delegated the current work to you,
-  perform the research yourself; do not delegate it again. Do not delegate vault orientation or
-  reading a handful of relevant notes. A subagent may supplement a larger vault investigation only
-  after you have inspected its decision-bearing sources directly.
-- Give the subagent the exact question, scope, relevant artifacts, source constraints, and expected
-  form of the result, including retention rules and any explicitly requested exceptions. Do not
-  supply a preferred conclusion, an unverified hypothesis, or unrelated vault history.
+- Use a fresh-context subagent when available for research across external sources, technology
+  or standards comparisons, unfamiliar topics, conflicting claims, or experiments that benefit
+  from an independent investigator. If this work was delegated to you, do it yourself; do not
+  delegate again. Do not delegate basic orientation or reading a few files. For larger
+  investigations, read the sources that affect the decision yourself before delegating
+  additional research.
+- Give the subagent the question, scope, relevant sources, source restrictions, expected result,
+  cleanup rules, and any exceptions I requested. Do not suggest an answer, supply an untested
+  hypothesis, or include unrelated history.
 - Keep the subagent's vault and Git access read-only. It must not edit notes, configuration, or
-  attachments; stage, commit, alter repository history, or discard changes; or expand its file
-  scope. Have it return findings and citations.
-- Use multiple search approaches and sources when available. Try alternate terminology and search
-  paths before concluding that evidence does not exist. Prefer original, authoritative, and current
-  sources; use secondary sources to add context or identify disagreements.
-- Follow material claims to their supporting source. Do not treat repeated copies of one claim as
-  independent confirmation. Cite vault paths and locations or direct external sources.
-- Investigate conflicts instead of selecting the convenient source. Check publication dates,
-  applicable versions, assumptions, and whether the sources address the same conditions.
-- Keep searches and experiments bounded to the question. Generate raw outputs in temporary
-  directories outside the vault or checkout. Record a concise setup, measured comparisons,
-  failures, and limitations so useful checks can be rerun. Do not retain per-run captures for exact
-  historical replay unless I explicitly request it.
+  attachments; stage, commit, alter history, or discard changes; or read outside its assigned
+  scope. Require findings and citations in its reply.
+- Try multiple search terms and sources before concluding that information is unavailable.
+  Prefer original, authoritative, current sources. Use secondary sources for context or
+  disagreements.
+- Check important claims against their original sources. Repeated copies of one claim are not
+  independent confirmation. Cite source paths and locations or direct external links.
+- Investigate disagreements. Compare dates, versions, assumptions, and the conditions each
+  source addresses instead of choosing the convenient answer.
+- Keep searches and experiments within the question and stop when they support the decision at
+  hand. Generate raw outputs in temporary directories outside the vault or checkout. Record
+  enough setup, measured comparisons, failures, and limitations to rerun useful checks. Do not
+  keep full run captures for later replay unless I explicitly request them.
 
-## Assess and preserve
+## Check and record findings
 
-Inspect the original evidence behind consequential findings and confirm that each citation supports
-the claim attributed to it. Distinguish established facts, supported inferences, recommendations,
-and unresolved uncertainty. State when the available evidence is insufficient rather than filling
-the gap with an assumption.
+Inspect the sources behind important findings and confirm that citations support their claims.
+Separate facts, inferences, recommendations, and uncertainty. State when information is missing
+rather than filling the gap with an assumption.
 
-Research remains read-only. When later work will need to revisit the evidence, reasoning, or
-citations, return a report-ready record for the owning state instead of creating a note. Default
-to one report of at most 500 words plus a compact results table per study; expand only at my
-explicit request. Update existing findings when they fit. Include the
-question, scope, conclusion, evidence, source links, conflicts, limitations, and implications. Link
-external and vault sources rather than copying material. Otherwise keep the finding in its owning
+Research is read-only. If later work needs a report, return findings ready for the current state
+to use instead of creating a note. Keep one report per study under 500 words plus a compact
+results table unless I explicitly request more. Update existing findings when they fit. Include
+the question, scope, conclusion, supporting sources, disagreements, limitations, and effects on
+the work. Link sources rather than copying them. Otherwise return findings with the current
 work.
 
-After inspection and required review, delete disposable captures. Keep reusable checks and concise
-findings. Do not commit raw outputs or create evidence manifests, deletion inventories, or
-substitute archives. Requested canonical source notes remain governed by source preservation.
+After inspection and required review, delete temporary captures. Keep reusable checks and
+concise findings. Do not commit raw outputs or replace them with manifests, deletion
+inventories, or archives. Requested source notes follow the source-preservation procedure.
 
 ## Result
 
-Include the direct answer, supporting evidence and citations, conflicting evidence, uncertainty,
-and implications for the work that requested the research. Identify any judgment or next question
-that remains mine to resolve.
+Return the answer, sources, disagreements, uncertainty, and what the findings mean for the work.
+Identify decisions or questions that still need my judgment.

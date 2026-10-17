@@ -7,7 +7,7 @@
       "procedures": {
         "subagent-testing": {
           "status": "required",
-          "cue": "Preserve the assignment's focused test boundary and run its named checks."
+          "cue": "Use the supplied focused test and run the named assignment checks."
         }
       },
       "transitions": {

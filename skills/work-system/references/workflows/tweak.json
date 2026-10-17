@@ -23,11 +23,11 @@
       "procedures": {
         "delegate": {
           "status": "allowed",
-          "cue": "Use when independently owned implementation work benefits from fresh context."
+          "cue": "Use when a task can be assigned separately and benefits from fresh context."
         },
         "interface-design": {
           "status": "triggered",
-          "cue": "Use when accepted work creates or materially reshapes an interface; do not use only to restore an established design."
+          "cue": "Use when agreed work creates or substantially changes an interface; do not use only to restore an established design."
         },
         "research": {
           "status": "allowed",
@@ -58,15 +58,15 @@
       "procedures": {
         "documentation": {
           "status": "required",
-          "cue": "Resolve the implementation's effect on durable project knowledge."
+          "cue": "Update documentation affected by the implementation."
         },
         "review": {
           "status": "required",
-          "cue": "Review the validated work against accepted intent and engineering risk."
+          "cue": "Review the validated work against the request and look for engineering problems."
         },
         "commit": {
           "status": "required",
-          "cue": "Commit the completed work as coherent repository outcomes."
+          "cue": "Commit all completed changes, grouped by result."
         }
       },
       "transitions": {

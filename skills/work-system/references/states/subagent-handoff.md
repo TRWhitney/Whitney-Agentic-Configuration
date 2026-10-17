@@ -1,21 +1,20 @@
 # Subagent Handoff State
 
-Produce an accurate, evidence-backed result for the bounded assignment. Handoff owns result
-assembly and does not change the repository.
+Report the assigned result and checks without changing the repository.
 
-## Assemble the result
+## Report the result
 
-Inspect the assignment-owned changes and the evidence produced while implementing them. Report:
+Inspect the changes and check results. Include:
 
-- the assigned outcome and whether it was completed;
+- the assignment and whether it is complete;
 - every changed path;
-- the exact named checks run and their outcomes;
-- any remaining blocker, conflict, invalid assumption, or uncertainty.
+- the exact named checks run and their results;
+- remaining blockers, conflicts, incorrect assumptions, or uncertainty.
 
-Distinguish passing evidence from checks that were not run or could not complete. Keep the result
-limited to information needed to inspect and integrate the assignment.
+Distinguish passing checks from checks that were not run or could not finish. Include only what
+the parent agent needs to inspect and integrate the work.
 
 ## Continue
 
-Continue when the result accurately accounts for the assignment-owned changes, named checks, and
-remaining uncertainty. Use the available route to complete the workflow.
+Complete the workflow when the report accounts for all assigned changes, named checks, and
+remaining uncertainty.

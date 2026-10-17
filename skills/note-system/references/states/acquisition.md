@@ -1,22 +1,21 @@
 # Acquisition State
 
-Acquire and prepare one independent source and any requested visual candidates before discovering
-their vault context. Acquisition owns temporary evidence and asset preparation; it does not write
-to the vault or decide the vault's current knowledge representation.
+Download and prepare one source and any requested images before finding where they fit in the
+vault. Work in temporary files. Do not write vault notes or decide how to organize their
+knowledge.
 
 ## Prepare the source
 
-Preflight dependencies, source access, and evidence availability before downloading or
-transforming source evidence or visual candidates.
+Check required tools, source access, and available content before downloading or converting it.
 
-Use an explicit temporary workspace outside the vault or checkout for downloads, generated audio,
-bulk frames, storyboards, and machine-readable preparation data. Keep it through required
-inspection and review, then delete disposable outputs before delivery unless I explicitly
-requested retention. Do not store those bulk artifacts in the attachment hierarchy.
-Keep every source independent, including items in one series or course.
+Use a temporary directory outside the vault or checkout for downloads, generated audio, bulk
+frames, contact sheets, and preparation data. Keep it for required inspection and review, then
+remove temporary outputs before delivery unless I explicitly requested them. Do not put bulk
+outputs in the vault's attachment folders. Treat each source separately, even within a series or
+course.
 
 ## Continue
 
-Continue when the source evidence and requested visual candidates are available in the temporary
-workspace with sufficient identity, provenance, timestamps, and visual inspection material for
-later work. Preserve the workspace and report its path if acquisition fails.
+Continue when the source and requested images are ready in the temporary directory, with enough
+source details, timestamps, and viewable images for later work. If preparation fails, keep the
+workspace for diagnosis or retry and report its path.

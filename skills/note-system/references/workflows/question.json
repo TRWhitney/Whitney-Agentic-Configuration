@@ -7,11 +7,11 @@
       "procedures": {
         "vault-discovery": {
           "status": "required",
-          "cue": "Establish the relevant vault evidence and conventions without changing the vault."
+          "cue": "Read relevant notes and check vault conventions without editing."
         },
         "research": {
           "status": "allowed",
-          "cue": "Use when a bounded factual investigation would materially improve discovery."
+          "cue": "Use when a limited factual investigation would help discovery."
         }
       },
       "transitions": {
