@@ -5,14 +5,30 @@ liberally, while keeping each commit focused on one concrete outcome.
 
 ## Decide whether to commit
 
-Commit only completed work whose prerequisites remain satisfied. Stop and report a concrete
-blocker when:
+This procedure covers the entire repository working tree, including my changes, pre-existing
+changes, and staged, unstaged, or untracked files. Task ownership limits implementation scope;
+it does not limit which completed outcomes you must commit.
 
-- I appear to be reviewing the work or waiting to confirm it before commit.
+Run `git status --short --untracked-files=all` from the repository root before deciding that no
+commit is needed. That result is valid only when the entire working tree is clean or every
+remaining change is explicitly exempted by me.
+
+Honor explicit instructions to leave specific changes uncommitted as exceptions for those changes.
+Commit the other completed outcomes and include the permitted exceptions in the result.
+
+Commit only completed work whose prerequisites remain satisfied. Hold an outcome and report a
+concrete blocker when:
+
+- I explicitly asked you to wait for confirmation before committing it.
 - A significant design or behavior assumption still needs my input.
 - Required verification is incomplete, invalid, or no longer matches the work.
 
-The procedure remains required even when it returns a blocker instead of a commit.
+The procedure remains required even when it returns a blocker instead of a commit. Pre-existing
+changes, unrelated outcomes, and human authorship are not blockers. If an outcome is incomplete or
+cannot be verified, identify its affected paths, the exact unmet prerequisite, and the action
+needed. A blocker leaves delivery pending; it does not permit a completion claim. Other
+independently complete, verified outcomes can still be committed unless I asked you to pause
+committing.
 
 ## Compose the commits
 
@@ -25,7 +41,9 @@ and binary additions directly. Remove task-generated disposable material, includ
 transcripts, per-run JSON, screenshots, logs, duplicate snapshots, hash inventories, and evidence
 manifests, unless I explicitly requested retention. Keep concise findings and reusable source or
 checks. Ignoring output or planning a later cleanup does not satisfy this check. Preserve unrelated
-files and my work; do not create a cleanup inventory or replacement archive.
+files and my work by retaining their content and committing completed outcomes. Do not discard,
+overwrite, stash, or newly ignore changes to make the working tree appear clean. Do not create a
+cleanup inventory or replacement archive.
 
 Partition the final work before staging:
 
@@ -50,7 +68,16 @@ its subject; unstage and repartition anything that is not.
 - Squash local commits that describe the same outcome when they have not been pushed upstream.
   Do not rewrite published commits without my direction.
 
-After committing, the working tree must be clean unless I explicitly told you otherwise.
+## Verify completion
+
+After the final commit and any hooks finish, run `git status --short --untracked-files=all` again
+from the repository root. The output must be empty unless I explicitly told you to leave specific
+changes uncommitted. Inspect every remaining entry and commit completed outcomes separately as
+needed. Do not substitute a task-path diff or a list of your own changes for this check.
+
+If any other entry remains, resolve it or report the concrete blocker and keep delivery pending.
+Merely listing leftover changes in the final response does not satisfy this requirement. Preserve
+existing ignored files; inspect ignored outputs separately for task-generated disposable material.
 
 ## Write the subject
 
@@ -91,6 +118,8 @@ author and committer identity.
 
 ## Result
 
-Include each commit identifier and subject, any intentionally uncommitted changes, and whether
-history was squashed. If no commit was created, include the exact blocker and the action needed
-to resolve it.
+Include each commit identifier and subject, the final working-tree check, and whether history was
+squashed. Report uncommitted changes only with my explicit instruction permitting them or the
+concrete blocker keeping delivery pending. If no commit was needed, state that the entire working
+tree was already clean or only my explicit exceptions remained. If committing was blocked,
+include the action needed to resolve it.

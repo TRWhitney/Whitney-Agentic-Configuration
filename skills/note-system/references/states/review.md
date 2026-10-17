@@ -57,11 +57,16 @@ for a concrete diagnosis or retry, then delete it. Preserve requested canonical 
 selected attachments.
 
 After review and cleanup pass, complete the required commit procedure.
+For a Git-tracked vault, apply it to the entire working tree, including my pre-existing changes
+and unrelated outcomes. Commit each completed outcome and verify the entire working tree is clean
+before completion unless I explicitly instructed you to leave specific changes uncommitted.
+Task ownership does not exempt changes from this requirement.
 
 ## Continue
 
-Continue to completion when review passes, the commit procedure has no blocker, and the report
-is ready. Return to integration when I resolve a queued decision, a source record has a defect, or
+Continue to completion when review passes, the commit procedure has no blocker, its final
+repository-wide working-tree check passes or the vault is not Git-tracked, and the report is
+ready. Return to integration when I resolve a queued decision, a source record has a defect, or
 tag assignments need correction. Return to discovery when scope evidence, the subject inventory,
 or relevant tag usage is incomplete. Return to acquisition when source evidence must be prepared
 again. Use the displayed preparation route when a visual needs to be obtained or corrected. If

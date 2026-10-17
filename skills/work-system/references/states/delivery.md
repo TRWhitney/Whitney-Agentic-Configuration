@@ -32,6 +32,11 @@ Commit after documentation is resolved, every required review axis passes, and c
 evidence covers the complete work. Preserve accepted artifacts and completion records according
 to the work-record guidance. Remain in delivery while a commit blocker remains.
 
+Apply the commit procedure to the entire working tree, including my pre-existing changes and
+unrelated outcomes. Commit each completed outcome and verify the entire working tree is clean
+before completion unless I explicitly instructed you to leave specific changes uncommitted.
+Task ownership does not exempt changes from this requirement.
+
 Complete all required delivery procedures before marking the outcome delivered. Keep work pending
 until its delivery conditions are met.
 
@@ -41,5 +46,6 @@ Complete the workflow only when no accepted work remains and its durable record 
 ## Continue
 
 Continue when documentation is resolved, review has no unresolved blocking finding or judgment,
-required commits exist, completion evidence remains valid, and no decision or correction belongs
-to an earlier state.
+required commits exist, the final repository-wide working-tree check passes under the commit
+procedure, completion evidence remains valid, and no decision or correction belongs to an earlier
+state.
