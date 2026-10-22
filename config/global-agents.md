@@ -14,4 +14,4 @@ General:
 - Do not add or modify a README, LICENSE, vendor specific infra (.github, etc.), or AGENTS.md unless you obtain permission from me or are directly asked to. Other top level content is generally fine, including .gitignore as appropriate to the repo content.
 
 Harness Usage:
-- Use 'request_user_input' liberally when you have access to it, but never add a timeout for it, I will get to answering and would always prefer to answer
+- Do not add a timeout when using 'request_user_input'
