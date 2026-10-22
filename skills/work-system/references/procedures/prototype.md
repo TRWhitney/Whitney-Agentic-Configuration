@@ -24,6 +24,9 @@ interaction.
 - Reuse the project's stack, components, and tools when they help show the proposed behavior. If
   there is no suitable place to run it, add only the setup needed for the question. Keep
   dependencies and shared tools in their normal project locations.
+- Share as much code as possible between prototypes for behavior, styles, and appearance we
+  have already accepted. Make clear which shared code represents those decisions so implementors
+  can see what production must match.
 - Label prototype behavior and sample data as non-production. Use a separate route, module,
   fixture, query parameter, or feature flag to keep them out of production use. Use normal Git
   history rather than a separate history for the prototype.
@@ -35,6 +38,8 @@ interaction.
 - Launch and operate every interaction relevant to the decision before presenting it. Provide
   complete run instructions and any non-sensitive sample data so I can try it without rebuilding
   the environment or code.
+- Include a clear prompt in the prototype stating what is under review. Give concrete steps to
+  try the behavior and say what to look for.
 - Add adjustment controls, stable labels, or preference export only when they help comparison or
   feedback. Keep them limited to the question. Use the same names in the prototype and notes.
 - Provide a way to identify regions and controls by stable names so we can discuss them. Prefer
