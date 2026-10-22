@@ -65,11 +65,11 @@ only when the correction cannot affect them.
 
 Record exact commands, concise outcomes, failures, limitations, inspected flows, and visual
 observations in the existing record. Keep reusable checks. Give reviewers temporary evidence
-paths when needed; saved conclusions must make sense after captures are deleted. Delete raw
-outputs after inspection and required review, before delivery, unless I explicitly requested
-retention. This includes screenshots, logs, traces, and per-run JSON. Ignoring them does not
-satisfy cleanup. Avoid capturing secrets and redact sensitive values from evidence shared for
-inspection or review.
+paths when needed. Describe the results before deleting the captures.
+Delete screenshots, logs, traces, per-run JSON, and other raw outputs after inspection and
+required review, before delivery, unless I explicitly asked to keep them. Delete these files
+even if Git ignores them. Avoid capturing secrets and redact sensitive values shared for inspection
+or review.
 
 When behavior, tests, tooling, dependencies, or the environment change, invalidate affected
 evidence and rerun the affected checks and their dependent checks.

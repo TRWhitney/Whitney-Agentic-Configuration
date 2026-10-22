@@ -11,9 +11,9 @@ task. If the task scope cannot be identified, do not dispatch review.
 Gather my request, acceptance checks, specification or ticket, agreed decisions and prototype
 requirements, current verification evidence, and affected public interfaces.
 
-Supply temporary evidence paths when needed and keep those captures available through required
-review. Include the retention rules and explicit exceptions in each reviewer assignment. Review
-does not require committed captures or full run histories unless I explicitly requested it.
+Give reviewers temporary evidence paths and keep the files until review is done. Include the
+retention rules and explicit exceptions in each assignment. Do not require committed captures
+or full run histories unless I explicitly requested them.
 
 For the initial complete review, provide these sources without prior conclusions, suspected
 defects, or unrelated project history. For a correction review, also provide the admitted

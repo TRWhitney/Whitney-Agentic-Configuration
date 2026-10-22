@@ -49,9 +49,9 @@ Run `python3 <skill-directory>/scripts/check_markdown_tables.py FILE [FILE ...]`
 task-owned Markdown file explicitly. Do not derive the file set from Git. Exit status 1 reports
 a table-link violation; exit status 2 reports invalid input or an unreadable file.
 
-Inspect temporary evidence before disposal; review does not require committing it or saving full
-run histories unless I explicitly requested it. Keep concise findings in the existing record,
-without reviewer transcripts, evidence manifests, or cleanup inventories.
+Inspect temporary evidence before deleting it. Do not require committed captures or full run
+histories unless I explicitly requested them. Keep concise findings in the existing record.
+Do not save reviewer transcripts, evidence manifests, or cleanup inventories.
 
 After the result passes, remove downloaded video, audio, bulk frames, contact sheets, raw
 metadata, and other temporary preparation files before commit or delivery unless I explicitly

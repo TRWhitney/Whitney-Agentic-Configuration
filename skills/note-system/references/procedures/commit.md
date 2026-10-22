@@ -31,13 +31,14 @@ pause committing. A change's age, author, or lack of relation to your task is no
 Inspect the full working tree, staged and unstaged diffs, recent commits, current branch, and
 upstream before grouping commits.
 
-Before every commit, inspect generated file counts and sizes, untracked and ignored outputs, and
-staged additions with `git diff --cached --stat` and `git diff --cached --numstat`. Open large
-and binary additions. Remove temporary outputs created for this task, including session
-transcripts, per-run JSON, screenshots, logs, duplicate snapshots, hash inventories, and
-evidence manifests, unless I explicitly requested them. Requested source notes and selected
-attachments are deliverables. Keep concise findings and reusable code or checks. Do not replace
-deleted outputs with cleanup inventories or archives.
+Before every commit, check generated file counts and sizes, untracked and ignored files, and
+staged additions. Use `git diff --cached --stat` and `git diff --cached --numstat`. Open large
+and binary additions.
+
+Delete task-generated agent session transcripts, per-run JSON, screenshots, logs, duplicate
+snapshots, hash inventories, and evidence manifests unless I explicitly asked to keep them.
+Keep requested source notes and selected attachments. Keep concise findings and reusable code
+or checks. Do not replace deleted outputs with cleanup inventories or archives.
 
 Keep unrelated file contents unchanged and commit completed work. Do not discard, overwrite,
 stash, or newly ignore changes to make the tree appear clean. Ignoring temporary outputs or
