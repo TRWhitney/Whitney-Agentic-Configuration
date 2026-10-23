@@ -42,9 +42,9 @@ the question. Do not delegate ordinary repository reading.
 - Investigate disagreements. Compare dates, versions, assumptions, and the conditions each
   source addresses instead of choosing the convenient answer.
 - Keep searches and experiments within the question and stop when they support the decision at
-  hand. Generate raw outputs in temporary directories outside the checkout. Record enough setup,
-  measured comparisons, failures, and limitations to rerun useful checks. Do not keep full run
-  captures for later replay unless I explicitly request them.
+  hand. Put temporary code, data, and outputs in temporary directories outside the checkout.
+  Record enough setup, measured comparisons, failures, and limitations to rerun useful checks.
+  Do not keep full run captures for later replay unless I explicitly request them.
 
 ## Check and record findings
 

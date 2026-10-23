@@ -34,8 +34,10 @@ and binary additions.
 
 Delete task-generated agent session transcripts, per-run JSON, screenshots, logs, duplicate
 snapshots, hash inventories, and evidence manifests unless I explicitly asked to keep them.
-Keep concise findings and reusable code or checks. Do not replace deleted outputs with cleanup
-inventories or archives.
+Keep concise findings. Commit source or data only if an agreed feature, tool, test, or prototype
+needs it after this task. Reuse by other temporary work does not count. Do not commit temporary
+code or data. Keep them until they are no longer needed, then delete them. Do not replace
+deleted outputs with cleanup inventories or archives.
 
 Keep unrelated file contents unchanged and commit completed work. Do not discard, overwrite,
 stash, or newly ignore changes to make the tree appear clean. Ignoring temporary outputs or
