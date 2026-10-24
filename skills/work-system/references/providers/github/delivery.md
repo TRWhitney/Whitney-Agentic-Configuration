@@ -4,33 +4,31 @@
 
 For implementation delivery, check the issue, repository, head branch, and base. Find the
 branch's existing PR. Push the validated commits and create or update the PR using the
-description guidance below. After an uncertain creation response, look for the PR before
-retrying.
+title and description guidance below. If the request to create a PR times out or returns no PR
+URL, check GitHub for a PR with the same head and base branches before retrying.
 
 Save the PR URL, head revision, base, and next action on the work item. Read the repository's
 required checks and reviews, including review bots that run after a push.
 
-## PR description
+## PR title and description
 
-Apply this guidance when creating, rewriting, or clarifying a GitHub PR description. Explain the
-problem and what this PR makes possible or changes compared with existing behavior, including
-earlier parts of the same feature. Link the ticket and report the checks and their results.
+Write for someone who has not read the ticket history or code. Link the ticket.
 
-For behavior changes:
-
-- Show a concrete consumer action and its observable result. Explain what previously failed or
-  behaved differently. An API declaration or list of supported signatures alone does not
-  demonstrate functionality.
-- Use examples that exercise the claimed change. An unchanged example can explain setup, but
-  cannot demonstrate a newly delivered capability.
-- Link relevant documentation and runnable examples or acceptance fixtures at the reviewed
-  revision. Explain what each demonstrates. Verify that the linked material supports the claim;
-  do not present general setup or earlier functionality as evidence of the new behavior.
-- State required setup, supported environments, and material limitations when they affect usage.
-
-Scale detail to the change. Use plain, concrete language and include only what helps a reviewer
-understand or use the result. A small change may need only a few sentences and validation. Do
-not turn every PR into a long checklist.
+- Use the title to say what someone can now do or what behavior changes.
+- Describe the old behavior and what this PR changes. Say what earlier PRs already delivered.
+- Explain the change before showing an example.
+- Include a realistic example in every PR description. Show what someone does and what happens.
+  Use code, a command, or a concrete interaction. Give separate concepts separate examples.
+- State required setup and limits that affect use. Say what runs automatically and what the
+  person using it must do or provide.
+- Report the checks you ran and their results. Link relevant docs and runnable examples or
+  acceptance tests at the commit under review. Say what each explains or tests. Read the linked
+  files to confirm they support your claims.
+- After changing the implementation, update the title, description, examples, and links to match.
+  Leave out abandoned approaches and conversation history unless they explain a needed tradeoff.
+- Use simple words and short sentences. A small change may need only a few sentences, an example,
+  and check results. Include technical details when they explain behavior, compatibility, or
+  risk. Cut vague benefits, lists of changed files, and claims about following instructions.
 
 ## Watch and respond
 
