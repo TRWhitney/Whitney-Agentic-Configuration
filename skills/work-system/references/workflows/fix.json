@@ -15,7 +15,7 @@
         },
         "tracking": {
           "status": "triggered",
-          "cue": "My request selects or changes the project tracker."
+          "cue": "My request explicitly sets or changes this repository's tracker."
         }
       },
       "transitions": {
