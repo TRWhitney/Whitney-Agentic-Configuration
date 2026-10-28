@@ -4,15 +4,90 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shlex
 import sys
 from pathlib import Path
-from typing import cast
 
 # Keep standalone installation working with Python's isolated mode.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import navigation as core
 import project
+import sessions
+
+
+def nav_command(*arguments: str) -> str:
+    return " ".join(
+        shlex.quote(value)
+        for value in ("python3", str(Path(__file__).resolve()), *arguments)
+    )
+
+
+def bind_commands(output: str, conversation: str | None) -> str:
+    if conversation is None:
+        return output
+
+    def bind(match: re.Match[str]) -> str:
+        value = match.group(1)
+        parts = shlex.split(value)
+        if (
+            len(parts) > 2
+            and parts[1]
+            in {str(Path(__file__).resolve()), str(Path(core.__file__).resolve())}
+            and parts[2] != "provider"
+            and "--conversation" not in parts
+        ):
+            value += " --conversation " + shlex.quote(conversation)
+        return f"`{value}`"
+
+    return re.sub(r"`(python3 [^`\n]+)`", bind, output)
+
+
+def substates_for(
+    workflow: dict[str, object], state: str
+) -> list[core.ProcedureAccess]:
+    configured = core.mapping(
+        core.state_for(workflow, state).get("substates", {}), "substates"
+    )
+    return [
+        core.parse_access(name, {"status": "allowed", **core.mapping(raw, name)})
+        for name, raw in configured.items()
+    ]
+
+
+def substate_for(
+    workflow: dict[str, object], state: str, name: str
+) -> core.ProcedureAccess:
+    for access in substates_for(workflow, state):
+        if access.name == name:
+            return access
+    raise core.NavigationError(f"Substate {name} is unavailable in {state}.")
+
+
+def render_substate(
+    provider: project.Provider, workflow: dict[str, object], state: str, name: str
+) -> str:
+    access = substate_for(workflow, state, name)
+    sections = [
+        core.read_markdown(core.REFERENCES_ROOT / "substates" / f"{name}.md", name)
+    ]
+    related = core.render_related_procedures(
+        core.text(workflow["name"], "workflow"),
+        state,
+        core.procedures_for(workflow, state),
+        access,
+    )
+    if related:
+        sections.append(related)
+    for format_access in access.formats:
+        sections.append(
+            provider.resource("formats", format_access.name)
+            or core.read_markdown(
+                core.FORMATS_ROOT / f"{format_access.name}.md", format_access.name
+            )
+        )
+    sections.append(f"Leave this substate with `{nav_command('substate', 'leave')}`.")
+    return "\n\n".join(sections)
 
 
 def procedure_guidance(provider: project.Provider, name: str) -> str:
@@ -34,6 +109,8 @@ def render_state(
     state_name: str,
     *,
     include_record: bool,
+    session: sessions.Session | None = None,
+    conversation: str | None = None,
 ) -> str:
     state = core.state_for(workflow, state_name)
     procedures = core.procedures_for(workflow, state_name)
@@ -64,14 +141,35 @@ def render_state(
         record = provider.resource("records", name)
         if record:
             sections.extend(("## Workflow record", record))
+    sections.append(f"Tracker: `{provider.directory.name}`")
+    substates = substates_for(workflow, state_name)
+    if substates:
+        sections.append("## Optional substates")
+        for substate in substates:
+            sections.append(
+                f"- `{substate.name}`: {substate.cue}\n"
+                f"  Enter with `{nav_command('substate', 'enter', substate.name)}`"
+            )
+    if session:
+        if session.record:
+            sections.append(f"Read the work record before continuing: {session.record}")
+        if session.substate:
+            sections.append(
+                render_substate(provider, workflow, state_name, session.substate)
+            )
+    resume = (
+        core.resume_command(name, state_name)
+        if session is None
+        else nav_command("resume")
+    )
     sections.extend(
         (
             "## Resume",
-            f"Continue this state with `{core.resume_command(name, state_name)}`",
+            f"Continue this state with `{resume}`",
             core.render_routes(name, state_name, state),
         )
     )
-    return "\n\n".join(sections)
+    return bind_commands("\n\n".join(sections), conversation)
 
 
 def render_procedure(
@@ -117,6 +215,46 @@ def render_format(
     )
 
 
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Navigate work-system states and procedures."
+    )
+    commands = parser.add_subparsers(dest="command", required=True)
+    for name in (
+        "start",
+        "resume",
+        "move",
+        "procedure",
+        "format",
+        "cancel",
+        "substate",
+    ):
+        item = commands.add_parser(name)
+        item.add_argument("--conversation")
+        if name == "start":
+            item.add_argument("workflow")
+            item.add_argument("--record")
+        elif name == "resume":
+            item.add_argument("workflow", nargs="?")
+            item.add_argument("state", nargs="?")
+        elif name == "substate":
+            item.add_argument("action", choices=("enter", "leave"))
+            item.add_argument("name", nargs="?")
+        elif name != "cancel":
+            item.add_argument("workflow")
+            item.add_argument("state")
+            if name == "move":
+                item.add_argument("destination")
+            elif name == "procedure":
+                item.add_argument("procedure")
+            else:
+                item.add_argument("format")
+                sources = item.add_mutually_exclusive_group()
+                sources.add_argument("--procedure")
+                sources.add_argument("--substate")
+    return parser
+
+
 def run(arguments: list[str]) -> str:
     if arguments and arguments[0] == "provider":
         command = argparse.ArgumentParser(
@@ -134,51 +272,144 @@ def run(arguments: list[str]) -> str:
             core.text(provider.manifest.get("setup"), "provider setup")
         )
 
-    args = core.build_parser().parse_args(arguments)
-    name = cast(str, args.workflow)
+    args = build_parser().parse_args(arguments)
     provider, settings = project.selected()
-    workflow = provider.workflow(name)
-    command_name = cast(str, args.command)
-    if command_name in {"start", "resume"}:
-        state = (
-            core.text(workflow["entry-state"], "entry state")
-            if command_name == "start"
-            else cast(str, args.state)
-        )
-        return render_state(
-            provider, settings, name, workflow, state, include_record=True
-        )
-    if command_name == "procedure":
-        return render_procedure(provider, workflow, args.state, args.procedure)
-    if command_name == "format":
-        return render_format(
-            provider, workflow, args.state, args.format, args.procedure
-        )
-    if command_name == "move":
-        current_state = core.state_for(workflow, args.state)
-        routes = core.mapping(current_state.get("transitions"), "transitions")
-        destination = cast(str, args.destination)
-        if destination not in routes.values():
-            raise core.NavigationError(
-                f"Cannot move from {name}.{args.state} to {destination}."
-            )
-        if destination == "complete":
-            return f"Workflow complete: {name}"
-        next_name, next_state = (
-            destination.split(".", maxsplit=1)
-            if "." in destination
-            else (name, destination)
-        )
-        next_workflow = provider.workflow(next_name)
-        return render_state(
+    if args.command == "resume" and bool(args.workflow) != bool(args.state):
+        raise core.NavigationError("Supply both workflow and state, or neither.")
+    if args.command == "resume" and args.workflow:
+        output = render_state(
             provider,
             settings,
-            next_name,
-            next_workflow,
-            next_state,
-            include_record=next_name != name,
+            args.workflow,
+            provider.workflow(args.workflow),
+            args.state,
+            include_record=True,
+            conversation=args.conversation,
         )
-    raise core.NavigationError(f"Unknown command: {command_name}")
+        return bind_commands(
+            output + "\n\nNamed-location guidance does not move the saved workflow. "
+            f"Restore it with `{nav_command('resume')}`.",
+            args.conversation,
+        )
+    with sessions.locked_store(args.conversation) as store:
+        session = store.load()
+        if args.command == "start":
+            workflow = provider.workflow(args.workflow)
+            if session and session.workflow != args.workflow:
+                raise core.NavigationError(
+                    "A workflow is active in this conversation. Restore, complete, "
+                    "or cancel it before starting another."
+                )
+            if session is None:
+                session = sessions.Session(
+                    args.workflow,
+                    core.text(workflow["entry-state"], "entry state"),
+                )
+            if args.record is not None:
+                session.record = sessions.record_location(args.record)
+        elif args.command in {"procedure", "format", "move"}:
+            workflow = provider.workflow(args.workflow)
+            if session and (session.workflow, session.state) != (
+                args.workflow,
+                args.state,
+            ):
+                raise core.NavigationError(
+                    f"The saved state is {session.workflow}.{session.state}. "
+                    "Restore it before continuing."
+                )
+            if args.command == "procedure":
+                output = render_procedure(
+                    provider, workflow, args.state, args.procedure
+                )
+                resume = (
+                    nav_command("resume")
+                    if session
+                    else core.resume_command(args.workflow, args.state)
+                )
+                return bind_commands(
+                    output + f"\n\nReturn with `{resume}`.", args.conversation
+                )
+            if args.command == "format":
+                if args.substate:
+                    access = substate_for(workflow, args.state, args.substate)
+                    if args.format not in {item.name for item in access.formats}:
+                        raise core.NavigationError(
+                            "Format unavailable through this substate."
+                        )
+                    return provider.resource(
+                        "formats", args.format
+                    ) or core.read_markdown(
+                        core.FORMATS_ROOT / f"{args.format}.md", args.format
+                    )
+                return render_format(
+                    provider, workflow, args.state, args.format, args.procedure
+                )
+            if session is None:
+                session = sessions.Session(args.workflow, args.state)
+            if session.substate:
+                raise core.NavigationError(
+                    "Leave the active substate before moving to another state."
+                )
+            source = core.state_for(workflow, args.state)
+            destination = args.destination
+            if (
+                destination
+                not in core.mapping(source.get("transitions"), "transitions").values()
+            ):
+                raise core.NavigationError(
+                    f"Cannot move from {args.workflow}.{args.state} to {destination}."
+                )
+            if destination == "complete":
+                if store.path.exists():
+                    store.clear()
+                return f"Workflow complete: {session.workflow}"
+            session.workflow, session.state = (
+                destination.split(".", 1)
+                if "." in destination
+                else (args.workflow, destination)
+            )
+        elif session is None:
+            if args.command == "resume":
+                return (
+                    "No active workflow. "
+                    "Use the work-system skill to choose a workflow."
+                )
+            raise core.NavigationError("No active workflow. Start one first.")
+        if args.command == "cancel":
+            store.clear()
+            return (
+                f"Workflow cancelled: {session.workflow}. Its work record is unchanged."
+            )
+        workflow = provider.workflow(session.workflow)
+        if args.command == "substate":
+            if args.action == "enter":
+                if not args.name:
+                    raise core.NavigationError("Name the substate to enter.")
+                substate_for(workflow, session.state, args.name)
+                if session.substate and session.substate != args.name:
+                    raise core.NavigationError(
+                        "Leave the current substate before entering another."
+                    )
+                session.substate = args.name
+            else:
+                if args.name or not session.substate:
+                    raise core.NavigationError(
+                        "Use substate leave with an active substate and no name."
+                    )
+                session.substate = None
+        output = render_state(
+            provider,
+            settings,
+            session.workflow,
+            workflow,
+            session.state,
+            include_record=True,
+            session=session,
+            conversation=args.conversation,
+        )
+        if args.command != "resume":
+            store.save(session)
+        return output
 
 
 def main() -> int:
@@ -190,7 +421,7 @@ def main() -> int:
                 str(Path(core.__file__).resolve()), str(Path(__file__).resolve())
             )
         )
-    except core.NavigationError as error:
+    except (core.NavigationError, OSError) as error:
         print(f"Navigation error: {error}", file=sys.stderr)
         return 2
     return 0

@@ -34,8 +34,16 @@
           "status": "allowed",
           "cue": "Use for a bounded investigation that benefits from dedicated research."
         },
-        "wayfinding": {
+        "tracking": {
           "status": "triggered",
+          "cue": "My request explicitly sets or changes this repository's tracker."
+        }
+      },
+      "transitions": {
+        "plan-ready": "implementation"
+      },
+      "substates": {
+        "wayfinding": {
           "cue": "Use when there are too many open decisions to track reliably in conversation.",
           "related-procedures": [
             "research",
@@ -48,14 +56,7 @@
               "cue": "Use when creating or updating a decision map or decision ticket."
             }
           }
-        },
-        "tracking": {
-          "status": "triggered",
-          "cue": "My request explicitly sets or changes this repository's tracker."
         }
-      },
-      "transitions": {
-        "plan-ready": "implementation"
       }
     },
     "implementation": {

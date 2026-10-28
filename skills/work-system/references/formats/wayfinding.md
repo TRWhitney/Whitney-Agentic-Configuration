@@ -25,8 +25,7 @@ ticket for their feature. Several decisions may link to sections of the same tic
 The map is an index. Link the next unblocked decisions from the map; keep questions and accepted
 answers in their owning record. Multiple map entries may link to sections of the same design
 issue. Keep an area under `Not yet specified` until a question can be stated precisely and its
-effect on the first deliverable is known. Later concerns belong under `Out of scope` for that
-deliverable.
+effect on the agreed scope is known. Move work under `Out of scope` only by agreement.
 
 ## Feature research-and-planning ticket
 
@@ -69,8 +68,8 @@ supporting research, accepted prototypes, and domain terms or architecture decis
 
 Keep the feature ticket's requirements concise and link supporting documents or code. Context
 size does not justify splitting a feature's planning into several tickets. Work next on
-unanswered, unblocked questions that prevent the first deliverable. Claim the feature ticket
-before working it. Mark its planning resolved only when its blocking questions are settled.
+unanswered, unblocked questions that prevent specifying the full agreed scope. Claim the feature
+ticket before working it. Mark its planning resolved only when its blocking questions are settled.
 Follow the provider's native closure rules and add only a linked conclusion to the map.
 Decompose actual implementation separately into logical units of work with their own acceptance
 checks.

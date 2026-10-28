@@ -1,14 +1,13 @@
-# Wayfinding procedure
+# Wayfinding substate
 
 Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
 here, not production code. Use the displayed format for the map and feature tickets.
 
 ## Define the goal
 
-Describe the finished result in one or two sentences. For broad work, agree on the first useful
-deliverable and its acceptance checks before listing decisions. Put later work under `Out of
-scope` for this deliverable. Put unclear topics under `Not yet specified` only if they may
-affect it.
+Describe the finished result in one or two sentences. Agree on the full scope and its acceptance
+checks. Put excluded work under `Out of scope`.
+Keep unclear topics under `Not yet specified` until their effect on the design is settled.
 
 Group questions by feature. Keep each feature's questions, research, detailed requirements,
 refinements, and agreed answers in one combined research-and-planning ticket. Create another
@@ -17,8 +16,8 @@ its open questions and what blocks them. Do not add speculative questions just t
 
 ## Work through the next decisions
 
-Choose precise, unanswered, unblocked questions that prevent specifying or building the first
-deliverable. They may be sections of one design issue. Claim a ticket before working on it. Use
+Choose precise, unanswered, unblocked questions that prevent specifying or building the agreed
+scope. They may be sections of one design issue. Claim a ticket before working on it. Use
 a compact progress line during discussion:
 
 `Planning: <n> decided, <n> ready, unspecified: <topics or none>`
@@ -45,7 +44,7 @@ its planning open while a blocking question remains. Once settled, mark it resol
 issue state under the tracker's rules, and link the conclusion from the map.
 
 Reassess the next decisions and unspecified topics. Add a question to its feature ticket when it
-is precise and blocks the deliverable. Create a new planning ticket only for a distinct feature.
+is precise and blocks the agreed scope. Create a new planning ticket only for a distinct feature.
 
 When requirements settle and before a planning handoff, move useful decisions, reasons, and
 source links from redundant records into the existing feature ticket. Close or remove redundant
@@ -57,12 +56,17 @@ project terms or architecture decisions that future work needs, then link those 
 the feature ticket.
 
 Keep the map an index. Feature planning records requirements; implementation tickets describe
-work to build them. Finish when the deliverable is clear, its blocking decisions are settled,
-and a fresh context can write its specification and implementation tickets without guessing my
-intent. Deferred choices must not affect its acceptance checks or be reported as resolved.
+work to build them. Finish when the full agreed scope is clear and its blocking decisions are
+settled. A fresh context must be able to write its specification and implementation tickets
+without guessing my intent. Deferred choices must not affect its acceptance checks or be reported
+as resolved.
 
 ## Result
 
-Report the goal, first deliverable, links to agreed requirements, exclusions, deferred work, and
+Report the goal, agreed scope, links to agreed requirements, exclusions, deferred work, and
 remaining unspecified topics and ready decisions. When finished, report that no blocking
-decision or unspecified topic remains for the deliverable.
+decision or unspecified topic remains for the agreed scope.
+
+Leave wayfinding when its result is complete or I cancel it. Research, prototypes, and record
+updates return to this discussion. Leaving wayfinding returns to planning; specification,
+and ticketing must still finish before implementation.

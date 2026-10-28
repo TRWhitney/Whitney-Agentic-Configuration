@@ -16,11 +16,11 @@ requirements, architecture concerns, experiments, and agreed answers belong toge
 of question, method, evidence, agent, or context does not justify another planning ticket. For
 example, named text-style syntax, defaults, inheritance, and validation belong to one feature.
 
-For broad work, agree on the first useful deliverable and its acceptance checks before listing
-more decisions. Identify choices that block specifying, building, or checking that deliverable.
-Defer later choices with the work they affect. Keep the full requested goal in scope for the
-effort; do not call it complete after delivering only part. If I request a complete design up
-front, plan that full design.
+Agree on the requested work and its acceptance checks. Use dependencies between features to order
+the discussion and implementation tickets. Complete the design for all agreed work before
+implementation. Remove agreed work only with my agreement.
+Identify decisions needed to specify, build, or check the agreed work. Keep unanswered decisions
+with the work they affect. Do not call the requested work complete after delivering only part.
 
 For open-ended inputs or public composition and extension interfaces, state which uses are
 supported and what callers must handle when that affects acceptance.
@@ -66,18 +66,18 @@ Prefer tickets that connect all layers needed for a result over tickets divided 
 technical component. Avoid file-by-file instructions, speculative tasks, and code likely to
 become outdated.
 
-Check that tickets cover the agreed deliverable without gaps or duplicate work. When delivering
-in parts, keep later work explicit and create its tickets when requirements are clear enough.
-Order by dependencies and identify tickets ready to build. One fresh context limits ticket size;
-it does not justify a ticket for every question, file, or refinement. Planning stays grouped by
-feature, while one feature's implementation may need several tickets.
+Check that tickets cover all agreed work without gaps or duplicate work. Write all
+implementation tickets before implementation starts. Order them by dependencies. Each ticket must
+be small enough to finish in one agent context; this does not justify a ticket for every question,
+file, or refinement.
+Planning stays grouped by feature, while one feature's implementation may need several tickets.
 
 ## Continue
 
-Continue to implementation when the specification describes the agreed behavior and scope, all
-decisions blocking this deliverable are settled, and deferred choices cannot change its behavior
-or acceptance checks. Tickets must cover the deliverable, link their sources, and list real
-dependencies. At least one must be ready for a fresh context to implement without guessing.
+Continue to implementation when the accepted design and implementation tickets cover all
+agreed work, all required product and architecture decisions are settled, and each ticket
+links its sources and real dependencies. A ticket with no dependencies does not permit an
+earlier start to implementation.
 
 Stay in planning otherwise. If new findings overturn part of the plan, keep the valid parts,
 update affected documents and tickets, and reassess which work is ready.

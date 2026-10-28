@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+import uuid
 from pathlib import Path
 from typing import cast
 
@@ -49,7 +51,6 @@ EXPECTED_PROCEDURES = {
     "review",
     "subagent-testing",
     "testing",
-    "wayfinding",
 }
 EXPECTED_FORMATS = {"domain-modeling", "planning-artifacts", "wayfinding"}
 EXPECTED_WORKFLOWS = {
@@ -110,7 +111,7 @@ class WorkSystemStructureTests(unittest.TestCase):
     def test_root_delegates_navigation_without_exposing_manifests(self) -> None:
         self.assertEqual(
             {path.name for path in REFERENCES_ROOT.iterdir() if path.is_dir()},
-            {"formats", "procedures", "states", "providers", "workflows"},
+            {"formats", "procedures", "states", "substates", "providers", "workflows"},
         )
         self.assertEqual(
             {path.name for path in WORKFLOWS_ROOT.iterdir()},
@@ -196,6 +197,13 @@ class WorkflowManifestTests(unittest.TestCase):
                     cast(dict[str, object], state.get("formats", {}))
                 )
                 for raw_access in procedures.values():
+                    access = cast(dict[str, object], raw_access)
+                    referenced_formats.update(
+                        cast(dict[str, object], access.get("formats", {}))
+                    )
+                for raw_access in cast(
+                    dict[str, object], state.get("substates", {})
+                ).values():
                     access = cast(dict[str, object], raw_access)
                     referenced_formats.update(
                         cast(dict[str, object], access.get("formats", {}))
@@ -338,7 +346,6 @@ class WorkflowManifestTests(unittest.TestCase):
                 "interface-design",
                 "prototype",
                 "research",
-                "wayfinding",
             },
         )
         self.assertNotIn("testing", cast(dict[str, object], planning["procedures"]))
@@ -385,7 +392,10 @@ class WorkflowManifestTests(unittest.TestCase):
             dict[str, object], planning_procedures["interface-design"]
         )
         prototype = cast(dict[str, object], planning_procedures["prototype"])
-        wayfinding = cast(dict[str, object], planning_procedures["wayfinding"])
+        wayfinding = cast(
+            dict[str, object],
+            cast(dict[str, object], planning["substates"])["wayfinding"],
+        )
         self.assertEqual(interface_design["related-procedures"], ["prototype"])
         self.assertEqual(prototype.get("related-procedures", []), [])
         self.assertIn(
@@ -516,12 +526,22 @@ class WorkflowManifestTests(unittest.TestCase):
 
 
 class NavigatorTests(unittest.TestCase):
+    def setUp(self) -> None:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.inspection_root = Path(temporary.name)
+
     def run_navigator(
         self, *arguments: str, expected_returncode: int = 0, cwd: Path | None = None
     ) -> subprocess.CompletedProcess[str]:
         result = subprocess.run(
             [sys.executable, str(NAVIGATOR_PATH), *arguments],
-            cwd=cwd or REPO_ROOT,
+            cwd=cwd or self.inspection_root,
+            env={
+                **os.environ,
+                "CODEX_HOME": str(self.inspection_root / "codex-home"),
+                "CODEX_THREAD_ID": str(uuid.uuid4()),
+            },
             check=False,
             capture_output=True,
             text=True,
@@ -551,7 +571,7 @@ class NavigatorTests(unittest.TestCase):
                 cwd=cwd,
                 expected_returncode=2,
             )
-            (cwd / ".work").mkdir()
+            (cwd / ".work").mkdir(exist_ok=True)
             settings = cwd / ".work" / "project.json"
             settings.write_text('{"tracker": "github", "repository": "owner/repo"}')
             for name in ("novel-work", "tweak", "fix"):
@@ -581,7 +601,7 @@ class NavigatorTests(unittest.TestCase):
     def test_bad_settings_do_not_silently_select_local(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             cwd = Path(directory)
-            (cwd / ".work").mkdir()
+            (cwd / ".work").mkdir(exist_ok=True)
             for body in ("{", "[]", '{"tracker": "unknown"}', '{"tracker": "github"}'):
                 (cwd / ".work" / "project.json").write_text(body)
                 self.run_navigator(
@@ -663,6 +683,11 @@ class NavigatorTests(unittest.TestCase):
                         *args,
                     ],
                     cwd=cwd,
+                    env={
+                        **os.environ,
+                        "CODEX_HOME": str(cwd / "codex-home"),
+                        "CODEX_THREAD_ID": str(uuid.uuid4()),
+                    },
                     capture_output=True,
                     text=True,
                     check=False,
@@ -677,7 +702,7 @@ class NavigatorTests(unittest.TestCase):
 
         self.assertIn("procedure question discovery research", output)
         self.assertIn("move question discovery answer", output)
-        self.assertIn("resume question discovery", output)
+        self.assertIn("navigate.py resume`", output)
         self.assertNotIn("resume question answer", output)
         self.assertNotIn("procedure question discovery testing", output)
 
@@ -688,7 +713,6 @@ class NavigatorTests(unittest.TestCase):
             "domain-modeling",
             "interface-design",
             "prototype",
-            "wayfinding",
         }:
             self.assertIn(f"procedure novel-work planning {procedure_name}", output)
         self.assertIn("format novel-work planning planning-artifacts", output)
@@ -696,7 +720,7 @@ class NavigatorTests(unittest.TestCase):
     def test_fix_workflow_navigation_does_not_use_variants(self) -> None:
         output = self.run_navigator("start", "fix").stdout
 
-        self.assertIn("resume fix discovery", output)
+        self.assertIn("navigate.py resume`", output)
         self.assertNotIn("--variant", output)
 
     def test_tweak_testing_loads_on_demand_while_fix_and_novel_require_it(self) -> None:
@@ -756,8 +780,9 @@ class NavigatorTests(unittest.TestCase):
         self.assertNotIn("format novel-work planning wayfinding", output)
 
     def test_procedure_exposes_only_declared_related_procedure_cues(self) -> None:
+        self.run_navigator("start", "novel-work", "--conversation", "feature-planning")
         output = self.run_navigator(
-            "procedure", "novel-work", "planning", "wayfinding"
+            "substate", "enter", "wayfinding", "--conversation", "feature-planning"
         ).stdout
 
         for procedure_name in {
@@ -802,7 +827,7 @@ class NavigatorTests(unittest.TestCase):
             "novel-work",
             "planning",
             "wayfinding",
-            "--procedure",
+            "--substate",
             "wayfinding",
         ).stdout
         unavailable = self.run_navigator(
@@ -827,7 +852,7 @@ class NavigatorTests(unittest.TestCase):
             expected_returncode=2,
         )
 
-        self.assertIn("resume tweak delivery", valid)
+        self.assertIn("navigate.py resume`", valid)
         self.assertTrue(invalid.stderr.strip())
 
     def test_subagent_implementation_rejects_primary_destinations(self) -> None:
@@ -853,7 +878,7 @@ class NavigatorTests(unittest.TestCase):
         ).stdout
 
         self.assertIn("procedure novel-work planning prototype", output)
-        self.assertIn("resume novel-work planning", output)
+        self.assertIn("navigate.py resume`", output)
 
     def test_complete_move_returns_to_the_null_state(self) -> None:
         output = self.run_navigator("move", "question", "answer", "complete").stdout

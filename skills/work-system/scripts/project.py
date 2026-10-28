@@ -25,7 +25,12 @@ def settings_path() -> Path:
     except (OSError, subprocess.TimeoutExpired) as error:
         raise core.NavigationError(f"Cannot locate project: {error}") from error
     if result.returncode:
-        return Path.cwd() / ".work" / "project.json"
+        cwd = Path.cwd().resolve()
+        for candidate in (cwd, *cwd.parents):
+            path = candidate / ".work" / "project.json"
+            if path.exists():
+                return path
+        return cwd / ".work" / "project.json"
     return Path(result.stdout.strip()) / "work-system.json"
 
 
@@ -65,6 +70,8 @@ class Provider:
         for state, raw in core.mapping(
             self.manifest.get("states", {}), "states"
         ).items():
+            if state not in states:
+                continue
             additions = core.mapping(raw, state)
             target = core.mapping(states[state], state)
             procedures = core.mapping(target["procedures"], "procedures")

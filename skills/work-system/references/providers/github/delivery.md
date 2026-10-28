@@ -2,8 +2,8 @@
 
 ## File or resume
 
-For implementation delivery, check the issue, repository, head branch, and base. Find the
-branch's existing PR. Push the validated commits and create or update the PR using the
+For planning or implementation delivery, check the issue, repository, head branch, and base.
+Find the branch's existing PR. Push the validated commits and create or update the PR using the
 title and description guidance below. If the request to create a PR times out or returns no PR
 URL, check GitHub for a PR with the same head and base branches before retrying.
 
@@ -24,7 +24,7 @@ Write for someone who has not read the ticket history or code. Link the ticket.
 - Report the checks you ran and their results. Link relevant docs and runnable examples or
   acceptance tests at the commit under review. Say what each explains or tests. Read the linked
   files to confirm they support your claims.
-- After changing the implementation, update the title, description, examples, and links to match.
+- After changing the work, update the title, description, examples, and links to match.
   Leave out abandoned approaches and conversation history unless they explain a needed tradeoff.
 - Use simple words and short sentences. A small change may need only a few sentences, an example,
   and check results. Include technical details when they explain behavior, compatibility, or
@@ -62,8 +62,10 @@ Fix confirmed problems. Explain incorrect or out-of-scope findings in the PR. Re
 requirements to planning or discovery. Close addressed threads under the repository's review
 rules.
 
-Take code corrections to implementation and outdated evidence to validation. Repeat affected
-checks and required review, commit, push, and return here with the same PR.
+While planning, keep document corrections and design questions in planning. During
+implementation delivery, take code corrections to implementation
+and outdated evidence to validation. Repeat affected checks and required review, commit, push,
+and return here with the same PR.
 
 Read failed check logs before fixing code or retrying. Apply the existing validation rules to
 repository failures. Retry temporary service failures up to three times, then report the
@@ -81,14 +83,17 @@ Read the PR head again. Check that required checks and reviews pass, expected bo
 finished, no actionable feedback is open, and the PR can merge. Repeat on the new revision if
 the head changes during this check.
 
-Mark the ticket `awaiting-merge`, keep it open, and report the PR URL and check/review results
-in a progress update, keeping the watch active. Continue waiting and checking. If new feedback,
+For an implementation PR, mark the ticket `awaiting-merge` and keep it open. For a planning PR,
+keep the parent issue open and record the pending merge there. Report the PR URL and check/review
+results in a progress update, keeping the watch active. Continue waiting and checking. If new feedback,
 failing checks, or changes make the PR unready, update its ticket status and address them. Leave
 merging to me. Do not enable auto-merge or add the PR to a merge queue.
 
 ## Stop watching
 
 Stop only when the PR is merged or closed, or when I explicitly stop the watch. Unregister any
-built-in watcher when stopping. After merge, update the ticket and its dependents. Report
-closed, unmerged work without marking its outcome complete. Keep work that depends on an
+built-in watcher when stopping. After merge, update the work record and its dependents. While
+planning, recheck the design and ticket coverage before moving to implementation.
+Keep implementation tickets open. Report closed, unmerged work without marking its outcome
+complete. Keep work that depends on an
 unmerged change blocked. Finish the effort after its accepted changes have merged.

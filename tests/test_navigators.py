@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+import uuid
 from pathlib import Path
 
 from scripts.sync_navigators import (
@@ -64,6 +66,11 @@ class SkillPackagingTests(unittest.TestCase):
                     result = subprocess.run(
                         [sys.executable, "-I", str(navigator), *arguments],
                         cwd=root,
+                        env={
+                            **os.environ,
+                            "CODEX_HOME": str(root / "codex-home"),
+                            "CODEX_THREAD_ID": str(uuid.uuid4()),
+                        },
                         capture_output=True,
                         text=True,
                         check=False,

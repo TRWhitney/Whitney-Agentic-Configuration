@@ -33,8 +33,9 @@ shape may be included when it states a decision more precisely than prose.
 Under `Implementation Decisions`, maintain the agreed requirements and group its related
 questions and accepted answers in its feature's combined research-and-planning issue. For a
 multi-feature effort, link those feature issues from the parent specification. Link domain terms
-or architecture decisions that constrain it. Record the first deliverable and its deferred scope
-under `Solution` and `Out of Scope`. State agreed conclusions without copying linked rationale
+or architecture decisions that constrain it. Record the full agreed scope under `Solution` and
+agreed exclusions under `Out of Scope`. Use ticket dependencies to order implementation.
+State agreed conclusions without copying linked rationale
 or evidence. Each implementation ticket's `Accepted sources` section links to the specification
 and the decisions, research, prototypes, or project documents needed for its result.
 

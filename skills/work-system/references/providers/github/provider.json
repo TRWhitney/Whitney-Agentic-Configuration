@@ -26,6 +26,22 @@
           "cue": "Validation, review, and commit are complete."
         }
       }
+    },
+    "planning": {
+      "procedures": {
+        "review": {
+          "status": "allowed",
+          "cue": "Use to review repository planning documents before publishing."
+        },
+        "commit": {
+          "status": "triggered",
+          "cue": "Planning documents are ready to commit."
+        },
+        "publish": {
+          "status": "triggered",
+          "cue": "The design and tickets are complete and repository planning documents are checked and committed."
+        }
+      }
     }
   },
   "setup": "setup.md"

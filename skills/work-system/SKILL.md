@@ -46,6 +46,18 @@ including when I ask the primary agent to delegate work.
 4. Switch a tweak or fix to novel work when later evidence shows that its scope or uncertainty
    no longer fits the bounded workflow.
 
+## Restore
+
+After context compaction, run:
+
+```text
+python3 <skill-directory>/scripts/navigate.py resume
+```
+
+The navigator restores this conversation's progress. Read its linked work record before
+continuing when one is saved. If there is no active workflow, route the prompt. Named-location
+resume loads guidance without changing saved progress.
+
 ## Navigate
 
 Use `scripts/navigate.py` to load states, procedures, and formats. Do not read workflow
@@ -62,9 +74,11 @@ python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destinati
 Use `question`, `tweak`, `fix`, or `novel-work` as standard workflows. Use
 `subagent-implementation` only under the spawned-implementation-subagent rule.
 
-Enter a workflow with `start`. Every active state displays its exact resume command. In a fresh
-context, use that command before loading a procedure. The navigator returns the active state and
-the procedures related to it:
+Enter a workflow with `start`. Use `--record <path-or-url>` to link its work record. Progress is
+saved separately for each conversation. Use `cancel` when the workflow is cancelled.
+The navigator uses `CODEX_THREAD_ID` to identify the conversation. If it is unavailable, supply
+`--conversation <id>`; displayed continuation commands keep that argument. The navigator returns
+the active state and the procedures related to it:
 
 - **Allowed**: Load when it would help perform the state's work.
 - **Triggered**: Load when its displayed cue applies.
@@ -72,13 +86,19 @@ the procedures related to it:
 
 Load an allowed or triggered procedure only through an exact command displayed by the active
 state or another authorized procedure. Do not construct a procedure command independently.
-Return to the active state after completing it. The output for each state and procedure lists
-any associated formats; load them only through the displayed navigator command.
+Return with the displayed resume command after completing a procedure. The output for each
+state and procedure lists any associated formats; load them only through the displayed
+navigator command.
 
 ## Procedure results and transitions
 
-Loading a procedure does not change the active state. Use its result to continue that state's
-work. Run `resume` again only when the state guidance is missing from context.
+Loading a procedure does not change the active state or substate. Use its result to continue
+that state's work.
+
+A state may offer optional substates. Enter one with its displayed command when it would help.
+It remains active across discussion and temporary procedures until its result is complete or I
+cancel it. Resume restores its guidance and formats. Leave it with the displayed command before
+moving to another state.
 
 Keep findings needed for the next step in conversation and in the work record when one exists.
 Report blockers and decisions that need my input when they arise.
@@ -91,13 +111,14 @@ affected checks.
 Complete the workflow only when the active state permits completion and its required evidence
 still matches the completed work. Give one final response covering the result, proof, findings,
 documentation impact, commits, and unresolved issues. Omit categories that do not apply and link
-saved documents or code instead of copying them. Then clear the active workflow.
+saved documents or code instead of copying them. Then use the displayed completion route to
+remove its saved navigation progress.
 
 ## Track state
 
-- Keep workflow progress in conversation unless its work-record guidance requires a saved
-  record. For a fresh context, include the exact resume command, question or acceptance checks,
-  key findings and procedure results, this task's uncommitted paths, and next action in the
-  handoff.
-- Follow the work-record guidance returned by the navigator. Update its resume command, agreed
-  decisions, checks that need rerunning, and next step. Link sources instead of copying them.
+The navigator saves the workflow, state, optional substate, and optional work-record link under
+`<Codex home>/work-system/state/`, using `CODEX_HOME` or `.codex` under the home directory. Keep the
+current question, accepted sources, findings, this task's uncommitted paths, and next action in
+the work record when one is required, or in conversation otherwise. Follow the work-record
+guidance returned by the navigator. Update its resume command, agreed decisions, checks that
+need rerunning, and next step. Link sources instead of copying them.

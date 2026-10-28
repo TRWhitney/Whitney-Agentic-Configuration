@@ -73,6 +73,17 @@ files for command input and remove them after use.
 Use `--body-file` for multiline writes. Save returned URLs and check created records. After an
 uncertain response, look for the record before retrying creation.
 
+## Finish planning
+
+Before leaving planning, check changed repository planning documents and publish them through a
+PR. Check links, names, commands, and examples before committing. Use the displayed commit and
+publishing procedures. Keep specifications and tracking records in their owning issues.
+
+Remain in planning until the required planning PRs have merged and review changes have reached
+every affected document and ticket. A closed, unmerged PR does not permit implementation. If no
+repository planning document changes are needed, record that result in the parent issue instead
+of creating an empty PR.
+
 ## Status
 
 Use `ready-for-agent`, `active`, `blocked`, or `awaiting-merge` labels on open implementation
