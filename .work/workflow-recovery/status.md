@@ -6,8 +6,9 @@
 
 ## Current state
 
-Planning. The design and implementation tickets have completed document review. Implementation
-waits for the planning PR on `design/workflow-recovery` to merge.
+Planning. The design and implementation tickets have completed document review.
+[Planning PR #1](https://github.com/TRWhitney/Whitney-Agentic-Configuration/pull/1) is open.
+Implementation waits for its merge.
 
 ## Frontier
 
@@ -31,5 +32,5 @@ without a separate reviewer. All 15 document links resolve. Whitespace checks pa
 Resume with `python3 skills/work-system/scripts/navigate.py resume novel-work planning`.
 Branch: `design/workflow-recovery`. Base: `origin/main`.
 
-Publish these planning records and wait for merge. After the planning PR merges, start the first
-ticket from the merged planning commit.
+Wait for the planning PR to merge. After merge, start the first ticket from the merged planning
+commit.
