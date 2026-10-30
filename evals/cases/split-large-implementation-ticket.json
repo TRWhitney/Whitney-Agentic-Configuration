@@ -1,0 +1,73 @@
+{
+  "id": "split-large-implementation-ticket",
+  "tags": [
+    "expansion"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    ".gitignore": "__pycache__/\n",
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work planning.\n\n[Accepted specification](spec.md). Design is accepted. Implementation ticketing is unfinished.\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match names by case-insensitive substring in input order. An empty query returns all items. Search uses Unicode case folding for supported names.\n\n## CSV export\n\nAdd export_matches(items, query), calling search_items to select rows before returning CSV text.\nUse name,quantity headings, input order, standard csv module quoting, and LF line endings.\nEmpty matches return a header-only CSV. File writing and interfaces are excluded.\nExport depends on completed search.\n\nRelease sequence: staff receive name search first. Filtered CSV export is a later release.\n",
+    "checks/check_search.py": "\"\"\"Check the accepted search behavior from the repository root.\"\"\"\nfrom pathlib import Path\nimport runpy\n\nsource = Path.cwd() / \"src/app.py\"\nsearch = runpy.run_path(str(source))[\"search_items\"]\nrows = [{\"name\": \"Milk\", \"quantity\": 1}, {\"name\": \"Tea\", \"quantity\": 2}, {\"name\": \"Miso\", \"quantity\": 3}]\nassert search(rows, \"MI\") == [rows[0], rows[2]]\nassert search(rows, \"\") == rows\nassert search(rows, \"unknown\") == []\nassert search([], \"mi\") == []\nprint(\"Four search checks passed.\")\n",
+    ".work/inventory/tickets/01-all.md": "# Search and export\n\n**Status:** draft\n\nImplement search_items and export_matches from the accepted specification in one ticket.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue planning name search and CSV export. Staff will use name search before the export release.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    ".work/inventory/tickets",
+    ".work/inventory/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "two-results",
+      "description": "Prepare one independently checkable search ticket and one export ticket. Retire the original combined ticket so it no longer owns overlapping active work."
+    },
+    {
+      "id": "search-complete",
+      "description": "The search ticket states Unicode case-insensitive substring matching, input order, empty query, absent matches and empty input, with usable acceptance checks and accepted sources."
+    },
+    {
+      "id": "export-complete",
+      "description": "The export ticket states filtered name,quantity CSV, standard quoting, input order, LF endings and header-only empty results, with usable checks and accepted sources."
+    },
+    {
+      "id": "real-dependency",
+      "description": "The export ticket depends on completed search. Preserve the accepted requirements and leave production code untouched during planning. Reformatting the specification without changing its requirements is allowed."
+    }
+  ]
+}

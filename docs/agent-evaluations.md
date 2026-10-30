@@ -1,0 +1,442 @@
+# Agent workflow evaluations
+
+Cases under `evals/cases/` test agent behavior against a copy of the repository's instructions.
+They share project setup, conversation execution, checks, and result reporting.
+The [failure report](research/evaluation-failures.md) collects recorded failures, their reasons,
+later passes, disputed judgments and checks needed for resolution.
+
+The [baseline study](research/workflow-eval-baseline.md) records observed failures and tested
+instruction changes. Cases cover planning, tracking, corrections, and wayfinding. The
+[specification](../.work/agent-evals/spec.md#testing-decisions) lists their required behavior.
+[Planning and rework results](research/workflow-boundary-evals.md) cover GitHub planning
+outcomes, corrections without reminders, recovery with stale validation, dependency selection,
+and returning to planning when requirements change.
+The [corpus expansion](research/workflow-corpus-expansion.md) covers the further planning,
+wayfinding, recovery, dependency, review, service-failure, and documentation cases.
+The [procedure guidance cases](research/workflow-guidance-evals.md) cover test quality, commit
+grouping and blockers, read-only review, supplied clocks, error handling, and decision history.
+Those studies used earlier case definitions. The [assessment study](research/evaluation-methods.md)
+records the revision of the existing corpus.
+The [retention study](research/evidence-retention-evals.md) records evidence lifetime, saved
+findings, and raw outputs staying outside Git.
+The [correction study](research/correction-and-judgment-evals.md) records successive edits,
+retained regression coverage, guide revisions, and assessor calibration.
+The [ordinary-work revision](research/workflow-eval-realism.md) audits all 130 cases, strengthens
+GUI and prose tasks, and records current outcomes and assessment-format checks.
+
+The [connections and continued-work cases](research/workflow-connection-evals.md) add shared
+component effects, real project connections, executable guide examples, workflow selection,
+and longer decision and prose conversations.
+
+The [procedure cases](research/procedure-decision-evals.md) cover unconfirmed diagnosis,
+refactor test quality, interactive comparisons, keyboard use, insufficient research evidence,
+and amendment across publication and compaction.
+The [further procedure cases](research/procedure-followup-evals.md) cover test isolation,
+invalid worker assignments, existing data-loss findings, repeated prototype feedback and
+light/dark appearance.
+The [integration and acceptance cases](research/integration-and-acceptance-evals.md) cover
+combined worker results, complete measurements, required service interactions and confirmed
+prototype requirements.
+The [main procedure cases](research/main-procedure-path-evals.md) cover new interface design,
+tracker conversion, successful worker implementation, complete research and planning judgment.
+The [planning-state corrections](research/planning-state-corrections.md) record applied guidance,
+the small-clarification case correction and remaining record/recovery failures.
+The [study of damaged workflow state](research/damaged-state-recovery.md) compares recovery wording
+and navigator hints pointing to the selected tracker's existing record guidance.
+The [wayfinding answer trials](research/wayfinding-answer-trials.md) compare temporary changes
+for continuation, dependent answers and progress placement. All nine final cases have three
+correct results. The [tested diff](research/wayfinding-reply-proposal.diff) is applied.
+Native file patches and completion status are captured alongside shell commands. Assessment
+indexes list per-turn artifact additions, changes and removals, distinguishing supplied edits
+from candidate turns.
+The [rework commit trials](research/rework-commit-trials.md) passed all 27 final attempts, three
+per case or control, with complete assessments. The [tested diff](research/rework-commit-proposal.diff)
+is applied. Navigator commit records support amendment, squash, removal and reset. Native
+compaction remains deferred.
+
+## Run cases
+
+Install the optional runtime and validate the corpus without model calls:
+
+```sh
+uv sync --group eval
+uv run --group eval python -m evals validate
+uv run --group eval python -m evals list
+```
+
+Live runs require existing file-based Codex credentials under `CODEX_HOME`, or `~/.codex` by
+default. Each attempt copies them into a temporary home and removes that home on exit.
+Choose a model available to that account:
+
+```sh
+uv run --group eval python -m evals run --model MODEL --case seeded-wayfinding-recovery
+uv run --group eval python -m evals run --model MODEL --tag planning --repeat 3
+```
+
+For the allowance used in the initial corpus check:
+
+```sh
+uv run --group eval python -m evals run --model MODEL --max-tokens 350000 --timeout 240
+```
+
+The two-edit amendment case completed with a larger allowance:
+
+```sh
+uv run --group eval python -m evals run --model MODEL --case amend-preserves-earlier-edit \
+  --max-tokens 500000 --timeout 240
+```
+
+Without a case or tag, `run` selects all routine cases. Integration cases require
+`--integration`, even when selected by name:
+
+```sh
+uv run --group eval python -m evals run --model MODEL --integration --case explicit-compaction \
+  --max-tokens 350000 --timeout 240
+```
+
+To compare instruction versions, supply source directories containing `skills/`,
+`config/global-agents.md`, and any declared external skills:
+
+```sh
+uv run --group eval python -m evals run --model MODEL --case incomplete-design \
+  --variant before=/path/to/before --variant after=/path/to/after --repeat 3
+```
+
+Every attempt gets a separate project, home, and set of conversations. Cases with several
+conversations share only that attempt's project. GitHub calls use a local `gh` fixture;
+agent tools have network access disabled and Apps integrations are disabled for each attempt.
+An unexpected external-service tool call invalidates the run. This tests publication attempts
+and supplied tracker responses. `github_pr_state` selects `OPEN`, `CLOSED`, `MERGED`, or `null` for no PR.
+`github_issue_body` supplies issue content. `github_issues` supplies separate bodies keyed by
+issue number. `github_issue_labels` supplies their labels; omitted issues have no labels.
+Issue edits and comments persist within an attempt. `github_read_error` makes reads
+fail; `github_write_timeout` saves the first created issue but returns a timeout. These fields
+change only the disposable fixture.
+This does not test GitHub itself.
+
+## Assess complete tasks
+
+Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
+All 151 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
+questions. Select them with
+`--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
+counts and per-case facts without model calls. Include integration cases to audit the entire corpus:
+
+```sh
+uv run --group eval python -m evals audit --integration
+```
+
+The audit also lists process-language cues found in requests, resolved files, temporary evidence,
+and supplied edits. Each cue includes its source and surrounding text. Inspect those cues against
+the case's private question. They are not automatic findings; an available command or a genuine
+user constraint may belong in the input.
+
+Task cases provide three to six hidden criteria. Add `--judge-model MODEL` to assess their
+finished files, final replies, observed actions, starting and changed tracker records, and
+confirmed compaction events in a separate context. Supplied file updates are identified
+separately from agent edits. Every selected case
+must have a rubric. The judge gets all attempts and conditions for that case under shuffled
+labels, after candidate writing ends. It receives no subject skills, expected verdicts, model
+names, condition labels, or earlier scores. It reads frozen evidence files in a read-only
+workspace, using shell commands and image viewing. Delegation and evidence changes invalidate
+the assessment. Available native child turns and status messages are included separately from
+assignments. Structured model metadata is excluded from native child items.
+Completion notifications retain their place among the parent's actions; child turns
+are fetched after the parent turn. Candidate threads are stored only in the disposable runtime
+home so their child turns can be read before cleanup. Judges remain ephemeral.
+Missing assignment data or child findings identify an observation gap, not a failed child run.
+A review claim without accessible findings remains uncertain.
+
+Run the existing corpus with independent assessment:
+
+```sh
+uv run --group eval python -m evals run --model gpt-6.1-sol --purpose task \
+  --judge-model gpt-6.1-sol
+```
+
+The candidate and judge models are separate explicit settings. Current runs use the same model
+family; a later run can select a different judge family through a supported adapter. The judge
+defaults to 600 seconds with no cumulative token cutoff. Set `--judge-timeout` and
+`--judge-max-tokens` to change them. Each case's outputs share one assessment call.
+
+Use `--review-dir PATH` with judging to keep temporary evidence for inspection. It must be a
+new directory outside instruction source checkouts. It saves complete observed outputs before
+assessment, followed by readable judge inputs, the private label map, and the judge's observed
+work and response. The map is never sent to the judge. A small manifest points to each output's
+index. Those indexes link complete artifacts, requests, final replies, progress messages,
+actions, browser observations, and images. Repeated artifacts and identical images share files. There is no packet byte limit,
+file-size limit, or image-count limit. Evidence is not shortened to fit a prompt.
+Git tracks the project file list; unignored new files are included. Tool outputs are the outputs
+supplied by the runtime, which may itself limit them.
+
+Check assessment against independently labeled examples:
+
+```sh
+uv run --group eval python -m evals.calibrate --model gpt-6.1-sol
+```
+
+Use `--examples evals/calibration/planning-authorization.json` to select another group.
+`evals/calibration/wayfinding-continuation.json` checks continuation after corrections.
+`evals/calibration/wayfinding-dependent-feedback.json` distinguishes routine feedback wording
+from obsolete success requirements and invented user approval.
+Groups also cover case-result equivalence and protected-file authorization. Each example
+includes initial files, a final artifact, and an optional `reply` so the judge can distinguish a
+request for permission from an unauthorized edit.
+`evals/calibration/existing-data-loss-finding.json` checks reporting and ownership of a
+credible risk outside the delivered change.
+
+Calibration reports clear examples separately from ambiguous examples. Expected labels and
+their reasons stay out of the judge's input. Read every task artifact and relevant action,
+reconcile disagreements, and remove temporary review evidence after review. The
+[method study](research/evaluation-methods.md) records the initial audit and pilot.
+
+## Read results
+
+The command prints a line for every attempt stating `behavior correct`, `behavior incorrect`,
+or `behavior unknown`, followed by whether assessment completed. Failed checks and unmet or
+uncertain criteria follow that line. JSON records the same fields, each required check, outcome,
+reported token count, model, instruction digest, source revision, SDK version, source variant,
+purpose, and attempt. With judging, it also records the original code-check status and each criterion
+verdict. `assessment_counts` keeps judge outcomes visible even when a failed code check determines
+the final status. `--report PATH` writes
+the same summary to a new file outside the source checkouts. Temporary projects and runtime
+records are removed after execution.
+
+| Outcome | Meaning | Exit code |
+| --- | --- | --- |
+| `pass` | Every required code check passed and every required rubric criterion was met | 0 |
+| `fail` | At least one required behavior check failed | 1 |
+| `error` | Setup, runtime, or result data prevented a verdict | 2 |
+| `limit` | Time or observed-token allowance was exhausted | 3 |
+| `inconclusive` | Required criteria have not been assessed or their evidence could not be decided | 4 |
+
+A mixed run exits with error before limit before fail before inconclusive. A favorable judge
+verdict never erases a code check failure or execution problem. `mechanical_status` records the
+code-check result separately. Without `--judge-model`, a case with required criteria remains
+inconclusive when its code checks pass. Each attempt remains in the report.
+The candidate defaults to 600 seconds per attempt with no cumulative token cutoff. Change
+these with `--timeout` and `--max-tokens`. Explicit token guards measure cumulative reported
+usage, including repeated input, rather than the size of the current context. They are not exact
+spending caps. A completed final answer remains assessable if a later usage notification crosses
+the guard. A guard reached before completion stops further turns and preserves observed work.
+
+Both candidate and judge results retain startup, conversation-start, message, and compaction time,
+plus reported input, output, reasoning, and cached tokens when available. Assessment also records
+preparation time and evidence size. A failed assessment leaves behavior unknown unless an
+observed check or criterion already establishes a failure. Passing code checks alone cannot
+establish correct behavior for unassessed required criteria.
+
+Judge responses use output labels as keys, then criterion IDs, with a verdict and cited evidence
+for each. The supplied schema and local parser require every label and criterion. Duplicate keys,
+unknown fields, empty evidence, and incomplete JSON are errors. This format avoids the unfinished
+outer-array output observed in the [ordinary-work revision](research/workflow-eval-realism.md).
+
+Routine recovery supplies saved state and a work record to a fresh conversation. It checks
+restoration from that input. The integration case requests native compaction in the same
+conversation and waits for its completed compaction item and completed turn before continuing.
+It uses a short conversation and does not fill the context window.
+
+## Add cases
+
+Add a JSON file under `evals/cases/` with a unique `id`, `tags`, and `steps`. Put initial project
+files in `files`, or reuse named maps from `evals/cases/fixtures/` through `fixtures`. Later
+fixtures replace earlier files with the same path; case files replace fixture files. Paths
+are relative to the disposable project.
+
+A case's `purpose` defaults to `focused`. Task cases require a `rubric` with three to six criteria.
+Each criterion has a unique `id`, `description`, and optional `required` flag, true by default.
+`project_name` selects an ordinary disposable directory name. Each case has one sequence of
+requests. `artifacts` identifies intended file outputs and can be empty for a task answered in
+conversation. The judge can read the entire captured project to assess
+context and changes together.
+
+Set `browser_tools: true` to provide the same local browser tools for an open prototype task
+without requiring a fixed private browser scenario. `press` supports a keyboard key and an
+optional selector. Without a selector it uses the page keyboard. A scenario's
+`media.colorScheme` sets `light` or `dark` appearance. A `media` action with `colorScheme`
+changes the live setting without reloading the page.
+
+Set `candidate_role: "implementation-worker"` to evaluate a worker assignment. The runtime
+identifies the candidate as a spawned implementation subagent; the task supplies the normal
+parent assignment. Its role is included in assessment evidence. The default role is `primary`.
+Explicit judge instructions remain separate from candidate roles.
+
+Set `local_remote: true` to create a disposable local `origin/main` containing the initial
+commit. An `edit` step with `publish: true` publishes the current head there through the
+fixture, including replacement of its previous head. This uses no external service. Evidence
+marks the supplied edit and records local history and the remote head separately from candidate
+actions. Fixture publication rejects a changed remote URL.
+
+An `edit` step with `record_commit: true` registers HEAD for that step's conversation through
+the navigator.
+
+A `session_commits` check compares that conversation's recorded IDs with the current Git
+history. Set `include_initial: true` when the starting commit belongs to that conversation.
+Otherwise the check excludes the starting commit. A `completed` check permits retained commit
+IDs when no workflow remains active.
+
+Use `uncommitted_files` for existing edits. These files are written after the initial commit,
+so they can include changes to tracked files and new untracked files. File checks compare
+against this edited starting state.
+Set `commit_hook` to a setup file to install it as the disposable project's executable
+pre-commit hook after the initial commit.
+
+Use `temporary_files` for UTF-8 evidence outside the candidate checkout. The literal
+`{temporary}` in supplied file contents and requests expands to that disposable directory.
+The assessor sees its complete contents under `/evidence/` alongside project files. An `edit`
+step can update `temporary_files` or delete `remove_temporary` paths between turns. Both kinds
+of supplied edit remain distinct from candidate actions.
+
+Steps use `message` to send a prompt, `seed` to prepare navigation progress, and `compact` to
+request compaction. Give steps the same `conversation` name to continue a conversation, or
+different names to keep their progress separate. A compact step requires `integration: true`.
+An `edit` step changes files through `files`, deletes files listed in `remove`, or replaces this
+conversation's saved navigation file through `navigation_text`. Edits happen between turns and
+do not change the starting content used by unchanged-file checks. Paths must stay inside the
+project and cannot write Git metadata. A missing file named in `remove` is a setup error.
+Check definitions stay outside the project visible to the agent. Put private Python scripts in
+`grader_files` rather than `files`; `python_check` reads their saved content without copying
+them into the project.
+
+| Check | Required fields | Pass condition |
+| --- | --- | --- |
+| `unchanged` | `paths`, optional `exclude` | Initial files or directories have identical content, including no added files outside excluded paths |
+| `only_changed` | `paths` | Changes to tracked and unignored files stay within these files or directories, compared with the initial project |
+| `file_equals` | `path`, `text` | A file has exactly the expected text |
+| `file_regex` | `path`, `pattern`, optional `absent` | The file exists and its text matches the regex, or does not when `absent` is true |
+| `prose` | `paths`, `required_patterns`, optional `forbidden_patterns` | Every file contains text, required subject patterns occur in their combined content, and forbidden patterns are absent |
+| `reply_regex` | `pattern`, optional `absent` | The final answer matches the regex, or does not when `absent` is true |
+| `command_sequence` | `commands`, each with `pattern`, `exit_code`, optional `output_pattern` | Current-message command results match in order; each result is used once |
+| `action_sequence` | `actions`, each with `kind`, `pattern`, optional `exit_code`, `tool` | Commands and assignment submissions match in order within this message; each action is used once |
+| `agent_assignments` | optional `tools`, `min_count`, `max_count`, `required_patterns`, `forbidden_patterns` | Every selected assignment has the required text and no forbidden text; its count is within the bounds |
+| `completed` | none | This conversation has no saved active workflow |
+| `session_commits` | optional `include_initial` | Saved commit IDs match current Git history for this conversation; the starting commit is excluded unless requested |
+| `regression_test` | `tests`, `source`, optional `faulty_text` | Authored unittest tests pass current code and fail the supplied faulty source, or initial source by default, by assertion |
+| `browser` | `scenario`, optional `require_match` | Real reference and application browser observations; require the accepted contract by default |
+| `python_check` | `path` | The starting Python script passes against the current project within ten seconds |
+| `temporary_files` | `paths`, `state` | Outside-checkout files are `present`, `absent`, or `unchanged` from their supplied contents |
+| `no_raw_evidence` | optional `paths` | Supplied temporary evidence and the named initial project captures have no copies in the checkout or new Git blobs, including staged files and replaced commits |
+| `command_regex` | `pattern`, optional `absent` | The current step's recorded command text matches the regex, or does not when `absent` is true |
+| `progress` | `workflow`, `state`, optional `substate`, `ignore_substate` | This conversation has the expected saved progress; `ignore_substate: true` allows any substate |
+| `navigation_text` | `text` | This conversation's saved navigation file has exactly this text, even when damaged |
+| `github_state` | optional `resource`, `count`, `number`, `body_pattern` | Saved fixture records have the expected count and at least one selected body matches; requires a count or body pattern |
+| `commit_count` | `count` | Git has that many commits and tracked files have no uncommitted changes |
+| `commit_groups` | `groups`, optional `uncommitted` | Initial history is preserved; new commits contain exactly the listed path groups in any order; only the listed paths remain uncommitted |
+| `tracker` | `name` | The project tracker is `local` or `github` as expected |
+| `no_publish` | optional `target` | No observed `gh` call requests publication; `pull_requests` limits this check to PR writes through CLI or REST endpoints |
+
+For `unchanged`, exclusions are project-relative files or directory prefixes. For `no_publish`,
+the default target is `all`; `pull_requests` permits issue updates while rejecting PR writes.
+Both targets reuse the same mutation detection.
+
+`no_raw_evidence` checks ignored files and reads ZIP and gzip contents with a bounded size.
+It detects supplied raw content even under another name. Semantic assessment still checks for
+rewritten dumps and whether the retained conclusions explain the result. It cannot prove that
+an unobserved file was never briefly created or that Git objects were not deliberately erased.
+
+Use `regression_test.faulty_text` when later accepted changes make the original source an
+ambiguous test of an earlier bug. Keep those later changes correct in the faulty implementation
+so an unrelated assertion cannot stand in for the regression under assessment.
+
+Checks run after their step. Each case needs at least one check. Use code checks for functional
+behavior, exact edits, permissions, command results, and required navigation boundaries. Use
+hidden criteria for the meaning and completeness of decisions, prose, and review findings.
+Ordinary Python cache files are excluded from project observations and preservation checks;
+source files supplied at the start remain checked even when ignored by Git.
+
+Prose checks read the named files as UTF-8, including headings, tables, footnotes, and comments.
+They combine required subject content with prohibited text patterns, so missing or empty output
+cannot pass. Use separate checks when each artifact needs its own content. The check examines
+saved files; progress messages and final replies remain separate observations. Cases can permit
+requested methods in one report while detecting process claims in a reader's guide.
+
+`command_regex` joins the current step's commands with newlines in recorded order. They check
+command text, including shell wrappers. Check outputs separately; matching a command does not
+prove that it succeeded.
+
+Command sequences use exit codes and combined output from completed runtime commands. Missing
+result fields cannot satisfy an expected value. Other commands may occur between matches.
+A command's exit code belongs to the whole shell command, so a later successful command in the
+same shell call can hide an earlier failure. Match the check's output as well when it matters.
+Set an expected `exit_code` to `null` when only command text and output should be checked.
+This is useful for a service error inside a shell call that ends successfully; it does not
+establish the service command's individual exit code.
+
+Action sequences distinguish `command` and `agent` actions. Command text includes the observed
+output. Assignment text comes from the submitted prompt, without the worker's returned message.
+Assignment checks default to `spawnAgent` and at least one call. Set both count bounds to zero
+to prohibit that tool. Missing native assignment text is an execution error when content needs
+checking. An observed call can still fail a zero-call requirement without its text.
+
+Set `delegation` to `review`, `label`, or `total` to install the local delegation stand-in. Submit
+a project assignment file with `python3 "$CODEX_HOME/bin/delegate-fixture.py" <path>`. It records
+the submitted text outside the project and returns a prepared review or file correction. Select
+`delegateFixture` in assignment checks and action sequences. A returned identifier connects the
+command result to its recorded submission. The stand-in does not run a child model. Its files
+and records are removed with the temporary workspace.
+
+For `github_state`, `resource` defaults to `issues` and also accepts `prs`. `count` checks the
+whole resource collection. `number` selects the record for `body_pattern`. These checks read the
+saved fixture state independently of the agent's reply. The fixture covers the CLI and REST
+operations used by the cases, not the complete GitHub API. Repository access checks and native
+sub-issue links support conversion; help commands leave records and pending write faults unchanged.
+
+Prepared Python checks reference a setup file or private `grader_files` entry and run its saved starting content with `python
+-I -B -` from the project root. They test the current production code even if the agent changes
+the visible check script. Use the working directory to find project files. Script input comes
+from the runner, so these checks cannot use interactive input. Keep assertions independent of
+the implementation being tested.
+
+Regression checks run unittest discovery in disposable project copies. `tests` names the test
+directory; `source` names a setup file to restore for the failing run. Each run has ten seconds.
+No tests, test errors, or a passing initial implementation fail the check. The original project
+is not changed. These checks cover one source file per check.
+
+Generate the field schema and run infrastructure tests without live conversations:
+
+```sh
+uv run --group eval python -m evals schema
+uv run --group eval python -m unittest discover -s tests
+```
+
+The SDK and its bundled runtime are pinned to `0.163.0`. Compaction uses one protected SDK
+method to observe events before turn routing. When changing that pin, run adapter tests and
+a short native compaction probe before trusting integration results.
+
+## GUI cases
+
+The GUI cases use a reconstructed document workspace and runnable accepted design. They cover
+design adherence, browser rendering, state changes, combined constraints, alignment, grouping,
+and wrapping during ordinary implementation. They are not a replay of Linkwrite's source or
+original prototype. Historical case IDs containing `audit` remain, but their requests ask for
+feature completion.
+
+Production components share stored document state. Private checks exercise editing, switching,
+New, Rename, applied preferences, and reloading as well as the visual scenarios. Copying the
+prototype cannot satisfy that data flow. A known finished production fixture passes the same
+checks. These cases use native browser controls and a textarea; they do not cover integration
+with a production editor library or differences between browser engines.
+
+Browser cases require existing Node, Playwright, and Chromium. The runner discovers packages
+through existing Playwright cache links and browser binaries in the usual cache locations.
+`EVAL_PLAYWRIGHT_MODULE` and `EVAL_BROWSER_EXECUTABLE` can select existing paths. No software is
+installed. Missing dependencies or browser failures produce an execution error.
+
+The disposable project receives `browser-run SCENARIO_JSON OUTPUT_DIR`. Its documented actions
+include navigation, clicking, filling, selection, resizing, evaluation, waits, and captures.
+Captures include PNG images and DOM geometry and styles. Command results return capture paths
+and evaluation values; complete capture data remains available to assessment. Native image-view
+events are recorded separately because generating a screenshot does not establish inspection. Browser observations survive deletion of the candidate's raw captures
+until assessment finishes, outside the project. A local worker runs Chromium outside the
+candidate sandbox and serves the disposable project on a private loopback origin. It blocks other browser origins and sockets. The candidate keeps
+its usual sandbox. The same browser launcher supports private reference comparisons. Private
+observations are labeled separately and do not count as verification performed by the candidate.
+
+The judge opens PNG files alongside complete browser observations as needed. Images with
+identical contents share a file. Each browser record keeps its origin, actions, and capture
+names so private checks cannot stand in for candidate inspection.
+
+With `--review-dir`, complete outputs are saved before preparing judge inputs. Interrupted
+assessments retain observed judge actions, partial replies, token usage, and phase times. Remove
+this evidence after inspection and required review.

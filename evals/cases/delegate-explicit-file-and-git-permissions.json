@@ -1,0 +1,89 @@
+{
+  "id": "delegate-explicit-file-and-git-permissions",
+  "tags": [
+    "guidance",
+    "agent-guidance"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/inventory.md": "# Shelf inventroy\n\nA small local inventory records item names and quantities.\n",
+    "docs/label-spec.md": "# Accepted label\n\nThe documentation title must be Shelf inventory. No code change is required.\n",
+    "checks/check_label.py": "from pathlib import Path\nassert Path(\"docs/inventory.md\").read_text().splitlines()[0]==\"# Shelf inventory\"\n",
+    ".work/label/status.md": "# Documentation label\n\nImplementation. The accepted heading is in [label specification](../../docs/label-spec.md). This change concerns docs/inventory.md. Check: python3 checks/check_label.py.\n",
+    "tools/delegation.md": "# Local implementation workers\n\nSubmit an implementation assignment with python3 \"$CODEX_HOME/bin/delegate-fixture.py\" .work/assignment.md. The service reads that file, records the submitted text, applies the assigned implementation result in the working tree, and returns the worker result. Use this service for implementation workers in this project; native implementation workers are not connected to it.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/label/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Delegate the heading correction described in .work/label/status.md, then finish the change. This project uses the local service documented in tools/delegation.md.",
+      "checks": [
+        {
+          "kind": "file_regex",
+          "path": "docs/inventory.md",
+          "pattern": "\\A# Shelf inventory\\n"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "agent_assignments",
+          "required_patterns": [],
+          "forbidden_patterns": [],
+          "max_count": 1,
+          "tools": [
+            "delegateFixture"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs/label-spec.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "delegation": "label",
+  "purpose": "focused",
+  "artifacts": [
+    "docs/inventory.md",
+    ".work/assignment.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The user selects delegation; this criterion assesses the work-system rules after that choice, not autonomous delegation selection. Submit a usable implementation assignment for the accepted Shelf inventory heading using the documented local service; the child receives the relevant source and acceptance check."
+    },
+    {
+      "id": "criterion-2",
+      "description": "The actual assignment explicitly allows edits only to docs/inventory.md, reserves Git to read-only inspection, and tells the worker to report missing permissions or conflicts instead of widening authority."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Include the exact subagent-implementation navigator command and applicable temporary-output retention instructions in the assignment, without filling it with unrelated history."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Inspect and integrate the returned file and named check result, preserve unrelated code and the specification, and deliver the corrected heading."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Report actual delegation and verification outcomes accurately. An unavailable assignment record makes assignment-content criteria uncertain, not automatically failed."
+    }
+  ]
+}

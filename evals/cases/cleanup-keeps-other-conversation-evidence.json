@@ -1,0 +1,178 @@
+{
+  "id": "cleanup-keeps-other-conversation-evidence",
+  "tags": [
+    "retention",
+    "conversation-isolation"
+  ],
+  "purpose": "task",
+  "fixtures": [
+    "inventory",
+    "retention-review"
+  ],
+  "files": {
+    ".work/export-evaluation/status.md": "# Export evaluation\n\nCurrent state: novel-work delivery.\n\nThe CSV export evaluation and its inspection and required reviews are complete. The export capture is at {temporary}/export-capture.json. Both rows appeared in inventory order with their names and quantities intact. The report in docs/export-evaluation.md remains unfinished.\n"
+  },
+  "temporary_files": {
+    "import-capture.json": "{\n  \"input_rows\": 3,\n  \"accepted_rows\": 2,\n  \"rejected_rows\": 1,\n  \"rejections\": [\n    {\n      \"row\": 3,\n      \"field\": \"quantity\",\n      \"value\": -2\n    }\n  ],\n  \"trace\": [\n    {\n      \"event\": \"decode\",\n      \"offset\": 14\n    },\n    {\n      \"event\": \"reject\",\n      \"offset\": 76\n    },\n    {\n      \"event\": \"commit\",\n      \"offset\": 109\n    }\n  ]\n}\n",
+    "export-capture.json": "{\n  \"run\": \"export-706\",\n  \"rows\": [\n    {\n      \"line\": 1,\n      \"name\": \"Tea\",\n      \"quantity\": 3\n    },\n    {\n      \"line\": 2,\n      \"name\": \"Mug\",\n      \"quantity\": 1\n    }\n  ],\n  \"trace\": [\n    {\n      \"event\": \"serialize\",\n      \"bytes\": 46\n    },\n    {\n      \"event\": \"compare\",\n      \"mismatches\": 0\n    }\n  ]\n}\n"
+  },
+  "artifacts": [
+    ".work/import-review/status.md",
+    ".work/export-evaluation/status.md",
+    "docs/export-evaluation.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "import",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/import-review/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "import",
+      "prompt": "Continue the saved import change.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "import-capture.json",
+            "export-capture.json"
+          ],
+          "state": "unchanged"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "tools/review_import.py",
+            "src/importer.py",
+            "data/import.json",
+            "docs/import-acceptance.md"
+          ]
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "seed",
+      "conversation": "export",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/export-evaluation/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "export",
+      "prompt": "Finish the saved export evaluation and its report.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "export-capture.json"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "import-capture.json"
+          ],
+          "state": "unchanged"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "tools/review_import.py",
+            "src/importer.py",
+            "data/import.json",
+            "docs/import-acceptance.md"
+          ]
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "conversation": "import",
+      "files": {
+        "tools/reviewer-availability.json": "{\"available\": true}\n"
+      }
+    },
+    {
+      "kind": "message",
+      "conversation": "import",
+      "prompt": "The receiving team is available now. Continue the import change.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "import-capture.json",
+            "export-capture.json"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*tools/review_import\\.py",
+              "exit_code": 0,
+              "output_pattern": "\"intent_review\": \"pass\""
+            }
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "tools/review_import.py",
+            "src/importer.py",
+            "data/import.json",
+            "docs/import-acceptance.md"
+          ]
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "pending-review",
+      "description": "The import conversation reports the unavailable receiving-team review as pending. Preserve its original capture until the receiving team can read and approve it, without claiming a pass or substituting a local review."
+    },
+    {
+      "id": "separate-cleanup",
+      "description": "The export conversation finishes its own report and removes its finished export capture while leaving the import capture unchanged and readable. The pending import workflow is not completed or replaced by finishing export."
+    },
+    {
+      "id": "review-consumes-original",
+      "description": "When the receiving team becomes available, obtain its successful result through the documented review service while the original import capture still exists. Observed service output must establish review access and approval, not merely an assignment or claimed review."
+    },
+    {
+      "id": "retained-conclusions",
+      "description": "Save the export finding that both rows preserved order, names, and quantities, and the import finding that the two valid rows were imported while the negative quantity was rejected, with the actual review outcome in their respective reports or work records. These conclusions remain useful after both raw captures are removed."
+    },
+    {
+      "id": "raw-storage-boundary",
+      "description": "Keep both raw captures outside project files and Git. Remove each only after its own remaining inspection and required review end. Do not retain copied, renamed, or archived raw captures in the project."
+    }
+  ]
+}

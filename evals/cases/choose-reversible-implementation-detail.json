@@ -1,0 +1,75 @@
+{
+  "id": "choose-reversible-implementation-detail",
+  "tags": [
+    "expansion"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    ".work/inventory/spec.md": "# Quantity label\n\n**Status:** accepted\n\nquantity_label(value) returns the validated nonnegative integer followed by a space and items, for example 0 items or 12 items. Existing inventory behavior stays unchanged. There are no interface or dependency changes.\n",
+    ".work/inventory/tickets/01-search.md": "# Quantity label\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement quantity_label from [specification](../spec.md). Examples: 0 items and 12 items.\n",
+    ".work/inventory/tickets/02-export.md": "# Unused draft\n\n**Status:** cancelled\n\nNot included in this effort.\n",
+    "checks/check_label.py": "from pathlib import Path\nimport runpy\nf=runpy.run_path(str(Path.cwd()/\"src/app.py\"))[\"quantity_label\"]\nassert f(0)==\"0 items\" and f(12)==\"12 items\"\n",
+    ".work/inventory/status.md": "# Quantity label\n\nCurrent state: novel-work planning.\n\n[Accepted specification](spec.md). [Quantity-label ticket](tickets/01-search.md). The quantity-label design is accepted and is the entire effort. The unrelated export draft is cancelled.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the accepted quantity-label ticket.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_label.py"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_quantity_contract.py"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/inventory/status.md",
+    ".work/inventory/tickets/01-search.md"
+  ],
+  "rubric": [
+    {
+      "id": "quantity-label",
+      "description": "quantity_label returns 0 items and 12 items for the validated values 0 and 12, preserving the existing inventory functions."
+    },
+    {
+      "id": "exercise-judgment",
+      "description": "Choose routine local syntax without asking the user to decide variable names or string formatting."
+    },
+    {
+      "id": "finished-result",
+      "description": "Complete the accepted ticket with current check evidence and local delivery. The cancelled export draft does not create unfinished accepted work."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n",
+    "checks/check_quantity_contract.py": "import runpy\napp=runpy.run_path('src/app.py')\nassert app['quantity_label'](0)=='0 items' and app['quantity_label'](12)=='12 items'\nassert app['empty_message']()=='No items saved.'\nassert app['stock_total']([{'quantity':-3},{'quantity':5}])==2\n"
+  }
+}

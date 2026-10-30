@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import re
 import shlex
+import subprocess
 import sys
 from pathlib import Path
 
@@ -30,6 +31,9 @@ def bind_commands(output: str, conversation: str | None) -> str:
     def bind(match: re.Match[str]) -> str:
         value = match.group(1)
         parts = shlex.split(value)
+        if parts and parts[0] == "scripts/navigate.py":
+            value = nav_command(*parts[1:])
+            parts = shlex.split(value)
         if (
             len(parts) > 2
             and parts[1]
@@ -40,7 +44,7 @@ def bind_commands(output: str, conversation: str | None) -> str:
             value += " --conversation " + shlex.quote(conversation)
         return f"`{value}`"
 
-    return re.sub(r"`(python3 [^`\n]+)`", bind, output)
+    return re.sub(r"`((?:python3 |scripts/navigate.py )[^`\n]+)`", bind, output)
 
 
 def substates_for(
@@ -86,8 +90,62 @@ def render_substate(
                 core.FORMATS_ROOT / f"{format_access.name}.md", format_access.name
             )
         )
+    if name == "wayfinding":
+        command = nav_command(
+            "reply",
+            "--decided",
+            "<n>",
+            "--ready",
+            "<n>",
+            "--unspecified",
+            "<topics or none>",
+            "--body",
+            "<facts and recommendation>",
+            "--question",
+            "<next decision question>",
+        )
+        sections.append(
+            f"Build the final reply with `{command}`. Send its output unchanged."
+        )
     sections.append(f"Leave this substate with `{nav_command('substate', 'leave')}`.")
     return "\n\n".join(sections)
+
+
+def render_reply(
+    decided: int,
+    ready: int,
+    unspecified: str,
+    body: str,
+    question: str | None,
+    blocked_by: str | None,
+    recap: bool = False,
+) -> str:
+    if decided < 0 or ready < 0:
+        raise core.NavigationError("Decision counts cannot be negative.")
+    if recap:
+        if question is not None or blocked_by is not None:
+            raise core.NavigationError("A recap uses its body without a next question.")
+        ending = ""
+    elif ready:
+        if not question or blocked_by:
+            raise core.NavigationError("Ask the next ready question with --question.")
+        ending = question.strip()
+    else:
+        if not blocked_by or question:
+            raise core.NavigationError(
+                "Use --blocked-by when no question is ready, "
+                "or leave finished wayfinding."
+            )
+        ending = blocked_by.strip()
+    topics = unspecified.strip()
+    discussion = body.strip()
+    if not topics or not discussion or (not recap and not ending):
+        raise core.NavigationError("Reply fields cannot be blank.")
+    result = (
+        f"Planning: {decided} decided, {ready} ready, unspecified: {topics}\n\n"
+        f"{discussion}"
+    )
+    return result + f"\n\n{ending}" if ending else result
 
 
 def procedure_guidance(provider: project.Provider, name: str) -> str:
@@ -228,15 +286,36 @@ def build_parser() -> argparse.ArgumentParser:
         "format",
         "cancel",
         "substate",
+        "reply",
+        "commit",
     ):
         item = commands.add_parser(name)
         item.add_argument("--conversation")
-        if name == "start":
+        if name == "commit":
+            actions = item.add_subparsers(dest="action", required=True)
+            add = actions.add_parser("add")
+            add.add_argument("revision")
+            add.add_argument("--replaces", action="append", default=[])
+            listing = actions.add_parser("list")
+            remove = actions.add_parser("remove")
+            remove.add_argument("commits", nargs="+")
+            for action in (add, listing, remove):
+                action.add_argument("--conversation", default=argparse.SUPPRESS)
+        elif name == "start":
             item.add_argument("workflow")
             item.add_argument("--record")
         elif name == "resume":
             item.add_argument("workflow", nargs="?")
             item.add_argument("state", nargs="?")
+        elif name == "reply":
+            item.add_argument("--decided", type=int, required=True)
+            item.add_argument("--ready", type=int, required=True)
+            item.add_argument("--unspecified", required=True)
+            item.add_argument("--body", required=True)
+            ending = item.add_mutually_exclusive_group(required=True)
+            ending.add_argument("--question")
+            ending.add_argument("--blocked-by")
+            ending.add_argument("--recap", action="store_true")
         elif name == "substate":
             item.add_argument("action", choices=("enter", "leave"))
             item.add_argument("name", nargs="?")
@@ -253,6 +332,38 @@ def build_parser() -> argparse.ArgumentParser:
                 sources.add_argument("--procedure")
                 sources.add_argument("--substate")
     return parser
+
+
+def recovery_guidance(provider: project.Provider) -> str:
+    records = core.mapping(provider.manifest.get("records", {}), "records")
+    paths = dict.fromkeys(
+        provider.resource_path(core.text(value, "work-record guidance"))
+        for value in records.values()
+    )
+    sections = [f"Tracker: {provider.directory.name}"]
+    sections.extend(f"Work-record guidance: {path}" for path in paths)
+    if paths:
+        sections.append(
+            "Read this guidance to find the work record and explain how it can help "
+            "recovery. "
+            "Leave the damaged state unchanged."
+        )
+    return "\n".join(sections)
+
+
+def git_value(*arguments: str) -> str:
+    result = subprocess.run(["git", *arguments], capture_output=True, text=True)
+    if result.returncode:
+        raise core.NavigationError(result.stderr.strip() or "Git command failed.")
+    return result.stdout.strip()
+
+
+def commit_hash(revision: str) -> str:
+    if not revision:
+        raise core.NavigationError("Supply a commit revision.")
+    return git_value(
+        "rev-parse", "--verify", "--end-of-options", revision + "^{commit}"
+    )
 
 
 def run(arguments: list[str]) -> str:
@@ -273,6 +384,20 @@ def run(arguments: list[str]) -> str:
         )
 
     args = build_parser().parse_args(arguments)
+    if args.command == "commit":
+        repository = str(Path(git_value("rev-parse", "--git-common-dir")).resolve())
+        with sessions.locked_store(args.conversation) as store:
+            if args.action == "add":
+                commit = commit_hash(args.revision)
+                store.update_commits(repository, [commit], args.replaces)
+                return f"Recorded commit: {commit}"
+            if args.action == "remove":
+                store.update_commits(repository, [], args.commits)
+                return "Removed recorded commits:\n" + "\n".join(args.commits)
+            commits = store.commits(repository)
+            return "Commits made in this session for this repository:\n" + (
+                "\n".join(commits) if commits else "None."
+            )
     provider, settings = project.selected()
     if args.command == "resume" and bool(args.workflow) != bool(args.state):
         raise core.NavigationError("Supply both workflow and state, or neither.")
@@ -291,6 +416,20 @@ def run(arguments: list[str]) -> str:
             f"Restore it with `{nav_command('resume')}`.",
             args.conversation,
         )
+    try:
+        return run_saved(args, provider, settings)
+    except (core.NavigationError, OSError) as error:
+        if args.command != "resume":
+            raise
+        raise core.NavigationError(
+            f"{error}\n\n{recovery_guidance(provider)}"
+        ) from error
+
+
+def run_saved(
+    args: argparse.Namespace, provider: project.Provider, settings: Path
+) -> str:
+    left_substate: str | None = None
     with sessions.locked_store(args.conversation) as store:
         session = store.load()
         if args.command == "start":
@@ -375,6 +514,21 @@ def run(arguments: list[str]) -> str:
                     "Use the work-system skill to choose a workflow."
                 )
             raise core.NavigationError("No active workflow. Start one first.")
+        if args.command == "reply":
+            if session.substate != "wayfinding":
+                raise core.NavigationError("Reply building requires active wayfinding.")
+            substate_for(
+                provider.workflow(session.workflow), session.state, "wayfinding"
+            )
+            return render_reply(
+                args.decided,
+                args.ready,
+                args.unspecified,
+                args.body,
+                args.question,
+                args.blocked_by,
+                args.recap,
+            )
         if args.command == "cancel":
             store.clear()
             return (
@@ -396,6 +550,7 @@ def run(arguments: list[str]) -> str:
                     raise core.NavigationError(
                         "Use substate leave with an active substate and no name."
                     )
+                left_substate = session.substate
                 session.substate = None
         output = render_state(
             provider,
@@ -409,6 +564,11 @@ def run(arguments: list[str]) -> str:
         )
         if args.command != "resume":
             store.save(session)
+        if left_substate and session.record:
+            output += (
+                f"\n\n{left_substate} has ended. Update {session.record} with the "
+                "current workflow state and next step."
+            )
         return output
 
 

@@ -1,0 +1,108 @@
+{
+  "id": "outdated-recap",
+  "tags": [
+    "recovery",
+    "wayfinding",
+    "decisions"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-text-planning"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The previous assistant recap said empty input returns a header-only CSV and that we had agreed to include headings. What is accepted now, and which decision is still open?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/export/status.md",
+            "docs/planning/export/design.md",
+            "docs/planning/export/map.md",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Which empty-input requirement should the implementation ticket use?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/export/status.md",
+            "docs/planning/export/design.md",
+            "docs/planning/export/map.md",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Checks current accepted sources rather than treating the reported assistant recap as a new user decision, and explicitly identifies the conflicting recap."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Reports that empty input raises ValueError with the agreed Inventory is empty. message without returning CSV text."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Reports that presence of a header row is still unresolved. It does not infer acceptance from the recap or from CSV conventions."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The follow-up uses the current refusal/exception requirement and preserves accepted source documents and production source, while keeping planning active and making no publication."
+    }
+  ],
+  "artifacts": []
+}

@@ -1,0 +1,57 @@
+{
+  "purpose": "task",
+  "fixtures": [
+    "inventory"
+  ],
+  "tags": [
+    "accepted-expansion"
+  ],
+  "id": "documentation-examples-run",
+  "files": {
+    "src/export.py": "import argparse, csv\nfrom pathlib import Path\n\ndef main():\n    parser=argparse.ArgumentParser()\n    parser.add_argument('--output',required=True,type=Path)\n    args=parser.parse_args()\n    with args.output.open('w',newline='') as stream:\n        writer=csv.writer(stream)\n        writer.writerow(['name','quantity'])\n        writer.writerow(['Blue mug',3])\n\nif __name__=='__main__':\n    main()\n",
+    "docs/export.md": "# Export inventory\n\nExport creates a CSV with name and quantity columns. The starter inventory contains Blue mug with quantity 3.\n\n## Write a file\n\n```sh\npython3 src/export.py --destination inventory.csv\n```\n\nRead inventory.csv with a spreadsheet. To choose a different filename:\n\n```sh\npython3 src/export.py --destination shelf-backup.csv\n```\n",
+    ".work/export/spec.md": "# Export command\n\nAccepted: the export command uses --output PATH. Remove --destination; it is not an alias. Write name and quantity CSV columns and the starter inventory.\n",
+    ".work/export/status.md": "# Export command\n\nThe command now implements the accepted --output option. The operator guide has not been updated.\n\n[Accepted behavior](spec.md).\n",
+    "tests/test_export.py": "import csv, subprocess, sys, tempfile, unittest\nfrom pathlib import Path\n\nclass ExportTests(unittest.TestCase):\n    def test_csv(self):\n        with tempfile.TemporaryDirectory() as directory:\n            output=Path(directory)/'items.csv'\n            result=subprocess.run([sys.executable,'src/export.py','--output',str(output)],capture_output=True,text=True)\n            self.assertEqual(result.returncode,0,result.stderr)\n            with output.open(newline='') as stream:\n                self.assertEqual(list(csv.reader(stream)),[['name','quantity'],['Blue mug','3']])\n",
+    ".gitignore": "__pycache__/\n*.csv\n"
+  },
+  "artifacts": [
+    "docs/export.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted export command change in .work/export/spec.md.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/export.py"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "checks/export.py": "import subprocess,sys,tempfile,csv\nfrom pathlib import Path\nwith tempfile.TemporaryDirectory() as directory:\n    output=Path(directory)/'result.csv'\n    result=subprocess.run([sys.executable,'src/export.py','--output',str(output)],capture_output=True,text=True)\n    assert result.returncode==0,result.stderr\n    with output.open(newline='') as stream:\n        assert list(csv.reader(stream))==[['name','quantity'],['Blue mug','3']]\n    result=subprocess.run([sys.executable,'src/export.py','--destination',str(output)],capture_output=True,text=True)\n    assert result.returncode!=0,'obsolete option must not remain an alias'\n"
+  },
+  "rubric": [
+    {
+      "id": "working-examples",
+      "description": "The finished operator guide supplies complete executable examples using the accepted command. Both its default filename example and its alternative filename example work against the finished program. Passing application tests with obsolete guide commands fails this criterion."
+    },
+    {
+      "id": "accepted-interface",
+      "description": "Preserve --output PATH, name and quantity columns, and starter rows. Do not restore the removed option to make old examples pass."
+    },
+    {
+      "id": "reader-content",
+      "description": "Keep useful operator instructions and correct file/result explanations. Do not insert implementation directions or reports of verification into the operator guide."
+    },
+    {
+      "id": "evidence",
+      "description": "Report observed checks accurately and identify any remaining mismatch. A particular method of checking the guide is not required if its examples are correct."
+    }
+  ]
+}

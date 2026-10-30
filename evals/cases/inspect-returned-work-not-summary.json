@@ -1,0 +1,97 @@
+{
+  "id": "inspect-returned-work-not-summary",
+  "tags": [
+    "guidance",
+    "agent-guidance"
+  ],
+  "fixtures": [
+    "inventory",
+    "total-regression"
+  ],
+  "files": {
+    ".work/total/status.md": "# Stock total\n\nImplementation. A subagent returned the src/app.py change and reports completion. The accepted [behavior](spec.md) and retained tests need integration.\n",
+    "tests/test_total.py": "import unittest\nfrom src.app import stock_total\n\nclass TotalTests(unittest.TestCase):\n    def test_positive_total(self):\n        self.assertEqual(stock_total([{\"quantity\":2},{\"quantity\":5}]),7)\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/total/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The implementation worker reports, \"Stock totals are complete and all tests pass.\" Its source and tests are in the working tree. Finish the stock-total change.",
+      "checks": [
+        {
+          "kind": "regression_test",
+          "tests": "tests",
+          "source": "src/app.py"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_total.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/total/spec.md",
+            "docs"
+          ],
+          "exclude": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "(?s).+",
+              "exit_code": 1,
+              "output_pattern": "FAIL:|AssertionError"
+            },
+            {
+              "pattern": "(?s).+",
+              "exit_code": 0,
+              "output_pattern": "(?s)Ran [1-9][0-9]* tests?.*\\bOK\\b"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    "tests/test_total.py",
+    ".work/total/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Inspect returned source, tests, accepted specification, and available check evidence instead of accepting the worker's completion summary as proof."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Detect that returned behavior still counts negative quantities despite its passing positive-only test; obtain evidence of the accepted negative-quantity failure and repair the incomplete result."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Retain meaningful real-function regression coverage with independent expected values that passes the finished implementation and fails the returned original source for the intended reason."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Deliver correct totals for mixed, empty, and supported nonnegative input while preserving empty_message, accepted specification, and unrelated behavior."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Report the actual integration repair and observed checks accurately; do not repeat the false all-tests-pass handoff as evidence."
+    }
+  ]
+}

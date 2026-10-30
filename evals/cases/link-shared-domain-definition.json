@@ -1,0 +1,69 @@
+{
+  "id": "link-shared-domain-definition",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/glossary.md": "# Inventory terms\n\n## Item\n\nA named kind of object tracked in inventory.\n",
+    ".work/stock/status.md": "# Stock counting\n\nPlanning. The term \"counted item\" has been accepted for one individual object held in stock. [Domain glossary](../../docs/glossary.md). Implementation has not started.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/stock/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The term \"counted item\" is accepted for one individual object held in stock. Use that term in the stock-counting design.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "ignore_substate": true
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/glossary.md",
+    ".work/stock/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Add a concise counted-item glossary entry meaning one individual object held in stock, distinct from Item as a named kind of object, without implementation or workflow details."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Keep the accepted definition in docs/glossary.md and use a valid relative link from the planning record; do not copy the definition into records or new competing documents."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Preserve the existing Item meaning and relevant planning context without starting production implementation."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Finish the requested documentation update and accurately identify where future work should read the term."
+    }
+  ]
+}

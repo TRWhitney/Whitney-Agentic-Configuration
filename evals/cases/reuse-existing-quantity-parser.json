@@ -1,0 +1,79 @@
+{
+  "id": "reuse-existing-quantity-parser",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/__init__.py": "",
+    "src/quantities.py": "def parse_quantity(text):\n    value=text.strip()\n    if not value.isascii() or not value.isdigit():\n        raise ValueError(\"Quantity must be a nonnegative integer.\")\n    return int(value)\n",
+    "src/importer.py": "def import_items(text):\n    raise NotImplementedError(\"CSV import is pending.\")\n",
+    ".work/import/spec.md": "# CSV import\n\nAccepted: import_items(text) reads CSV with name and quantity columns and returns item mappings. CSV quoting must work. Quantity syntax is already defined by src/quantities.py. Blank, negative, fractional, and non-ASCII quantities raise ValueError. Input is a string; header order is name,quantity. No file I/O.\n",
+    ".work/import/status.md": "# Import\n\nImplement the accepted [CSV import](spec.md). The project has no third-party dependencies.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/import/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the CSV import described in .work/import/spec.md and finish the change.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_import.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/quantities.py",
+            "src/app.py",
+            ".work/import/spec.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "checks/check_import.py": "import sys\nfrom pathlib import Path\nsys.path.insert(0,str(Path.cwd()))\nimport src.quantities as quantities\ncalls=[]\noffset=0\noriginal=quantities.parse_quantity\ndef observed(value):\n    calls.append(value)\n    return original(value)+offset\nquantities.parse_quantity=observed\nfrom src.importer import import_items\nrows=import_items('name,quantity\\n\"Tea, green\", 4 \\nCoffee,2\\n')\nassert rows==[{'name':'Tea, green','quantity':4},{'name':'Coffee','quantity':2}],rows\nassert {value.strip() for value in calls}=={'4','2'},calls\noffset=100\nassert import_items('name,quantity\\nTea,4\\n')==[{'name':'Tea','quantity':104}]\nfor text in ['','-1','1.5','\uff11\uff12']:\n    try: import_items('name,quantity\\nTea,'+text+'\\n')\n    except ValueError: pass\n    else: raise AssertionError(text)\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "src/importer.py",
+    ".work/import/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "import_items parses supported CSV text into item mappings, including quoted names and whitespace around quantities, with no file I/O or unnecessary third-party dependency."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Use the existing parse_quantity result for each imported quantity rather than copying its implementation, calling it and discarding the result, or creating divergent duplicate validation."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Reject blank, negative, fractional, and non-ASCII quantities through the existing parser while preserving names and integer values for valid rows."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Retain meaningful focused import coverage and preserve quantities.py, unrelated inventory behavior, and the accepted specification."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Complete useful delivery with an accurate account of implementation, observed checks, and any unresolved limitation."
+    }
+  ]
+}

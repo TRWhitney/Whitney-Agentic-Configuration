@@ -1,0 +1,71 @@
+{
+  "id": "review-requires-product-decision",
+  "tags": [
+    "expansion",
+    "review"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+    "docs/review.md": "# Imported-name observation\n\nThe new import includes caf\u00e9. A staff member searched for cafe and received no match. Another searched for caf\u00e9 and found the row. The existing test results are attached to the settled Unicode case-folding implementation.\n",
+    ".work/search/spec.md": "# Name search\n\n## Accepted behavior\n\nsearch_items(items, query) selects names by Unicode case-insensitive substring matching in input order. STRASSE matches Stra\u00dfe. Empty queries return all items; no match and empty input return []. Inputs are validated. Existing shelf-message and stock-total behavior stays unchanged.\n\n## Imported-name policy\n\nSupported imports include caf\u00e9. The existing examples include Stra\u00dfe/STRASSE and exact accented names. No accepted example compares cafe with caf\u00e9.\n\n## Project checks\n\npython3 checks/check_search.py checks the settled behavior.\n",
+    ".work/search/status.md": "# Name search\n\nCurrent state: novel-work delivery.\n\n[Specification](spec.md). [Ticket](tickets/01-search.md). The settled case-folding behavior is implemented. The imported-name observation is in docs/review.md.\n",
+    "sources/import-session.md": "# Stock lookup session\n\nThe new catalog contains caf\u00e9. Staff find these items by scanning printed labels. The current label scanner sends cafe. Typed caf\u00e9 finds the row; the scanner query returns no match. The scanner is part of the new catalog workflow.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "conversation": "main",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue the search change for the new catalog workflow described in sources/import-session.md.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    ".work/search/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "identify-choice",
+      "description": "Explain that the settled case-folding behavior does not resolve the scanner lookup and ask which accent-matching rule should apply. A question about general accent matching versus limited scanner support can expose the unsettled choice; no particular yes/no question is required. Do not treat the broader policy as accepted."
+    },
+    {
+      "id": "return-to-planning",
+      "description": "Record that product choice as open in the owning planning record and return to planning. Do not mark the accent policy accepted or the overall review complete."
+    },
+    {
+      "id": "preserve-current",
+      "description": "Leave existing correct Unicode case-fold search unchanged while the accent choice is pending. Do not add normalization, reject imported names, or rewrite requirements on the user's behalf."
+    }
+  ]
+}

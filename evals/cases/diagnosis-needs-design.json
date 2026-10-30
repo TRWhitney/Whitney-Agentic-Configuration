@@ -1,0 +1,68 @@
+{
+  "id": "diagnosis-needs-design",
+  "tags": [
+    "diagnosis",
+    "planning",
+    "question"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n",
+    ".work/totals/status.md": "# Negative quantities\n\nCurrent state: fix discovery.\n\nThe report says totals are wrong when quantity is -3 and another item is 5: the result is 2. No accepted rule says whether negative quantities are valid. The existing documentation only says totals add quantities. No rule for invalid input exists.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/totals/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Please investigate the reported totals bug.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs/inventory.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "fix",
+          "state": "discovery",
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Inspects the supplied report and current function, establishes that -3 plus 5 returns 2, and explains that this matches the existing summation behavior."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Identifies the missing product rule for negative quantities rather than asserting that summation itself is defective."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Remains in fix discovery and asks a concrete choice about accepting negative quantities or treating them as invalid, explaining the consequence for totals."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Does not choose or implement a rejection, clamping, or ignoring policy without an answer. Production source and existing inventory documentation remain unchanged and nothing is published."
+    }
+  ],
+  "artifacts": []
+}

@@ -1,0 +1,56 @@
+{
+  "id": "tool-limits-stay-out-of-consumer-guide",
+  "tags": [
+    "prose-boundaries",
+    "leakage"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "sources/packing.md": "# Packing thin panels\n\nPlace a soft sheet between each pair of panels. Support the full stack on a flat base. Fasten straps snugly without bending the panels.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Write docs/packing-guide.md for the people packing panels, using sources/packing.md. Work from these supplied records only; web access is unavailable for this task.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/packing-guide.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Explain placing a soft sheet between each pair of panels, supporting the whole stack on a flat base, and tightening straps snugly without bending panels."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Use direct packing instructions suitable for the workers, without inventing materials, force limits, or other unsupported requirements."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Do not put the agent's unavailable web access, tools, browsing process, or compliance claims into the consumer guide; the environmental limitation governs sourcing, not packing."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keep supplied source and unrelated application behavior intact and finish the guide using the available evidence."
+    }
+  ]
+}

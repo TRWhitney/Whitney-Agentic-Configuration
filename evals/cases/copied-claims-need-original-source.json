@@ -1,0 +1,63 @@
+{
+  "id": "copied-claims-need-original-source",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "sources/index.md": "# Supplied source excerpts\n\nThese files contain all sources for this investigation. No network access is needed.\n\n[Original product manual](manual.md). [Trade article](article.md). [Newsletter](newsletter.md). [Community post](community.md).\n",
+    "sources/manual.md": "# Parcel API manual\n\n## Version 2.0, released 2026-08-01\n\nBasic accounts may request at most 20 labels per batch. Pro accounts may request 50 labels per batch. These limits apply to the labels endpoint. Other endpoints have separate limits.\n",
+    "sources/article.md": "# Trade article\n\nParcel API supports 50 labels per batch. Details in the [product manual](manual.md).\n",
+    "sources/newsletter.md": "# Newsletter\n\nParcel API now allows 50 labels in a batch, according to this [trade article](article.md).\n",
+    "sources/community.md": "# Community post\n\nI read that Parcel API supports 50 labels per batch in this [newsletter](newsletter.md).\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Can our production Parcel API 2.0 Basic account submit 50 labels in one batch? The collected material is under sources/index.md.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "commit_groups",
+          "groups": [],
+          "uncommitted": []
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Give the usable answer that Basic accounts are limited to 20 labels per batch and 50 applies to Pro accounts for the labels endpoint."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Follow the article, newsletter, and community citations back to the manual; explain that repeated summaries of that one source are not independent confirmation."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Cite the original manual for the account-specific limit and identify how the summaries lost the account condition rather than treating their number as a separate result."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keep source excerpts and production files intact and distinguish supported findings from any unprovided experimental confirmation."
+    }
+  ]
+}

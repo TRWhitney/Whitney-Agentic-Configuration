@@ -1,0 +1,106 @@
+{
+  "id": "conversations-share-current-document",
+  "tags": [
+    "expansion",
+    "recovery",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export, empty-inventory behavior, and behavior when the destination file already exists. CSV with name and quantity columns is agreed. Empty-inventory behavior and existing-file behavior are both open and unblocked. Current question: empty-inventory behavior.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "planning",
+      "record": ".work/export/status.md",
+      "substate": "wayfinding"
+    },
+    {
+      "kind": "message",
+      "prompt": "Which empty-inventory choice remains open for export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        }
+      ],
+      "conversation": "planning"
+    },
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "update",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The empty-inventory answer is now accepted: refuse without creating a file. I have not decided what to do when the destination already exists.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ],
+      "conversation": "update"
+    },
+    {
+      "kind": "message",
+      "prompt": "What empty-inventory behavior is accepted now, and which question remains open?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        }
+      ],
+      "conversation": "planning"
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "In the first planning conversation, identifies empty-inventory behavior as unresolved and presents meaningful header-only and refusal choices without accepting either."
+    },
+    {
+      "id": "criterion-2",
+      "description": "In the update conversation, records refusal without file creation in the shared export design and map, and retains destination-exists behavior as unresolved."
+    },
+    {
+      "id": "criterion-3",
+      "description": "On returning to the original conversation, reads the current shared record and reports refusal without creation as accepted. It does not reuse the stale empty-inventory question as though no answer exists."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps each conversation in export planning, retaining the original conversation wayfinding discussion state, while keeping production source unchanged and making no publication."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

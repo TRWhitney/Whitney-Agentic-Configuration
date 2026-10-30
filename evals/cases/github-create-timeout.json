@@ -1,0 +1,87 @@
+{
+  "id": "github-create-timeout",
+  "tags": [
+    "expansion",
+    "github"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "Let's plan Inventory export. Should an empty inventory create a header-only CSV or refuse without creating a file?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        },
+        {
+          "kind": "github_state",
+          "resource": "issues",
+          "count": 2,
+          "body_pattern": "(?is)empty.*(?:header|refus)"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "gh.*(?:issue create|api.*issues)",
+              "exit_code": 1,
+              "output_pattern": "timed out"
+            },
+            {
+              "pattern": "gh.*(?:issue (?:list|view)|api.*issues)",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "no_publish",
+          "target": "pull_requests"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "tracker": "github",
+  "github_issues": {
+    "10": "Unrelated search planning."
+  },
+  "github_write_timeout": true,
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "issue-content",
+      "description": "The created Inventory export issue states the two empty-inventory alternatives as an unresolved product question."
+    },
+    {
+      "id": "uncertain-create",
+      "description": "After the fixture times out while creating the issue, inspect existing GitHub records and recover the issue that was actually created before retrying creation."
+    },
+    {
+      "id": "one-owner",
+      "description": "There is exactly one new export planning issue and the existing unrelated search issue remains. Do not create implementation code or a planning PR for this issue-only request."
+    }
+  ]
+}

@@ -56,9 +56,31 @@ After staging each group, read the staged diff. Unstage and regroup anything its
 not cover. Combine my changes with yours when they deliver the same result. Commit unrelated
 completed results separately, including changes that predate this task.
 
-Fold corrections or additions to the same result into an earlier local commit. Squash local
-commits that deliver the same result if they have not been pushed. Do not rewrite published
-commits without my direction.
+## Fold corrections into an existing commit
+
+Fold corrections or additions into their existing commit when all conditions hold:
+
+- It has not been pushed, unless I explicitly ask you to rewrite history.
+- It was made in this session.
+- The changes correct or complete the original work, or materially improve and belong
+  in the same logical unit of work.
+
+Before creating a new commit, run `scripts/navigate.py commit list` and check these conditions.
+Before updating work records or staging corrections, identify the commit being corrected.
+Starting a workflow or compacting context does not start a new session.
+
+Before amending without an explicit request to rewrite history, run `git fetch --all`
+and `git branch -r --contains <commit>` with the target commit's hash. Any listed branch
+means it was pushed. If the check fails, create a new commit.
+
+## Record commits
+
+After each successful commit, run `scripts/navigate.py commit add <commit>` with its full hash.
+After amending or squashing, add `--replaces <old-commit>` for each recorded commit replaced
+by the new commit. Use the full hashes from `scripts/navigate.py commit list`.
+
+After removing commits or resetting, run `scripts/navigate.py commit remove <commit> ...`
+with the full hashes of discarded commits recorded for this session.
 
 ## Check the final status
 

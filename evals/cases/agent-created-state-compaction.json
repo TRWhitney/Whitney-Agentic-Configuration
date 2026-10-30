@@ -1,0 +1,196 @@
+{
+  "id": "agent-created-state-compaction",
+  "tags": [
+    "expansion",
+    "integration",
+    "wayfinding",
+    "recovery"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCSV with name and quantity columns is agreed. Empty-inventory and existing-file behavior remain unanswered. No implementation tickets exist.\n"
+  },
+  "steps": [
+    {
+      "kind": "edit",
+      "remove": [
+        "docs/planning/export/map.md",
+        "docs/planning/export/design.md"
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Use wayfinding to plan inventory export. CSV with name and quantity columns is accepted. I have not chosen what an empty inventory should do or what should happen if the destination exists. What should we decide first?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_wayfinding_map.py"
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "For an empty inventory, refuse the export and create no file. Leave the existing-file decision open.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "sources/importer.md": "# Importer behavior\n\nThe field team imports CSV files using a reader that accepts a name,quantity header with no data rows as an empty inventory. A missing file means no export was received and is reported as a delivery error. Existing destination files may contain manually corrected records.\n"
+      }
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "The field team added sources/importer.md. How does that affect our empty-inventory decision?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "Change the empty-inventory answer to a header-only CSV so the importer receives an empty inventory. Existing-file behavior is still undecided.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        }
+      ]
+    },
+    {
+      "kind": "compact"
+    },
+    {
+      "kind": "message",
+      "prompt": "What decision do you still need from me?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": true,
+  "purpose": "control",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "In the user-selected wayfinding mode, the first response discusses a precise unanswered export choice, explains relevant alternatives and their tradeoffs, recommends an answer, and asks for a decision without accepting its own recommendation. Either independent open choice may be discussed first."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Creates a linked decision map and a single export feature planning record containing the accepted CSV columns and both unresolved product choices. These records contain useful requirements rather than only progress labels."
+    },
+    {
+      "id": "criterion-3",
+      "description": "After the actual compaction step, restores this conversation through the installed navigator and reads its linked saved work before answering. Missing observed action evidence is uncertain, not proof the action never occurred."
+    },
+    {
+      "id": "criterion-4",
+      "description": "After compaction, recover CSV with name and quantity columns and the latest accepted header-only empty export. Keep destination-exists behavior unresolved and discuss that pending choice. Do not revive the earlier refuse-empty answer, treat the importer analysis as unfinished, invent overwrite permission, or restart completed decisions."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Keeps production source unchanged and keeps planning active with the wayfinding progress line. Does not implement export or publish work."
+    }
+  ],
+  "artifacts": [
+    ".work/export/status.md",
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md"
+  ],
+  "grader_files": {
+    "checks/check_wayfinding_map.py": "from pathlib import Path\nimport re\nroot=Path.cwd()\nstatus=root/'.work/export/status.md'\nlinks=re.findall(r'\\[[^\\]]*\\]\\(([^)]+)\\)',status.read_text())\nmaps=[]\nfor link in links:\n    target=(status.parent/link.split('#')[0]).resolve()\n    if target.name=='map.md' and target.is_relative_to(root.resolve()) and target.is_file():\n        maps.append(target)\nassert len(maps)==1, 'work record must link one decision map'\nassert maps[0].read_text().strip(), 'decision map must contain text'\n"
+  }
+}

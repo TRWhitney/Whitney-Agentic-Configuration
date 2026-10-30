@@ -1,0 +1,141 @@
+{
+  "id": "separate-conversations",
+  "tags": [
+    "recovery",
+    "conversations"
+  ],
+  "files": {
+    ".work/import/status.md": "# Import failure\n\nCurrent state: fix discovery.\n\nAn intermittent inventory import failure has been reported. The failing input\nis unavailable and the failure has not been reproduced. The import code is\nnot present in this small checkout. The report includes no minimal failing CSV or observed error.\n",
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "export",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "seed",
+      "conversation": "import",
+      "workflow": "fix",
+      "state": "discovery",
+      "substate": null,
+      "record": ".work/import/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "export",
+      "prompt": "What decision do you need from me about export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "import",
+      "prompt": "What information do you still need from me about the import failure?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "fix",
+          "state": "discovery",
+          "substate": null
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "Planning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+",
+          "absent": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "export",
+      "prompt": "Which export question is still open?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The export conversation restores its own planning state and discusses the unresolved empty-inventory choice with meaningful header-only and refusal alternatives."
+    },
+    {
+      "id": "criterion-2",
+      "description": "The import conversation restores fix discovery, explains the missing failure evidence and absent import code, and asks for a minimal failing CSV plus observed error without inventing a diagnosis."
+    },
+    {
+      "id": "criterion-3",
+      "description": "The import answer does not carry the export wayfinding progress line or turn import into an export planning question."
+    },
+    {
+      "id": "criterion-4",
+      "description": "On returning to export, retains the same unanswered empty-inventory choice rather than consuming an import detail as an export decision. Production source remains unchanged and nothing is published."
+    }
+  ],
+  "artifacts": []
+}

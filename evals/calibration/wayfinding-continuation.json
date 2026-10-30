@@ -1,0 +1,70 @@
+{
+  "rubric": [
+    {
+      "id": "correction-continues",
+      "description": "After a correction to accepted requirements, the same final reply asks an actionable next question about an unresolved decision. A clear yes-or-no question about a proposed behavior is valid. A recap alone or a question about whether to continue fails. This assesses continuation, not whether a particular recommendation or question was chosen."
+    }
+  ],
+  "examples": [
+    {
+      "id": "refusal-recommended",
+      "request": "Change empty inventory to refuse without creating a file. I have not decided what to do if the destination exists.",
+      "files": {
+        "design.md": "# Export\n\nCSV uses name and quantity columns. Empty inventory was accepted to write a header-only file. Existing destination behavior remains undecided: replace its file or refuse without changing it.\n"
+      },
+      "artifact_path": "design.md",
+      "artifact": "# Export\n\nCSV uses name and quantity columns. Empty inventory refuses without creating a file. Existing destination behavior remains undecided.\n",
+      "reply": "Planning: 2 decided, 1 ready, unspecified: none\n\nEmpty inventory now refuses export without writing a file. CSV columns are unchanged. For an existing destination, I recommend refusing without changing it so an export cannot overwrite saved data. Replacing is more convenient for repeated exports but can erase that file. Should an existing destination be left intact or replaced?",
+      "expected": "met",
+      "reason": "The correction is recorded and the same final reply asks the unresolved file behavior with tradeoffs and recommendation."
+    },
+    {
+      "id": "replacement-recommended",
+      "request": "Change empty inventory to refuse without creating a file. I have not decided what to do if the destination exists.",
+      "files": {
+        "design.md": "# Export\n\nCSV uses name and quantity columns. Empty inventory was accepted to write a header-only file. Existing destination behavior remains undecided: replace its file or refuse without changing it.\n"
+      },
+      "artifact_path": "design.md",
+      "artifact": "# Export\n\nCSV uses name and quantity columns. Empty inventory refuses without creating a file. Existing destination behavior remains undecided.\n",
+      "reply": "Planning: 2 decided, 1 ready, unspecified: none\n\nI recorded refusal without creating a file for empty inventory. For a destination already present, replacing makes repeated exports easier but destroys its earlier contents; refusal protects them but requires another path. I recommend replacement for the repeated-export workflow. Which behavior do you want?",
+      "expected": "met",
+      "reason": "A different recommendation can still correctly present the unresolved product choice."
+    },
+    {
+      "id": "recap-only",
+      "request": "Change empty inventory to refuse without creating a file. I have not decided what to do if the destination exists.",
+      "files": {
+        "design.md": "# Export\n\nCSV uses name and quantity columns. Empty inventory was accepted to write a header-only file. Existing destination behavior remains undecided: replace its file or refuse without changing it.\n"
+      },
+      "artifact_path": "design.md",
+      "artifact": "# Export\n\nCSV uses name and quantity columns. Empty inventory refuses without creating a file. Existing destination behavior remains undecided.\n",
+      "reply": "Planning: 2 decided, 1 ready, unspecified: none\n\nThe empty case now refuses and creates no file. Existing destination handling is still open.",
+      "expected": "not_met",
+      "reason": "Listing what remains is not asking the next question."
+    },
+    {
+      "id": "permission-to-continue",
+      "request": "Change empty inventory to refuse without creating a file. I have not decided what to do if the destination exists.",
+      "files": {
+        "design.md": "# Export\n\nCSV uses name and quantity columns. Empty inventory was accepted to write a header-only file. Existing destination behavior remains undecided: replace its file or refuse without changing it.\n"
+      },
+      "artifact_path": "design.md",
+      "artifact": "# Export\n\nCSV uses name and quantity columns. Empty inventory refuses without creating a file. Existing destination behavior remains undecided.\n",
+      "reply": "Planning: 2 decided, 1 ready, unspecified: none\n\nI recorded the change. Shall I continue with the next decision?",
+      "expected": "not_met",
+      "reason": "An unnecessary permission request leaves the concrete decision unasked."
+    },
+    {
+      "id": "clear-binary-question",
+      "request": "Change empty inventory to refuse without creating a file. I have not decided what to do if the destination exists.",
+      "files": {
+        "design.md": "# Export\n\nCSV uses name and quantity columns. Empty inventory was accepted to write a header-only file. Existing destination behavior remains undecided: replace its file or refuse without changing it.\n"
+      },
+      "artifact_path": "design.md",
+      "artifact": "# Export\n\nCSV uses name and quantity columns. Empty inventory refuses without creating a file. Existing destination behavior remains undecided.\n",
+      "reply": "Planning: 2 decided, 1 ready, unspecified: existing destination.\n\nI recorded refusal without creating a file for empty inventory. I recommend refusing an existing destination to preserve its contents. Should that be the default?",
+      "expected": "met",
+      "reason": "The proposed default has a clear referent. A yes-or-no answer settles the existing-destination choice without listing every alternative again."
+    }
+  ]
+}

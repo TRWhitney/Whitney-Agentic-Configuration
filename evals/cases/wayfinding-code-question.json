@@ -1,0 +1,131 @@
+{
+  "id": "wayfinding-code-question",
+  "tags": [
+    "wayfinding",
+    "question",
+    "continuation"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "What decision do you need from me about export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Before choosing, what does stock_total([]) return in the current code?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Back to export. Which decision is still open?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Initially presents the unresolved empty-inventory export choice with relevant alternatives and a main question."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Inspects or evaluates stock_total and correctly answers that an empty list returns 0, explaining the result concisely."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Does not infer that a zero total settles whether export should create a file, and keeps the existing wayfinding progress and unanswered choice throughout the side question."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The final turn returns to empty-inventory export behavior without losing accepted CSV columns. Production source stays unchanged and nothing is published."
+    }
+  ],
+  "artifacts": []
+}

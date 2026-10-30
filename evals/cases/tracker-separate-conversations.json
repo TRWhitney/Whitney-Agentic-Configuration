@@ -1,0 +1,134 @@
+{
+  "id": "tracker-separate-conversations",
+  "tags": [
+    "tracking",
+    "conversations",
+    "question"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning.\n\n[Design](../../docs/planning/export/design.md). CSV with name and quantity columns is agreed. Empty-inventory behavior remains unresolved and is part of the accepted export scope.\n"
+  },
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null,
+      "record": ".work/export/status.md",
+      "conversation": "planning"
+    },
+    {
+      "kind": "seed",
+      "conversation": "guidance",
+      "workflow": "question",
+      "state": "discovery",
+      "substate": null
+    },
+    {
+      "kind": "message",
+      "prompt": "What would GitHub tracking change for our export planning?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ],
+      "conversation": "planning"
+    },
+    {
+      "kind": "message",
+      "prompt": "How would GitHub issues be used to track implementation?",
+      "checks": [
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs/inventory.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ],
+      "conversation": "guidance"
+    },
+    {
+      "kind": "message",
+      "prompt": "Which tracker does this repository use now?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ],
+      "conversation": "planning"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "planning-explanation",
+      "description": "Explain how GitHub would move export specification, decision and implementation tracking into issues, with required delivery for changed repository planning documents."
+    },
+    {
+      "id": "guidance-explanation",
+      "description": "In the separate guidance conversation, explain implementation issue units, real dependencies, status and merge-based completion without changing the selected tracker."
+    },
+    {
+      "id": "current-selection",
+      "description": "When returning to the planning conversation, identify local as the repository's current tracker from the project setting."
+    },
+    {
+      "id": "discussion-boundary",
+      "description": "Keep the unfinished export planning active and source unchanged. Neither question authorizes conversion, issue creation or publication."
+    }
+  ]
+}

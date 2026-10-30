@@ -49,6 +49,227 @@ class WorkflowSessionTests(unittest.TestCase):
         value: dict[str, object] = json.loads(self.path(conversation).read_text())
         return value
 
+    def make_commit(self, text: str) -> str:
+        (self.root / "item.txt").write_text(text)
+        self.git("add", "item.txt")
+        self.git(
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "-qm",
+            text,
+        )
+        return self.git("rev-parse", "HEAD").strip()
+
+    def git(self, *arguments: str) -> str:
+        return subprocess.check_output(["git", *arguments], cwd=self.root, text=True)
+
+    def test_commits_survive_completed_and_cancelled_workflows(self) -> None:
+        commit = self.make_commit("first")
+        self.run_nav("commit", "add", "HEAD")
+        self.run_nav("start", "question")
+        self.run_nav("move", "question", "discovery", "answer")
+        self.run_nav("move", "question", "answer", "complete")
+        self.assertIn(commit, self.run_nav("commit", "list"))
+        self.assertNotIn("workflow", self.progress())
+        self.assertIn("No active workflow", self.run_nav("resume"))
+        self.run_nav("start", "tweak")
+        self.run_nav("cancel")
+        self.assertIn(commit, self.run_nav("commit", "list"))
+        self.assertNotIn("workflow", self.progress())
+
+    def test_amendment_replaces_saved_id_and_rejects_unknown_targets(self) -> None:
+        before = self.make_commit("first")
+        self.run_nav("commit", "add", before)
+        self.run_nav("commit", "add", before)
+        self.git(
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.com",
+            "commit",
+            "--amend",
+            "--allow-empty",
+            "-qm",
+            "amended",
+        )
+        after = self.git("rev-parse", "HEAD").strip()
+        self.make_commit("later")
+        self.run_nav("commit", "add", after, "--replaces", before)
+        self.assertEqual(self.progress()["commits"], {str(self.root / ".git"): [after]})
+        saved = self.path().read_bytes()
+        self.run_nav("commit", "add", "missing", success=False)
+        self.run_nav("commit", "add", "HEAD", "--replaces", "", success=False)
+        self.run_nav("commit", "add", "HEAD", "--replaces", before, success=False)
+        self.assertEqual(self.path().read_bytes(), saved)
+
+    def test_commits_are_separate_by_repository_and_conversation(self) -> None:
+        first = self.make_commit("first")
+        self.run_nav("commit", "add", first)
+        original = self.path().read_bytes()
+        self.environment["CODEX_THREAD_ID"] = "conversation-two"
+        self.assertNotIn(first, self.run_nav("commit", "list"))
+        self.assertEqual(self.path().read_bytes(), original)
+        self.environment["CODEX_THREAD_ID"] = "conversation-one"
+        self.root = self.directory / "other"
+        self.root.mkdir()
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        second = self.make_commit("second")
+        self.assertNotIn(first, self.run_nav("commit", "list"))
+        self.run_nav("commit", "add", second)
+        listing = self.run_nav("commit", "list")
+        self.assertIn(second, listing)
+        self.assertNotIn(first, listing)
+        self.assertFalse((self.root / ".work").exists())
+
+    def test_damaged_commit_state_is_not_overwritten(self) -> None:
+        self.make_commit("first")
+        self.run_nav("start", "question")
+        damaged = '{"commits": {"repo": ["not-a-hash"]}}'
+        self.path().write_text(damaged)
+        self.run_nav("commit", "list", success=False)
+        self.run_nav("commit", "add", "HEAD", success=False)
+        self.assertEqual(self.path().read_text(), damaged)
+
+    def test_worktrees_share_commits_and_explicit_conversation_works(self) -> None:
+        commit = self.make_commit("first")
+        self.run_nav("commit", "add", "HEAD", "--conversation", "explicit")
+        worktree = self.directory / "worktree"
+        self.git("worktree", "add", "--detach", str(worktree))
+        self.root = worktree
+        self.assertIn(
+            commit, self.run_nav("commit", "list", "--conversation", "explicit")
+        )
+        self.assertNotIn(commit, self.run_nav("commit", "list"))
+
+    def test_failed_commit_replacement_preserves_existing_state(self) -> None:
+        commit = self.make_commit("first")
+        self.run_nav("start", "question")
+        original = self.path().read_bytes()
+        script = """
+import sys
+from unittest.mock import patch
+sys.path.insert(0, sys.argv[1])
+import navigate
+sys.argv = ['navigate.py', *sys.argv[2:]]
+with patch('os.replace', side_effect=OSError('Cannot replace file')):
+    raise SystemExit(navigate.main())
+"""
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                script,
+                str(NAVIGATOR.parent),
+                "commit",
+                "add",
+                commit,
+            ],
+            cwd=self.root,
+            env=self.environment,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertEqual(self.path().read_bytes(), original)
+        self.assertEqual(list(self.path().parent.glob("*.tmp")), [])
+
+    def test_concurrent_commit_additions_keep_both_ids(self) -> None:
+        first = self.make_commit("first")
+        second = self.make_commit("second")
+        processes = [
+            subprocess.Popen(
+                [sys.executable, str(NAVIGATOR), "commit", "add", commit],
+                cwd=self.root,
+                env=self.environment,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            for commit in (first, second)
+        ]
+        for process in processes:
+            _, error = process.communicate()
+            self.assertEqual(process.returncode, 0, error)
+        listing = self.run_nav("commit", "list")
+        self.assertEqual(set(listing.splitlines()[1:]), {first, second})
+
+    def test_squash_replaces_multiple_ids_and_keeps_other_commits(self) -> None:
+        first = self.make_commit("first")
+        second = self.make_commit("second")
+        third = self.make_commit("third")
+        for commit in (first, second, third):
+            self.run_nav("commit", "add", commit)
+        self.git("reset", "--soft", first)
+        combined = self.make_commit("combined")
+        self.run_nav(
+            "commit", "add", combined, "--replaces", second, "--replaces", third
+        )
+        self.assertEqual(
+            self.progress()["commits"], {str(self.root / ".git"): [first, combined]}
+        )
+
+    def test_reset_removes_discarded_ids_even_after_objects_are_pruned(self) -> None:
+        first = self.make_commit("first")
+        second = self.make_commit("second")
+        third = self.make_commit("third")
+        for commit in (first, second, third):
+            self.run_nav("commit", "add", commit)
+        self.git("reset", "--hard", first)
+        self.git("reflog", "expire", "--expire=now", "--all")
+        self.git("gc", "--prune=now")
+        missing = subprocess.run(
+            ["git", "cat-file", "-e", second], cwd=self.root, capture_output=True
+        )
+        self.assertNotEqual(missing.returncode, 0)
+        self.run_nav("commit", "remove", second, third)
+        self.assertEqual(self.progress()["commits"], {str(self.root / ".git"): [first]})
+
+    def test_unknown_removal_keeps_the_complete_record_unchanged(self) -> None:
+        first = self.make_commit("first")
+        self.run_nav("commit", "add", first)
+        self.run_nav("start", "question")
+        original = self.path().read_bytes()
+        self.run_nav("commit", "remove", first, "0" * 40, success=False)
+        self.assertEqual(self.path().read_bytes(), original)
+
+    def test_removing_all_ids_preserves_an_active_workflow(self) -> None:
+        commit = self.make_commit("first")
+        self.run_nav("commit", "add", commit)
+        self.run_nav("start", "question")
+        self.run_nav("commit", "remove", commit)
+        self.assertEqual(
+            self.progress(), {"workflow": "question", "state": "discovery"}
+        )
+        self.run_nav("cancel")
+        self.run_nav("commit", "add", commit)
+        self.run_nav("commit", "remove", commit)
+        self.assertFalse(self.path().exists())
+
+    def test_commit_commands_keep_an_explicit_conversation(self) -> None:
+        self.make_commit("first")
+        self.environment.pop("CODEX_THREAD_ID")
+        self.run_nav("start", "tweak", "--conversation", "explicit")
+        self.run_nav(
+            "move", "tweak", "discovery", "implementation", "--conversation", "explicit"
+        )
+        self.run_nav(
+            "move",
+            "tweak",
+            "implementation",
+            "validation",
+            "--conversation",
+            "explicit",
+        )
+        output = self.run_nav(
+            "move", "tweak", "validation", "delivery", "--conversation", "explicit"
+        )
+        self.assertIn("commit list --conversation explicit", output)
+        self.assertIn("commit add '<commit>' --conversation explicit", output)
+        self.assertIn("commit remove '<commit>' ... --conversation explicit", output)
+
     def test_minimal_progress_is_saved_outside_the_repository(self) -> None:
         self.run_nav("start", "novel-work")
         self.assertEqual(
@@ -212,7 +433,9 @@ with patch('os.replace', side_effect=OSError('Cannot replace file')):
     ) -> None:
         self.run_nav("start", "novel-work")
         self.path().write_text("{")
-        self.run_nav("resume", success=False)
+        output = self.run_nav("resume", success=False)
+        guidance = NAVIGATOR.parent.parent / "references/providers/local/record.md"
+        self.assertIn(str(guidance), output)
         self.run_nav("start", "novel-work", success=False)
         self.assertEqual(self.path().read_text(), "{")
         self.environment["CODEX_THREAD_ID"] = "conversation-two"
@@ -233,8 +456,38 @@ with patch('os.replace', side_effect=OSError('Cannot replace file')):
                 value = {"workflow": "novel-work", "state": "planning", **change}
                 self.path().write_text(json.dumps(value))
                 before = self.path().read_bytes()
-                self.run_nav("resume", success=False)
+                output = self.run_nav("resume", success=False)
+                guidance = (
+                    NAVIGATOR.parent.parent / "references/providers/local/record.md"
+                )
+                self.assertIn(str(guidance), output)
                 self.assertEqual(self.path().read_bytes(), before)
+
+    def test_failed_restore_uses_the_selected_tracker_record_guidance(self) -> None:
+        settings = self.root / ".git/work-system.json"
+        settings.write_text(
+            json.dumps({"tracker": "github", "repository": "example/inventory"})
+        )
+        original_settings = settings.read_bytes()
+        self.run_nav("start", "novel-work")
+        damaged = '{"workflow": "missing", "state": "planning"}'
+        self.path().write_text(damaged)
+        output = self.run_nav("resume", success=False)
+        guidance = NAVIGATOR.parent.parent / "references/providers/github/record.md"
+        self.assertEqual(output.count(str(guidance)), 1)
+        self.assertNotIn("references/providers/local/record.md", output)
+        self.assertEqual(settings.read_bytes(), original_settings)
+        self.assertEqual(self.path().read_text(), damaged)
+        self.assertFalse((self.root / ".work").exists())
+
+    def test_unreadable_state_returns_guidance_without_changing_its_bytes(self) -> None:
+        self.run_nav("start", "novel-work")
+        self.path().write_bytes(b"\xff")
+        output = self.run_nav("resume", success=False)
+        guidance = NAVIGATOR.parent.parent / "references/providers/local/record.md"
+        self.assertIn(str(guidance), output)
+        self.assertIn(str(self.path()), output)
+        self.assertEqual(self.path().read_bytes(), b"\xff")
 
     def test_concurrent_conversations_do_not_overwrite_progress(self) -> None:
         processes = [
@@ -353,6 +606,108 @@ with patch('os.replace', side_effect=OSError('Cannot replace file')):
             )
         self.run_nav("move", "novel-work", "planning", "implementation")
         self.assertEqual(self.progress()["state"], "implementation")
+
+    def _start_wayfinding_for_reply(self) -> bytes:
+        self.run_nav("start", "novel-work")
+        self.run_nav("substate", "enter", "wayfinding")
+        return self.path().read_bytes()
+
+    def _reply_arguments(self, ready: str = "1") -> tuple[str, ...]:
+        return (
+            "reply",
+            "--decided",
+            "2",
+            "--ready",
+            ready,
+            "--unspecified",
+            "destination",
+            "--body",
+            "Refusal protects saved files.",
+        )
+
+    def test_reply_preserves_navigation_and_contains_question(self) -> None:
+        before = self._start_wayfinding_for_reply()
+        out = self.run_nav(
+            *self._reply_arguments(), "--question", "Should export refuse?"
+        )
+        self.assertTrue(
+            out.startswith("Planning: 2 decided, 1 ready, unspecified: destination")
+        )
+        self.assertIn("Refusal protects saved files.", out)
+        self.assertTrue(out.rstrip().endswith("Should export refuse?"))
+        self.assertEqual(self.path().read_bytes(), before)
+
+    def test_reply_requires_an_ending_mode(self) -> None:
+        before = self._start_wayfinding_for_reply()
+        self.run_nav(*self._reply_arguments(), success=False)
+        self.assertEqual(self.path().read_bytes(), before)
+
+    def test_blocked_reply_has_no_invented_question(self) -> None:
+        before = self._start_wayfinding_for_reply()
+        out = self.run_nav(
+            *self._reply_arguments("0"), "--blocked-by", "The source is unavailable."
+        )
+        self.assertIn("0 ready", out)
+        self.assertTrue(out.rstrip().endswith("The source is unavailable."))
+        self.assertEqual(self.path().read_bytes(), before)
+
+    def test_contradictory_and_blank_fields_are_rejected(self) -> None:
+        before = self._start_wayfinding_for_reply()
+        self.run_nav(
+            *self._reply_arguments("0"),
+            "--question",
+            "Should export refuse?",
+            success=False,
+        )
+        self.run_nav(
+            *self._reply_arguments(), "--blocked-by", "Unavailable.", success=False
+        )
+        self.run_nav(
+            *self._reply_arguments("-1"),
+            "--question",
+            "Should export refuse?",
+            success=False,
+        )
+        self.run_nav(*self._reply_arguments(), "--question", "   ", success=False)
+        self.assertEqual(self.path().read_bytes(), before)
+
+    def test_reply_rejects_unavailable_saved_substate(self) -> None:
+        self.run_nav("start", "question")
+        state = self.progress()
+        state["substate"] = "wayfinding"
+        self.path().write_text(json.dumps(state))
+        before = self.path().read_bytes()
+        self.run_nav(
+            *self._reply_arguments(),
+            "--question",
+            "Should export refuse?",
+            success=False,
+        )
+        self.assertEqual(self.path().read_bytes(), before)
+
+    def test_requested_recap_preserves_progress_without_another_question(self) -> None:
+        before = self._start_wayfinding_for_reply()
+        out = self.run_nav(*self._reply_arguments(), "--recap")
+        self.assertTrue(out.startswith("Planning: 2 decided, 1 ready,"))
+        self.assertTrue(out.rstrip().endswith("Refusal protects saved files."))
+        self.assertEqual(self.path().read_bytes(), before)
+
+    def test_reply_requires_wayfinding(self) -> None:
+        self.run_nav(
+            *self._reply_arguments(),
+            "--question",
+            "Should export refuse?",
+            success=False,
+        )
+        self.run_nav("start", "novel-work")
+        before = self.path().read_bytes()
+        self.run_nav(
+            *self._reply_arguments(),
+            "--question",
+            "Should export refuse?",
+            success=False,
+        )
+        self.assertEqual(self.path().read_bytes(), before)
 
 
 if __name__ == "__main__":

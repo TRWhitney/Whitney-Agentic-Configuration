@@ -1,0 +1,77 @@
+{
+  "id": "remove-obsolete-export-paths",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/export.py": "import csv\nimport io\nimport json\n\n\ndef export_json(items):\n    return json.dumps(items)\n\n\ndef export_csv(items):\n    output=io.StringIO()\n    writer=csv.DictWriter(output,fieldnames=[\"name\",\"quantity\"])\n    writer.writeheader()\n    writer.writerows(items)\n    return output.getvalue()\n\n\ndef export_items(items,format=\"csv\"):\n    return export_csv(items) if format==\"csv\" else export_json(items)\n",
+    "src/cli.py": "import argparse\nfrom export import export_items\n\np=argparse.ArgumentParser()\np.add_argument(\"--format\",choices=[\"csv\",\"json\"],default=\"csv\")\np.add_argument(\"--csv\",action=\"store_true\")\na=p.parse_args()\nprint(export_items([{\"name\":\"Tea\",\"quantity\":2}],\"csv\" if a.csv else a.format))\n",
+    "docs/export.md": "# Export\n\nUse python3 src/cli.py for CSV, --csv for the old alias, or --format json for JSON.\n",
+    ".work/export/spec.md": "# JSON export\n\nAccepted: export is JSON only. The CLI without options and with --format json emits the item array. Remove CSV export, --csv, and --format csv. No compatibility path is needed. Preserve item names and integer quantities.\n",
+    ".work/export/status.md": "# Export\n\nImplement the accepted [JSON-only export](spec.md).\n",
+    "checks/check_export.py": "import ast,json,os,subprocess,sys\nfrom pathlib import Path\nroot=Path.cwd()\nsys.path.insert(0,str(root/'src'))\nfrom export import export_items\nfor items in [[],[{'name':'Th\u00e9, green','quantity':7},{'name':'Coffee','quantity':0}]]:\n    assert json.loads(export_items(items))==items\ndef invoke(*args):\n    return subprocess.run([sys.executable,'src/cli.py',*args],capture_output=True,text=True,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})\nfor args in [(),('--format','json')]:\n    result=invoke(*args);assert result.returncode==0,result.stderr\n    assert json.loads(result.stdout)==[{'name':'Tea','quantity':2}]\nfor args in [('--csv',),('--format','csv')]:\n    assert invoke(*args).returncode!=0\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the accepted JSON-only export in .work/export/spec.md and update the export documentation.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_export.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/app.py",
+            ".work/export/spec.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/export.py",
+    "src/cli.py",
+    "docs/export.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "export_items preserves arbitrary supported item names and integer quantities in a JSON array, including empty input; do not hardcode the CLI sample."
+    },
+    {
+      "id": "criterion-2",
+      "description": "The default CLI and --format json produce the expected item array, and removed --csv and --format csv inputs no longer select CSV behavior."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Remove obsolete CSV functions, aliases, format branches, and otherwise unused compatibility implementations in involved production paths. Mentioning the removed options in useful migration documentation is allowed."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Update docs/export.md with accurate JSON usage and retain meaningful focused tests for supported export behavior."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Preserve unrelated inventory behavior and the accepted specification, complete delivery, and report actual verification rather than treating code deletion as sufficient proof."
+    }
+  ]
+}

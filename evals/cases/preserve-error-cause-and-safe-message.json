@@ -1,0 +1,69 @@
+{
+  "id": "preserve-error-cause-and-safe-message",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/storage.py": "class InventoryError(Exception):\n    pass\n\ndef load_inventory(store):\n    try:\n        return store.load()\n    except OSError as error:\n        raise InventoryError(str(error))\n\ndef error_message(error):\n    return str(error)\n",
+    "checks/check_storage.py": "from pathlib import Path\nimport runpy\napp=runpy.run_path(str(Path.cwd()/'src/storage.py'))\nfailure=OSError('Private path /srv/private/customer-42/inventory.db unavailable')\nclass Store:\n    def load(self): raise failure\ntry: app['load_inventory'](Store())\nexcept app['InventoryError'] as error:\n    assert error.__cause__ is failure\n    assert app['error_message'](error)=='Inventory could not be loaded.'\nelse: raise AssertionError('storage failure was swallowed')\nclass Working:\n    def load(self): return [{'name':'Tea','quantity':2}]\nassert app['load_inventory'](Working())==[{'name':'Tea','quantity':2}]\n",
+    ".work/total/status.md": "# Inventory errors\n\nCurrent state: fix discovery.\n\n[Specification](spec.md). Storage errors expose a private path and lose their explicit cause.\n",
+    ".work/total/spec.md": "# Inventory errors\n\nload_inventory(store) returns store.load() on success. On OSError it raises InventoryError with the original exception as its explicit cause. error_message(error) returns exactly Inventory could not be loaded. for consumers, without paths or internal details.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/total/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Fix the storage error-handling bug recorded in .work/total/status.md and finish the change.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_storage.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/total/spec.md",
+            "src/app.py"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/storage.py",
+    ".work/total/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "On a store OSError, load_inventory raises InventoryError with that same original exception as its explicit cause; do not swallow or replace diagnostic causality."
+    },
+    {
+      "id": "criterion-2",
+      "description": "error_message returns exactly \"Inventory could not be loaded.\" and does not expose private paths or internal error details to consumers."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Successful storage loads still return store.load() results unchanged, and unrelated inventory behavior and the accepted specification remain intact."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Retain meaningful regression coverage for failure/cause/message and successful loading, observe appropriate red and green results, and report actual delivery evidence."
+    }
+  ]
+}

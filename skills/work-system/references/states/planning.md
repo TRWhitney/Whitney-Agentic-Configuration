@@ -42,8 +42,9 @@ procedures when trying something is needed to decide. Do not implement productio
 during planning.
 
 Record agreed conclusions and their reasons, not a transcript. Link research, prototypes,
-decisions, and domain documentation instead of copying them. If a decision changes, update the
-specification and every ticket that depends on it.
+decisions, and domain documentation instead of copying them. If a requirement or decision changes,
+update the specification and every ticket that depends on it before replying. Mark tickets
+blocked when implementing them still needs a design decision.
 
 Before creating a ticket, check the current design issue or work record and the tracker's
 creation rules. Put related refinements into the existing design. Before leaving planning, move

@@ -1,0 +1,75 @@
+{
+  "id": "combine-related-planning-records",
+  "tags": [
+    "expansion"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work planning.\n\n[Export design](decisions/01-export.md). [CSV quoting notes](decisions/02-quoting.md). [Specification](spec.md).\n",
+    ".work/inventory/decisions/01-export.md": "# Export design\n\n**Status:** claimed\n\n## Accepted answers\n\nCSV uses name,quantity headings and LF endings.\n\n## Questions\n\nShould an existing file be replaced or left unchanged?\n",
+    ".work/inventory/decisions/02-quoting.md": "# CSV quoting\n\n**Status:** claimed\n\n## Accepted answers\n\nUse Python csv quoting because names can contain commas and quotation marks.\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** draft\n\nName search is accepted: return Unicode case-insensitive substring matches in input order. An empty query returns all items; no match or empty input returns [].\n\nThe export design is in [the existing decision record](decisions/01-export.md). CSV uses name,quantity headings, standard CSV quoting and LF endings. File export remains under discussion because existing-destination behavior is unanswered. No export implementation is ready.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement the accepted name-search behavior in the [accepted specification](../spec.md). Acceptance covers mixed-case matching, input order, empty queries, missing matches, and empty input. Project checks: checks/check_search.py.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The CSV quoting notes belong in the export design. Combine those records so the export design is ready for our next discussion.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    ".work/inventory/decisions/01-export.md",
+    ".work/inventory/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "merge-answer-reason",
+      "description": "The existing export design contains the accepted use of Python CSV quoting and the reason, item names may contain commas and quotation marks."
+    },
+    {
+      "id": "preserve-open-question",
+      "description": "The existing-file replacement-versus-refusal choice remains open. The merge does not invent an answer or imply planning is settled."
+    },
+    {
+      "id": "single-owner",
+      "description": "Retire the redundant quoting record with a replacement link or remove it after moving its useful content. Update the status link to the owning export design."
+    },
+    {
+      "id": "bounded-planning",
+      "description": "Leave application behavior untouched and keep the export planning discussion active."
+    }
+  ]
+}

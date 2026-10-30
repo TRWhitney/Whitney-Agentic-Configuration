@@ -1,0 +1,134 @@
+{
+  "id": "narrow-correction",
+  "tags": [
+    "correction",
+    "question",
+    "git"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"Nothing here.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Change the empty shelf message to \"No items saved.\".",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "src/app.py",
+          "text": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n"
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "session_commits"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "Is 'No items saved.' too technical for the empty shelf message? Would 'Your shelf is empty.' read better?",
+      "checks": [
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        },
+        {
+          "kind": "file_equals",
+          "path": "src/app.py",
+          "text": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "\\bgit\\b[^\\n]*(?:\\bcommit\\b|\\brebase\\b|\\breset\\b)",
+          "absent": true
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "Approved. Change only the text returned by empty_message() from 'No items saved.' to 'Your shelf is empty.'.",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "src/app.py",
+          "text": "def empty_message():\n    return \"Your shelf is empty.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py"
+  ],
+  "rubric": [
+    {
+      "id": "discussion-only",
+      "description": "Answer whether Your shelf is empty. reads better for the app, without editing files or committing during the initial question."
+    },
+    {
+      "id": "approved-text",
+      "description": "After approval, change exactly the string returned by empty_message from No items saved. to Your shelf is empty. Stock-total code and inventory documentation remain unchanged."
+    },
+    {
+      "id": "amended-result",
+      "description": "Preserve the starting commit and amend the message commit made on the first turn. Leave two commits containing the approved correction and no unfinished edit."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

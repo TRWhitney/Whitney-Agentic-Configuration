@@ -1,0 +1,75 @@
+{
+  "rubric": [
+    {
+      "id": "case-outcomes",
+      "description": "The saved report identifies every supplied case and its attempt, preserves its distinct outcome and substantive reasons for failure, uncertainty, or a limit, and does not replace case outcomes with aggregate totals. Equivalent wording of an attempt number is sufficient when the source establishes the mapping. Missing source evidence must not become an invented pass or failure."
+    }
+  ],
+  "examples": [
+    {
+      "id": "table-attempt-number",
+      "request": "Write the report for the completed import evaluation in docs/import-evaluation.md.",
+      "files": {
+        "sources/import-results.md": "# Import evaluation results\n\nThis is the complete batch. Each case ran once, attempt 1.\n\n| Case | Outcome | Criterion and evidence |\n| --- | --- | --- |\n| valid-rows | pass | row-content met. Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected not met. Quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy uncertain. Accepted duplicate-name behavior is not specified. |\n| unicode-name | limit | Worker timed out before output. No behavior criteria were assessed. |\n",
+        "docs/import-evaluation.md": "# Import evaluation\n\nReport pending.\n"
+      },
+      "artifact_path": "docs/import-evaluation.md",
+      "artifact": "# Import evaluation\n\nAll cases below are attempt 1.\n\n| Case | Outcome | Finding |\n| --- | --- | --- |\n| valid-rows | pass | Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected was not met: quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy remains uncertain because accepted duplicate-name behavior is unspecified. |\n| unicode-name | limit | The worker timed out before output, so its behavior was not assessed. |\n",
+      "reply": "Saved the four case outcomes and the unresolved policy and timeout findings.",
+      "expected": "met",
+      "reason": "The numeric attempt heading applies to all four cases. Every outcome and each substantive nonpassing reason is preserved."
+    },
+    {
+      "id": "single-recorded-attempt",
+      "request": "Write the report for the completed import evaluation in docs/import-evaluation.md.",
+      "files": {
+        "sources/import-results.md": "# Import evaluation results\n\nThis is the complete batch. Each case ran once, attempt 1.\n\n| Case | Outcome | Criterion and evidence |\n| --- | --- | --- |\n| valid-rows | pass | row-content met. Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected not met. Quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy uncertain. Accepted duplicate-name behavior is not specified. |\n| unicode-name | limit | Worker timed out before output. No behavior criteria were assessed. |\n",
+        "docs/import-evaluation.md": "# Import evaluation\n\nReport pending.\n"
+      },
+      "artifact_path": "docs/import-evaluation.md",
+      "artifact": "# Import evaluation\n\nThere was one recorded attempt per case.\n\n| Case | Outcome | Finding |\n| --- | --- | --- |\n| valid-rows | pass | Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected was not met: quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy remains uncertain because accepted duplicate-name behavior is unspecified. |\n| unicode-name | limit | The worker timed out before output, so its behavior was not assessed. |\n",
+      "reply": "The report covers all four cases from the single recorded attempt.",
+      "expected": "met",
+      "reason": "The complete source says every case ran once, attempt 1. One recorded attempt per case expresses that same mapping without requiring the literal string attempt 1."
+    },
+    {
+      "id": "batch-summary",
+      "request": "Write the report for the completed import evaluation in docs/import-evaluation.md.",
+      "files": {
+        "sources/import-results.md": "# Import evaluation results\n\nThis is the complete batch. Each case ran once, attempt 1.\n\n| Case | Outcome | Criterion and evidence |\n| --- | --- | --- |\n| valid-rows | pass | row-content met. Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected not met. Quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy uncertain. Accepted duplicate-name behavior is not specified. |\n| unicode-name | limit | Worker timed out before output. No behavior criteria were assessed. |\n",
+        "docs/import-evaluation.md": "# Import evaluation\n\nReport pending.\n"
+      },
+      "artifact_path": "docs/import-evaluation.md",
+      "artifact": "# Import evaluation\n\nAttempt 1 finished with one pass, one failure, one inconclusive result, and one worker limit. Fix invalid inputs and clarify the duplicate policy before rerunning the limited case.\n",
+      "reply": "Saved the batch totals and next steps.",
+      "expected": "not_met",
+      "reason": "Accurate totals do not identify the four cases or preserve which case timed out and what invalid input was accepted. The per-case results are lost."
+    },
+    {
+      "id": "timeout-classification",
+      "request": "Write the report for the completed import evaluation in docs/import-evaluation.md.",
+      "files": {
+        "sources/import-results.md": "# Import evaluation results\n\nThis is the complete batch. Each case ran once, attempt 1.\n\n| Case | Outcome | Criterion and evidence |\n| --- | --- | --- |\n| valid-rows | pass | row-content met. Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected not met. Quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy uncertain. Accepted duplicate-name behavior is not specified. |\n| unicode-name | limit | Worker timed out before output. No behavior criteria were assessed. |\n",
+        "docs/import-evaluation.md": "# Import evaluation\n\nReport pending.\n"
+      },
+      "artifact_path": "docs/import-evaluation.md",
+      "artifact": "# Import evaluation\n\nAll cases below are attempt 1.\n\n| Case | Outcome | Finding |\n| --- | --- | --- |\n| valid-rows | pass | Two valid rows imported with matching names and quantities. |\n| invalid-quantity | fail | invalid-rejected was not met: quantity -2 was imported instead of rejected. |\n| duplicate-name | inconclusive | duplicate-policy remains uncertain because accepted duplicate-name behavior is unspecified. |\n| unicode-name | fail | The worker timed out, proving that Unicode names are unsupported. |\n",
+      "reply": "Saved all four case rows, including the Unicode failure.",
+      "expected": "not_met",
+      "reason": "All case identifiers and the attempt appear, but an unassessed timeout is changed to a behavior failure and an unsupported conclusion. Row-count or identifier checks would miss the error."
+    },
+    {
+      "id": "partial-source",
+      "request": "Write the report for the completed import evaluation in docs/import-evaluation.md.",
+      "files": {
+        "sources/import-results.md": "# Available import results\n\nThis excerpt has no batch manifest or attempt identifiers. valid-rows passed with matching names and quantities. invalid-quantity failed because quantity -2 was imported instead of rejected. The remaining source results are unavailable.\n",
+        "docs/import-evaluation.md": "# Import evaluation\n\nReport pending.\n"
+      },
+      "artifact_path": "docs/import-evaluation.md",
+      "artifact": "# Import evaluation\n\nOne recorded attempt per case. valid-rows passed with matching names and quantities. invalid-quantity failed because quantity -2 was imported instead of rejected. These are the results available for this report; the batch manifest is unavailable.\n",
+      "reply": "Saved the available findings. The remaining batch results and attempt identifiers were unavailable.",
+      "expected": "uncertain",
+      "reason": "The two supplied outcomes and failure reason are preserved, but the excerpt cannot establish the full case set or the report's one-attempt mapping. Missing records prevent a complete equivalence judgment."
+    }
+  ]
+}

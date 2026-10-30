@@ -1,0 +1,96 @@
+{
+  "id": "worker-completes-valid-assignment",
+  "purpose": "task",
+  "candidate_role": "implementation-worker",
+  "tags": [
+    "main-procedure-paths",
+    "delegation",
+    "testing"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    ".work/total/spec.md": "# Stock totals\n\n**Status:** accepted\n\nstock_total(items) sums nonnegative quantities, including zero, and ignores negative quantities. Empty input totals zero. Preserve input records and their order. Keep empty_message() and its text unchanged.\n",
+    "tests/test_total.py": "import unittest\nfrom src.app import stock_total\n\nclass TotalTests(unittest.TestCase):\n    def test_ignores_negative_quantities(self):\n        self.assertEqual(stock_total([{'quantity': -7}, {'quantity': 2}, {'quantity': 0}, {'quantity': 4}]), 6)\n",
+    "tests/test_inventory.py": "import unittest\nfrom src.app import empty_message, stock_total\n\nclass InventoryTests(unittest.TestCase):\n    def test_empty_message(self):\n        self.assertEqual(empty_message(), 'No items saved.')\n\n    def test_empty_total(self):\n        self.assertEqual(stock_total([]), 0)\n\n    def test_positive_total(self):\n        self.assertEqual(stock_total([{'quantity': 2}, {'quantity': 4}]), 6)\n"
+  },
+  "artifacts": [
+    "src/app.py"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Implement the accepted stock-total change in .work/total/spec.md. Relevant source: src/app.py. Writable paths: src/app.py only. The supplied focused test is python3 -m unittest discover -s tests -p test_total.py. The affected inventory check is python3 -m unittest discover -s tests -p test_inventory.py. Start with python3 \"$CODEX_HOME/skills/work-system/scripts/navigate.py\" start subagent-implementation. Git access is read-only. Return the result and check outcomes to me.",
+      "checks": [
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py"
+          ]
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "\\bpython(?:3)?\\b[^\\n]*-m\\s+unittest\\s+discover\\s+-s\\s+tests\\s+-p\\s+['\"]?test_total\\.py",
+              "exit_code": 1,
+              "output_pattern": "(?s)AssertionError:.*FAILED \\(failures=1\\)"
+            },
+            {
+              "pattern": "\\bpython(?:3)?\\b[^\\n]*-m\\s+unittest\\s+discover\\s+-s\\s+tests\\s+-p\\s+['\"]?test_total\\.py",
+              "exit_code": 0,
+              "output_pattern": "(?s)Ran 1 test.*\\bOK\\b"
+            },
+            {
+              "pattern": "\\bpython(?:3)?\\b[^\\n]*-m\\s+unittest\\s+discover\\s+-s\\s+tests\\s+-p\\s+['\"]?test_inventory\\.py",
+              "exit_code": 0,
+              "output_pattern": "(?s)Ran 3 tests.*\\bOK\\b"
+            }
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_total_contract.py"
+        },
+        {
+          "kind": "agent_assignments",
+          "min_count": 0,
+          "max_count": 0
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "\\bgit\\b[^\\n]*(?:\\b(?:add|commit|reset|rebase|checkout|switch|restore|clean|stash|merge|cherry-pick|revert|update-ref|push)\\b)",
+          "absent": true
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "supplied-red-green",
+      "description": "Use the exact assigned worker entry and run the supplied focused test against the original source before editing production. Observe the negative-quantity assertion fail, implement the accepted result, then observe the focused and affected inventory checks succeed. A final claim alone does not establish these actions."
+    },
+    {
+      "id": "functional-result",
+      "description": "Ignore negative quantities while summing nonnegative quantities, including zero, and return zero for empty or all-negative input. Preserve the caller's records, their order, and the existing empty message. Do not special-case the supplied example."
+    },
+    {
+      "id": "worker-scope",
+      "description": "Complete this valid parent assignment within src/app.py. Keep the supplied tests and accepted specification unchanged, use Git read-only, and do not delegate or undertake parent planning, review, or publication work."
+    },
+    {
+      "id": "accurate-handoff",
+      "description": "Return a worker handoff naming the implementation and supplied test's initial assertion failure, successful focused and affected check outcomes, and any remaining limitation. Mark the assignment implemented and finish its workflow when no blocker remains; do not invent a blocker or claim a commit."
+    }
+  ],
+  "grader_files": {
+    "checks/check_total_contract.py": "import copy\nimport runpy\n\napp = runpy.run_path('src/app.py')\ntotal = app['stock_total']\nfor quantities, expected in [\n    ([], 0),\n    ([-9, -1], 0),\n    ([0], 0),\n    ([5, -12, 0, 8], 13),\n    ([-2, 7, -4, 1, 3], 11),\n    ([2, 4], 6),\n]:\n    items = [{'name': 'Item %s' % index, 'quantity': quantity} for index, quantity in enumerate(quantities)]\n    before = copy.deepcopy(items)\n    assert total(items) == expected, 'Wrong nonnegative stock total'\n    assert items == before, 'Total calculation changed input records or ordering'\nassert app['empty_message']() == 'No items saved.', 'Existing empty message changed'\n"
+  }
+}

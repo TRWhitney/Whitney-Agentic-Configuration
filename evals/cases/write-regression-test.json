@@ -1,0 +1,111 @@
+{
+  "id": "write-regression-test",
+  "tags": [
+    "verification",
+    "regression"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-without-tests"
+  ],
+  "files": {
+    ".work/search/tickets/01-search.md": "# Search repair\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nRestore the accepted Unicode name-search behavior from [the specification](../spec.md). The reported input is an item named Straße queried with STRASSE, which currently returns no match.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Fix the Unicode search bug reported in the work record.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*unittest",
+              "exit_code": 1,
+              "output_pattern": "FAIL:"
+            },
+            {
+              "pattern": "python.*unittest",
+              "exit_code": 0,
+              "output_pattern": "(?s)Ran [1-9].*OK"
+            }
+          ]
+        },
+        {
+          "kind": "regression_test",
+          "tests": "tests",
+          "source": "src/app.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs",
+            ".work/search/spec.md"
+          ],
+          "exclude": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py",
+            "tests/test_search.py",
+            ".work/search/status.md",
+            ".work/search/tickets/01-search.md",
+            "tests",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_search_result.py"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    "tests",
+    ".work/search/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "diagnose-first",
+      "description": "Reproduce STRASSE failing to match Straße and identify the lower-versus-case-fold cause before changing production behavior."
+    },
+    {
+      "id": "real-regression",
+      "description": "Retain a unittest regression through the existing search_items interface with independently derived expected results. It must fail on the original implementation by an assertion about the reported behavior and pass the repair."
+    },
+    {
+      "id": "red-then-green",
+      "description": "Observe the regression fail before production repair, then run the repaired focused test and affected suite successfully. A retroactive counterfactual check alone does not prove the agent followed the required sequence."
+    },
+    {
+      "id": "finish-fix",
+      "description": "Repair the accepted Unicode search without changing shelf-message or stock-total behavior, and finish the fix with current evidence, review and committed changes."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n",
+    "checks/check_search_result.py": "from pathlib import Path\nimport runpy\napp=runpy.run_path(str(Path.cwd()/\"src/app.py\"))\nf=app[\"search_items\"]\nrows=[{\"name\":\"Straße lamp\",\"quantity\":2},{\"name\":\"Tea\",\"quantity\":1},{\"name\":\"STRASSE shade\",\"quantity\":3}]\nassert f(rows,\"strasse\")==[rows[0],rows[2]]\nassert f(rows,\"\")==rows and f(rows,\"missing\")==[] and f([],\"x\")==[]\nassert app[\"empty_message\"]()==\"No items saved.\"\nassert app[\"stock_total\"]([{\"quantity\":-3},{\"quantity\":5}])==2\n"
+  }
+}

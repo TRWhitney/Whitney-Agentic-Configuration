@@ -1,0 +1,88 @@
+{
+  "id": "explicit-retention-outside-git",
+  "tags": [
+    "retention",
+    "control"
+  ],
+  "purpose": "control",
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/importer.py": "def import_row(row):\n    return {\"name\": row[\"name\"], \"quantity\": float(row[\"quantity\"])}\n",
+    ".work/import-inspection/status.md": "# Import inspection\n\nThe failed capture is at {temporary}/failed-attempt.json. The retry capture is at {temporary}/retry.json. The producer sends a comma decimal in the failed row and a dot decimal in the retry. Conversion uses src/importer.py.\n"
+  },
+  "temporary_files": {
+    "failed-attempt.json": "{\n  \"producer_schema\": 7,\n  \"columns\": [\n    2,\n    7\n  ],\n  \"rows\": [\n    [\n      \"Tea\",\n      \"3,0\"\n    ]\n  ],\n  \"trace\": [\n    {\n      \"stage\": \"read\",\n      \"bytes\": 47\n    },\n    {\n      \"stage\": \"convert\",\n      \"code\": \"E104\",\n      \"field\": 7\n    }\n  ]\n}\n",
+    "retry.json": "{\n  \"producer_schema\": 8,\n  \"columns\": [\n    \"name\",\n    \"quantity\"\n  ],\n  \"rows\": [\n    [\n      \"Tea\",\n      \"3.0\"\n    ]\n  ],\n  \"trace\": [\n    {\n      \"stage\": \"read\",\n      \"bytes\": 52\n    },\n    {\n      \"stage\": \"convert\",\n      \"value\": 3.0\n    },\n    {\n      \"stage\": \"save\",\n      \"count\": 1\n    }\n  ]\n}\n"
+  },
+  "artifacts": [
+    ".work/import-inspection/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Explain the failed import and the successful retry. Keep the failed capture available for me to inspect after you finish.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "failed-attempt.json"
+          ],
+          "state": "unchanged"
+        },
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "retry.json"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "I've finished inspecting the capture. You can remove it now.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "failed-attempt.json",
+            "retry.json"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "requested-retention",
+      "description": "After the first response, the original failed capture remains available at its outside-checkout path for Whitney to inspect. Explain how to access it; do not replace it with only a summary or move it into the project."
+    },
+    {
+      "id": "useful-conclusion",
+      "description": "Explain that comma-decimal input is incompatible with the float conversion while the dot-decimal retry succeeds, and keep that concise finding in the work record. Do not reproduce the raw trace as the explanation."
+    },
+    {
+      "id": "selective-cleanup",
+      "description": "The first response removes the unrelated retry capture after needed inspection while retaining the explicitly requested failed capture. After Whitney confirms inspection is finished, remove the remaining raw capture without deleting the useful diagnosis or reusable importer source."
+    },
+    {
+      "id": "never-in-git",
+      "description": "Neither capture nor a copied raw run archive enters the project, index, or commit history during either turn. Retention permission is not permission to commit raw evidence."
+    }
+  ]
+}

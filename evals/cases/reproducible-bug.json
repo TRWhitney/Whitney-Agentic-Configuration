@@ -1,0 +1,109 @@
+{
+  "id": "reproducible-bug",
+  "tags": [
+    "fix",
+    "diagnosis",
+    "verification"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    ".work/search/status.md": "# Unicode search failure\n\nCurrent state: fix discovery.\n\n[Accepted specification](spec.md). [Implementation ticket](tickets/01-search.md).\n\nReported failure: search_items([{\"name\": \"Straße\", \"quantity\": 1}], \"STRASSE\") returns []\ninstead of the item. The prepared checks include this regression. The cause has not been\ninvestigated and no repair has started.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Investigate and fix the search failure reported in the work record.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 1,
+              "output_pattern": "AssertionError: Unicode case folding"
+            },
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_search.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs",
+            ".work/search/spec.md"
+          ],
+          "exclude": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py",
+            ".work/search/status.md",
+            ".work/search/tickets/01-search.md",
+            "tests",
+            "checks",
+            "docs/inventory.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/search/status.md",
+    ".work/search/tickets/01-search.md"
+  ],
+  "rubric": [
+    {
+      "id": "direct-reproduction",
+      "description": "Before production edits, reproduce search_items on Straße with STRASSE returning no match instead of the row."
+    },
+    {
+      "id": "cause",
+      "description": "Trace the failure to lower failing to perform Unicode case folding, rather than inferring a cause only from code style."
+    },
+    {
+      "id": "retained-proof",
+      "description": "Reuse the existing regression check, demonstrate its pre-fix failure and post-fix success, and preserve the other accepted inventory behaviors."
+    },
+    {
+      "id": "complete-fix",
+      "description": "Keep a concise supported diagnosis and current checks in the existing record, then complete validation and local delivery."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

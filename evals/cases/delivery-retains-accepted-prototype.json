@@ -1,0 +1,106 @@
+{
+  "id": "delivery-retains-accepted-prototype",
+  "tags": [
+    "expansion",
+    "documentation",
+    "retention"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+    "docs/prototypes/csv.md": "# CSV quoting study\n\n[Runnable CSV probe](../../prototypes/export_csv_probe.py) round-trips item names containing commas through Python's CSV writer and reader. The probe is the accepted study source.\n\nRun `python prototypes/export_csv_probe.py` from the project root. Successful execution exits with no output after confirming that the comma in Tea, green stays inside one field.\n",
+    "prototypes/export_csv_probe.py": "import csv, io\nstream=io.StringIO()\ncsv.writer(stream).writerow([\"Tea, green\", \"Mug\"] )\nassert next(csv.reader(io.StringIO(stream.getvalue())))==[\"Tea, green\", \"Mug\"]\n",
+    "notes/unrelated.txt": "Unrelated note to retain.\n",
+    ".work/search/status.md": "# Name search and CSV study\n\nCurrent state: novel-work delivery.\n\n[Accepted specification](spec.md). [Implementation ticket](tickets/01-search.md). [CSV study](../../docs/prototypes/csv.md). Search implementation is present. Its earlier seven checks passed. The CSV probe source is accepted. Uncommitted probe output and debug files remain from the study.\n\nThe probe run trace is at {temporary}/probe-run.log. Its inspection and required study review are complete.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "conversation": "main",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted search work and CSV study.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_retention.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "prototypes/export_csv_probe.py",
+            "notes/unrelated.txt"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "probe-run.log"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "no_raw_evidence",
+          "paths": [
+            "prototypes/probe-output.csv",
+            "prototypes/probe-debug.log"
+          ]
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "uncommitted_files": {
+    "prototypes/probe-output.csv": "name,quantity\nTea,2\n",
+    "prototypes/probe-debug.log": "temporary probe trace\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    "docs/prototypes/csv.md",
+    "prototypes/export_csv_probe.py",
+    ".work/search/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "retain-useful-sources",
+      "description": "Retain the runnable accepted export_csv_probe.py, its CSV quoting finding, and the unrelated note unchanged."
+    },
+    {
+      "id": "remove-raw-output",
+      "description": "Remove probe-output.csv and probe-debug.log after any needed inspection. Do not commit, ignore, archive, or replace these temporary outputs with cleanup inventories."
+    },
+    {
+      "id": "link-source",
+      "description": "The study keeps the CSV quoting finding, a working relative link to the retained runnable prototype, and usable reproduction steps. A link to a deleted output or a claim that the study passed cannot replace the finding and runnable source."
+    },
+    {
+      "id": "delivered-work",
+      "description": "Finish the accepted search and study with current validation, accurate completion records, required review and committed work."
+    }
+  ],
+  "grader_files": {
+    "checks/check_retention.py": "from pathlib import Path\np=Path.cwd()\nassert not (p/\"prototypes/probe-output.csv\").exists()\nassert not (p/\"prototypes/probe-debug.log\").exists()\nassert (p/\"prototypes/export_csv_probe.py\").exists()\n",
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  },
+  "temporary_files": {
+    "probe-run.log": "run=csv-quoting-714\nwriter=stdlib.csv\ninput_fields=2\noutput_fields=2\nround_trip=equal\n"
+  }
+}

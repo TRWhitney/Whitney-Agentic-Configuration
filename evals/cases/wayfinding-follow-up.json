@@ -1,0 +1,103 @@
+{
+  "id": "wayfinding-follow-up",
+  "tags": [
+    "wayfinding",
+    "recovery",
+    "follow-up"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What should we decide next about inventory export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "Before I choose, which option do you recommend, and why?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The first response frames the open empty-inventory decision with header-only and refusal alternatives and asks for a decision."
+    },
+    {
+      "id": "criterion-2",
+      "description": "The follow-up gives a concrete recommendation tied to consequences for an empty local inventory, with a reason and a real tradeoff rather than repeating the question."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Does not record the recommended behavior as accepted, advance decision counts, or close the question merely because advice was requested."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps accepted CSV columns and the active wayfinding discussion intact with a consistent progress line, production source unchanged, and no publication."
+    }
+  ],
+  "artifacts": []
+}

@@ -1,0 +1,99 @@
+{
+  "id": "writing-preferences-stay-out-of-prose",
+  "tags": [
+    "prose-boundaries",
+    "leakage"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "sources/shelf-assistant.md": "# Shelf assistant behavior\n\nThe Shelf assistant helps a collection keeper prepare inventory edits. It reads the local inventory and shows a proposed change before saving. The keeper accepts or cancels that proposal. Acceptance saves the item name and quantity together; cancellation leaves the saved inventory unchanged.\n\n## Questions and missing details\n\nIf a new item has no quantity, the assistant asks the keeper for a quantity before showing the proposal. A quantity of zero is valid and keeps the item in the inventory. A request to delete an item also produces a proposal that needs acceptance. The assistant never chooses a quantity on the keeper's behalf.\n\n## Session handoff\n\nA saved session includes the pending proposal, its item, and whether it still needs acceptance. When the keeper resumes, the assistant shows that proposal and waits for a decision. Resuming a session does not accept or save a proposal. If no proposal is pending, the keeper can make a new request.\n\n## Save failure\n\nIf saving fails, the existing inventory remains unchanged and the proposal stays pending. The keeper can inspect it before trying again. A successful save closes the pending proposal.\n",
+    "docs/assistant-guide.md": "# Working with the Shelf assistant\n\nThe assistant can help you change a name or quantity without editing the inventory file yourself. Start by describing the item and the change you want. A proposal shows you what would be saved.\n\n## Review a change\n\nCheck the proposed name and quantity together. Choose Accept to save them, or Cancel to leave your inventory as it was. A saved quantity of zero keeps the item in your collection. Deleting an item also asks for your acceptance.\n\n## Missing information\n\nIf you leave out a quantity, the assistant picks one and shows you a proposal. You can correct it before saving.\n\n## Continue later\n\nYou can close a session while deciding. Opening the session again accepts the waiting proposal and saves the change so you can carry on.\n\n## When saving fails\n\nA failed save clears the proposal. Enter your request again to retry.\n\n## Example\n\nAsk to set the quantity of Blue mug to zero. Review the proposal, then accept it. Blue mug remains in the inventory with a quantity of zero.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Revise docs/assistant-guide.md from sources/shelf-assistant.md for a collection keeper trying the Shelf assistant for the first time. The review-a-change section and Blue mug example are useful; the later sections lag behind the current behavior. I like familiar words, short explanations and direct instructions. Use \"you\" for the keeper and \"the assistant\" for the app. Explain what happens when a session resumes and when a save fails.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "The handoff and failed-save explanations are approved. Add an example where a keeper requests a new item without giving a quantity, then supplies zero and cancels the proposal. Explain what is saved at the end. Keep the Blue mug example and the accepted session and save-failure behavior.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Make the headings easier to scan as questions a keeper might ask. Keep the two examples and the accepted explanations. Add a brief opening overview that connects requesting a change, reviewing it and deciding whether to save.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/assistant-guide.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Every revised guide accurately describes a proposal before saving, acceptance saving name and quantity together, and cancellation leaving saved inventory unchanged. Preserve the accepted review section, valid zero quantities, deletion acceptance and the Blue mug example throughout."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Correct the draft's invented-quantity behavior: the assistant asks for a missing quantity before showing a proposal. The added example requests an item without a quantity, supplies zero, cancels, and explains that no new item or quantity was saved. Preserve it in the final revision."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Correct the draft's resume and failure behavior: resuming shows a pending proposal and waits, without accepting it; save failure leaves inventory unchanged and the proposal pending for inspection and retry. Preserve both accepted corrections through the later edits."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Across the full saved artifacts, apply the author's wording preferences through clear instructions. Do not turn author instructions, claims of writing-style compliance, or revision history into documented assistant features or workflow. The product's real proposal, acceptance, save and handoff behavior belongs in the guide even though it shares vocabulary with the author's directions. Judge the contextual meaning, including comments, tables and headings."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Each request produces a substantive document revision. The final guide uses question headings and a useful request-review-decision overview without dropping the accepted facts or either example. Preserve supplied sources and unrelated application behavior."
+    }
+  ]
+}

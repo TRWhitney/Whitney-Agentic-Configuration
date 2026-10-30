@@ -1,0 +1,55 @@
+{
+  "id": "refactor-brittle-internal-test",
+  "purpose": "task",
+  "tags": [
+    "procedure-coverage"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/export.py": "import csv, io\n\ndef _row(item):\n    return [item['name'],item['quantity']]\n\ndef export_inventory(items):\n    out=io.StringIO(newline='')\n    writer=csv.writer(out,lineterminator='\\n')\n    writer.writerow(['name','quantity'])\n    for item in items:\n        row=_row(item)\n        writer.writerow([row[0],_row(item)[1]])\n    return out.getvalue()\n\ndef export_selected(items, selected):\n    out=io.StringIO(newline='')\n    writer=csv.writer(out,lineterminator='\\n')\n    writer.writerow(['name','quantity'])\n    for item in items:\n        if item['name'] in selected:\n            row=_row(item)\n            writer.writerow([row[0],_row(item)[1]])\n    return out.getvalue()\n",
+    "docs/export.md": "# CSV export\n\nFull and selected exports use name,quantity headings, LF line endings, standard CSV quoting, and input order. Selection uses item names. No selected rows produces only the header. Zero quantities are included.\n",
+    "tests/test_export.py": "import unittest\nfrom unittest.mock import patch\nfrom src import export\n\nclass ExportTests(unittest.TestCase):\n    def test_full_export(self):\n        rows=[{'name':'Cup','quantity':2}]\n        with patch.object(export,'_row',wraps=export._row) as row:\n            self.assertEqual(export.export_inventory(rows),'name,quantity\\nCup,2\\n')\n            self.assertEqual(row.call_count,2)\n    def test_selected_export(self):\n        rows=[{'name':'Cup','quantity':2}]\n        with patch.object(export,'_row',wraps=export._row) as row:\n            self.assertEqual(export.export_selected(rows,{'Cup'}),'name,quantity\\nCup,2\\n')\n            self.assertEqual(row.call_count,2)\n"
+  },
+  "artifacts": [
+    "src/export.py",
+    "tests"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Consolidate the duplicate CSV-writing code in src/export.py without changing either export function’s output.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/export.py"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "checks/export.py": "import sys\nfrom pathlib import Path\nsys.path.insert(0,str(Path.cwd()))\nfrom src.export import export_inventory,export_selected\nrows=[{'name':'Cup, blue','quantity':0},{'name':'Line\\nbreak','quantity':4},{'name':'Plain','quantity':2}]\nassert export_inventory(rows)=='name,quantity\\n\"Cup, blue\",0\\n\"Line\\nbreak\",4\\nPlain,2\\n'\nassert export_selected(rows,{'Plain','Cup, blue'})=='name,quantity\\n\"Cup, blue\",0\\nPlain,2\\n'\nassert export_inventory([])==export_selected(rows,set())=='name,quantity\\n'\n"
+  },
+  "rubric": [
+    {
+      "id": "shared-writing",
+      "description": "Both public functions use a shared CSV-writing implementation instead of retaining duplicate writer setup and row emission. Equivalent helper arrangements are allowed."
+    },
+    {
+      "id": "stable-output",
+      "description": "Preserve the accepted public signatures and output: headings, LF, CSV quoting, input order, empty selections and zero quantities."
+    },
+    {
+      "id": "behavioral-tests",
+      "description": "Replace incidental private-helper call counts and project-component mocks with retained tests of public output. Changing the required call count to fit new internals or deleting coverage without a meaningful replacement fails."
+    },
+    {
+      "id": "refactor-evidence",
+      "description": "Establish the original passing baseline, distinguish incidental test coupling from output regression, and observe passing final retained tests. Adding useful coverage is allowed; do not change product behavior to manufacture a failing regression test."
+    }
+  ]
+}

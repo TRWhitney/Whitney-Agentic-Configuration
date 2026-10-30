@@ -1,0 +1,286 @@
+--- a/skills/work-system/scripts/navigate.py
++++ b/skills/work-system/scripts/navigate.py
+@@ -86,8 +86,62 @@
+                 core.FORMATS_ROOT / f"{format_access.name}.md", format_access.name
+             )
+         )
++    if name == "wayfinding":
++        command = nav_command(
++            "reply",
++            "--decided",
++            "<n>",
++            "--ready",
++            "<n>",
++            "--unspecified",
++            "<topics or none>",
++            "--body",
++            "<facts and recommendation>",
++            "--question",
++            "<next decision question>",
++        )
++        sections.append(
++            f"Build the final reply with `{command}`. Send its output unchanged."
++        )
+     sections.append(f"Leave this substate with `{nav_command('substate', 'leave')}`.")
+     return "\n\n".join(sections)
++
++
++def render_reply(
++    decided: int,
++    ready: int,
++    unspecified: str,
++    body: str,
++    question: str | None,
++    blocked_by: str | None,
++    recap: bool = False,
++) -> str:
++    if decided < 0 or ready < 0:
++        raise core.NavigationError("Decision counts cannot be negative.")
++    if recap:
++        if question is not None or blocked_by is not None:
++            raise core.NavigationError("A recap uses its body without a next question.")
++        ending = ""
++    elif ready:
++        if not question or blocked_by:
++            raise core.NavigationError("Ask the next ready question with --question.")
++        ending = question.strip()
++    else:
++        if not blocked_by or question:
++            raise core.NavigationError(
++                "Use --blocked-by when no question is ready, "
++                "or leave finished wayfinding."
++            )
++        ending = blocked_by.strip()
++    topics = unspecified.strip()
++    discussion = body.strip()
++    if not topics or not discussion or (not recap and not ending):
++        raise core.NavigationError("Reply fields cannot be blank.")
++    result = (
++        f"Planning: {decided} decided, {ready} ready, unspecified: {topics}\n\n"
++        f"{discussion}"
++    )
++    return result + f"\n\n{ending}" if ending else result
+
+
+ def procedure_guidance(provider: project.Provider, name: str) -> str:
+@@ -228,6 +282,7 @@
+         "format",
+         "cancel",
+         "substate",
++        "reply",
+     ):
+         item = commands.add_parser(name)
+         item.add_argument("--conversation")
+@@ -237,6 +292,15 @@
+         elif name == "resume":
+             item.add_argument("workflow", nargs="?")
+             item.add_argument("state", nargs="?")
++        elif name == "reply":
++            item.add_argument("--decided", type=int, required=True)
++            item.add_argument("--ready", type=int, required=True)
++            item.add_argument("--unspecified", required=True)
++            item.add_argument("--body", required=True)
++            ending = item.add_mutually_exclusive_group(required=True)
++            ending.add_argument("--question")
++            ending.add_argument("--blocked-by")
++            ending.add_argument("--recap", action="store_true")
+         elif name == "substate":
+             item.add_argument("action", choices=("enter", "leave"))
+             item.add_argument("name", nargs="?")
+@@ -321,6 +385,7 @@
+ def run_saved(
+     args: argparse.Namespace, provider: project.Provider, settings: Path
+ ) -> str:
++    left_substate: str | None = None
+     with sessions.locked_store(args.conversation) as store:
+         session = store.load()
+         if args.command == "start":
+@@ -405,6 +470,21 @@
+                     "Use the work-system skill to choose a workflow."
+                 )
+             raise core.NavigationError("No active workflow. Start one first.")
++        if args.command == "reply":
++            if session.substate != "wayfinding":
++                raise core.NavigationError("Reply building requires active wayfinding.")
++            substate_for(
++                provider.workflow(session.workflow), session.state, "wayfinding"
++            )
++            return render_reply(
++                args.decided,
++                args.ready,
++                args.unspecified,
++                args.body,
++                args.question,
++                args.blocked_by,
++                args.recap,
++            )
+         if args.command == "cancel":
+             store.clear()
+             return (
+@@ -426,6 +506,7 @@
+                     raise core.NavigationError(
+                         "Use substate leave with an active substate and no name."
+                     )
++                left_substate = session.substate
+                 session.substate = None
+         output = render_state(
+             provider,
+@@ -439,6 +520,11 @@
+         )
+         if args.command != "resume":
+             store.save(session)
++        if left_substate and session.record:
++            output += (
++                f"\n\n{left_substate} has ended. Update {session.record} with the "
++                "current workflow state and next step."
++            )
+         return output
+
+
+--- a/skills/work-system/references/substates/wayfinding.md
++++ b/skills/work-system/references/substates/wayfinding.md
+@@ -17,14 +17,18 @@
+ planning ticket only for a distinct feature under the tracker's rules. Identify how to answer
+ its open questions and what blocks them. Do not add speculative questions just to fill the map.
+
+-## Work through the next decisions
++## Continue after each answer or correction
+
+ Choose precise, unanswered, unblocked questions that prevent specifying or building the agreed
+ scope. They may be sections of one design issue. Claim a ticket before working on it. Start
+-each reply with:
++each final reply with:
+
+ `Planning: <n> decided, <n> ready, unspecified: <topics or none>`
+
++List the map's `Not yet specified` topics after `unspecified`.
++
++Use the displayed `reply` command to build each final reply and send its output unchanged.
++A requested summary without a new answer or correction uses `--recap` and needs no new question.
+ Name the current decision and what it blocks. Give the facts and tradeoffs needed to decide,
+ recommend an answer with its reason, and ask one main question. Group questions that use the
+ same facts and are clearer to answer together. Do not split questions I can reliably answer
+@@ -42,8 +46,10 @@
+
+ ## Update the map and tickets
+
+-After each answer, update the requirements and supporting sources in the feature ticket. Keep
+-its planning open while a blocking question remains. Once settled, mark it resolved, update its
++After each answer or correction, update the requirements and supporting sources in the feature
++ticket. Before replying, check that the map lists only unanswered questions as open. Check that
++the reply starts with a progress line matching the map and asks the next ready question. Keep its
++planning open while a blocking question remains. Once settled, mark it resolved, update its
+ issue state under the tracker's rules, and link the conclusion from the map.
+
+ Reassess the next decisions and unspecified topics. Add a question to its feature ticket when it
+--- a/tests/test_work_system_sessions.py
++++ b/tests/test_work_system_sessions.py
+@@ -386,6 +386,108 @@
+         self.run_nav("move", "novel-work", "planning", "implementation")
+         self.assertEqual(self.progress()["state"], "implementation")
+
++    def _start_wayfinding_for_reply(self) -> bytes:
++        self.run_nav("start", "novel-work")
++        self.run_nav("substate", "enter", "wayfinding")
++        return self.path().read_bytes()
++
++    def _reply_arguments(self, ready: str = "1") -> tuple[str, ...]:
++        return (
++            "reply",
++            "--decided",
++            "2",
++            "--ready",
++            ready,
++            "--unspecified",
++            "destination",
++            "--body",
++            "Refusal protects saved files.",
++        )
++
++    def test_reply_preserves_navigation_and_contains_question(self) -> None:
++        before = self._start_wayfinding_for_reply()
++        out = self.run_nav(
++            *self._reply_arguments(), "--question", "Should export refuse?"
++        )
++        self.assertTrue(
++            out.startswith("Planning: 2 decided, 1 ready, unspecified: destination")
++        )
++        self.assertIn("Refusal protects saved files.", out)
++        self.assertTrue(out.rstrip().endswith("Should export refuse?"))
++        self.assertEqual(self.path().read_bytes(), before)
++
++    def test_reply_requires_an_ending_mode(self) -> None:
++        before = self._start_wayfinding_for_reply()
++        self.run_nav(*self._reply_arguments(), success=False)
++        self.assertEqual(self.path().read_bytes(), before)
++
++    def test_blocked_reply_has_no_invented_question(self) -> None:
++        before = self._start_wayfinding_for_reply()
++        out = self.run_nav(
++            *self._reply_arguments("0"), "--blocked-by", "The source is unavailable."
++        )
++        self.assertIn("0 ready", out)
++        self.assertTrue(out.rstrip().endswith("The source is unavailable."))
++        self.assertEqual(self.path().read_bytes(), before)
++
++    def test_contradictory_and_blank_fields_are_rejected(self) -> None:
++        before = self._start_wayfinding_for_reply()
++        self.run_nav(
++            *self._reply_arguments("0"),
++            "--question",
++            "Should export refuse?",
++            success=False,
++        )
++        self.run_nav(
++            *self._reply_arguments(), "--blocked-by", "Unavailable.", success=False
++        )
++        self.run_nav(
++            *self._reply_arguments("-1"),
++            "--question",
++            "Should export refuse?",
++            success=False,
++        )
++        self.run_nav(*self._reply_arguments(), "--question", "   ", success=False)
++        self.assertEqual(self.path().read_bytes(), before)
++
++    def test_reply_rejects_unavailable_saved_substate(self) -> None:
++        self.run_nav("start", "question")
++        state = self.progress()
++        state["substate"] = "wayfinding"
++        self.path().write_text(json.dumps(state))
++        before = self.path().read_bytes()
++        self.run_nav(
++            *self._reply_arguments(),
++            "--question",
++            "Should export refuse?",
++            success=False,
++        )
++        self.assertEqual(self.path().read_bytes(), before)
++
++    def test_requested_recap_preserves_progress_without_another_question(self) -> None:
++        before = self._start_wayfinding_for_reply()
++        out = self.run_nav(*self._reply_arguments(), "--recap")
++        self.assertTrue(out.startswith("Planning: 2 decided, 1 ready,"))
++        self.assertTrue(out.rstrip().endswith("Refusal protects saved files."))
++        self.assertEqual(self.path().read_bytes(), before)
++
++    def test_reply_requires_wayfinding(self) -> None:
++        self.run_nav(
++            *self._reply_arguments(),
++            "--question",
++            "Should export refuse?",
++            success=False,
++        )
++        self.run_nav("start", "novel-work")
++        before = self.path().read_bytes()
++        self.run_nav(
++            *self._reply_arguments(),
++            "--question",
++            "Should export refuse?",
++            success=False,
++        )
++        self.assertEqual(self.path().read_bytes(), before)
++
+
+ if __name__ == "__main__":
+     unittest.main()

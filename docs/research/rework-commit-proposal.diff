@@ -1,0 +1,303 @@
+--- a/skills/work-system/references/procedures/commit.md
++++ b/skills/work-system/references/procedures/commit.md
+@@ -56,9 +56,31 @@
+ not cover. Combine my changes with yours when they deliver the same result. Commit unrelated
+ completed results separately, including changes that predate this task.
+
+-Fold corrections or additions to the same result into its commit when that commit was created
+-in the current session, even if it was pushed. Context compaction does not start a new session.
+-For commits from earlier sessions, create a new commit unless I direct otherwise.
++## Fold corrections into an existing commit
++
++Fold corrections or additions into their existing commit when all conditions hold:
++
++- It has not been pushed, unless I explicitly ask you to rewrite history.
++- It was made in this session.
++- The changes correct or complete the original work, or materially improve and belong
++  in the same logical unit of work.
++
++Before creating a new commit, run `scripts/navigate.py commit list` and check these conditions.
++Before updating work records or staging corrections, identify the commit being corrected.
++Starting a workflow or compacting context does not start a new session.
++
++Before amending without an explicit request to rewrite history, run `git fetch --all`
++and `git branch -r --contains <commit>` with the target commit's hash. Any listed branch
++means it was pushed. If the check fails, create a new commit.
++
++## Record commits
++
++After each successful commit, run `scripts/navigate.py commit add <commit>` with its full hash.
++After amending or squashing, add `--replaces <old-commit>` for each recorded commit replaced
++by the new commit. Use the full hashes from `scripts/navigate.py commit list`.
++
++After removing commits or resetting, run `scripts/navigate.py commit remove <commit> ...`
++with the full hashes of discarded commits recorded for this session.
+
+ ## Check the final status
+
+--- a/skills/work-system/scripts/navigate.py
++++ b/skills/work-system/scripts/navigate.py
+@@ -6,6 +6,7 @@
+ import argparse
+ import re
+ import shlex
++import subprocess
+ import sys
+ from pathlib import Path
+
+@@ -30,6 +31,9 @@
+     def bind(match: re.Match[str]) -> str:
+         value = match.group(1)
+         parts = shlex.split(value)
++        if parts and parts[0] == "scripts/navigate.py":
++            value = nav_command(*parts[1:])
++            parts = shlex.split(value)
+         if (
+             len(parts) > 2
+             and parts[1]
+@@ -40,7 +44,7 @@
+             value += " --conversation " + shlex.quote(conversation)
+         return f"`{value}`"
+
+-    return re.sub(r"`(python3 [^`\n]+)`", bind, output)
++    return re.sub(r"`((?:python3 |scripts/navigate.py )[^`\n]+)`", bind, output)
+
+
+ def substates_for(
+@@ -283,10 +287,21 @@
+         "cancel",
+         "substate",
+         "reply",
++        "commit",
+     ):
+         item = commands.add_parser(name)
+         item.add_argument("--conversation")
+-        if name == "start":
++        if name == "commit":
++            actions = item.add_subparsers(dest="action", required=True)
++            add = actions.add_parser("add")
++            add.add_argument("revision")
++            add.add_argument("--replaces", action="append", default=[])
++            listing = actions.add_parser("list")
++            remove = actions.add_parser("remove")
++            remove.add_argument("commits", nargs="+")
++            for action in (add, listing, remove):
++                action.add_argument("--conversation", default=argparse.SUPPRESS)
++        elif name == "start":
+             item.add_argument("workflow")
+             item.add_argument("--record")
+         elif name == "resume":
+@@ -336,6 +351,21 @@
+     return "\n".join(sections)
+
+
++def git_value(*arguments: str) -> str:
++    result = subprocess.run(["git", *arguments], capture_output=True, text=True)
++    if result.returncode:
++        raise core.NavigationError(result.stderr.strip() or "Git command failed.")
++    return result.stdout.strip()
++
++
++def commit_hash(revision: str) -> str:
++    if not revision:
++        raise core.NavigationError("Supply a commit revision.")
++    return git_value(
++        "rev-parse", "--verify", "--end-of-options", revision + "^{commit}"
++    )
++
++
+ def run(arguments: list[str]) -> str:
+     if arguments and arguments[0] == "provider":
+         command = argparse.ArgumentParser(
+@@ -354,6 +384,20 @@
+         )
+
+     args = build_parser().parse_args(arguments)
++    if args.command == "commit":
++        repository = str(Path(git_value("rev-parse", "--git-common-dir")).resolve())
++        with sessions.locked_store(args.conversation) as store:
++            if args.action == "add":
++                commit = commit_hash(args.revision)
++                store.update_commits(repository, [commit], args.replaces)
++                return f"Recorded commit: {commit}"
++            if args.action == "remove":
++                store.update_commits(repository, [], args.commits)
++                return "Removed recorded commits:\n" + "\n".join(args.commits)
++            commits = store.commits(repository)
++            return "Commits made in this session for this repository:\n" + (
++                "\n".join(commits) if commits else "None."
++            )
+     provider, settings = project.selected()
+     if args.command == "resume" and bool(args.workflow) != bool(args.state):
+         raise core.NavigationError("Supply both workflow and state, or neither.")
+--- a/skills/work-system/scripts/sessions.py
++++ b/skills/work-system/scripts/sessions.py
+@@ -1,4 +1,4 @@
+-"""Save navigation progress separately for each conversation."""
++"""Save workflow state and commits separately for each conversation."""
+
+ from __future__ import annotations
+
+@@ -48,42 +48,115 @@
+     def __init__(self, path: Path) -> None:
+         self.path = path
+
+-    def load(self) -> Session | None:
++    def _read(self) -> dict[str, object]:
+         try:
+-            value = self.path.read_text(encoding="utf-8")
+-            raw = core.mapping(json.loads(value), "saved navigation")
+-            if not {"workflow", "state"} <= raw.keys() or raw.keys() - {
++            raw = core.mapping(
++                json.loads(self.path.read_text(encoding="utf-8")), "conversation state"
++            )
++            if not raw or raw.keys() - {
+                 "workflow",
+                 "state",
+                 "substate",
+                 "record",
++                "commits",
+             }:
+                 raise ValueError("unexpected navigation fields")
+-            optional = {
+-                name: None if raw.get(name) is None else core.text(raw[name], name)
+-                for name in ("substate", "record")
+-            }
+-            record = optional["record"]
++            if ("workflow" in raw) != ("state" in raw):
++                raise ValueError("workflow and state must occur together")
++            if "workflow" not in raw and raw.keys() - {"commits"}:
++                raise ValueError("navigation fields require an active workflow")
++            for name in ("workflow", "state", "substate", "record"):
++                if name in raw and (
++                    name in {"workflow", "state"} or raw[name] is not None
++                ):
++                    core.text(raw[name], name)
++            record = raw.get("record")
+             if (
+-                record is not None
++                isinstance(record, str)
+                 and "://" not in record
+                 and not Path(record).is_absolute()
+             ):
+                 raise ValueError("work-record path must be absolute")
+-            return Session(
+-                workflow=core.text(raw["workflow"], "workflow"),
+-                state=core.text(raw["state"], "state"),
+-                substate=optional["substate"],
+-                record=record,
+-            )
++            commits = core.mapping(raw.get("commits", {}), "conversation commits")
++            for repository, hashes in commits.items():
++                if not Path(repository).is_absolute() or not isinstance(hashes, list):
++                    raise ValueError("invalid repository commit list")
++                if any(
++                    not isinstance(value, str)
++                    or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", value)
++                    for value in hashes
++                ):
++                    raise ValueError("invalid commit hash")
++                if len(hashes) != len(set(hashes)):
++                    raise ValueError("duplicate commit hash")
++            return raw
+         except FileNotFoundError:
+-            return None
++            return {}
+         except (ValueError, TypeError) as error:
+             raise core.NavigationError(
+                 f"Cannot restore {self.path}: {error}"
+             ) from error
+
++    def load(self) -> Session | None:
++        raw = self._read()
++        if "workflow" not in raw:
++            return None
++        return Session(
++            workflow=core.text(raw["workflow"], "workflow"),
++            state=core.text(raw["state"], "state"),
++            substate=None
++            if raw.get("substate") is None
++            else core.text(raw["substate"], "substate"),
++            record=None
++            if raw.get("record") is None
++            else core.text(raw["record"], "record"),
++        )
++
++    def commits(self, repository: str) -> list[str]:
++        raw = core.mapping(self._read().get("commits", {}), "conversation commits")
++        values = raw.get(repository, [])
++        assert isinstance(values, list)
++        return [core.text(value, "commit hash") for value in values]
++
++    def update_commits(
++        self, repository: str, added: list[str], removed: list[str]
++    ) -> None:
++        raw = self._read()
++        commits = core.mapping(raw.get("commits", {}), "conversation commits")
++        values = self.commits(repository)
++        for commit in removed:
++            if commit not in values:
++                raise core.NavigationError(
++                    f"Commit {commit} is not recorded in this session "
++                    "for this repository."
++                )
++        values = [commit for commit in values if commit not in removed]
++        for commit in added:
++            if commit not in values:
++                values.append(commit)
++        if values:
++            commits[repository] = values
++        else:
++            commits.pop(repository, None)
++        if commits:
++            raw["commits"] = commits
++        else:
++            raw.pop("commits", None)
++        if raw:
++            self._write(raw)
++        else:
++            self.path.unlink()
++
+     def save(self, session: Session) -> None:
++        raw: dict[str, object] = {
++            key: value for key, value in asdict(session).items() if value is not None
++        }
++        commits = self._read().get("commits")
++        if commits:
++            raw["commits"] = commits
++        self._write(raw)
++
++    def _write(self, raw: dict[str, object]) -> None:
+         temporary: str | None = None
+         try:
+             with tempfile.NamedTemporaryFile(
+@@ -94,15 +167,7 @@
+                 delete=False,
+             ) as output:
+                 temporary = output.name
+-                json.dump(
+-                    {
+-                        key: value
+-                        for key, value in asdict(session).items()
+-                        if value is not None
+-                    },
+-                    output,
+-                    indent=2,
+-                )
++                json.dump(raw, output, indent=2)
+                 output.write("\n")
+                 output.flush()
+                 os.fsync(output.fileno())
+@@ -112,7 +177,11 @@
+                 Path(temporary).unlink()
+
+     def clear(self) -> None:
+-        self.path.unlink()
++        commits = self._read().get("commits")
++        if commits:
++            self._write({"commits": commits})
++        else:
++            self.path.unlink()
+
+
+ @contextmanager

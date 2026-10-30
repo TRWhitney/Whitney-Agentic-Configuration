@@ -1,0 +1,126 @@
+{
+  "id": "amend-preserves-earlier-edit",
+  "tags": [
+    "correction",
+    "git"
+  ],
+  "files": {
+    "tests/test_inventory.py": "from pathlib import Path\nimport runpy\nimport unittest\n\n\nclass InventoryTests(unittest.TestCase):\n    def test_positive_quantities(self):\n        app = runpy.run_path(str(Path(__file__).resolve().parents[1] / \"src/app.py\"))\n        self.assertEqual(app[\"stock_total\"]([{\"quantity\": 2}, {\"quantity\": 4}]), 6)\n\n    def test_empty_inventory(self):\n        app = runpy.run_path(str(Path(__file__).resolve().parents[1] / \"src/app.py\"))\n        self.assertEqual(app[\"stock_total\"]([]), 0)\n"
+  },
+  "fixtures": [
+    "inventory"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Negative quantities should contribute zero to stock_total().",
+      "checks": [
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_result.py"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py",
+            "tests",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "regression_test",
+          "tests": "tests",
+          "source": "src/app.py"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "tests/test_negative_additions.py": "from pathlib import Path\nimport runpy\nimport unittest\n\n\nclass NegativeAdditionTests(unittest.TestCase):\n    def test_negative_additions_do_not_reduce_a_total(self):\n        total = runpy.run_path(str(Path(__file__).resolve().parents[1] / \"src/app.py\"))[\"stock_total\"]\n        for quantities in ([], [0], [2, 6], [-3, 2, 6]):\n            with self.subTest(quantities=quantities):\n                items = [{\"quantity\": value} for value in quantities]\n                before = total(items)\n                self.assertEqual(total(items + [{\"quantity\": -7}]), before)\n"
+      }
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the additional stock-total regression coverage.",
+      "checks": [
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_second_amendment.py"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py",
+            "tests",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "regression_test",
+          "tests": "tests",
+          "source": "src/app.py",
+          "faulty_text": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item.get(\"quantity\", 0) for item in items)\n"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    "tests"
+  ],
+  "rubric": [
+    {
+      "id": "stock-clamp",
+      "description": "After the first request, negative quantities contribute zero, positive quantities retain their value, and an empty inventory totals zero."
+    },
+    {
+      "id": "later-correction",
+      "description": "Deliver the additional regression coverage for the negative-quantity fix. Preserve positive totals, empty inventory behavior and the existing empty message."
+    },
+    {
+      "id": "scope",
+      "description": "The follow-up concerns regression coverage for the existing stock_total repair. Preserve that repair, earlier tests, the inventory guide and unrelated behavior. Consolidating equivalent tests is allowed."
+    },
+    {
+      "id": "same-commit",
+      "description": "The first change creates a new commit and preserves the starting commit. Fold retained additional regression work into that same bugfix commit, leaving two commits and a clean working tree. If all requested coverage already exists and no change is needed, do not require an empty amendment."
+    },
+    {
+      "id": "retained-regression",
+      "description": "Both turns retain executable regression tests that reject negative quantities contributing to stock_total. The follow-up preserves that coverage. A temporary assertion, zero discovered tests, or a test that catches only the changed message is insufficient."
+    }
+  ],
+  "grader_files": {
+    "checks/check_result.py": "import runpy\napp=runpy.run_path(\"src/app.py\")\nf=app[\"stock_total\"]\nassert f([{\"quantity\":-3},{\"quantity\":5}])==5\nassert f([{\"quantity\":-3},{\"quantity\":-2}])==0 and f([])==0\nassert f([{\"quantity\":2},{\"quantity\":4}])==6\nassert app[\"empty_message\"]()==\"No items saved.\"\n",
+    "checks/check_second_amendment.py": "import runpy\napp=runpy.run_path(\"src/app.py\")\nf=app[\"stock_total\"]\nassert f([{\"quantity\":-7},{\"quantity\":2},{\"quantity\":6}])==8\nassert f([{\"quantity\":-7}])==0 and f([])==0\nassert app[\"empty_message\"]()==\"No items saved.\"\n",
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

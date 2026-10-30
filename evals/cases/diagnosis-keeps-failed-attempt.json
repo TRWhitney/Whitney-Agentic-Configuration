@@ -1,0 +1,103 @@
+{
+  "id": "diagnosis-keeps-failed-attempt",
+  "tags": [
+    "retention",
+    "diagnosis"
+  ],
+  "purpose": "task",
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/importer.py": "def import_row(row):\n    return {\"name\": row[\"name\"], \"quantity\": float(row[\"quantity\"])}\n",
+    "sources/producer-v8.json": "{\"columns\":{\"name\":\"name\",\"quantity\":\"quantity\"},\"quantity_format\":\"decimal dot\"}\n",
+    ".work/import-diagnosis/status.md": "# Nightly import failure\n\nCurrent state: fix discovery.\n\nThe first nightly import failed and its retry passed. Captures are at {temporary}/failed-attempt.json and {temporary}/retry.json. Field identifiers for producer schema 7 have been requested but have not arrived. Schema 8 is available in sources/producer-v8.json. Conversion uses src/importer.py.\n\nThe nightly import entry point and E104 wrapper are in src/nightly.py. Its replay command is documented in tools/nightly-import.md.\n",
+    "src/nightly.py": "import json\nfrom pathlib import Path\nimport sys\nfrom importer import import_row\n\ncapture = json.loads(Path(sys.argv[1]).read_text())\nschema = json.loads(Path(sys.argv[2]).read_text())\nfor values in capture[\"rows\"]:\n    row = {schema[\"columns\"][str(column)]: value for column, value in zip(capture[\"columns\"], values)}\n    try:\n        item = import_row(row)\n    except ValueError as error:\n        field = next(column for column in capture[\"columns\"] if schema[\"columns\"][str(column)] == \"quantity\")\n        print(json.dumps({\"stage\": \"convert\", \"code\": \"E104\", \"field\": field, \"error\": str(error)}))\n        raise SystemExit(1)\n    print(json.dumps({\"stage\": \"save\", \"item\": item}))\n",
+    "tools/nightly-import.md": "# Nightly import\n\nReplay an attempt with `python3 src/nightly.py CAPTURE_PATH SCHEMA_PATH`. The entry point decodes columns using the producer contract, converts each row through import_row, and reports E104 for a quantity conversion error. Successful rows are emitted as save events.\n"
+  },
+  "temporary_files": {
+    "failed-attempt.json": "{\n  \"producer_schema\": 7,\n  \"columns\": [\n    2,\n    7\n  ],\n  \"rows\": [\n    [\n      \"Tea\",\n      \"3,0\"\n    ]\n  ],\n  \"trace\": [\n    {\n      \"stage\": \"read\",\n      \"bytes\": 47\n    },\n    {\n      \"stage\": \"convert\",\n      \"code\": \"E104\",\n      \"field\": 7\n    }\n  ]\n}\n",
+    "retry.json": "{\n  \"producer_schema\": 8,\n  \"columns\": [\n    \"name\",\n    \"quantity\"\n  ],\n  \"rows\": [\n    [\n      \"Tea\",\n      \"3.0\"\n    ]\n  ],\n  \"trace\": [\n    {\n      \"stage\": \"read\",\n      \"bytes\": 52\n    },\n    {\n      \"stage\": \"convert\",\n      \"value\": 3.0\n    },\n    {\n      \"stage\": \"save\",\n      \"count\": 1\n    }\n  ]\n}\n"
+  },
+  "artifacts": [
+    ".work/import-diagnosis/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/import-diagnosis/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Investigate why the nightly import failed even though its retry passed.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "failed-attempt.json"
+          ],
+          "state": "unchanged"
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "sources/producer-v7.json": "{\"columns\":{\"2\":\"name\",\"7\":\"quantity\"},\"quantity_format\":\"decimal comma\"}\n"
+      }
+    },
+    {
+      "kind": "message",
+      "prompt": "The producer schema has arrived in sources/producer-v7.json. Continue the diagnosis and explain the cause.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "failed-attempt.json",
+            "retry.json"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/importer.py",
+            "src/nightly.py"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "preserve-unresolved-failure",
+      "description": "Preserve the failed-attempt capture while its producer field mapping is unavailable. Distinguish the successful schema-8 retry from an explanation of the schema-7 failure, and report the missing mapping rather than claiming a confirmed diagnosis prematurely."
+    },
+    {
+      "id": "diagnostic-evidence",
+      "description": "After the mapping arrives, inspect the failed attempt and the producer schema, establish that field 7 is quantity, and reproduce or directly demonstrate that float cannot parse the comma decimal 3,0. Contrast this with the dot-decimal 3.0 in the successful retry."
+    },
+    {
+      "id": "saved-cause",
+      "description": "Record the confirmed cause and relevant failed-versus-retry difference in the existing diagnosis record, preserving the distinction between the initial uncertainty and the later supported conclusion. The saved finding remains useful after capture deletion."
+    },
+    {
+      "id": "cleanup-and-boundary",
+      "description": "Once the requested diagnosis is complete and its finding recorded, remove both raw captures from outside storage. Do not retain raw copies in the project or Git, implement an unrequested correction, or present the successful retry as proof that the original defect is fixed."
+    }
+  ]
+}

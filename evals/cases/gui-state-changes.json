@@ -1,0 +1,73 @@
+{
+  "id": "gui-state-changes",
+  "tags": [
+    "gui",
+    "visual-verification",
+    "transitions"
+  ],
+  "purpose": "task",
+  "project_name": "fieldnotes",
+  "fixtures": [
+    "gui-project"
+  ],
+  "files": {
+    "app/components/naming.js": "export function mountNaming(root, notebook) {\n  root.innerHTML = `<section class=\"dialog-frame\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"dialog-title\"><header class=\"dialog-heading\"><span class=\"document-mark\" aria-hidden=\"true\">F</span><h2 id=\"dialog-title\"></h2></header>\n<form id=\"name-form\"><label for=\"name\">Document name</label><input id=\"name\" autocomplete=\"off\"><p id=\"name-error\" class=\"feedback-slot\" role=\"alert\"></p><footer id=\"modal-actions\"><button type=\"button\" id=\"cancel\">Cancel</button><button type=\"submit\" id=\"confirm\"></button></footer></form></section>`;\n  const input = root.querySelector('#name');\n  const render = event => {\n    const dialog = notebook.dialog;\n    root.hidden = !dialog;\n    if (!dialog) return;\n    root.querySelector('#dialog-title').textContent = dialog.mode === 'new' ? 'New document' : 'Rename document';\n    root.querySelector('#confirm').textContent = dialog.mode === 'new' ? 'Create' : 'Rename';\n    root.querySelector('#name-error').textContent = dialog.error;\n    root.querySelector('#name-error').hidden = !dialog.error;\n    if (event === 'dialog') { input.value = dialog.title; input.focus(); }\n  };\n  root.querySelector('#cancel').onclick = () => notebook.closeDialog();\n  input.oninput = event => notebook.name(event.target.value);\n  root.querySelector('#name-form').onsubmit = event => { event.preventDefault(); notebook.confirmName(); };\n  notebook.subscribe(event => { if (['dialog','name'].includes(event)) render(event); });\n}\n",
+    "app/components/documents.js": "export function mountDocuments(root, notebook) {\n  const render = () => {\n    const matching = notebook.documents.filter(doc => doc.title.toLowerCase().includes(notebook.query.toLowerCase()));\n    root.replaceChildren(...matching.map(doc => {\n      const link = document.createElement('a');\n      link.href = '#document-title'; link.textContent = doc.title;\n      link.onclick = event => { event.preventDefault(); notebook.select(doc.id); };\n      return link;\n    }));\n    root.classList.toggle('document-results', matching.length > 0);\n    if (!matching.length) root.textContent = 'No documents found';\n  };\n  notebook.subscribe(event => { if (['search','document'].includes(event)) render(); });\n  render();\n}\n"
+  },
+  "artifacts": [
+    "app/index.html",
+    "app/app.css",
+    "app/app.js",
+    ".work/fieldnotes/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/fieldnotes/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the Fieldnotes document workspace using the accepted design.",
+      "checks": [
+        {
+          "kind": "browser",
+          "scenario": "transitions",
+          "require_match": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "design",
+            "docs/accepted-design.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "stable-transitions",
+      "description": "Naming validation and searching preserve the accepted layout during error, corrected input, results, empty results and restored results. Endpoint functionality alone is insufficient."
+    },
+    {
+      "id": "flow-observation",
+      "description": "The candidate exercises and observes state changes in the real browser, rather than inferring a stable transition from separate endpoints or static source."
+    },
+    {
+      "id": "retained-actions",
+      "description": "Naming still validates and creates or renames a document; searching still filters and restores results. Layout fixes do not remove required feedback."
+    },
+    {
+      "id": "completion-evidence",
+      "description": "The report connects completion to observed flows and acknowledges any unchecked changes. Private grader replays do not count as candidate verification."
+    }
+  ]
+}

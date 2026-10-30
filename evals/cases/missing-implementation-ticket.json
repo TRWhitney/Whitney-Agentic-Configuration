@@ -1,0 +1,69 @@
+{
+  "id": "missing-implementation-ticket",
+  "tags": [
+    "planning",
+    "tickets"
+  ],
+  "files": {
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work planning.\n\nThe [accepted design](../../docs/planning/inventory/design.md) covers name search and CSV export. All design decisions are settled. Only the [search implementation ticket](tickets/01-search.md) exists. No export implementation ticket has been written.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement case-insensitive substring matching of item names in input order. Acceptance: query \"mi\" matches \"Milk\" and \"Miso\", preserving input order; an empty query returns all items.\n\n[Accepted design](../../../docs/planning/inventory/design.md).\n",
+    "docs/planning/inventory/design.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. Search uses case-insensitive substring matching in input order. An empty query returns all items. Export writes UTF-8 CSV with name and quantity columns in input order, quoting fields through the standard csv module. An empty inventory creates a header-only CSV. Export refuses to overwrite an existing destination. Search and export are independent. All product and architecture decisions are settled.\n"
+  },
+  "fixtures": [
+    "inventory"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null,
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The design is accepted and the search ticket is ready. What is still missing before implementation can begin?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Checks the accepted search-and-export design against the ticket set and identifies the missing export implementation ticket."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Explains that all agreed work must be covered by implementation tickets before implementation begins, despite search being independent and ready."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Gives useful content for the missing ticket: CSV columns and ordering, empty header-only export, and refusal to overwrite an existing destination, with links to the accepted design where helpful."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Treats the message as a readiness question and does not implement code or quietly remove export from the agreed work. Stays in planning and does not publish work."
+    }
+  ],
+  "artifacts": []
+}

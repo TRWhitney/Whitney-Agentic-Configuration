@@ -1,0 +1,87 @@
+{
+  "id": "fresh-handoff-separates-directions-from-content",
+  "tags": [
+    "prose-boundaries",
+    "leakage"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "sources/plant.md": "# Silver fern collection record\n\nCollection SF-12 is the silver fern in the west alcove. Its care record specifies shade and damp soil. Let excess water drain out of the pot after watering. The inner pot has drain holes and sits in a removable outer cover; water collected in that cover must be emptied.\n\n## Placement\n\nThe shelf beside the curtained west window provides the recorded shade. Direct afternoon sun reaches the uncurtained sill, so the sill is not the designated place for this plant. Keep the collection label with the pot when moving it for cleaning.\n\n## Keeper handoff\n\nFeel the soil before watering. Record the date when watering is done and whether water collected in the outer cover. The collection record gives no fixed watering interval or measured water volume. A damp pot does not need another watering simply because a shift has changed.\n",
+    "docs/plant-guide.md": "# Care for the silver fern\n\nThe silver fern is collection SF-12 in the west alcove. Keep its label with the pot when moving it for cleaning so the next keeper can identify it.\n\n## Where to keep it\n\nPut the pot on the uncurtained sill for afternoon sun. Move it back to the shelf after watering.\n\n## Watering\n\nKeep the soil damp. Water every morning at shift change and let excess water collect in the outer cover so the plant can use it later.\n\n## Before the next shift\n\nWrite down the date after watering. Leave the pot where the next keeper can find it.\n\nThe collection source was verified and the requested familiar wording was applied.\n",
+    ".work/plant/status.md": "# Plant reference handoff\n\nCurrent state: tweak implementation.\n\n## Deliverable\n\nRevise docs/plant-guide.md for volunteer collection keepers using sources/plant.md. The guide already identifies SF-12 and explains why its label stays with the pot. Keep that useful introduction. The placement and watering sections were drafted before the collection record was available.\n\n## Work notes\n\nThe record locates SF-12 in the west alcove and distinguishes the shaded shelf from the sunny sill. Use familiar words and short instructions that a new keeper can follow during a shift. The inner pot and outer cover have different roles; the guide needs to make the watering sequence usable. Complete the existing guide, then give a brief handoff summary in the reply.\n\n## Next keeper\n\nThe next keeper needs to know what to record after watering. The supplied collection record is the care reference; it gives no daily schedule or measured dose.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "implementation",
+      "record": ".work/plant/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue the saved plant-reference task and finish the guide.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "The placement and drainage explanations are approved. Put the watering actions in the order a keeper carries them out, and add a short end-of-shift reminder about the care record. Keep the SF-12 introduction and the accepted care advice.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/plant-guide.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Use the saved record to resume the existing task and revise docs/plant-guide.md, rather than returning only a continuation plan. Preserve the useful SF-12 identity, west-alcove location and keeping the label with the pot."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Correct the draft placement to shade on the shelf beside the curtained west window, not direct afternoon sun on the uncurtained sill. Explain damp soil, checking before watering, drainage through the inner pot and emptying water from the outer cover."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Remove the draft's unsupported every-morning watering rule and retained-water advice. The record gives no fixed interval or volume. Include recording the watering date and whether water collected in the outer cover, without inventing unsupported care requirements."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Assess the complete guides, including comments, headings, tables and retained draft text. Saved workflow and author preferences should guide the revision, without appearing as source-checking claims, preference compliance or task-status narration in the care guide. Legitimate care-record and keeper-handoff instructions remain useful reader content."
+    },
+    {
+      "id": "criterion-5",
+      "description": "The followup makes watering actions usable in sequence and adds an end-of-shift record reminder while preserving the approved placement, drainage and identity content. Keep supplied source and unrelated application behavior intact; both messages should produce substantive guide revisions."
+    }
+  ]
+}

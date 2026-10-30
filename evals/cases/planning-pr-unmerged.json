@@ -1,0 +1,78 @@
+{
+  "id": "planning-pr-unmerged",
+  "tags": [
+    "planning",
+    "github"
+  ],
+  "files": {
+    "docs/planning/search/design.md": "# Name search design\n\nReturn inventory items whose names contain the query without regard to case.\nPreserve input order. An empty query returns all items.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "Implement name search from issue #11.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "tracker": "github",
+  "fixtures": [
+    "inventory"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Checks the actual linked planning pull request and correctly identifies that it is still open and awaiting review, rather than assuming accepted design means merged planning documents."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Explains the specific planning-document merge blocker and the useful next action for that state without treating an unmerged PR as implementation authorization."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Keeps the accepted search requirements and ready ticket intact while leaving production source unchanged and remaining in planning."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Does not merge, reopen, replace, or publish a pull request merely to bypass the blocker. The answer makes the unresolved gate clear to the requester."
+    }
+  ],
+  "artifacts": [],
+  "github_issues": {
+    "10": "# Name search\n\n**Status:** accepted\n\nReturn inventory items whose names contain the query without regard to case.\nPreserve input order. An empty query returns all items.\n\nRepository planning documentation was committed and submitted in [planning-document pull request #12](https://github.com/example/inventory/pull/12), currently OPEN and awaiting review. Search implementation has not started.\n\n[Implementation ticket #11](https://github.com/example/inventory/issues/11).\n\n[Repository design](https://github.com/example/inventory/blob/main/docs/planning/search/design.md).\n",
+    "11": "# Search inventory names\n\n**Blocked by:** merge of planning-document PR #12\n\nReturn matching inventory records in input order using the [accepted specification](https://github.com/example/inventory/issues/10). Empty query returns all records; no matches and empty input return an empty list. Existing empty_message and stock_total behavior is unchanged.\n"
+  },
+  "github_issue_labels": {
+    "11": [
+      "blocked"
+    ]
+  }
+}

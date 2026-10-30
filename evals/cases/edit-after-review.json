@@ -1,0 +1,94 @@
+{
+  "id": "edit-after-review",
+  "tags": [
+    "expansion",
+    "review"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+    ".work/search/status.md": "# Name search\n\nCurrent state: novel-work delivery.\n\n[Accepted specification](spec.md). [Implementation ticket](tickets/01-search.md).\n\nSeven checks and both review axes passed for the current committed files. Delivery remains.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "conversation": "main",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "src/app.py": "def empty_message():\n    return \"Your shelf is empty.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+        ".work/search/spec.md": "# Name search\n\n**Status:** accepted\n\nAll design and ticketing are complete. Add search_items(items, query) to src/app.py.\nReturn names containing the query using Unicode case folding, in input order. In particular,\nSTRASSE matches Straße. An empty query returns all items. No match or empty input returns [].\nInputs are already validated. stock_total behavior stays unchanged. empty_message returns Your shelf is empty.\n\nProject checks: checks/check_search.py covers the accepted behavior.\n\n",
+        "checks/check_search.py": "from pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/app.py\"))\nsearch = app[\"search_items\"]\nitems = [\n    {\"name\": \"Desk lamp\", \"quantity\": 2},\n    {\"name\": \"LAMP shade\", \"quantity\": 5},\n    {\"name\": \"Chair\", \"quantity\": 1},\n]\nassert search(items, \"LaMp\") == items[:2], \"Mixed case and input order\"\nassert search(items, \"\") == items, \"Empty query\"\nassert search(items, \"missing\") == [], \"Missing match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nstreet = [{\"name\": \"Straße\", \"quantity\": 1}]\nassert search(street, \"STRASSE\") == street, \"Unicode case folding\"\nassert app[\"empty_message\"]() == \"Your shelf is empty.\", \"Empty shelf message\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 2, \"Stock total\"\nprint(\"Seven inventory checks passed.\")\n"
+      }
+    },
+    {
+      "kind": "message",
+      "prompt": "The empty-shelf message is now \"Your shelf is empty.\" in the code, specification and checks. Finish the updated search work.",
+      "checks": [
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_current.py"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?s)move.*delivery.*validation.*checks/check_search.*move.*validation.*delivery"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/search/status.md",
+    ".work/search/spec.md"
+  ],
+  "rubric": [
+    {
+      "id": "respect-correction",
+      "description": "Keep the applied shelf-message correction and accepted Unicode search behavior. Do not restore the old message to satisfy old evidence."
+    },
+    {
+      "id": "fresh-validation",
+      "description": "Rerun the affected search and inventory checks against the changed files. Earlier checks and review of the committed version are stale."
+    },
+    {
+      "id": "bounded-renewed-review",
+      "description": "Renew review for the correction and the conclusions it can affect, using the current evidence. Do not claim the old review proves the changed result."
+    },
+    {
+      "id": "finish-current-result",
+      "description": "Record current outcomes and complete local delivery for the updated accepted files."
+    }
+  ],
+  "grader_files": {
+    "checks/check_current.py": "from pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/app.py\"))\nsearch = app[\"search_items\"]\nitems = [\n    {\"name\": \"Desk lamp\", \"quantity\": 2},\n    {\"name\": \"LAMP shade\", \"quantity\": 5},\n    {\"name\": \"Chair\", \"quantity\": 1},\n]\nassert search(items, \"LaMp\") == items[:2], \"Mixed case and input order\"\nassert search(items, \"\") == items, \"Empty query\"\nassert search(items, \"missing\") == [], \"Missing match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nstreet = [{\"name\": \"Straße\", \"quantity\": 1}]\nassert search(street, \"STRASSE\") == street, \"Unicode case folding\"\nassert app[\"empty_message\"]() == \"Your shelf is empty.\", \"Empty shelf message\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 2, \"Stock total\"\nprint(\"Seven inventory checks passed.\")\n",
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "id": "verification-directions-stay-out-of-guide",
+  "tags": [
+    "prose-boundaries",
+    "leakage"
+  ],
+  "fixtures": [
+    "inventory",
+    "prose-camera"
+  ],
+  "files": {
+    "docs/camera-guide.md": "# Camera controls\n\nThis handout accompanies the community photography workshop. Try one control at a time and compare the resulting photographs before moving to the next station. The examples use the workshop display so you can recognize the effect in a picture.\n\n## Aperture\n\nAperture is how long the shutter stays open. At the window-portrait station, a wider aperture makes the picture brighter. Compare the light on the subject's face while keeping the camera and subject in place.\n\n## Shutter speed\n\nShutter speed sets the opening in the lens. The cyclist photograph shows how changing the setting affects movement. Watch the outline of the bicycle as it passes the marker.\n\n## ISO\n\nISO is the name of the lens. In the evening-room photograph, raising ISO makes the picture brighter and can reveal more speckles in dark areas.\n\n## Try the stations\n\nStart with the window portrait, then the moving subject, then the dim room. Keep the comparison photographs together so you can see which control changed the result.\n\nAll three source cards were checked for this guide.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Revise docs/camera-guide.md for the next beginner photography workshop using the exhibition captions and lesson cards. The existing handout has useful station instructions but its definitions need work. Explain each control and give a practical example that a learner can connect to a photograph. Keep the handout useful at the stations. I prefer familiar words and short paragraphs.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "prose",
+          "paths": [
+            "docs/camera-guide.md"
+          ],
+          "required_patterns": [
+            "(?i)aperture",
+            "(?i)shutter",
+            "(?i)ISO"
+          ],
+          "forbidden_patterns": [
+            "(?i)all three (?:source )?cards were checked(?: for this guide)?"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "sources/cards/shutter.md": "# Shutter speed\n\nShutter speed describes how long the shutter stays open. A shorter exposure can reduce motion blur. The indoor workshop now uses a moving toy train instead of the outdoor cyclist. In a long exposure the wheels blur; a shorter exposure records clearer wheels. Reducing exposure time also reduces the light admitted during that exposure when the other settings stay fixed.\n"
+      }
+    },
+    {
+      "kind": "message",
+      "prompt": "The outdoor station has moved inside. Use the toy-train demonstration from the updated shutter-speed card. Put each practical example directly below the explanation it belongs to, with the control names as headings. Keep the window-portrait and evening-room explanations.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__",
+            "sources/cards/shutter.md"
+          ]
+        },
+        {
+          "kind": "file_equals",
+          "path": "sources/cards/shutter.md",
+          "text": "# Shutter speed\n\nShutter speed describes how long the shutter stays open. A shorter exposure can reduce motion blur. The indoor workshop now uses a moving toy train instead of the outdoor cyclist. In a long exposure the wheels blur; a shorter exposure records clearer wheels. Reducing exposure time also reduces the light admitted during that exposure when the other settings stay fixed.\n"
+        },
+        {
+          "kind": "prose",
+          "paths": [
+            "docs/camera-guide.md"
+          ],
+          "required_patterns": [
+            "(?i)aperture",
+            "(?i)shutter",
+            "(?i)ISO"
+          ],
+          "forbidden_patterns": [
+            "(?i)all three (?:source )?cards were checked(?: for this guide)?"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "The train section works. Shorten the opening to one sentence and end with a brief exercise asking the learner to change one control at a time. Keep the three explanations, their examples, and the light and noise tradeoffs.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__",
+            "sources/cards/shutter.md"
+          ]
+        },
+        {
+          "kind": "file_equals",
+          "path": "sources/cards/shutter.md",
+          "text": "# Shutter speed\n\nShutter speed describes how long the shutter stays open. A shorter exposure can reduce motion blur. The indoor workshop now uses a moving toy train instead of the outdoor cyclist. In a long exposure the wheels blur; a shorter exposure records clearer wheels. Reducing exposure time also reduces the light admitted during that exposure when the other settings stay fixed.\n"
+        },
+        {
+          "kind": "prose",
+          "paths": [
+            "docs/camera-guide.md"
+          ],
+          "required_patterns": [
+            "(?i)aperture",
+            "(?i)shutter",
+            "(?i)ISO"
+          ],
+          "forbidden_patterns": [
+            "(?i)all three (?:source )?cards were checked(?: for this guide)?"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/camera-guide.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Across all saved versions, explain aperture as the lens opening and that a wider opening admits more light. Resolve the caption and draft duration error; retain the window-portrait comparison with other controls fixed."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Explain shutter speed as exposure duration and shorter exposures as reducing motion blur, with the corresponding loss of admitted light when other settings stay fixed. Use the cyclist initially and replace it with the updated toy-train demonstration, including blurred versus clearer wheels, after the source update."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Explain ISO as affecting recorded brightness through camera response, with more visible noise as the tradeoff. Retain the evening-room example without calling ISO a lens or claiming it changes aperture or exposure duration."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Assess every saved guide in full, including headings, lists, tables and comments. It should teach photography without narrating source checks, drafting, preference compliance, or compliance with the revision request. Judge paraphrases and context semantically; absence of a known mechanical phrase does not establish this criterion. Useful source attribution and genuine photography limits are allowed."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Preserve supplied source records and unrelated application behavior, and deliver substantive revisions to the requested artifact at each message."
+    },
+    {
+      "id": "followup-layout",
+      "description": "The second guide places each example below its matching control heading and uses the new train evidence while preserving correct aperture and ISO content. The final revision preserves those accepted facts, examples and tradeoffs, shortens the opening to one sentence, and adds a useful one-control-at-a-time exercise."
+    }
+  ]
+}

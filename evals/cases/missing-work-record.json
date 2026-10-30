@@ -1,0 +1,73 @@
+{
+  "id": "missing-work-record",
+  "tags": [
+    "expansion",
+    "recovery"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "edit",
+      "remove": [
+        ".work/export/status.md"
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Resume the current work.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?:move.*implementation|start\\s+(?:tweak|fix))",
+          "absent": true
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "uncommitted_files": {
+    ".work/export/status.md": "# Export\n\nCurrent state: novel-work planning.\n\nThe export requirements and open product choices exist only in this uncommitted work record. They are not accepted or recorded elsewhere.\n"
+  },
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Attempts to restore the current effort and identifies that its linked export status/work record is missing."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Looks for available authoritative recovery sources, then states what requirements cannot be recovered from this checkout rather than inventing export choices."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Requests restoration of the lost record or the necessary missing context and explains what is needed to resume usefully."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Leaves production source unchanged, does not advance to implementation or start an unrelated replacement workflow, and does not publish work."
+    }
+  ],
+  "artifacts": []
+}

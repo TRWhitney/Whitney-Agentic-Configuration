@@ -1,0 +1,80 @@
+{
+  "id": "no-documentation-change-needed",
+  "tags": [
+    "expansion",
+    "documentation"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef has_items(items):\n    item_cout = len(items)\n    return item_cout > 0\n",
+    "checks/check_inventory.py": "from pathlib import Path\nimport runpy\nf=runpy.run_path(str(Path.cwd()/\"src/app.py\"))[\"has_items\"]\nassert not f([]) and f([1])\nprint(\"Two inventory checks passed.\")\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Rename the local variable item_cout to item_count in has_items without changing behavior.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_inventory.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs"
+          ]
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py",
+            "checks/check_inventory.py"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_rename_result.py"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py"
+  ],
+  "rubric": [
+    {
+      "id": "rename",
+      "description": "has_items consistently uses item_count and returns false for empty input and true for nonempty input."
+    },
+    {
+      "id": "no-behavior-drift",
+      "description": "Preserve existing inventory behavior and leave the guide unchanged because the rename changes no information its readers need."
+    },
+    {
+      "id": "finish-small-change",
+      "description": "Check the affected behavior, assess documentation impact accurately, review and commit the rename, and clear the completed workflow."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n",
+    "checks/check_rename_result.py": "import runpy\napp=runpy.run_path('src/app.py')\nf=app['has_items']\nassert 'item_count' in f.__code__.co_varnames and 'item_cout' not in f.__code__.co_varnames\nassert not f([]) and f([1])\nassert app['empty_message']()=='No items saved.'\nassert app['stock_total']([{'quantity':-3},{'quantity':5}])==2\n"
+  }
+}

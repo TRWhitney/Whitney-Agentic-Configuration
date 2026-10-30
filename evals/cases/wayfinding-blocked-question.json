@@ -1,0 +1,137 @@
+{
+  "id": "wayfinding-blocked-question",
+  "tags": [
+    "wayfinding",
+    "decisions",
+    "dependencies"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nCSV with name and quantity columns is agreed. Empty-inventory behavior is open and unblocked. The success-message wording for a header-only export is blocked until we agree to create that file.\n",
+    "docs/planning/export/map.md": "# Inventory export\n\n## Destination\n\nDefine CSV export, empty-inventory behavior, and the message shown after an empty export.\n\n## Decisions so far\n\n- [Format](design.md): CSV with name and quantity columns.\n\n## Not yet specified\n\n- [Empty inventory](design.md#questions): create a header-only CSV or refuse without creating a file. Unblocked.\n- [Success message](design.md#questions): wording after a header-only export. Blocked by empty-inventory behavior.\n\n## Out of scope\n\nRemote storage.\n",
+    "docs/planning/export/design.md": "# Inventory export\n\n**Status:** claimed\n**Blocked by:** none\n**Type:** discussion\n\n## Questions\n\n1. Should an empty inventory create a header-only CSV or refuse export without creating a file? This question is unblocked.\n2. If we agree to create a header-only CSV, what success message should appear? This question is blocked by question 1.\n\n## Accepted answers\n\nCSV is agreed, with name and quantity columns.\n\n## Evidence\n\nThe inventory can be empty. A successful export shows a message. Refused exports use the existing error message.\n"
+  },
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Which export decision can we settle next?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "An empty inventory should create a header-only CSV. We still need to agree on its success message.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "What question is ready now?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Initially discusses empty-inventory behavior as the ready product choice and recognizes success-message wording depends on the outcome, rather than asking for premature success wording."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Records header-only creation as accepted after the answer in the existing feature record/map while preserving accepted CSV columns."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Reassesses the dependency and makes success-message wording the next ready unanswered choice, with a relevant suggestion and a question instead of inventing accepted wording."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The final answer accurately identifies success-message wording as ready, keeps planning active, preserves production source, and makes no publication."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

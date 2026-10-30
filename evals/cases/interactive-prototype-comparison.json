@@ -1,0 +1,101 @@
+{
+  "id": "interactive-prototype-comparison",
+  "purpose": "task",
+  "tags": [
+    "procedure-coverage",
+    "procedure-followup",
+    "remaining-procedures"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/browser-tools.md": "# Browser tools\n\nPages are local HTML files in this project. Browser tools serve project files locally,\nincluding the application's JavaScript modules. No package download is needed.\n`browser-run SCENARIO_JSON OUTPUT_DIR` runs Chromium against a local page. The executable and\nPlaywright are supplied locally. It returns the action results and writes\ncaptures in OUTPUT_DIR.\n\nA scenario is a JSON object with page, viewport, and steps. The page is a path relative to this\nproject. A viewport has numeric width and height. Steps support:\n\n- {\"action\":\"click\",\"selector\":\"#new\"}\n- {\"action\":\"fill\",\"selector\":\"#name\",\"value\":\"Estuary notes\"}\n- {\"action\":\"press\",\"key\":\"Tab\"} or {\"action\":\"press\",\"selector\":\"button\",\"key\":\"Enter\"}\n- {\"action\":\"resize\",\"width\":640,\"height\":800}\n- {\"action\":\"evaluate\",\"script\":\"document.querySelector('h1').textContent\"}\n- {\"action\":\"capture\",\"name\":\"document\"}\n\nA capture includes a PNG and rendered element bounds, styles, text, and visibility. The app uses native inputs, selectors,\nand an editable textarea. All interactions are local.\n\nA scenario may set media: {\"colorScheme\":\"light\"} or {\"colorScheme\":\"dark\"}.\nA step {\"action\":\"media\",\"colorScheme\":\"dark\"} changes system appearance without reloading.\n",
+    "sources/comparison.md": "# Inventory name editing\n\nCompare editing an item name directly in the inventory row with editing it in a dialog.\nUse Blue mug, quantity 2, and Field kit, quantity 1. Both approaches let the keeper change a\nname, save it, or cancel without changing the old name. A blank name shows feedback and stays\neditable. Neither approach is accepted. No server or permanent storage is needed.\n\nThe current comparison is prototypes/names/index.html. Feedback requested keeping the item\nsummary visible during dialog editing. The summary must show the same item and quantity as\nthe row being edited, including at a narrow width.\n\nThe first revision moved .item-summary above the form. The second set .item-summary to\ndisplay:block in preview.css. Opening either dialog in the current page still hides the summary.\nThe earlier observations were made at 1100px and 390px widths. Neither revision is accepted.\n",
+    "prototypes/names/index.html": "<!doctype html>\n<html lang=\"en\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Name editing comparison</title><link rel=\"stylesheet\" href=\"base.css\"><link rel=\"stylesheet\" href=\"preview.css\">\n<body><main><h1>Compare name editing</h1><p>Prototype with sample data. Try inline and dialog editing, then save, cancel, or submit a blank name.</p>\n<section aria-label=\"Inline editing\"><h2>Inline</h2><div id=\"inline-items\"></div></section>\n<section aria-label=\"Dialog editing\"><h2>Dialog</h2><div id=\"dialog-items\"></div></section></main>\n<dialog aria-labelledby=\"dialog-title\"><h2 id=\"dialog-title\">Edit name</h2><p class=\"item-summary\"></p>\n<form><label>Name <input name=\"name\" required></label><p class=\"error\" role=\"alert\"></p><button type=\"button\" id=\"cancel\">Cancel</button><button>Save</button></form></dialog>\n<script type=\"module\" src=\"preview.js\"></script></body></html>\n",
+    "prototypes/names/base.css": "body {font:16px system-ui;max-width:880px;margin:auto;padding:24px;color:#20334a;background:#edf2f7}\nsection,dialog {padding:20px;border:1px solid #8094ac;background:white}section{margin:16px 0}\nbutton,input {font:inherit;padding:8px} .item-summary{padding:12px;background:#edf2f7}\n.error{color:#8a251a;min-height:1.5em}dialog {max-width:calc(100% - 40px)}\nbody.dialog-open .item-summary{display:none!important}\n",
+    "prototypes/names/preview.css": ".item-summary{display:block;margin-bottom:16px}\n",
+    "prototypes/names/preview.js": "const samples=[{name:'Blue mug',quantity:2},{name:'Field kit',quantity:1}];\nconst inline=samples.map(item=>({...item})), modal=samples.map(item=>({...item}));\nconst dialog=document.querySelector('dialog'), form=dialog.querySelector('form');\nlet active=0;\nfunction render(){\n document.querySelector('#inline-items').replaceChildren(...inline.map((item,index)=>{\n  const row=document.createElement('div');\n  const summary=document.createElement('p');summary.textContent=`${item.name}, quantity ${item.quantity}`;\n  const input=document.createElement('input');input.value=item.name;input.setAttribute('aria-label',`Inline name ${index+1}`);\n  const error=document.createElement('p');error.className='error';error.setAttribute('role','alert');\n  const save=document.createElement('button');save.textContent='Save';save.onclick=()=>{if(!input.value.trim()){error.textContent='Enter a name.';return;}item.name=input.value.trim();render();};\n  const cancel=document.createElement('button');cancel.textContent='Cancel';cancel.onclick=render;\n  row.append(summary,input,error,cancel,save);return row;\n }));\n document.querySelector('#dialog-items').replaceChildren(...modal.map((item,index)=>{\n  const row=document.createElement('div'), summary=document.createElement('p'), edit=document.createElement('button');\n  summary.textContent=`${item.name}, quantity ${item.quantity}`;edit.textContent=`Edit ${item.name}`;\n  edit.onclick=()=>{active=index;dialog.querySelector('.item-summary').textContent=summary.textContent;form.elements.name.value=item.name;dialog.querySelector('.error').textContent='';document.body.classList.add('dialog-open');dialog.showModal();};\n  row.append(summary,edit);return row;\n }));\n}\nfunction close(){dialog.close();document.body.classList.remove('dialog-open');}\nform.noValidate=true;\nform.onsubmit=event=>{event.preventDefault();const name=form.elements.name.value.trim();if(!name){dialog.querySelector('.error').textContent='Enter a name.';return;}modal[active].name=name;close();render();};\nform.elements.name.oninput=()=>{dialog.querySelector('.error').textContent='';};\ndocument.querySelector('#cancel').onclick=close;\ndialog.oncancel=()=>document.body.classList.remove('dialog-open');\nrender();\n"
+  },
+  "artifacts": [],
+  "browser_tools": true,
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Continue the inline versus dialog name-editing comparison in prototypes/names/index.html. The item summary still disappears when the dialog opens. The brief and earlier feedback are in sources/comparison.md.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "I want the dialog approach for production. Keep the visible item summary, editable blank-name feedback, and save/cancel behavior. The example items and colors can change.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Confirmed: the dialog layout and those editing rules are the requirements. Example items and colors remain flexible.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "operable-comparison",
+      "description": "The initial repaired version provides runnable inline and dialog alternatives using the sample items. Static descriptions, screenshots alone or nonfunctional controls fail. After selection is confirmed, the rejected inline alternative may be removed; preserve the runnable selected dialog and useful comparison conclusions."
+    },
+    {
+      "id": "flows",
+      "description": "Before selection, both alternatives support changing and saving a name, cancellation preserving the old name, and recoverable blank-name feedback. After confirmation, preserve these flows in the selected dialog. Keep sample behavior separate from production and do not add unneeded server or permanent storage."
+    },
+    {
+      "id": "direct-operation",
+      "description": "Reproduce the missing summary in the running prototype before editing, then inspect the corrected summary for both sample items at wide and narrow widths using images and structure. Operate dialog editing, saving, cancellation and recovery from blank-name feedback after correction. Flow checks may run at one width when the repair does not change their responsive behavior. Private fixture checks cannot establish candidate operation."
+    },
+    {
+      "id": "feedback",
+      "description": "Deliver a comparison whose open dialog visibly identifies the edited item and quantity at wide and narrow widths. Preserve save, cancel, recoverable validation, useful source and working run instructions."
+    },
+    {
+      "id": "acceptance",
+      "description": "Keep selection open during the initial repair. On later production selection, present the interpretation of what production must match and what may change before recording final acceptance, unless that interpretation was already presented and the selection confirms it. After explicit confirmation, retain the selected runnable dialog source and useful run instructions, record the required summary/validation/save/cancel behavior and layout, and distinguish flexible sample items and colors. Clean up rejected alternatives while keeping useful rejection reasons. Do not turn prototype acceptance into production implementation or production validation."
+    },
+    {
+      "id": "failed-revision-diagnosis",
+      "description": "The two earlier revisions are supplied factual history, not candidate actions. Inspect the running failure and involved source before another edit, identify why those changes did not affect the visible result, and make a supported correction. Repeating layout/display tweaks without examining the actual cause fails. Any correct repair and equivalent markup are allowed."
+    }
+  ]
+}

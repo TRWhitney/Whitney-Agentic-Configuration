@@ -1,0 +1,98 @@
+{
+  "id": "choose-ready-ticket",
+  "tags": [
+    "implementation",
+    "dependencies"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-dependencies"
+  ],
+  "files": {
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match names by case-insensitive substring in input order. An empty query returns all items. Search uses Unicode case folding for supported names.\n\n## CSV export\n\nAdd export_matches(items, query), calling search_items to select rows before returning CSV text.\nUse name,quantity headings, input order, standard csv module quoting, and LF line endings.\nEmpty matches return a header-only CSV. File writing and interfaces are excluded.\nThe export ticket depends on the search ticket. All design and ticketing are accepted.\n",
+    ".work/inventory/tickets/02-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement the accepted name-search behavior in the [accepted specification](../spec.md). Acceptance covers mixed-case matching, input order, empty queries, missing matches, and empty input. Project checks: checks/check_search.py.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue with the next ready ticket. Pause after that ticket.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_search.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/inventory/spec.md"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "implementation"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/app.py",
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_result.py"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/inventory/status.md",
+    ".work/inventory/tickets/02-search.md",
+    ".work/inventory/tickets/01-export.md"
+  ],
+  "rubric": [
+    {
+      "id": "select-search",
+      "description": "Implement the search ticket first because export depends on it, despite export having the earlier ticket number."
+    },
+    {
+      "id": "search-behavior",
+      "description": "Search performs Unicode case-insensitive substring matching in input order; empty query returns all rows, absent matches and empty input return no rows."
+    },
+    {
+      "id": "one-ticket-boundary",
+      "description": "Leave export unimplemented and pending. Do not mark export or the overall accepted search-and-export effort complete."
+    },
+    {
+      "id": "ticket-evidence",
+      "description": "Execute the search acceptance checks and record search completion and the remaining export work in the existing records."
+    }
+  ],
+  "grader_files": {
+    "checks/check_result.py": "from pathlib import Path\nimport runpy\napp=runpy.run_path(str(Path.cwd()/\"src/app.py\"))\nf=app[\"search_items\"]\nrows=[{\"name\":\"Straße lamp\",\"quantity\":2},{\"name\":\"Tea\",\"quantity\":1},{\"name\":\"STRASSE shade\",\"quantity\":3}]\nassert f(rows,\"strasse\")==[rows[0],rows[2]]\nassert f(rows,\"\")==rows and f(rows,\"missing\")==[] and f([],\"x\")==[]\nassert app[\"empty_message\"]()==\"No items saved.\"\nassert app[\"stock_total\"]([{\"quantity\":-3},{\"quantity\":5}])==2\n\nassert \"export_matches\" not in app\n"
+  }
+}

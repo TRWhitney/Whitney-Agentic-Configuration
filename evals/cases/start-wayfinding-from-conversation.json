@@ -1,0 +1,85 @@
+{
+  "id": "start-wayfinding-from-conversation",
+  "tags": [
+    "expansion",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCSV with name and quantity columns is agreed. Empty-inventory and existing-file behavior remain unanswered. No implementation tickets exist.\n"
+  },
+  "steps": [
+    {
+      "kind": "edit",
+      "remove": [
+        "docs/planning/export/map.md",
+        "docs/planning/export/design.md"
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Use wayfinding to plan inventory export. CSV with name and quantity columns is accepted. I have not chosen what an empty inventory should do or what should happen if the destination exists. What should we decide first?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_wayfinding_map.py"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": false,
+  "purpose": "control",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "In the user-selected wayfinding mode, creates one useful export feature planning record and a linked decision map from the conversation rather than assuming deleted prior design/map files remain available."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Records CSV name/quantity columns as accepted and keeps empty-inventory plus existing-destination behavior unresolved, with real relationships and links between the effort record, map and design."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Presents a concrete next question with alternatives, tradeoffs and a recommendation, and waits for a decision instead of accepting its own preferred behavior."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps wayfinding planning active with the correct compact progress line and leaves production source unchanged without publication."
+    }
+  ],
+  "artifacts": [
+    ".work/export/status.md",
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md"
+  ],
+  "grader_files": {
+    "checks/check_wayfinding_map.py": "from pathlib import Path\nimport re\nroot=Path.cwd()\nstatus=root/'.work/export/status.md'\nlinks=re.findall(r'\\[[^\\]]*\\]\\(([^)]+)\\)',status.read_text())\nmaps=[]\nfor link in links:\n    target=(status.parent/link.split('#')[0]).resolve()\n    if target.name=='map.md' and target.is_relative_to(root.resolve()) and target.is_file():\n        maps.append(target)\nassert len(maps)==1, 'work record must link one decision map'\nassert maps[0].read_text().strip(), 'decision map must contain text'\n"
+  }
+}

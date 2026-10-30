@@ -1,0 +1,72 @@
+{
+  "id": "delegated-parts-fail-together",
+  "purpose": "task",
+  "tags": [
+    "remaining-procedures"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/reader.py": "import csv, io\n\ndef read_rows(text):\n    return list(csv.DictReader(io.StringIO(text)))\n",
+    "src/totals.py": "def summarize(items):\n    return f\"{len(items)} items, {sum(item['quantity'] for item in items):d} total\"\n",
+    "src/import_summary.py": "import sys\nfrom pathlib import Path\nfrom src.reader import read_rows\nfrom src.totals import summarize\n\ndef main():\n    rows=read_rows(Path(sys.argv[1]).read_text())\n    print(summarize(rows))\n\nif __name__=='__main__': main()\n",
+    "checks/check_reader.py": "from pathlib import Path\nimport runpy\nread=runpy.run_path(str(Path.cwd()/'src/reader.py'))['read_rows']\nassert read('name,quantity\\nCup,2\\n')==[{'name':'Cup','quantity':'2'}]\nassert read('name,quantity\\n')==[]\nprint('Reader checks passed.')\n",
+    "checks/check_totals.py": "from pathlib import Path\nimport runpy\nsummarize=runpy.run_path(str(Path.cwd()/'src/totals.py'))['summarize']\nassert summarize([{'name':'Cup','quantity':2},{'name':'Plate','quantity':3}])=='2 items, 5 total'\nassert summarize([])=='0 items, 0 total'\nprint('Summary checks passed.')\n",
+    ".work/import/spec.md": "# CSV import summary\n\nStatus: accepted\n\npython3 -m src.import_summary FILE reads a UTF-8 CSV with name,quantity headings and prints\nN items, Q total followed by a newline. N counts records, including zero quantities; Q is the\ninteger quantity sum. Preserve standard CSV quoting and Unicode names. Header-only input gives\n0 items, 0 total. Files are validated upstream: quantities are nonnegative decimal integers.\n\nread_rows is a CSV reader returning raw text cells. summarize accepts integer quantities.\nThe command connects these existing interfaces. Their public contracts stay unchanged.\n",
+    ".work/import/status.md": "# Import summary\n\nImplementation. Design and tickets are complete. [Specification](spec.md).\nReader worker returned src/reader.py and checks/check_reader.py; its named checks passed.\nSummary worker returned src/totals.py and checks/check_totals.py; its named checks passed.\nThe command source is src/import_summary.py. The changes are ready for integration.\n"
+  },
+  "artifacts": [
+    "src",
+    "tests",
+    ".work/import/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/import/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "The reader and summary workers have returned their changes. Finish the CSV import summary described in .work/import/spec.md.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/command_contract.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/import/spec.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "checks/command_contract.py": "import subprocess, tempfile, sys\nfrom pathlib import Path\nwith tempfile.TemporaryDirectory() as raw:\n    p=Path(raw)/'items.csv'\n    for text,expected in [('name,quantity\\n\"Cup, blue\",2\\n책,3\\nPlate,0\\n','3 items, 5 total\\n'),('name,quantity\\n','0 items, 0 total\\n')]:\n        p.write_text(text,encoding='utf-8')\n        r=subprocess.run([sys.executable,'-B','-m','src.import_summary',str(p)],capture_output=True,text=True)\n        assert r.returncode==0,r.stderr\n        assert r.stdout==expected,r.stdout\n"
+  },
+  "rubric": [
+    {
+      "id": "connected-result",
+      "description": "The real public command reads CSV and produces accepted counts/totals, including quoted and Unicode names, zero quantities and empty input."
+    },
+    {
+      "id": "integration-cause",
+      "description": "Inspect both returned components and their actual connection. Identify raw quantity text reaching the integer summary and repair the connecting conversion without changing either agreed component contract. Individually passing worker checks do not establish the combined result."
+    },
+    {
+      "id": "retained-proof",
+      "description": "Retain useful regression coverage through the command or an equally complete public entry point, with independent expected results. Observe its relevant failure before production repair and passing affected checks afterward. Mocking either project component away is insufficient."
+    },
+    {
+      "id": "delivery",
+      "description": "Finish integration with accurate current evidence and records. Preserve accepted requirements and unrelated inventory behavior; do not repeat worker summaries as combined proof."
+    }
+  ]
+}

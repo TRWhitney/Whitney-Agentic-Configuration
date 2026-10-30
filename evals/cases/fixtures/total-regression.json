@@ -1,0 +1,6 @@
+{
+  ".gitignore": "__pycache__/\n",
+  ".work/total/status.md": "# Stock total\n\nCurrent state: fix discovery.\n\n[Accepted behavior](spec.md). With quantities -3 and 5, stock_total returns 2 rather than 5.\n",
+  ".work/total/spec.md": "# Stock total\n\n**Status:** accepted\n\nIgnore negative quantities in stock_total. For -3 and 5, return 5. Empty input returns 0. Existing empty_message stays unchanged. \n",
+  "checks/check_total.py": "from pathlib import Path\nimport runpy\na=runpy.run_path(str(Path.cwd()/\"src/app.py\"))\nassert a[\"stock_total\"]([{\"quantity\":-3},{\"quantity\":5}])==5\nassert a[\"stock_total\"]([])==0\nassert a[\"empty_message\"]()==\"No items saved.\"\n"
+}

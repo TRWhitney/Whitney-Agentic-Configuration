@@ -1,0 +1,110 @@
+{
+  "id": "failed-verification",
+  "tags": [
+    "verification",
+    "repair"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "validation",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted name-search change.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 1,
+              "output_pattern": "AssertionError: Unicode case folding"
+            },
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_search.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs",
+            ".work/search/spec.md"
+          ],
+          "exclude": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py",
+            ".work/search/status.md",
+            ".work/search/tickets/01-search.md",
+            "tests",
+            "checks",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?s)move.*validation.*implementation.*move.*implementation.*validation"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/search/status.md",
+    ".work/search/tickets/01-search.md"
+  ],
+  "rubric": [
+    {
+      "id": "observe-failure",
+      "description": "Run the prepared project checks and observe the Unicode case-folding assertion fail before changing production behavior."
+    },
+    {
+      "id": "repair-cause",
+      "description": "Repair the search behavior so STRASSE matches Straße while preserving order, empty and absent-match behavior, empty-message text and stock totals."
+    },
+    {
+      "id": "fresh-green",
+      "description": "Run the same acceptance checks successfully after repair without weakening tests or accepted requirements."
+    },
+    {
+      "id": "finish-honestly",
+      "description": "Record the failure, cause and current passing result, route the correction through implementation and validation, and finish local delivery."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

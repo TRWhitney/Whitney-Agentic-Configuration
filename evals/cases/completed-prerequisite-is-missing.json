@@ -1,0 +1,62 @@
+{
+  "id": "completed-prerequisite-is-missing",
+  "tags": [
+    "expansion",
+    "dependencies"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-dependencies"
+  ],
+  "files": {
+    ".work/inventory/tickets/02-search.md": "# Add name search\n\n**Status:** done\n**Blocked by:** none\n\nImplement the accepted name-search behavior in the [accepted specification](../spec.md). Acceptance covers mixed-case matching, input order, empty queries, missing matches, and empty input. Project checks: checks/check_search.py.\n",
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work implementation.\n\n[Specification](spec.md). [Export ticket](tickets/01-export.md). [Search ticket](tickets/02-search.md).\n\nSearch is marked done in its ticket. Export depends on search and is the next requested delivery unit. No export implementation is present.\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match names by case-insensitive substring in input order. An empty query returns all items. Search uses Unicode case folding for supported names.\n\n## CSV export\n\nAdd export_matches(items, query), calling search_items to select rows before returning CSV text.\nUse name,quantity headings, input order, standard csv module quoting, and LF line endings.\nEmpty matches return a header-only CSV. File writing and interfaces are excluded.\nThe export ticket depends on the search ticket. All design and ticketing are accepted.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the next ready ticket.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    ".work/inventory/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "verify-prerequisite",
+      "description": "Identify that search_items is absent even though the search ticket is marked done, and explain why export cannot rely on that status."
+    },
+    {
+      "id": "no-speculation",
+      "description": "Do not implement dependent export or silently repair search under an export ticket whose prerequisites are not satisfied."
+    },
+    {
+      "id": "record-real-blocker",
+      "description": "Correct the continuation record to identify the missing prerequisite and the evidence needed to make export ready. Leave the effort unfinished."
+    }
+  ]
+}

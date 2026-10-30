@@ -1,0 +1,82 @@
+{
+  "id": "commit-completed-work-across-tree",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [],
+  "files": {
+    "src/labels.py": "def shelf_label():\n    return \"Shelf\"\n",
+    "docs/labels.md": "# Labels\n\nShelf label: Shelf.\n",
+    "src/limits.py": "MAX_ITEMS = 10\n",
+    "docs/limits.md": "# Limits\n\nAt most 10 items.\n",
+    ".work/limit/status.md": "# Inventory limit\n\nThe inventory-limit change in the working tree is accepted and complete. Its documentation describes the accepted limit.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted shelf-label change.",
+      "checks": [
+        {
+          "kind": "commit_groups",
+          "groups": [
+            [
+              "src/labels.py",
+              "docs/labels.md"
+            ],
+            [
+              "src/limits.py",
+              "docs/limits.md"
+            ]
+          ],
+          "uncommitted": []
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/labels.py",
+            "docs/labels.md",
+            "src/limits.py",
+            "docs/limits.md"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "uncommitted_files": {
+    "src/labels.py": "def shelf_label():\n    return \"Your shelf\"\n",
+    "docs/labels.md": "# Labels\n\nShelf label: Your shelf.\n",
+    "src/limits.py": "MAX_ITEMS = 20\n",
+    "docs/limits.md": "# Limits\n\nAt most 20 items.\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "src/labels.py",
+    "docs/labels.md",
+    "src/limits.py",
+    "docs/limits.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Commit both the shelf-label result and the unrelated inventory-limit result, including each matching documentation change. Do not leave completed limit work behind because it was outside the named delivery."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Group the independent results into separate commits without rewriting the initial project commit or adding unrelated content changes."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Inspect the entire working tree after hooks finish and establish it is clean, rather than checking only label files."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Report actual commit identifiers and outcomes accurately; do not present a partial commit as completed delivery."
+    }
+  ]
+}

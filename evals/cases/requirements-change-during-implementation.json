@@ -1,0 +1,76 @@
+{
+  "id": "requirements-change-during-implementation",
+  "tags": [
+    "planning",
+    "implementation",
+    "correction"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work implementation.\n\n[Specification](spec.md). [Search ticket](tickets/01-search.md). [Export ticket](tickets/02-export.md).\n\nSearch is complete and its checks passed. CSV export is accepted and ticketed but not implemented. Both features remain part of this effort.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** done\n**Blocked by:** none\n\nReturn item records matching the name query as defined in the [accepted specification](../spec.md). Acceptance covers Unicode case-insensitive substring matching, input order, empty queries, missing matches, empty input, and preservation of the supplied records.\n\nAll search checks passed.\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match item names by Unicode case-insensitive substring and return matching item records in input order. STRASSE matches Straße. An empty query returns all items. No match or an empty input returns an empty list. Searching leaves the supplied records unchanged.\n\n## CSV export\n\nAdd export_rows(items) to src/app.py. Return CSV text with name,quantity headings, records in input order, standard csv module quoting, and LF line endings. Empty input returns a header-only CSV. File writing and interfaces are excluded. Export is independent of search.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Add a second export format selected by the caller.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs/inventory.md",
+            ".work/inventory/tickets/01-search.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Recognizes that the second format and caller-selection interface are unspecified product/API choices, returns the effort to planning, and asks a concrete question to settle them."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Updates the existing specification and export ticket/index to reflect the additional-format requirement and marks export as needing design or blocked instead of leaving it ready against the old CSV-only design."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Preserves CSV as already accepted while avoiding an invented second format, selector API, default, or error policy. A reasoned recommendation may be offered as a proposal."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Retains completed search behavior and its completion record, leaves production source and inventory guide unchanged, and keeps both features within the effort without external publication."
+    }
+  ],
+  "artifacts": [
+    ".work/inventory/spec.md",
+    ".work/inventory/tickets/02-export.md",
+    ".work/inventory/status.md"
+  ]
+}

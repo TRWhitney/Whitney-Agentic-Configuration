@@ -54,10 +54,13 @@ class Provider:
         return self.read(core.text(value, f"{group}.{name}"))
 
     def read(self, relative: str) -> str:
+        return core.read_markdown(self.resource_path(relative), relative)
+
+    def resource_path(self, relative: str) -> Path:
         path = (self.directory / relative).resolve()
         if not path.is_relative_to(self.directory.resolve()):
             raise core.NavigationError("Provider resource is outside its directory.")
-        return core.read_markdown(path, relative)
+        return path
 
     def applies(self, workflow: str) -> bool:
         return workflow in core.names(self.manifest.get("workflows", []), "workflows")

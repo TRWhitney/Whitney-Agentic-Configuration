@@ -1,0 +1,96 @@
+{
+  "id": "complete-local-workflow",
+  "tags": [
+    "delivery",
+    "completion"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    ".gitignore": "__pycache__/\n",
+    ".work/message/status.md": "# Empty shelf message\n\nCurrent state: tweak implementation.\n\n[Specification](spec.md). The accepted empty-shelf message has not yet been applied to the application or inventory guide.\n",
+    ".work/message/spec.md": "# Empty shelf message\n\nReturn Your shelf is empty. from empty_message(). Document this empty shelf message in docs/inventory.md. Other behavior is unchanged.\n",
+    "checks/check_message.py": "import runpy\nvalue = runpy.run_path(\"src/app.py\")[\"empty_message\"]()\nassert value == 'Your shelf is empty.'\nprint(\"Message check passed: \" + value)\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "implementation",
+      "record": ".work/message/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted empty-shelf message change.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/message/spec.md"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_message.py"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_message\\.py",
+              "exit_code": 0,
+              "output_pattern": "Message check passed: Your shelf is empty\\."
+            }
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_result.py"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    "docs/inventory.md",
+    ".work/message/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "application-result",
+      "description": "empty_message returns exactly Your shelf is empty. and stock_total retains its original arithmetic behavior."
+    },
+    {
+      "id": "reader-docs",
+      "description": "Update the existing inventory guide to describe the accepted empty-shelf message. Do not turn the guide into a report of agent process."
+    },
+    {
+      "id": "current-verification",
+      "description": "Execute the prepared message check against the finished code. A statement that it passed without an observed successful execution is insufficient."
+    },
+    {
+      "id": "delivered-result",
+      "description": "Update the effort record, complete both review axes, commit the finished code and guide, and clear the completed workflow. Missing child-review telemetry remains uncertain."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n",
+    "checks/check_result.py": "import runpy\napp=runpy.run_path(\"src/app.py\")\nassert app[\"empty_message\"]()==\"Your shelf is empty.\"\nassert app[\"stock_total\"]([{\"quantity\":-3},{\"quantity\":5}])==2\n"
+  }
+}

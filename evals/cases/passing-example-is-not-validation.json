@@ -1,0 +1,92 @@
+{
+  "id": "passing-example-is-not-validation",
+  "tags": [
+    "expansion",
+    "verification"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "validation",
+      "conversation": "main",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted name-search change.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/search/spec.md"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_search.py"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 1,
+              "output_pattern": "Unicode case folding"
+            },
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?s)move.*validation.*implementation.*move.*implementation.*validation"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/search/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "broader-coverage",
+      "description": "Run the prepared checks across the accepted search behaviors instead of treating Desk lamp as proof of complete correctness."
+    },
+    {
+      "id": "expose-unicode",
+      "description": "Observe the Unicode case-fold failure before repair through checks that cover behavior beyond the successful Desk lamp example."
+    },
+    {
+      "id": "correct-result",
+      "description": "Repair Unicode search and obtain a fresh successful check run without changing accepted requirements or weakening assertions."
+    },
+    {
+      "id": "finish-result",
+      "description": "Complete the accepted search task with accurate current evidence and local delivery."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

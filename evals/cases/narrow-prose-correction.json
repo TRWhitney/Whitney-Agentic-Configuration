@@ -1,0 +1,216 @@
+{
+  "id": "narrow-prose-correction",
+  "tags": [
+    "expansion",
+    "correction"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/inventory.md": "",
+    "docs/search.md": "# Search behavior\n\nCase folding converts text to a form used for comparisons without case differences. Unicode case folding allows name search to match Straße with STRASSE.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Write docs/inventory.md with this text:\n\n# Inventory guide\n\n## Export\n\nCSV preserves inventory order. The canonical design defines export behavior.\n\n## Search\n\nName search uses Unicode case folding.\n",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "docs/inventory.md",
+          "text": "# Inventory guide\n\n## Export\n\nCSV preserves inventory order. The canonical design defines export behavior.\n\n## Search\n\nName search uses Unicode case folding.\n"
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "session_commits"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "In docs/inventory.md, replace only the word canonical with accepted. Keep all other text exactly as it is.",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "docs/inventory.md",
+          "text": "# Inventory guide\n\n## Export\n\nCSV preserves inventory order. The accepted design defines export behavior.\n\n## Search\n\nName search uses Unicode case folding.\n"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "In the CSV sentence, replace only preserves with keeps.",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "docs/inventory.md",
+          "text": "# Inventory guide\n\n## Export\n\nCSV keeps inventory order. The accepted design defines export behavior.\n\n## Search\n\nName search uses Unicode case folding.\n"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "In that CSV sentence, replace only order with sequence.",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "docs/inventory.md",
+          "text": "# Inventory guide\n\n## Export\n\nCSV keeps inventory sequence. The accepted design defines export behavior.\n\n## Search\n\nName search uses Unicode case folding.\n"
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "Is Unicode case folding defined elsewhere in this repository?",
+      "checks": [
+        {
+          "kind": "file_equals",
+          "path": "docs/inventory.md",
+          "text": "# Inventory guide\n\n## Export\n\nCSV keeps inventory sequence. The accepted design defines export behavior.\n\n## Search\n\nName search uses Unicode case folding.\n"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs/search.md",
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "\\bgit\\b[^\\n]*(?:\\bcommit\\b|\\brebase\\b|\\breset\\b)",
+          "absent": true
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/inventory.md"
+  ],
+  "rubric": [
+    {
+      "id": "exact-word",
+      "description": "On the first correction replace only canonical with accepted. Each later correction changes only its named word in the CSV sentence, preserving the earlier accepted corrections and every other character and section."
+    },
+    {
+      "id": "scope",
+      "description": "Write the requested guide on the first turn. Later corrections change only the requested words; preserve application behavior and other documents."
+    },
+    {
+      "id": "amend-complete",
+      "description": "After each correction, amend the guide commit created on the first turn. Preserve the starting commit, leave two clean commits and complete every requested edit."
+    },
+    {
+      "id": "factual-question",
+      "description": "Answer the final question using the case-folding definition in docs/search.md, identifying that source. The question does not authorize editing or another amendment. Preserve the three accepted wording changes and all other files, and make no repository edit or amendment in that question turn. Navigation bookkeeping outside the repository is allowed."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

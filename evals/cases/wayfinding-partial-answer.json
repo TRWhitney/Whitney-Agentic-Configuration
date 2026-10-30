@@ -1,0 +1,79 @@
+{
+  "id": "wayfinding-partial-answer",
+  "tags": [
+    "expansion",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export, empty-inventory behavior, and behavior when the destination file already exists. CSV with name and quantity columns is agreed. Empty-inventory behavior and existing-file behavior are both open and unblocked. Current question: empty-inventory behavior.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/export/status.md",
+      "substate": "wayfinding"
+    },
+    {
+      "kind": "message",
+      "prompt": "Empty inventory should create a CSV file. I have not decided whether that file contains column headings. I also have not decided what to do if the destination exists.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": false,
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Records empty-inventory file creation as accepted in the existing feature record/map without upgrading that partial answer to header-only creation."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Represents column-heading content and destination-exists behavior as unresolved, while preserving accepted CSV format and name/quantity fields."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Asks an actionable next question about headings or the existing destination, with relevant choices and tradeoffs, rather than only reporting that planning remains open."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps planning and its progress account consistent with the partial answer, avoids accepted-answer inflation, leaves production source unchanged, and makes no publication."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

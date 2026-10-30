@@ -1,0 +1,7 @@
+{
+  ".gitignore": "__pycache__/\n",
+  "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.lower()\n    return [item for item in items if needle in item[\"name\"].lower()]\n",
+  ".work/search/spec.md": "# Name search\n\n**Status:** accepted\n\nAll design and ticketing are complete. Add search_items(items, query) to src/app.py.\nReturn names containing the query using Unicode case folding, in input order. In particular,\nSTRASSE matches Straße. An empty query returns all items. No match or empty input returns [].\nInputs are already validated. Existing empty_message and stock_total behavior stays unchanged.\n\nProject tests use unittest.\n",
+  ".work/search/tickets/01-search.md": "# Search repair\n\nRepair the Unicode name-search behavior defined in the [specification](../spec.md).\n",
+  ".work/search/status.md": "# Search repair\n\nCurrent state: fix discovery.\n\n[Specification](spec.md). STRASSE fails to match Straße. No regression test exists.\n"
+}

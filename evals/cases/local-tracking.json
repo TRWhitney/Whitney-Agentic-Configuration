@@ -1,0 +1,73 @@
+{
+  "id": "local-tracking",
+  "tags": [
+    "tracking",
+    "planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What would GitHub tracking change for this export plan?",
+      "checks": [
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Explains concrete effects for the current export plan, including where feature decisions and implementation tickets would live and how GitHub issue and planning-document PR handling differs from local files."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Separates a tracker change from a product decision: the accepted CSV format and unresolved empty-inventory choice remain the same."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Answers as a discussion, keeps local tracking selected, and does not create or modify GitHub resources or silently migrate records."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Preserves production source and current export planning progress, including its active wayfinding discussion."
+    }
+  ],
+  "artifacts": []
+}

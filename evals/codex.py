@@ -1,0 +1,596 @@
+"""Native Codex execution through the pinned official SDK."""
+
+from __future__ import annotations
+
+import base64
+import json
+import queue
+import re
+import threading
+from pathlib import Path
+from time import perf_counter
+from typing import cast
+
+from openai_codex import LocalImageInput, TextInput
+from openai_codex._inputs import InputItem
+from openai_codex.api import Thread
+from openai_codex.client import CodexClient, CodexConfig
+from openai_codex.models import JsonObject, Notification
+from pydantic import BaseModel, JsonValue, TypeAdapter
+
+from evals.fixtures import Workspace
+from evals.runner import (
+    CommandResult,
+    ExecutionFailed,
+    LimitReached,
+    Observation,
+    ObservedAction,
+    TimeLimitReached,
+)
+
+
+def mapping(value: object) -> dict[str, object]:
+    if not isinstance(value, dict):
+        raise ValueError("Expected a structured Codex event.")
+    return cast(dict[str, object], value)
+
+
+def event_data(payload: object) -> dict[str, object]:
+    if not isinstance(payload, BaseModel):
+        raise ValueError("Unrecognized Codex event payload.")
+    return mapping(payload.model_dump(mode="json", by_alias=True))
+
+
+class ObservableClient(CodexClient):
+    """Observe compaction events before SDK turn routing consumes them.
+
+    This protected SDK hook is covered against the pinned runtime in adapter tests.
+    """
+
+    def __init__(self, config: CodexConfig) -> None:
+        self.watched_thread: str | None = None
+        self.compaction_events: queue.Queue[Notification | None] = queue.Queue()
+        super().__init__(config)
+
+    def watch(self, thread: str) -> None:
+        while not self.compaction_events.empty():
+            self.compaction_events.get_nowait()
+        self.watched_thread = thread
+
+    def _coerce_notification(self, method: str, params: object) -> Notification:
+        event = super()._coerce_notification(method, params)
+        if (
+            self.watched_thread is not None
+            and getattr(event.payload, "thread_id", None) == self.watched_thread
+            and method
+            in {
+                "thread/tokenUsage/updated",
+                "item/completed",
+                "error",
+                "turn/completed",
+            }
+        ):
+            self.compaction_events.put(event)
+        return event
+
+    def next_compaction_notification(self) -> Notification:
+        event = self.compaction_events.get()
+        if event is None:
+            raise ValueError("Codex closed before compaction completed.")
+        return event
+
+    def close(self) -> None:
+        self.compaction_events.put(None)
+        super().close()
+
+
+class CodexDriver:
+    def __init__(
+        self,
+        workspace: Workspace,
+        model: str,
+        timeout: float,
+        max_tokens: int,
+        *,
+        read_only: bool = False,
+        instructions: str | None = None,
+        output_schema: JsonObject | None = None,
+        image_paths: list[str] | None = None,
+    ) -> None:
+        started = perf_counter()
+        self.metrics: dict[str, float | int] = {
+            "startup_seconds": 0.0,
+            "thread_start_seconds": 0.0,
+            "message_seconds": 0.0,
+            "compaction_seconds": 0.0,
+        }
+        self.usage_by_thread: dict[str, dict[str, int]] = {}
+        workspace.copy_credentials()
+        self.workspace, self.model = workspace, model
+        self.max_tokens = max_tokens
+        self.read_only, self.instructions = read_only, instructions
+        if instructions is None and workspace.candidate_role == "implementation-worker":
+            self.instructions = (
+                "You are a spawned implementation subagent. "
+                "The message is your parent's assignment."
+            )
+        self.output_schema = output_schema
+        self.image_paths = image_paths or []
+        self.tokens: dict[str, int] = {}
+        self.expired = threading.Event()
+        environment = workspace.environment()
+        self.client = ObservableClient(
+            CodexConfig(
+                cwd=str(workspace.root),
+                env=environment,
+                experimental_api=False,
+                config_overrides=(
+                    'web_search="disabled"',
+                    "features.apps=false",
+                    "sandbox_workspace_write.network_access=false",
+                    "sandbox_workspace_write.writable_roots="
+                    + json.dumps(
+                        [
+                            str(workspace.home / "work-system"),
+                            str(workspace.root / ".git"),
+                        ]
+                    ),
+                    "shell_environment_policy.set.PATH="
+                    + json.dumps(environment["PATH"]),
+                ),
+            )
+        )
+        self.timer = threading.Timer(timeout, self._expire)
+        self.timer.daemon = True
+        self.timer.start()
+        try:
+            self.client.start()
+            self.client.initialize()
+        except Exception as error:
+            self.close()
+            if self.expired.is_set() or isinstance(error, TimeoutError):
+                raise TimeLimitReached(
+                    "Time allowance exhausted during runtime startup.",
+                    metrics=self.metrics,
+                ) from error
+            raise
+        finally:
+            self.metrics["startup_seconds"] = perf_counter() - started
+
+    def _expire(self) -> None:
+        self.expired.set()
+        self.client.close()
+
+    def close(self) -> None:
+        self.timer.cancel()
+        self.client.close()
+
+    def start(self) -> str:
+        started = perf_counter()
+        try:
+            response = self.client.thread_start(
+                {
+                    "cwd": str(self.workspace.root),
+                    "model": self.model,
+                    "sandbox": "read-only" if self.read_only else "workspace-write",
+                    "developerInstructions": self.instructions,
+                    "approvalPolicy": "never",
+                    "ephemeral": self.read_only,
+                }
+            )
+            return response.thread.id
+        except Exception as error:
+            if self.expired.is_set() or isinstance(error, TimeoutError):
+                raise TimeLimitReached(
+                    "Time allowance exhausted during conversation startup.",
+                    sum(self.tokens.values()) or None,
+                    metrics=self.metrics,
+                ) from error
+            raise
+        finally:
+            self.metrics["thread_start_seconds"] += perf_counter() - started
+
+    def _usage(
+        self, data: dict[str, object], thread: str, *, enforce: bool = True
+    ) -> None:
+        token_usage = mapping(data["tokenUsage"])
+        usage = mapping(token_usage["total"])
+        total = usage["totalTokens"]
+        if type(total) is not int or total < 0:
+            raise ValueError("Invalid token usage from Codex.")
+        self.tokens[thread] = total
+        fields = {
+            "totalTokens": "tokens",
+            "inputTokens": "input_tokens",
+            "outputTokens": "output_tokens",
+            "reasoningOutputTokens": "reasoning_output_tokens",
+            "cachedInputTokens": "cached_input_tokens",
+            "cacheWriteInputTokens": "cache_write_input_tokens",
+        }
+        totals: dict[str, int] = {}
+        for key, label in fields.items():
+            value = usage.get(key)
+            if value is not None:
+                if type(value) is not int or value < 0:
+                    raise ValueError("Invalid token usage from Codex.")
+                totals[label] = value
+        self.usage_by_thread[thread] = totals
+        for label in fields.values():
+            values = [u[label] for u in self.usage_by_thread.values() if label in u]
+            if values:
+                self.metrics["usage_total_" + label] = sum(values)
+        last = token_usage.get("last")
+        if last is not None:
+            last_usage = mapping(last)
+            for key, label in fields.items():
+                value = last_usage.get(key)
+                if value is not None:
+                    if type(value) is not int or value < 0:
+                        raise ValueError("Invalid token usage from Codex.")
+                    self.metrics["usage_last_" + label] = value
+        context_window = token_usage.get("modelContextWindow")
+        if context_window is not None:
+            if type(context_window) is not int or context_window < 0:
+                raise ValueError("Invalid model context window from Codex.")
+            self.metrics["model_context_window"] = context_window
+        if (
+            enforce
+            and self.max_tokens > 0
+            and sum(self.tokens.values()) > self.max_tokens
+        ):
+            raise LimitReached(
+                "Observed token allowance exhausted.",
+                sum(self.tokens.values()),
+                metrics=self.metrics,
+            )
+
+    def _native_child_results(self, identifier: str) -> dict[str, JsonValue]:
+        try:
+            data = event_data(self.client.thread_read(identifier, include_turns=True))
+            turns = TypeAdapter(list[dict[str, JsonValue]]).validate_python(
+                mapping(data["thread"])["turns"]
+            )
+            for turn in turns:
+                items = turn.get("items")
+                if not isinstance(items, list) or any(
+                    not isinstance(item, dict) for item in items
+                ):
+                    raise ValueError("Invalid native child turn items.")
+                for item in items:
+                    if (
+                        isinstance(item, dict)
+                        and item.get("type") == "subAgentActivity"
+                    ):
+                        item.pop("model", None)
+                        item.pop("reasoningEffort", None)
+                turn["items"] = [
+                    item
+                    for item in items
+                    if isinstance(item, dict) and item.get("type") != "reasoning"
+                ]
+            observed_turns: list[JsonValue] = list(turns)
+            return {identifier: {"turns": observed_turns}}
+        except Exception as error:
+            return {identifier: {"unavailable": str(error)}}
+
+    def message(self, thread: str, prompt: str) -> Observation:
+        started = perf_counter()
+        replies: list[str] = []
+        commentary: list[str] = []
+        pending: dict[str, list[str]] = {}
+        commands: list[str] = []
+        command_results: list[CommandResult] = []
+        actions: list[ObservedAction] = []
+        native_children: dict[str, ObservedAction] = {}
+        browser_evidence: list[dict[str, JsonValue]] = []
+        reported = False
+        turn_completed = False
+
+        def observation(*, completed: bool) -> Observation:
+            return Observation(
+                "\n".join(replies),
+                self.tokens.get(thread) if reported else None,
+                tuple(commands),
+                command_results=tuple(command_results),
+                actions=tuple(actions),
+                browser_evidence=browser_evidence,
+                completed=completed,
+                partial_reply="\n".join("".join(parts) for parts in pending.values()),
+                commentary=list(commentary),
+            )
+
+        try:
+            if self.max_tokens > 0 and sum(self.tokens.values()) > self.max_tokens:
+                raise LimitReached(
+                    "Observed token allowance exhausted.",
+                    sum(self.tokens.values()),
+                    metrics=self.metrics,
+                )
+            native_thread = Thread(self.client, thread)
+            content: str | list[InputItem] = (
+                [
+                    TextInput(prompt),
+                    *[LocalImageInput(path) for path in self.image_paths],
+                ]
+                if self.image_paths
+                else prompt
+            )
+            handle = (
+                native_thread.turn(content, output_schema=self.output_schema)
+                if self.output_schema is not None
+                else native_thread.turn(content)
+            )
+            for event in handle.stream():
+                if event.method not in {
+                    "thread/tokenUsage/updated",
+                    "item/completed",
+                    "item/agentMessage/delta",
+                    "turn/completed",
+                }:
+                    continue
+                data = event_data(event.payload)
+                if event.method == "item/agentMessage/delta":
+                    if data.get("threadId") == thread:
+                        identifier, delta = data.get("itemId"), data.get("delta")
+                        if not isinstance(identifier, str) or not isinstance(
+                            delta, str
+                        ):
+                            raise ValueError("Invalid message delta from Codex.")
+                        pending.setdefault(identifier, []).append(delta)
+                elif (
+                    event.method == "thread/tokenUsage/updated"
+                    and data.get("threadId") == thread
+                ):
+                    reported = True
+                    self._usage(data, thread, enforce=not replies)
+                elif event.method == "item/completed":
+                    item = mapping(data["item"])
+                    identifier = item.get("id")
+                    if isinstance(identifier, str):
+                        pending.pop(identifier, None)
+                    if self.read_only and item.get("type") not in {
+                        "agentMessage",
+                        "reasoning",
+                        "userMessage",
+                        "commandExecution",
+                        "imageView",
+                    }:
+                        raise ValueError("Judge used a tool or changed its context.")
+                    if item.get("type") == "subAgentActivity" and item.get("kind") in {
+                        "started",
+                        "completed",
+                    }:
+                        complete = item.get("kind") == "completed"
+                        action = ObservedAction(
+                            "agent",
+                            "",
+                            tool="agentCompleted" if complete else "spawnAgent",
+                            status="completed" if complete else "unavailable",
+                        )
+                        actions.append(action)
+                        identifier = item.get("agentThreadId")
+                        if isinstance(identifier, str):
+                            native_children[identifier] = action
+                    if item.get("type") == "fileChange":
+                        changes, status = item.get("changes"), item.get("status")
+                        if (
+                            not isinstance(changes, list)
+                            or any(not isinstance(change, dict) for change in changes)
+                            or not isinstance(status, str)
+                        ):
+                            raise ValueError("Invalid native file-change event.")
+                        actions.append(
+                            ObservedAction(
+                                "file",
+                                json.dumps(changes, ensure_ascii=False),
+                                tool="fileChange",
+                                status=status,
+                            )
+                        )
+                    if item.get("type") == "collabAgentToolCall":
+                        agent_prompt = item.get("prompt")
+                        tool, status = item.get("tool"), item.get("status")
+                        if (
+                            not isinstance(tool, str)
+                            or not isinstance(status, str)
+                            or (
+                                agent_prompt is not None
+                                and not isinstance(agent_prompt, str)
+                            )
+                        ):
+                            raise ValueError("Invalid agent call from Codex.")
+                        actions.append(
+                            ObservedAction(
+                                "agent",
+                                agent_prompt or "",
+                                tool=tool,
+                                status=status,
+                                agent_results=TypeAdapter(
+                                    dict[str, JsonValue]
+                                ).validate_python(item["agentsStates"])
+                                if item.get("agentsStates") is not None
+                                else None,
+                            )
+                        )
+                    if item.get("type") == "imageView":
+                        path = item.get("path")
+                        if not isinstance(path, str):
+                            raise ValueError("Invalid native image-view path.")
+                        actions.append(ObservedAction("image", path, tool="imageView"))
+                        image_path = Path(path)
+                        if not image_path.is_absolute():
+                            image_path = self.workspace.root / image_path
+                        images: list[JsonValue] = []
+                        if image_path.is_file():
+                            raw = image_path.read_bytes()
+                            if raw.startswith(b"\x89PNG\r\n\x1a\n"):
+                                images.append(
+                                    {
+                                        "name": path,
+                                        "data_url": "data:image/png;base64,"
+                                        + base64.b64encode(raw).decode("ascii"),
+                                    }
+                                )
+                        browser_evidence.append(
+                            {
+                                "origin": "candidate_image_view",
+                                "path": path,
+                                "images": images,
+                            }
+                        )
+                    if item.get("type") == "mcpToolCall":
+                        raise ValueError(
+                            "External service tool used in isolated evaluation."
+                        )
+                    if item.get("type") == "agentMessage" and isinstance(
+                        item.get("text"), str
+                    ):
+                        target = (
+                            commentary if item.get("phase") == "commentary" else replies
+                        )
+                        target.append(str(item["text"]))
+                    if item.get("type") == "commandExecution":
+                        command = str(item.get("command", ""))
+                        commands.append(command)
+                        exit_code = item.get("exitCode")
+                        output = item.get("aggregatedOutput")
+                        if exit_code is not None and type(exit_code) is not int:
+                            raise ValueError("Invalid command exit code from Codex.")
+                        if output is not None and not isinstance(output, str):
+                            raise ValueError("Invalid command output from Codex.")
+                        command_results.append(
+                            CommandResult(command, exit_code, output)
+                        )
+                        actions.append(
+                            ObservedAction(
+                                "command", command + "\n" + (output or ""), exit_code
+                            )
+                        )
+                        for identifier in re.findall(
+                            r"^DELEGATION_FIXTURE_ID:([a-f0-9]{32})$",
+                            output or "",
+                            re.MULTILINE,
+                        ):
+                            path = self.workspace.home / "work-system/delegations.jsonl"
+                            records = [
+                                json.loads(line)
+                                for line in path.read_text().splitlines()
+                            ]
+                            prompts = [
+                                r["prompt"] for r in records if r["id"] == identifier
+                            ]
+                            if len(prompts) != 1 or not isinstance(prompts[0], str):
+                                raise ValueError("Invalid delegation fixture record.")
+                            actions.append(
+                                ObservedAction(
+                                    "agent",
+                                    prompts[0],
+                                    tool="delegateFixture",
+                                    status="completed" if exit_code == 0 else "failed",
+                                )
+                            )
+                elif event.method == "turn/completed":
+                    turn = mapping(data["turn"])
+                    if turn.get("status") != "completed":
+                        error = turn.get("error")
+                        reason = (
+                            error.get("message") if isinstance(error, dict) else None
+                        )
+                        detail = f": {reason}" if reason else ""
+                        raise ValueError(
+                            f"Codex turn status: {turn.get('status')}{detail}"
+                        )
+                    turn_completed = True
+            if self.expired.is_set():
+                raise TimeLimitReached("Time allowance exhausted during message.")
+            if not turn_completed:
+                raise ValueError("Codex stream ended without a completed turn.")
+            for identifier, action in native_children.items():
+                action.agent_results = self._native_child_results(identifier)
+            if self.expired.is_set():
+                raise TimeLimitReached(
+                    "Time allowance exhausted collecting child work."
+                )
+            return observation(completed=True)
+        except Exception as error:
+            partial = observation(completed=False)
+            if self.expired.is_set():
+                raise TimeLimitReached(
+                    "Time allowance exhausted during message.",
+                    sum(self.tokens.values()) or None,
+                    partial,
+                    self.metrics,
+                ) from None
+            if isinstance(error, TimeoutError):
+                raise TimeLimitReached(
+                    str(error), sum(self.tokens.values()) or None, partial, self.metrics
+                ) from error
+            if isinstance(error, LimitReached):
+                error.observation = partial
+                error.metrics = self.metrics
+                raise
+            raise ExecutionFailed(
+                f"{type(error).__name__}: {error}", partial
+            ) from error
+        finally:
+            self.metrics["message_seconds"] += perf_counter() - started
+
+    def compact(self, thread: str) -> Observation:
+        started = perf_counter()
+        try:
+            self.client.watch(thread)
+            self.client.thread_compact(thread)
+            compacted_turn: str | None = None
+            completed_turns: set[str] = set()
+            while True:
+                event = self.client.next_compaction_notification()
+                if event.method not in {
+                    "thread/tokenUsage/updated",
+                    "item/completed",
+                    "error",
+                    "turn/completed",
+                }:
+                    continue
+                data = event_data(event.payload)
+                if data.get("threadId") != thread:
+                    continue
+                if event.method == "thread/tokenUsage/updated":
+                    self._usage(data, thread)
+                if (
+                    event.method == "item/completed"
+                    and mapping(data["item"]).get("type") == "contextCompaction"
+                ):
+                    compacted_turn = str(data["turnId"])
+                if event.method == "error":
+                    if data.get("willRetry"):
+                        continue
+                    raise ValueError("Codex compaction failed.")
+                if event.method == "turn/completed":
+                    turn = mapping(data["turn"])
+                    if turn.get("status") != "completed":
+                        raise ValueError("Codex compaction did not complete.")
+                    if compacted_turn is None:
+                        raise ValueError("No completed compaction item was reported.")
+                    completed_turns.add(str(turn["id"]))
+                if compacted_turn in completed_turns:
+                    return Observation(tokens=self.tokens.get(thread), compacted=True)
+        except Exception as error:
+            partial = Observation(tokens=self.tokens.get(thread), completed=False)
+            if self.expired.is_set():
+                raise TimeLimitReached(
+                    "Time allowance exhausted during compaction.",
+                    sum(self.tokens.values()) or None,
+                    partial,
+                    self.metrics,
+                ) from None
+            if isinstance(error, TimeoutError):
+                raise TimeLimitReached(
+                    str(error), sum(self.tokens.values()) or None, partial, self.metrics
+                ) from error
+            if isinstance(error, LimitReached):
+                error.observation = partial
+                error.metrics = self.metrics
+            raise
+        finally:
+            self.metrics["compaction_seconds"] += perf_counter() - started
+            self.client.watched_thread = None

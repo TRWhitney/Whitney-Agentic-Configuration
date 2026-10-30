@@ -1,0 +1,84 @@
+{
+  "id": "wayfinding-reopens-dependent-answer",
+  "tags": [
+    "expansion",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    "docs/planning/export/design.md": "# Export design\n\n## Accepted answers\n\nCSV uses name,quantity columns. Empty inventory creates a header-only CSV. Its success message is \"Exported 0 items\" and assumes a file is written.\n\n## Questions\n\nExisting-file behavior is open.\n",
+    "docs/planning/export/map.md": "# Export\n\n## Decisions so far\n\n- CSV format.\n- Empty inventory writes a header-only file.\n- Empty success message: Exported 0 items, depends on creating a file.\n\n## Not yet specified\n\n- Existing-file behavior, unblocked.\n",
+    ".work/export/status.md": "# Export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Design](../../docs/planning/export/design.md). [Map](../../docs/planning/export/map.md). Three answers accepted, existing-file behavior open.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/export/status.md",
+      "substate": "wayfinding"
+    },
+    {
+      "kind": "message",
+      "prompt": "Change empty-inventory behavior to refuse without creating a file. I have not decided what to do if the destination exists.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": false,
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Replaces the prior header-only empty-export answer with refusal without creating a file in the existing feature design and map, retaining accepted CSV columns."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Recognizes that Exported 0 items was accepted on the assumption that a file was written and can no longer remain an active success message for the new refusal path."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Removes obsolete export success from the accepted requirements. May reopen feedback or choose refusal wording consistent with the accepted behavior. Does not claim user approval of wording that the user did not choose."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Retains destination-exists behavior as an unanswered choice and asks an actionable next question about it or reopened dependent feedback in the same final reply. A recap alone or a question about whether to continue fails. The final reply starts with a progress line matching the actual remaining decisions."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Leaves production code unchanged, keeps export planning active, and makes no publication."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

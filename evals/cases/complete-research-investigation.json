@@ -1,0 +1,73 @@
+{
+  "id": "complete-research-investigation",
+  "purpose": "task",
+  "tags": [
+    "main-procedure-paths",
+    "research",
+    "planning"
+  ],
+  "fixtures": [
+    "storage-research-project"
+  ],
+  "files": {},
+  "artifacts": [
+    "docs/research/offline-storage.md",
+    "docs/planning/offline-editing/design.md",
+    "docs/planning/offline-editing/map.md",
+    ".work/offline-editing/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/offline-editing/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Which storage approach can meet the agreed offline-editing requirements for Field Notes? The current planning and collected material are linked from .work/offline-editing/status.md.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "decision-framing",
+      "description": "Organizes the investigation around the accepted decision: offline reopening, atomic paired saves during process termination, preservation of independent-window edits, detection of stale same-note edits, standard-library/local-disk constraints, and the open portability and conflict-UI preferences. Reads the current app and feature records before relying on comparisons, states a useful scope and stopping point, and finishes the factual investigation instead of merely proposing research or asking already answered framing questions. A missed requirement that changes the recommendation fails this criterion; a particular question list or phrasing is not required."
+    },
+    {
+      "id": "source-and-code-evidence",
+      "description": "Inspects the original adapter notes and decision-relevant code, follows the digest/article claims back to their sources, and resolves their conditions. Atomic replacement and serialized database writers do not by themselves prevent stale application snapshots from overwriting edits. The single-window successful-save trial does not establish interrupted saves or overlapping-window behavior, and the digest repeats the article rather than independently corroborating it. Cite supporting source paths and locations or equivalent precise references. Do not satisfy this criterion by identifying only an inaccurate quotation without investigating the alternatives."
+    },
+    {
+      "id": "experiments-and-limits",
+      "description": "Uses relevant local source inspection and, where needed to support a claim, bounded executable probes to establish each comparison. The supplied snapshot preserves a paired save at its injected pre-replacement termination but loses a different-note edit from a stale whole-document snapshot and silently replaces a stale same-note edit. SQLite preserves different-note edits and rolls back the interrupted pair; its unguarded mode still silently overwrites stale same-note edits, while its revision-guarded mode rejects that save and preserves the first edit. Both store types reopen completed saves offline with stable IDs. Accept equivalent independently designed checks or source-derived conclusions where sufficient, without requiring the supplied runner or exact timings. Distinguish observed outcomes from deductions and proposed mitigations; include enough setup, conditions, results and limitations to repeat any experiments. A single injected process termination is not proof about every crash point, power loss, production latency, or full application integration. Invented runs/results or unsupported extrapolation fail."
+    },
+    {
+      "id": "independent-investigation-and-verification",
+      "description": "Apply the subject research guidance to the tools actually available. If fresh-context delegation is required and available for this comparison or independent experimentation, give one neutral assignment covering related questions, scope, sources/restrictions, result with citations, cleanup and read-only Git and permitted-file boundaries. Do not embed a preferred answer or untested hypothesis. If delegation occurs, inspect original support for decision-critical returned claims rather than accepting the child conclusion as authority. Direct investigation is acceptable when delegation is unavailable or guidance permits it, and ordinary repository orientation remains the parent task. Missing native child observations are an observation gap, neither proof of child failure nor automatic satisfaction; assess the visible assignment and parent evidence checks, marking unobservable required portions uncertain."
+    },
+    {
+      "id": "usable-combined-findings",
+      "description": "Updates the existing docs/research/offline-storage.md with a concise combined answer, supporting sources, disagreements, conditions/limitations and planning consequences, within the research guidance length limit of 500 words plus a compact results table. Keeps the accepted stable-ID and duplicate-title findings. Carries the findings into the existing offline-editing work record and planning discussion rather than splitting related sources, experiments or architecture questions into new feature records/reports. Useful concise rerun instructions belong in the report; raw output dumps, replay archives and compliance narration do not. Leaving the report as the original pending placeholder or only giving a final answer fails."
+    },
+    {
+      "id": "planning-boundary",
+      "description": "Gives a supported recommendation with its conditions and remaining work. Revision-guarded SQLite can meet the modeled accepted requirements; snapshot JSON needs coordination against the current data and stale-revision handling, so recommending it is also acceptable when those untested changes and tradeoffs are explicit. Do not claim the current snapshot or default unguarded SQLite already meets every requirement, equate one passing model to a finished feature, or force a single winner when evidence permits mitigated alternatives. Leave the substantial portability and stale-save UI choices for Whitney, ask a useful next decision question or identify the needed preference clearly, and preserve accepted requirements. Do not implement the app, silently choose product preferences, add dependencies/services, or expand into sync or power-loss guarantees."
+    }
+  ]
+}

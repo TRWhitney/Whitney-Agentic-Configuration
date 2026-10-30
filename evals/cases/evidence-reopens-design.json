@@ -1,0 +1,79 @@
+{
+  "id": "evidence-reopens-design",
+  "tags": [
+    "expansion"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. Inputs are validated.\n\n## Name search\n\nsearch_items(items, query) returns case-insensitive substring matches in input order. An empty query returns all items. Inventory names are assumed to contain ASCII characters only, so lowercase comparison was accepted.\n\n## CSV export\n\nexport_rows(items) returns CSV text with name,quantity headings, input order, standard CSV quoting and LF line endings. Empty input returns a header-only CSV. Export is independent of search. File writing and interfaces are excluded.\n",
+    "docs/research/names.md": "# Imported names\n\nA supported import contains Straße. STRASSE must match that name. The ASCII-only assumption is false.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement the accepted name-search behavior in the [accepted specification](../spec.md). Acceptance covers mixed-case matching, input order, empty queries, missing matches, and empty input. Project checks: checks/check_search.py.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Update the search design for the imported names described in docs/research/names.md. The CSV export requirements stay the same.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/inventory/tickets/02-export.md"
+          ]
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    ".work/inventory/spec.md",
+    ".work/inventory/tickets/01-search.md",
+    ".work/inventory/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "use-evidence",
+      "description": "Recognize that Straße is a supported imported name and STRASSE must match it, so the ASCII-only assumption is false."
+    },
+    {
+      "id": "revise-owners",
+      "description": "Remove the false ASCII guarantee and lower-only rationale from the accepted specification, state Unicode case-fold behavior, and propagate the change to the search ticket with a link to the supporting study."
+    },
+    {
+      "id": "preserve-csv",
+      "description": "Keep the independent accepted CSV behavior and export ticket unchanged."
+    },
+    {
+      "id": "planning-result",
+      "description": "Leave production code untouched and present the reconciled design for discussion rather than treating the old acceptance claim as permission to implement changed requirements."
+    }
+  ]
+}

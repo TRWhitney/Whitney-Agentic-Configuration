@@ -1,0 +1,109 @@
+{
+  "id": "explicit-compaction",
+  "tags": [
+    "compaction",
+    "recovery",
+    "planning",
+    "wayfinding"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What should we decide next about export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "compact",
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What decision do you need from me?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "integration": true,
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Before compaction, presents the unresolved empty-inventory choice between a header-only CSV and refusing without creating a file, with a reasoned recommendation and a decision question."
+    },
+    {
+      "id": "criterion-2",
+      "description": "After actual compaction, restores this conversation with the installed navigator and consults the linked work record before answering. Missing observed actions remain uncertain where the trace is incomplete."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Retains accepted CSV format and name/quantity columns and resumes the pending empty-inventory choice after compaction without treating any option as accepted."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Maintains active planning with the wayfinding progress line, leaves production source unchanged, and does not publish work."
+    }
+  ],
+  "artifacts": []
+}

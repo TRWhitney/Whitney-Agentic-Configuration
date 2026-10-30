@@ -1,0 +1,72 @@
+{
+  "id": "conflicting-sources-need-version-and-conditions",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+    "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+    "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+    "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+    "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+    "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+    "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+    "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+    "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+    "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Can our production Parcel API 2.0 Basic integration submit a batch of 50 labels? The collected material is under sources/index.md.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "commit_groups",
+          "groups": [],
+          "uncommitted": []
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Conclude that production API 2.0 Basic label-creation requests are limited to 20 labels per batch; do not use a Pro, sandbox, status-lookup, or older-version value for this integration."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Investigate the disagreement across the packet, explaining the former 10-label version 1.0 cap, current 50-label Pro cap, 100-ID status-lookup limit, and sandbox trial in their own conditions rather than choosing a majority or newest headline."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Trace repeated 50-label statements through their citations to the announcement/manual, and distinguish copied claims from independent observations. The sandbox experiment does not establish production Basic behavior."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Cite original evidence supporting the chosen limit and each material explanation, including version/date and account and environment conditions."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Answer the integration question without changing source excerpts or application behavior. When action evidence is missing, leave source-reading or delegation claims uncertain instead of assuming they occurred."
+    }
+  ]
+}

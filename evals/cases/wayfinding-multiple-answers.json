@@ -1,0 +1,81 @@
+{
+  "id": "wayfinding-multiple-answers",
+  "tags": [
+    "expansion",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    "docs/planning/export/design.md": "# Inventory export\n\n**Status:** claimed\n**Blocked by:** none\n**Type:** discussion\n\n## Questions\n\n1. Should an empty inventory create a header-only CSV or refuse export without creating a file?\n2. If the destination file already exists, should export replace it or refuse without changing it?\n\n3. Should export include items with zero quantity?\n\nAll three questions are independent.\n\n## Accepted answers\n\nCSV is the agreed format, with name and quantity columns.\n\n## Evidence\n\nThe inventory can be empty. Export writes to a selected local file.\n",
+    "docs/planning/export/map.md": "# Inventory export\n\n## Destination\n\nDefine CSV export, empty-inventory behavior, and behavior when its destination already exists.\n\n## Decisions so far\n\n- [Format](design.md): CSV with name and quantity columns.\n\n## Not yet specified\n\n- [Empty inventory](design.md#questions): header-only CSV or refuse export.\n- [Existing file](design.md#questions): replace the file or refuse export.\n\n- Zero quantity: include or omit.\n\nAll three questions are unblocked.\n\n## Out of scope\n\nRemote storage.\n",
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export, empty-inventory behavior, and behavior when the destination file already exists. CSV with name and quantity columns is agreed. Empty-inventory behavior and existing-file behavior are both open and unblocked. Current question: empty-inventory behavior.\n\nZero-quantity inclusion is also open and unblocked.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/export/status.md",
+      "substate": "wayfinding"
+    },
+    {
+      "kind": "message",
+      "prompt": "For an empty inventory, create a header-only CSV. If the destination exists, refuse without changing it. I have not decided whether zero-quantity items belong in the output.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": false,
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Records both header-only empty export and refusal to alter an existing destination as accepted in the existing feature record and map, while retaining accepted CSV columns."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Keeps zero-quantity inclusion unresolved and does not infer inclusion or exclusion from the other two answers."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Updates the progress line to reflect both newly accepted answers and zero-quantity inclusion as the remaining ready choice, then asks a concrete zero-quantity decision question with useful choices or a recommendation instead of only acknowledging the answers."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Does not create separate feature planning tickets for the related answers or implement production behavior. Planning stays active and nothing is published."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

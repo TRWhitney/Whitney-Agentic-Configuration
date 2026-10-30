@@ -1,0 +1,4 @@
+{
+  "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n",
+  "docs/inventory.md": "# Shelf inventory\n\nA small local inventory records item names and quantities.\n"
+}

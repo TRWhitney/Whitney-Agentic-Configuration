@@ -1,0 +1,69 @@
+{
+  "id": "use-supplied-clock",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/reminders.py": "from datetime import datetime, timedelta, timezone\n\nclass ReminderService:\n    def __init__(self, clock):\n        self.clock=clock\n\n    def due_at(self, seconds):\n        return datetime.now(timezone.utc)+timedelta(seconds=seconds)\n",
+    "checks/check_clock.py": "from pathlib import Path\nimport runpy\nfrom datetime import datetime,timedelta,timezone\nservice=runpy.run_path(str(Path.cwd()/'src/reminders.py'))['ReminderService']\nclass Clock:\n    def __init__(self): self.value=datetime(2099,1,2,tzinfo=timezone.utc)\n    def now(self): return self.value\nclock=Clock(); reminder=service(clock)\nassert reminder.due_at(30)==clock.value+timedelta(seconds=30)\nclock.value+=timedelta(days=2)\nassert reminder.due_at(0)==clock.value\n",
+    ".work/total/status.md": "# Reminder time\n\nCurrent state: fix discovery.\n\n[Specification](spec.md). Supplied clock time is ignored by due_at.\n",
+    ".work/total/spec.md": "# Reminder time\n\nReminderService(clock).due_at(seconds) returns clock.now() plus the given seconds. The supplied clock can change between calls. No wall-clock fallback is supported.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/total/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Fix the reminder-time bug recorded in .work/total/status.md and finish the change.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_clock.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/total/spec.md",
+            "src/app.py"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/reminders.py",
+    ".work/total/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Compute due_at(seconds) from the supplied clock's current now() plus the requested seconds, honoring a changed clock value on subsequent calls."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Do not substitute wall-clock time, a cached constructor value, or an undocumented fallback for the injected dependency."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Retain meaningful deterministic coverage of a non-current supplied time, changed time, and supported offsets, with observed failing and passing results for the repair."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Preserve unrelated inventory behavior and the accepted specification, complete delivery, and report actual outcomes."
+    }
+  ]
+}

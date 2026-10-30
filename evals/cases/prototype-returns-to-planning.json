@@ -1,0 +1,100 @@
+{
+  "id": "prototype-returns-to-planning",
+  "tags": [
+    "prototype",
+    "planning",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-text-planning"
+  ],
+  "files": {
+    "prototypes/export_csv_probe.py": "\"\"\"Planning probe: check CSV round trips for punctuation and newlines in names.\n\nProbe command: python3 prototypes/export_csv_probe.py.\nResult: prototypes/export_csv_probe.result.json.\n\"\"\"\nimport csv\nimport io\nimport json\nfrom pathlib import Path\n\nrows = [[\"Tea, loose\", \"2\"], ['Box \"large\"', \"3\"], [\"Line\\nbreak\", \"1\"]]\nstream = io.StringIO(newline=\"\")\ncsv.writer(stream, lineterminator=\"\\n\").writerows(rows)\nstream.seek(0)\nassert list(csv.reader(stream)) == rows\nPath(__file__).with_suffix(\".result.json\").write_text(\n    json.dumps({\"preserved\": True, \"rows\": len(rows)}, sort_keys=True) + \"\\n\"\n)\nprint(\"All three names survived CSV writing and reading unchanged.\")\n",
+    "docs/prototypes/export-csv.md": "# CSV round-trip probe\n\n[Runnable source](../../prototypes/export_csv_probe.py).\n\n## Question\n\nDoes standard CSV writing and reading preserve commas, quotes, and newlines in item names?\n\n## Findings\n\nNot run yet.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Try the supplied CSV example with its sample names. Can our planned export preserve punctuation and line breaks? Keep the resulting sample output for our next comparison. What do we still need to decide?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "What product choice do you still need from me?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "focused",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "After the user requests trying the CSV example, applies the planning prototype procedure, actually runs the supplied probe, and inspects its result. This case tests evidence and return to planning after a requested experiment, not autonomous selection of prototyping. A command mentioned in text or echoed by a search is not an executed probe."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Records that all three supplied names, containing a comma, quotes, and a newline, survived writing and reading unchanged, supported by actual probe output. Keeps the requested sample evidence for the next comparison. Useful CSV output or the original result file is allowed; no particular filename or serialization is required."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Updates docs/prototypes/export-csv.md with the conclusion, runnable source link and reproduction instructions, and links or records the finding in the existing export design."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Distinguishes CSV round-trip capability from the unresolved header-row product choice. Both responses retain that choice for the requester, rather than accepting headings because the probe passed."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Returns to the current planning/wayfinding discussion after the requested experiment, keeps production unchanged and the probe runnable with meaningful round-trip checks, and does not publish work. Changing the probe to retain a useful sample is allowed."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/prototypes/export-csv.md"
+  ]
+}

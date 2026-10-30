@@ -1,0 +1,119 @@
+{
+  "id": "github-planning-edit-persists",
+  "tags": [
+    "expansion",
+    "github"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "update"
+    },
+    {
+      "kind": "message",
+      "prompt": "For empty inventories, use a header-only CSV. We still need to decide what happens when the destination exists.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        },
+        {
+          "kind": "no_publish",
+          "target": "pull_requests"
+        },
+        {
+          "kind": "github_state",
+          "number": 10,
+          "count": 1,
+          "body_pattern": "\\S"
+        }
+      ],
+      "conversation": "update"
+    },
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "read"
+    },
+    {
+      "kind": "message",
+      "prompt": "What have we agreed for empty inventories, and what is still undecided for export?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "gh.*(?:issue view|api.*issues/10)",
+              "exit_code": 0,
+              "output_pattern": "(?i)header"
+            }
+          ]
+        },
+        {
+          "kind": "no_publish",
+          "target": "pull_requests"
+        }
+      ],
+      "conversation": "read"
+    }
+  ],
+  "tracker": "github",
+  "github_issues": {
+    "10": "# Export\n\n## Accepted answers\n\nCSV with name and quantity columns.\n\n## Questions\n\nShould empty inventory create a header-only CSV or refuse? If the destination exists, replace it or refuse?\n"
+  },
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "persist-decision",
+      "description": "Update issue #10 itself to accept header-only CSV for empty inventory while retaining name and quantity columns."
+    },
+    {
+      "id": "open-destination",
+      "description": "Keep destination replacement-versus-refusal unresolved. Do not silently choose a policy or leave the empty-inventory decision listed as still open."
+    },
+    {
+      "id": "fresh-conversation",
+      "description": "In the separate reading conversation, read the current GitHub issue and accurately report the accepted empty behavior and remaining destination question."
+    },
+    {
+      "id": "bounded-change",
+      "description": "Do not implement export, switch trackers, or create a redundant issue or PR for this planning-answer update."
+    }
+  ]
+}

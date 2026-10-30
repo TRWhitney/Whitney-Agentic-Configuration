@@ -1,0 +1,92 @@
+{
+  "id": "damaged-navigation-record",
+  "tags": [
+    "expansion",
+    "recovery"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match item names by Unicode case-insensitive substring and return matching item records in input order. STRASSE matches Straße. An empty query returns all items. No match or an empty input returns an empty list. Searching leaves the supplied records unchanged.\n\n## CSV export\n\nAdd export_rows(items) to src/app.py. Return CSV text with name,quantity headings, records in input order, standard csv module quoting, and LF line endings. Empty input returns a header-only CSV. File writing and interfaces are excluded. Export is independent of search.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nReturn item records matching the name query as defined in the [accepted specification](../spec.md). Acceptance covers Unicode case-insensitive substring matching, input order, empty queries, missing matches, empty input, and preservation of the supplied records.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "other",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "edit",
+      "navigation_text": "{broken state"
+    },
+    {
+      "kind": "message",
+      "prompt": "Resume the current work.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "navigation_text",
+          "text": "{broken state"
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "What work remains?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ],
+      "conversation": "other"
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Detects and reports that the main conversation navigation record is invalid or damaged, identifying the inability to restore it rather than silently guessing a workflow."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Preserves the damaged record for diagnosis instead of replacing it with guessed state, and does not implement search or export based on that guess."
+    },
+    {
+      "id": "criterion-3",
+      "description": "The other conversation still restores its own valid planning progress and correctly reports both search and export as unfinished."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Production source remains unchanged and no work is published. A useful recovery explanation distinguishes the damaged conversation from available project documents."
+    }
+  ],
+  "artifacts": []
+}

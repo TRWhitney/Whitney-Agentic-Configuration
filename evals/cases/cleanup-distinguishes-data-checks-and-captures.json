@@ -1,0 +1,101 @@
+{
+  "id": "cleanup-distinguishes-data-checks-and-captures",
+  "tags": [
+    "prose-boundaries",
+    "retention"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "data/import.json": "{\"items\":[{\"name\":\"Tea\",\"quantity\":3}]}\n",
+    "checks/check_import.py": "import json\nfrom pathlib import Path\nassert json.loads(Path(\"data/import.json\").read_text())[\"items\"][0][\"quantity\"]==3\n",
+    ".work/cleanup/status.md": "# Inventory import\n\nDelivery. Import behavior is complete. Validation passed, and the intent and engineering reviews passed without findings. data/import.json is the input Whitney supplied for future imports. checks/check_import.py checks that input. scratch/session.json is the agent session capture from this work; inspection and required review of it have finished. Its older archive and ignored copy remain in scratch/. The import accepted Tea with quantity 3. The separate import trace at {temporary}/import.log has also been inspected and reviewed.\n",
+    ".gitignore": "__pycache__/\n*.py[cod]\nscratch/ignored/\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/cleanup/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the saved inventory-import delivery.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_retention.py"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "data/import.json",
+            "checks/check_import.py",
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "import.log"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "no_raw_evidence",
+          "paths": [
+            "scratch/session.json",
+            "scratch/ignored/session-copy.json",
+            "scratch/session-archive.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "uncommitted_files": {
+    "scratch/session.json": "{\"kind\":\"agent capture\",\"events\":[\"inspection complete\"]}\n",
+    "scratch/ignored/session-copy.json": "{\"kind\":\"agent capture\",\"events\":[\"inspection complete\"]}\n",
+    "scratch/session-archive.json": "{\"kind\":\"agent capture\",\"events\":[\"inspection complete\"]}\n"
+  },
+  "grader_files": {
+    "checks/check_retention.py": "from pathlib import Path\nimport subprocess\nassert not Path(\"scratch/session.json\").exists()\nr=subprocess.run([\"git\",\"log\",\"--all\",\"--format=\",\"--name-only\"],check=True,capture_output=True,text=True)\nassert \"scratch/session.json\" not in r.stdout\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "data/import.json",
+    "checks/check_import.py",
+    ".work/cleanup/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The delivered import retains the supplied data/import.json and reusable checks/check_import.py, with their contents and application behavior intact."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Remove the finished session capture, its older archive, its ignored copy, and the outside-checkout import trace before committing. Renaming, ignoring, archiving, or committing and later deleting raw outputs does not satisfy cleanup."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Finish local delivery with the result and work record committed and an inspected clean tree. Preserve the useful finding that Tea was imported with quantity 3, alongside the supplied input and reusable check, without copying raw captures or generating a capture inventory."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The final account identifies the delivered result and actual commit state without inventing new validation or independent review."
+    }
+  ],
+  "temporary_files": {
+    "import.log": "run=import-519\nrow=1,name=Tea,quantity=3,result=accepted\nbytes=86\n"
+  }
+}

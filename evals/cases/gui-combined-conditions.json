@@ -1,0 +1,73 @@
+{
+  "id": "gui-combined-conditions",
+  "tags": [
+    "gui",
+    "visual-verification",
+    "composition"
+  ],
+  "purpose": "task",
+  "project_name": "fieldnotes",
+  "fixtures": [
+    "gui-project"
+  ],
+  "files": {
+    "app/components/workspace.js": "import { mountEditor } from './editor.js';\nimport { mountSaveStatus } from './save-status.js';\n\nexport function mountWorkspace(root, notebook) {\n  root.innerHTML = `<header class=\"document-heading\"><h2 id=\"document-title\"></h2><button id=\"save\">Save</button></header>\n<section id=\"save-notice\" class=\"document-message\" aria-live=\"polite\" hidden><div class=\"notice-top\"><strong id=\"save-label\"></strong><button id=\"retry\" hidden>Retry</button></div><p id=\"save-detail\"></p></section>\n<textarea class=\"code-editor text-entry\" aria-label=\"Document text\" spellcheck=\"false\"></textarea></div>\n<footer class=\"document-footer\"><span>Saved locally</span><span>Plain text</span></footer>`;\n  const render = () => { root.querySelector('#document-title').textContent = notebook.current.title; };\n  mountEditor(root.querySelector('.code-editor'), notebook);\n  mountSaveStatus(root, notebook);\n  notebook.subscribe(event => { if (event === 'document') render(); });\n  render();\n}\n",
+    "app/components/save-status.js": "const failureDetail = 'The notebook service could not accept the document. Your writing is still available here. Retry when the connection returns. The field team can continue using the previous saved copy while this document waits to upload.';\n\nexport function mountSaveStatus(root, notebook) {\n  const global = document.querySelector('#global-status');\n  const notice = root.querySelector('#save-notice');\n  const label = root.querySelector('#save-label');\n  const detail = root.querySelector('#save-detail');\n  const retry = root.querySelector('#retry');\n  const footer = root.querySelector('.document-footer span:first-child');\n  const render = () => {\n    const status = notebook.saveState;\n    if (status === 'failed') { global.hidden = false; global.textContent = 'The last save failed.'; }\n    notice.hidden = status === 'idle';\n    label.textContent = {failed:'Save failed', saving:'Saving', saved:'Saved'}[status] || '';\n    detail.hidden = status !== 'failed'; detail.textContent = failureDetail;\n    retry.hidden = status !== 'failed';\n    footer.hidden = status === 'saving';\n    footer.textContent = status === 'failed' ? 'Saved locally' : 'Saved locally';\n  };\n  root.querySelector('#save').onclick = () => notebook.save();\n  retry.onclick = () => notebook.retry();\n  notebook.subscribe(event => { if (['save','document'].includes(event)) render(); });\n  render();\n}\n"
+  },
+  "artifacts": [
+    "app/index.html",
+    "app/app.css",
+    "app/app.js",
+    ".work/fieldnotes/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/fieldnotes/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the Fieldnotes document workspace using the accepted design.",
+      "checks": [
+        {
+          "kind": "browser",
+          "scenario": "composition",
+          "require_match": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "design",
+            "docs/accepted-design.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "whole-interface-status",
+      "description": "During Retry the finished interface shows Saving and no previous save failure anywhere, including outside the document notice."
+    },
+    {
+      "id": "constrained-pane",
+      "description": "With a save failure and split view together, the notice stays in its pane, the editor retains at least 80px of height and the footer remains visible. A wide window alone does not establish the available pane space."
+    },
+    {
+      "id": "combined-observation",
+      "description": "The candidate actually inspects combined states and surrounding UI in the browser. Isolated notice assertions or separate wide-window screenshots do not prove the combined requirement."
+    },
+    {
+      "id": "bounded-completion",
+      "description": "The report states what combinations were checked and any remaining uncertainty without treating private grader coverage as its own work."
+    }
+  ]
+}

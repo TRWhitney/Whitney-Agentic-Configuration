@@ -1,0 +1,131 @@
+{
+  "id": "wayfinding-stop",
+  "tags": [
+    "wayfinding",
+    "cancellation"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What should we decide next about inventory export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Stop using wayfinding. I still want to discuss the export design.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "Planning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+",
+          "absent": true
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "What decision is still open?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "Planning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+",
+          "absent": true
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Initially presents the unresolved empty-inventory export choice with the wayfinding progress line and useful alternatives."
+    },
+    {
+      "id": "criterion-2",
+      "description": "After the mode change, exits the wayfinding substate while retaining the novel-work planning effort, accepted CSV format, and unresolved empty-inventory decision."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Stops emitting the wayfinding progress line after the request and does not silently re-enter the mode on the next ordinary design question."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Answers the final question with the still-open empty-inventory behavior and useful next steps, preserving production source and avoiding publication."
+    }
+  ],
+  "artifacts": []
+}

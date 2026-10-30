@@ -1,0 +1,139 @@
+{
+  "id": "replace-workflow",
+  "tags": [
+    "recovery",
+    "conversations",
+    "cancellation"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "files": {
+    ".work/import/status.md": "# Import failure\n\nCurrent state: fix discovery.\n\nInventory CSV import intermittently fails. No failing CSV or observed error has been supplied, the failure has not been reproduced, and this small checkout has no import code.\n",
+    ".work/totals/status.md": "# Inventory totals\n\nCurrent state: novel-work planning.\n\n[Design](../../docs/planning/totals/design.md).\n\nWhether totals should accept or reject negative quantities is still open.\n",
+    "docs/planning/totals/design.md": "# Inventory totals\n\n**Status:** claimed\n**Blocked by:** none\n**Type:** discussion\n\n## Questions\n\nShould totals accept negative quantities or reject them as invalid input?\n\n## Accepted answers\n\nTotals add quantities. Negative-input handling is not yet agreed.\n",
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "seed",
+      "conversation": "totals",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null,
+      "record": ".work/totals/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "Cancel export planning. Instead, investigate the reported inventory import failure. The current details are in .work/import/status.md. What do you need from me?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "fix",
+          "state": "discovery",
+          "substate": null
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "totals",
+      "prompt": "Which totals decision is still open?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What information are you waiting for to investigate import?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "fix",
+          "state": "discovery",
+          "substate": null
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Cancels/replaces export in the main conversation and starts the import fix investigation from the supplied factual report rather than continuing export decisions."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Recognizes that import code, a failing CSV and an observed error are unavailable, and asks for a minimal failing input plus the actual error or failing invocation without inventing a cause."
+    },
+    {
+      "id": "criterion-3",
+      "description": "The independent totals conversation retains its planning state and correctly identifies acceptance versus rejection of negative quantities as unresolved."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Returning to main still concerns the import investigation and its missing evidence. The totals conversation does not overwrite or revive the export workflow."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Preserves production source and existing design documents and does not publish work or implement a speculative import fix."
+    }
+  ],
+  "artifacts": []
+}

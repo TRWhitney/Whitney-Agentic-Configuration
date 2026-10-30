@@ -1,0 +1,66 @@
+{
+  "id": "new-interface-design",
+  "purpose": "task",
+  "project_name": "eastbank-equipment-desk",
+  "tags": [
+    "main-procedure-paths",
+    "interface-design",
+    "prototype"
+  ],
+  "fixtures": [
+    "equipment-design-project"
+  ],
+  "files": {},
+  "artifacts": [],
+  "browser_tools": true,
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Design a new screen for volunteers checking equipment out and returning it at Eastbank. The equipment, volunteer roster, lending rules and desk constraints are in docs/equipment-desk.md and data/equipment.json. I want to try starting from the equipment and starting from the volunteer before choosing a screen. I need to be able to check out an available item and return an existing loan, including on my phone. This is a proposal for us to choose from; the current ledger is still in use.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "data"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "task-and-sources",
+      "description": "Ground the proposal in the desk volunteer's handover task, the supplied real equipment and people, lending rules, laptop and phone constraints, and absence of an existing visual system. Both starting points remain proposals. Do not silently settle a product choice or add policies such as fines, forced registration, checkout limits or special overdue restrictions. A generic inventory dashboard that obscures checking out and returning fails. An explicitly provisional visual or interaction choice is allowed when it preserves settled rules; asking about an actual remaining material ambiguity is also allowed."
+    },
+    {
+      "id": "specific-design-plan",
+      "description": "Produce a compact, task-grounded design plan before building the proposal. It includes four to six exact colors or token references, at least two type roles with scale and relationship, a layout concept, a motion approach with affected states or a justified restrained approach, and one distinctive element grounded in equipment handovers. Critique the direction against the desk brief and resolve contradictions. Assess the connections between choices and the task, not a preferred palette, font, style or file format. A generic adjective list, an unexplained aesthetic applied to unrelated work, or a retrospective claim that planning happened fails."
+    },
+    {
+      "id": "hierarchy-and-usable-content",
+      "description": "The rendered proposal makes finding the right item or person, understanding availability, checking out and returning clear. Groupings encode actual relationships among equipment, borrower, loan and action; identity and due time remain visible at the point of commitment. Use supplied names, IDs, tags and long equipment labels so wrapping is exercised. Labels and recoverable feedback serve desk volunteers, availability does not depend on color alone, and keyboard focus and phone reflow remain usable. Decorative summaries or identical cards that conceal these relationships fail. Accept any layout and component structure that communicates the required relationships."
+    },
+    {
+      "id": "runnable-choice",
+      "description": "Deliver runnable, operable equipment-first and volunteer-first proposals that let the requester assess the open starting-point choice. They may share source or be modes within one screen. In each, try checking out an available item to a roster volunteer and returning an existing loan, with identity/due-time verification, updated availability, cancellation without mutation, and useful handling of missing selections, unavailable equipment and no search matches. Preserve overdue returnability. Include a clear review question, useful trial instructions and complete run instructions. Keep sample state separate from the operational ledger. Static mockups, dead controls or cosmetic variants with no meaningful starting-point difference fail. This requested trial does not establish autonomous selection of prototyping."
+    },
+    {
+      "id": "rendered-inspection-and-critique",
+      "description": "Before presenting the proposal, the candidate actually launches and operates both starting points, inspects rendered images and an available structural representation, and critiques the result against the task and design plan. Evidence must cover laptop and phone appearance, the long item label and similar borrower names, and the relevant checkout, return, cancellation, empty-search and unavailable-item states. Inspect semantics, grouping, clipping/reflow and focus as relevant; flow checks need not be duplicated at both sizes when their responsive behavior is unaffected. Use the critique to refine observed weaknesses and remove unnecessary elements when identified. A supported conclusion that no further change is needed is allowed; do not manufacture a defect or needless edit. A claimed visual review, source inspection alone, screenshot creation without inspection, or private grader operation does not establish candidate inspection. Missing action evidence is uncertain unless observed evidence establishes a failure."
+    },
+    {
+      "id": "proposal-and-acceptance-boundary",
+      "description": "Present the question, useful comparison observations, recommendation or inconclusive result, runnable source, limitations and the choice still needed from the requester. Distinguish settled lending rules from proposed hierarchy and interactions. No choice is accepted in this conversation: do not record acceptance, implement or integrate the production screen, or treat prototype exercises as production tests or final validation. A supported recommendation is welcome. Preserve useful design/prototype notes and runnable source, with no required new filename or directory. The current ledger and snapshot remain intact."
+    }
+  ]
+}

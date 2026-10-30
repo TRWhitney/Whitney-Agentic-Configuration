@@ -10,6 +10,11 @@ dev = [
     "pyyaml>=6,<7",
     "ruff>=0.15,<0.16",
     "types-pyyaml>=6,<7",
+    "pydantic>=2.12,<3",
+]
+eval = [
+    { include-group = "dev" },
+    "openai-codex==0.163.0",
 ]
 
 [tool.ruff]

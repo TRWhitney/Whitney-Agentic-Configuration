@@ -1,0 +1,69 @@
+{
+  "id": "new-task-after-completion",
+  "tags": [
+    "expansion"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "What does empty_message() return?",
+      "checks": [
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "Investigate a stock-total bug. I have not supplied the failing inventory or expected total yet.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "fix",
+          "state": "discovery",
+          "substate": null
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "first-answer",
+      "description": "Inspect the app and answer that empty_message returns No items saved., then finish that question workflow without editing source."
+    },
+    {
+      "id": "new-investigation",
+      "description": "Treat the later stock-total request as a new fix in discovery, rather than reusing or reviving the completed wording question."
+    },
+    {
+      "id": "needed-evidence",
+      "description": "Ask for the failing inventory, expected total and actual total or reproduction steps. Do not silently choose a negative-quantity policy or make a speculative repair."
+    }
+  ]
+}

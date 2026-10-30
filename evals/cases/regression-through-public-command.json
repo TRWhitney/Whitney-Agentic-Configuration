@@ -1,0 +1,99 @@
+{
+  "id": "regression-through-public-command",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/app.py": "def search_items(items, query):\n    return [i for i in items if query.casefold() in i[\"name\"].casefold()]\n",
+    "src/cli.py": "import json, sys\nfrom app import search_items\nrows=[{\"name\":\"Straße\",\"quantity\":1},{\"name\":\"Milk\",\"quantity\":2}]\nquery=sys.argv[1]\nprint(json.dumps([i for i in rows if query.lower() in i[\"name\"].lower()]))\n",
+    ".gitignore": "__pycache__/\n",
+    ".work/total/status.md": "# Search command\n\nCurrent state: fix discovery.\n\n[Specification](spec.md). Running python3 src/cli.py STRASSE prints [] instead of the matching Straße row. The search_items helper returns the right result.\n",
+    ".work/total/spec.md": "# Search command\n\nThe CLI accepts a query and prints matching rows as JSON, using Unicode case folding. STRASSE matches Straße. Keep the helper behavior.\n",
+    "tests/test_search.py": "import unittest\nfrom src.app import search_items\n\nclass SearchTests(unittest.TestCase):\n    def test_unicode_query(self):\n        rows = [{\"name\": \"Straße\", \"quantity\": 1}]\n        self.assertEqual(search_items(rows, \"STRASSE\"), rows)\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery",
+      "record": ".work/total/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Fix the search-command bug recorded in .work/total/status.md and finish the change.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_cli.py"
+        },
+        {
+          "kind": "regression_test",
+          "tests": "tests",
+          "source": "src/cli.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/app.py",
+            ".work/total/spec.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "(?s).+",
+              "exit_code": 1,
+              "output_pattern": "FAIL:"
+            },
+            {
+              "pattern": "(?s).+",
+              "exit_code": 0,
+              "output_pattern": "(?s)Ran [1-9].*OK"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/cli.py",
+    "tests",
+    ".work/total/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The public command python3 src/cli.py STRASSE returns the Straße row as JSON under the accepted Unicode case-folding behavior; preserve other supported query results."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Diagnose that the command's duplicate lowercase filtering is faulty while the existing search_items helper already works, and connect the command to correct behavior without damaging the helper."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Retain a unittest regression that executes the public CLI and checks a parsed user-visible result. A helper-only test does not cover the reported command failure."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Observe a focused intended assertion failure before the production repair and success afterward; retained tests must fail the original command and pass the finished command."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Complete delivery with the accepted specification intact and an accurate account of the user-facing repair and observed results."
+    }
+  ],
+  "grader_files": {
+    "checks/check_cli.py": "from pathlib import Path\nimport subprocess,sys,json\np=Path.cwd()/\"src/cli.py\"\nr=subprocess.run([sys.executable,str(p),\"STRASSE\"],capture_output=True,text=True,check=True)\nassert json.loads(r.stdout)==[{\"name\":\"Straße\",\"quantity\":1}]\n"
+  }
+}

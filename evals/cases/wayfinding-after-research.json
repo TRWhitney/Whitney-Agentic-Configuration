@@ -1,0 +1,76 @@
+{
+  "id": "wayfinding-after-research",
+  "tags": [
+    "expansion",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    "docs/research/csv.md": "# CSV output with zero data rows\n\nWith fieldnames set to name and quantity, csv.DictWriter.writeheader() writes a header row. Calling writerows([]) writes no data rows. A caller can invoke these operations separately. The current inventory stores item names and quantities locally.\n",
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export, empty-inventory behavior, and behavior when the destination file already exists. CSV with name and quantity columns is agreed. Empty-inventory behavior and existing-file behavior are both open and unblocked. Current question: empty-inventory behavior.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/export/status.md",
+      "substate": "wayfinding"
+    },
+    {
+      "kind": "message",
+      "prompt": "Before I choose the empty-inventory behavior, what do docs/research/csv.md and the current inventory code establish?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": false,
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Inspects both the supplied CSV research note and the current inventory implementation and correctly explains what each source establishes."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Explains that CSV can emit headings with zero data rows and that an empty stock total is zero, while the current code has no export function choosing empty-export behavior."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Keeps the choice between header-only export and refusal without file creation unresolved, rather than treating library capability as product agreement."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Returns to the existing export discussion with its accepted CSV columns and open destination-exists choice intact. Production code stays unchanged, wayfinding progress remains active, and nothing is published."
+    }
+  ],
+  "artifacts": []
+}

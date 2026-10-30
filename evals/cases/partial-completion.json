@@ -1,0 +1,107 @@
+{
+  "id": "partial-completion",
+  "tags": [
+    "implementation",
+    "agreed-work",
+    "question"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    return [item for item in items if query.casefold() in item[\"name\"].casefold()]\n",
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work implementation.\n\n[Accepted design](../../docs/planning/inventory/design.md). [Search ticket](tickets/01-search.md). [Export ticket](tickets/02-export.md).\n\nSearch is implemented and its checks passed. CSV export has not been implemented. Both features remain part of the agreed work.\n",
+    "docs/planning/inventory/design.md": "# Search and export\n\n**Status:** accepted\n\nsearch_items(items, query) returns case-insensitive substring matches in input order. An empty query returns all items.\n\nexport_rows(items) returns CSV text with a name,quantity header, input order, standard CSV quoting, and LF line endings. An empty inventory returns a header-only CSV. Inputs are validated before either function is called. File writing and interfaces are excluded. All design and ticketing are complete.\n",
+    ".work/inventory/tickets/01-search.md": "# Search names\n\n**Status:** done\n**Blocked by:** none\n\nImplement the [accepted design](../../../docs/planning/inventory/design.md). Case-insensitive matching, input order, and the empty-query checks passed.\n",
+    ".work/inventory/tickets/02-export.md": "# Return inventory CSV\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement export_rows(items) from the [accepted design](../../../docs/planning/inventory/design.md). Acceptance covers the header, input order, quoting, LF line endings, and header-only output for empty input. No export implementation exists yet.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "substate": null,
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Search is finished and its checks passed. Have we completed the search and export work?",
+      "checks": [
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "implementation",
+          "substate": null
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            ".work/inventory",
+            "docs"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "What remains to be done?",
+      "checks": [
+        {
+          "kind": "only_changed",
+          "paths": [
+            "src/app.py"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "implementation",
+          "substate": null
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            ".work/inventory",
+            "docs"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "not-complete",
+      "description": "Explain that the full search-and-export effort is unfinished even though search is implemented and its checks passed."
+    },
+    {
+      "id": "concrete-remainder",
+      "description": "On the follow-up, identify the missing CSV export and its header, order, quoting, LF-ending and empty-inventory requirements, followed by its verification and delivery."
+    },
+    {
+      "id": "question-scope",
+      "description": "Keep source and accepted planning records unchanged and the unfinished effort active. Do not start implementing export in response to either status question."
+    }
+  ]
+}

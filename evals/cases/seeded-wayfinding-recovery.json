@@ -1,0 +1,74 @@
+{
+  "id": "seeded-wayfinding-recovery",
+  "tags": [
+    "recovery",
+    "planning",
+    "wayfinding"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Export planning](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export and the empty-inventory behavior. CSV is agreed.\nThe next question is whether an empty inventory creates a header-only CSV file\nor refuses export without creating a file. This is unresolved and blocks the\nexport specification. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What should we decide next about inventory export?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:\\s*[^\\n]+"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Restores the current planning discussion and consults its linked saved sources rather than starting unrelated work. The response uses accepted CSV with name and quantity columns as context."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Identifies empty-inventory behavior as unresolved and explains the concrete alternatives of header-only file creation and refusal without creating a file."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Offers a reasoned recommendation and one main decision question, without representing the recommendation as an accepted answer."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps wayfinding planning active with its required compact progress line, leaves production code unchanged, and makes no external publication."
+    }
+  ],
+  "artifacts": []
+}

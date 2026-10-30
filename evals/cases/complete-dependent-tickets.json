@@ -1,0 +1,89 @@
+{
+  "id": "complete-dependent-tickets",
+  "tags": [
+    "expansion",
+    "completion"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-dependencies"
+  ],
+  "files": {
+    "checks/check_all.py": "from pathlib import Path\nimport csv, io, runpy\napp=runpy.run_path(str(Path.cwd()/'src/app.py'))\nitems=[{'name':'Straße, West','quantity':2},{'name':'Tea','quantity':1}]\nassert app['search_items'](items,'STRASSE')==items[:1]\nassert app['export_matches']([], '')=='name,quantity\\n'\nassert list(csv.reader(io.StringIO(app['export_matches'](items,'strasse'))))==[['name','quantity'],['Straße, West','2']]\nprint('Search and export checks passed.')\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match names by case-insensitive substring in input order. An empty query returns all items. Search uses Unicode case folding for supported names.\n\n## CSV export\n\nAdd export_matches(items, query), calling search_items to select rows before returning CSV text.\nUse name,quantity headings, input order, standard csv module quoting, and LF line endings.\nEmpty matches return a header-only CSV. File writing and interfaces are excluded.\nThe export ticket depends on the search ticket. All design and ticketing are accepted.\n\nProject checks: checks/check_all.py covers search and export.\n",
+    ".work/inventory/tickets/02-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement the accepted name-search behavior in the [accepted specification](../spec.md). Acceptance covers mixed-case matching, input order, empty queries, missing matches, and empty input. Project checks: checks/check_search.py.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Complete the accepted search and CSV export work.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_all.py"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_all\\.py",
+              "exit_code": 0,
+              "output_pattern": "Search and export checks passed"
+            }
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_complete_inventory.py"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/inventory/status.md",
+    ".work/inventory/tickets/01-export.md",
+    ".work/inventory/tickets/02-search.md"
+  ],
+  "rubric": [
+    {
+      "id": "complete-search",
+      "description": "Search matches Unicode case-insensitive substrings in input order and handles empty queries, absent matches, and empty input."
+    },
+    {
+      "id": "complete-export",
+      "description": "export_matches selects matching rows through the accepted search behavior and returns name,quantity CSV with standard quoting, LF endings, and a header-only empty result."
+    },
+    {
+      "id": "all-tickets",
+      "description": "Complete both dependent tickets in a valid order and keep their completion evidence and effort status accurate."
+    },
+    {
+      "id": "full-delivery",
+      "description": "Run the complete search-and-export checks and finish local delivery. A passing search alone or a claim of completion with export missing fails."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n",
+    "checks/check_complete_inventory.py": "from pathlib import Path\nimport runpy\napp=runpy.run_path(str(Path.cwd()/\"src/app.py\"))\nf=app[\"search_items\"]\nrows=[{\"name\":\"Straße lamp\",\"quantity\":2},{\"name\":\"Tea\",\"quantity\":1},{\"name\":\"STRASSE shade\",\"quantity\":3}]\nassert f(rows,\"strasse\")==[rows[0],rows[2]]\nassert f(rows,\"\")==rows and f(rows,\"missing\")==[] and f([],\"x\")==[]\nassert app[\"empty_message\"]()==\"No items saved.\"\nassert app[\"stock_total\"]([{\"quantity\":-3},{\"quantity\":5}])==2\n\nimport csv,io\ng=app['export_matches']\nassert g([], '')=='name,quantity\\n'\nrows=[{'name':'Straße, West','quantity':2},{'name':'Tea','quantity':1},{'name':'STRASSE '+chr(34)+'East'+chr(34),'quantity':3}]\ntext=g(rows,'strasse')\nassert list(csv.reader(io.StringIO(text)))==[['name','quantity'],[rows[0]['name'],'2'],[rows[2]['name'],'3']]\nassert '\\r' not in text and text.endswith('\\n')\nassert g(rows,'absent')=='name,quantity\\n'\nassert list(csv.reader(io.StringIO(g(rows,''))))==[['name','quantity']]+[[r['name'],str(r['quantity'])] for r in rows]\n"
+  }
+}

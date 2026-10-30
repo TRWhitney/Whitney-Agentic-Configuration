@@ -1,0 +1,100 @@
+{
+  "id": "related-feature-questions",
+  "tags": [
+    "planning",
+    "wayfinding",
+    "tickets"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export, empty-inventory behavior, and behavior when the destination file already exists. CSV with name and quantity columns is agreed. Empty-inventory behavior and existing-file behavior are both open and unblocked. Current question: empty-inventory behavior.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Two more export choices are unresolved: whether to include items whose quantity is zero, and whether to sort output alphabetically by item name.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Before choosing, which export questions remain open?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Adds zero-quantity inclusion and alphabetical ordering as open questions in the existing export feature record and updates its decision map/index."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Preserves the previously open empty-inventory and destination-exists questions and the accepted CSV name/quantity columns."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Does not turn either new question into an accepted answer and does not create a separate planning ticket for each related refinement."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The follow-up names all four open product choices clearly and usefully, without repeating a full planning map unnecessarily."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Keeps production source unchanged, planning active, and no work published."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

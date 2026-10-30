@@ -1,0 +1,73 @@
+{
+  "id": "gui-layout-and-wrapping",
+  "tags": [
+    "gui",
+    "visual-verification",
+    "layout"
+  ],
+  "purpose": "task",
+  "project_name": "fieldnotes",
+  "fixtures": [
+    "gui-project"
+  ],
+  "files": {
+    "app/components/preferences.js": "const preferences = [\n  {key:'format', label:'Format', options:['Plain text','Field report with observations']},\n  {key:'sharing', label:'Sharing and review permissions', options:['Only me','Field team and visiting researchers']}\n];\n\nexport function mountPreferences(root, notebook) {\n  root.innerHTML = preferences.map(pref => `<div class=\"preference-row\"><div class=\"preference-field\"><label for=\"${pref.key}\">${pref.label}</label><select class=\"preference-select\" id=\"${pref.key}\">${pref.options.map(option => `<option>${option}</option>`).join('')}</select></div><button class=\"apply\">Apply</button></div>`).join('');\n  const render = () => {\n    for (const pref of preferences) {\n      root.querySelector('#' + pref.key).value = notebook.current.preferences[pref.key];\n      root.querySelector('#' + pref.key).closest('.preference-row').querySelector('.apply').textContent = 'Apply';\n    }\n  };\n  for (const pref of preferences) {\n    const select = root.querySelector('#' + pref.key);\n    select.closest('.preference-row').querySelector('.apply').onclick = event => {\n      notebook.applyPreference(pref.key, select.value);\n      event.target.textContent = 'Applied';\n    };\n  }\n  notebook.subscribe(event => { if (event === 'document') render(); });\n  render();\n}\n",
+    "app/components/toolbar.js": "export function mountToolbar(root, notebook) {\n  root.innerHTML = `<button id=\"new\">New document</button><button id=\"rename\">Rename</button>\n<label for=\"search\">Find</label><input id=\"search\" type=\"search\" placeholder=\"Find a document\"><button id=\"clear\">Clear</button>`;\n  root.querySelector('#new').onclick = () => notebook.openDialog('new');\n  root.querySelector('#rename').onclick = () => notebook.openDialog('rename');\n  root.querySelector('#search').oninput = event => notebook.search(event.target.value);\n  root.querySelector('#clear').onclick = () => { root.querySelector('#search').value = ''; notebook.search(''); };\n}\n"
+  },
+  "artifacts": [
+    "app/index.html",
+    "app/app.css",
+    "app/app.js",
+    ".work/fieldnotes/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/fieldnotes/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the Fieldnotes document workspace using the accepted design.",
+      "checks": [
+        {
+          "kind": "browser",
+          "scenario": "layout",
+          "require_match": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "design",
+            "docs/accepted-design.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "alignment-and-grouping",
+      "description": "The finished repeated preference controls have the accepted vertical alignment and shared column edges. Related toolbar controls remain visually grouped with consistent spacing, even if all controls were already clickable."
+    },
+    {
+      "id": "wrapping-and-content",
+      "description": "At narrow widths and with longer content, controls keep meaningful order, labels stay associated with their controls, and toolbar groups wrap together with the accepted spacing."
+    },
+    {
+      "id": "visual-observation",
+      "description": "The candidate inspects actual rendered alignment, grouping and wrapping against the accepted design. Absence of overflow or successful clicks alone is insufficient."
+    },
+    {
+      "id": "preserved-function",
+      "description": "Preference selection, Apply, naming and Find remain usable; layout changes preserve the accepted hierarchy and interactions. Existing per-document text, titles, and applied preferences survive switching and reload."
+    }
+  ]
+}

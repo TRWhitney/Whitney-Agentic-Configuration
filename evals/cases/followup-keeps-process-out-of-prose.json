@@ -1,0 +1,139 @@
+{
+  "id": "followup-keeps-process-out-of-prose",
+  "tags": [
+    "prose-boundaries",
+    "leakage"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "sources/transfer.md": "# Pine to Lake transfer\n\nTake the Blue line from Pine toward Market. At Market, leave the Blue train and change to the Green line toward Lake. Lake is the third stop after Market on Green. Keep the same ticket for the second train; the route is one journey and does not require a new purchase.\n\n## Finding the connection\n\nFollow the Green line signs from the Blue arrival area into the transfer concourse. Departure boards there show Green trains toward Lake. Platform assignments are not included in this route sheet. Stay inside the ticket gates during the change. If you leave through the street exit, you have left the transfer route.\n\n## Arrival\n\nAt Lake, use the Library exit for the reading room. The River exit is on the opposite side of the station. This route sheet gives no departure times or service frequency.\n",
+    "docs/transfer-guide.md": "# Travel from Pine to Lake\n\nThe trip has two train rides and one change. You stay on Green until Lake, then walk from the station to the reading room.\n\n## Start at Pine\n\nTake Blue from Pine toward Market. Your change is at Market, where Green takes you onward to Lake. Keep your ticket handy through the journey.\n\n## Change at Market\n\nLeave the Blue train and follow the Green signs. Buy a second ticket before boarding Green toward Lake. The departure platform will be shown on the boards.\n\n## Reach the reading room\n\nGet off at Lake. Both exits take you directly to the reading room.\n",
+    "sources/access.md": "# Reading room access\n\nThe Library exit has stairs. The River exit has step-free access and reaches the reading room by a signed five-minute path along the north side of the station. Both paths end at the same entrance. The route sheet describes the shortest walking route.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Revise docs/transfer-guide.md from sources/transfer.md for a first visit to the reading room. Keep the route easy to follow on a phone, with the transfer as numbered steps and the arrival advice in a short paragraph. Use familiar words and keep the ticket advice beside the change of trains.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "sources/transfer.md": "# Pine to Lake transfer\n\nTake the Blue line from Pine toward Market. At Market, leave the Blue train and change to the Green line toward Lake. Lake is the third stop after Market on Green. Keep the same ticket for the second train; the route is one journey and does not require a new purchase.\n\n## Finding the connection\n\nFollow the Green line signs from the Blue arrival area into the transfer concourse. Departure boards there show Green trains toward Lake. The Green line toward Lake leaves from platform 4 at Market. Stay inside the ticket gates during the change. If you leave through the street exit, you have left the transfer route.\n\n## Arrival\n\nAt Lake, use the Library exit for the reading room. The River exit is on the opposite side of the station. This route sheet gives no departure times or service frequency.\n"
+      }
+    },
+    {
+      "kind": "message",
+      "prompt": "The route sheet now has the platform number. Add it where the traveler changes trains. Keep the short numbered transfer steps and the other journey details.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "file_equals",
+          "path": "sources/transfer.md",
+          "text": "# Pine to Lake transfer\n\nTake the Blue line from Pine toward Market. At Market, leave the Blue train and change to the Green line toward Lake. Lake is the third stop after Market on Green. Keep the same ticket for the second train; the route is one journey and does not require a new purchase.\n\n## Finding the connection\n\nFollow the Green line signs from the Blue arrival area into the transfer concourse. Departure boards there show Green trains toward Lake. The Green line toward Lake leaves from platform 4 at Market. Stay inside the ticket gates during the change. If you leave through the street exit, you have left the transfer route.\n\n## Arrival\n\nAt Lake, use the Library exit for the reading room. The River exit is on the opposite side of the station. This route sheet gives no departure times or service frequency.\n"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "A visitor uses a wheelchair. Compare sources/access.md with the route sheet and explain which exit they can use, whether the train route changes, and which source resolves the difference.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources/access.md"
+          ]
+        },
+        {
+          "kind": "file_equals",
+          "path": "sources/transfer.md",
+          "text": "# Pine to Lake transfer\n\nTake the Blue line from Pine toward Market. At Market, leave the Blue train and change to the Green line toward Lake. Lake is the third stop after Market on Green. Keep the same ticket for the second train; the route is one journey and does not require a new purchase.\n\n## Finding the connection\n\nFollow the Green line signs from the Blue arrival area into the transfer concourse. Departure boards there show Green trains toward Lake. The Green line toward Lake leaves from platform 4 at Market. Stay inside the ticket gates during the change. If you leave through the street exit, you have left the transfer route.\n\n## Arrival\n\nAt Lake, use the Library exit for the reading room. The River exit is on the opposite side of the station. This route sheet gives no departure times or service frequency.\n"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "The route and platform advice are approved. Add a one-sentence route summary above the numbered transfer steps so someone can check the line order at a glance. Keep the ticket and Library-exit advice, and make clear that the third stop count starts after Market. Add the step-free arrival option from our discussion alongside the Library route.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "file_equals",
+          "path": "sources/transfer.md",
+          "text": "# Pine to Lake transfer\n\nTake the Blue line from Pine toward Market. At Market, leave the Blue train and change to the Green line toward Lake. Lake is the third stop after Market on Green. Keep the same ticket for the second train; the route is one journey and does not require a new purchase.\n\n## Finding the connection\n\nFollow the Green line signs from the Blue arrival area into the transfer concourse. Departure boards there show Green trains toward Lake. The Green line toward Lake leaves from platform 4 at Market. Stay inside the ticket gates during the change. If you leave through the street exit, you have left the transfer route.\n\n## Arrival\n\nAt Lake, use the Library exit for the reading room. The River exit is on the opposite side of the station. This route sheet gives no departure times or service frequency.\n"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/transfer-guide.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The first guide sends the traveler from Pine on Blue to Market, then on Green toward Lake, keeping the same ticket and staying inside the gates. Correct the draft's second-ticket error. Do not invent a platform before the source update."
+    },
+    {
+      "id": "criterion-2",
+      "description": "After the update, add platform 4 for the Green departure at Market, preserving line order, destination, ticket and gate instructions. Keep these accepted facts in the final revision."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Correct the draft's arrival error: Lake is the third stop after Market and the Library exit serves the reading room; the River exit is on the opposite side. Preserve arrival advice through both followups and avoid invented schedules or frequency."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Every complete saved artifact reads as traveler instructions. The numbered transfer and short arrival paragraph should apply the requested style without change-request narration, writing preferences or compliance reports in any headings, tables, comments or other saved prose. Assess paraphrases as well as explicit statements."
+    },
+    {
+      "id": "criterion-5",
+      "description": "The platform followup and final route-summary request each produce meaningful revisions while preserving earlier accepted content. The final summary makes line order easy to check and the stop count clearly starts after Market. Keep source content and unrelated application behavior intact."
+    },
+    {
+      "id": "intervening-source-work",
+      "description": "The intervening comparison correctly distinguishes the shortest Library route with stairs from the step-free River route with a five-minute signed walk, without changing the train route. The final guide gives both useful arrival options. Apply source judgments and writing directions without narrating the comparison, source-checking process or author compliance in reader-facing prose."
+    }
+  ]
+}

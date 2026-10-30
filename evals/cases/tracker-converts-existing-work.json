@@ -1,0 +1,84 @@
+{
+  "id": "tracker-converts-existing-work",
+  "purpose": "task",
+  "tags": [
+    "main-procedure-paths"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "local_remote": true,
+  "tracker": "local",
+  "github_pr_state": null,
+  "github_issues": {
+    "10": "Unrelated name-search planning. Preserve its input-order decision."
+  },
+  "github_write_timeout": true,
+  "files": {
+    "docs/development.md": "# Development\n\nThe origin remote is a local Git mirror for example/inventory. The GitHub CLI provides issue\nand repository access for example/inventory. Project tracking is currently local.\n",
+    ".work/inventory-report/spec.md": "# Inventory report\n\nStatus: accepted\n\nShow stock totals and export item names and quantities as CSV. Inputs have validated\nnonnegative integer quantities; zero remains a valid stored quantity. Totals sum quantities,\nnot the number of item kinds. CSV retains input order, name,quantity headings, standard quoting\nand LF endings. Empty export writes only the heading. Existing items remain unchanged.\n",
+    ".work/inventory-report/status.md": "# Inventory report\n\nImplementation. [Accepted specification](spec.md), [map](map.md), [CSV study](research.md),\n[accepted report layout](prototype.md). [Totals ticket](tickets/01-totals.md) is complete;\n[CSV ticket](tickets/02-csv.md) is ready. The design is accepted and all tickets exist.\n\n## Continuation\n\nWorkflow: novel-work. State: implementation. Next work: CSV export. Totals are already verified.\nBranch: main. There are no task edits. No product decisions remain open.\n",
+    ".work/inventory-report/tickets/01-totals.md": "# Sum stock quantities\n\nStatus: complete\nBlocked by: none\n\nDelivered stock_total(items). For quantities 2, 3 and 0, return 5. Empty input returns zero.\nThe result was verified before this conversion; source remains src/app.py.\n",
+    ".work/inventory-report/tickets/02-csv.md": "# Export inventory CSV\n\nStatus: ready\nBlocked by: none\n\nDeliver the CSV behavior from [the specification](../spec.md), including quoted names,\nzero quantities, input order and header-only empty output. File writing and remote storage\nare excluded. This work is not implemented yet.\n",
+    ".work/inventory-report/map.md": "# Inventory report\n\n## Destination\n\nShow stock quantities and export the report as CSV.\n\n## Decisions so far\n\n- [Report requirements](spec.md): quantity totals and CSV behavior accepted.\n- [CSV investigation](research.md): use standard CSV quoting.\n- [Layout](prototype.md): accepted summary alongside item rows.\n\n## Not yet specified\n\nNone.\n\n## Out of scope\n\nRemote storage and file-writing commands.\n",
+    ".work/inventory-report/research.md": "# CSV quoting\n\nStandard quoting preserves commas, quotes and embedded newlines in item names. The local\nround-trip experiment checked all three and recovered the original values. Use LF line endings.\nThe accepted column names are name and quantity. [Specification](spec.md).\n",
+    ".work/inventory-report/prototype.md": "# Report layout\n\nStatus: accepted\n\nKeep the total quantity visible beside the item rows. The example shows three item kinds and\nfive total objects. The sample names and colors are flexible. [Runnable source](prototype.html)\ncan be opened directly in a browser. Production still needs stored-data integration and tests.\n",
+    ".work/inventory-report/prototype.html": "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><title>Inventory report prototype</title>\n<h1>Inventory report</h1><p>Prototype with sample data</p><button onclick=\"document.querySelector('#total').textContent='5 total objects'\">Show quantity total</button>\n<p id=\"total\">5 total objects</p><ul><li>Blue mug: 2</li><li>Field kit: 3</li><li>Plate: 0</li></ul></html>\n"
+  },
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Move the existing inventory-report work to GitHub in example/inventory so we can continue from its issues. The current records are under .work/inventory-report/.",
+      "checks": [
+        {
+          "kind": "tracker",
+          "name": "github"
+        },
+        {
+          "kind": "github_state",
+          "count": 4
+        },
+        {
+          "kind": "github_state",
+          "number": 10,
+          "body_pattern": "Unrelated name-search planning. Preserve its input-order decision."
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "selected-destination",
+      "description": "Use the explicitly requested example/inventory repository, check access and persist its GitHub tracker setting only as part of verified conversion. The task itself authorizes this tracker change; do not merely explain setup or treat it as a product-planning question."
+    },
+    {
+      "id": "complete-records",
+      "description": "Preserve accepted quantities versus item-kind counts, zero quantities, CSV order/headings/quoting/LF/empty behavior, exclusions, completed totals and pending export status, acceptance checks and useful continuation. Represent the single feature effort and its two logical implementation tickets without duplicating the unrelated issue. Use native sub-issue relationships for the implementation tickets, not textual parent links alone."
+    },
+    {
+      "id": "durable-documents",
+      "description": "Move misplaced map, CSV findings, prototype notes and runnable source into suitable repository documentation. Keep useful findings and accepted layout versus flexible examples, rewrite links to their actual destinations and retain runnable source. Issues link documentation rather than duplicating full documents."
+    },
+    {
+      "id": "recover-and-verify",
+      "description": "Handle the supplied first-create timeout by finding the issue actually saved before creating a duplicate. Read back destination issues/documents and compare with sources before removing original copies. Keep any unverified source and report incomplete conversion rather than deleting it or asserting completion. Actual actions and evidence establish verification, not a completion claim alone."
+    },
+    {
+      "id": "finish-conversion",
+      "description": "Finish the requested conversion with verified local tracking copies removed, conversion progress kept in Git metadata, moved/deleted tracked documents committed and remaining work clearly identified. Preserve operational source and unrelated issues; do not implement the pending export. Issue/PR actions use the supplied local service and Git uses the disposable mirror."
+    }
+  ]
+}

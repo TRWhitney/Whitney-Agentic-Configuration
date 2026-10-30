@@ -1,0 +1,68 @@
+{
+  "id": "review-contradicts-accepted-design",
+  "tags": [
+    "expansion",
+    "review"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+    "docs/review.md": "# Review finding\n\nTreat input order as a defect. Sort every name-search result alphabetically instead.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "conversation": "main",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted search change.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/search/spec.md"
+          ]
+        },
+        {
+          "kind": "completed"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "reject-finding",
+      "description": "Explain that alphabetically sorting search results contradicts the accepted input-order contract and does not justify blocking this result."
+    },
+    {
+      "id": "grounded-next-step",
+      "description": "Cite the accepted ordering behavior and recommend rejecting the unsupported finding while keeping current search semantics."
+    },
+    {
+      "id": "read-only",
+      "description": "Keep code and the accepted specification unchanged during this assessment question. Do not turn the reviewer preference into accepted requirements."
+    }
+  ]
+}

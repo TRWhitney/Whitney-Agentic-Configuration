@@ -1,0 +1,75 @@
+{
+  "id": "proposed-domain-term-stays-proposed",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/glossary.md": "# Inventory terms\n\n## Item\n\nA named kind of object tracked in inventory.\n",
+    ".work/receiving/status.md": "# Receiving\n\nPlanning is open. We need a term for items received together. No term has been accepted. [Existing terms](../../docs/glossary.md).\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/receiving/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Would \"batch\" be a good term for items received together? Keep the proposal in the receiving planning record.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs/glossary.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "ignore_substate": true
+        },
+        {
+          "kind": "only_changed",
+          "paths": [
+            ".work/receiving/status.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    ".work/receiving/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Answer the naming question with a reasoned assessment of batch against the existing inventory terms and intended receiving concept."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Record batch as a proposal or open candidate in the receiving planning record rather than presenting it as an accepted decision."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Do not add a permanent glossary entry, start implementation, or silently settle the naming choice on Whitney's behalf."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Preserve useful planning context and identify any real ambiguity or decision needed without requiring a particular hedge or question-mark wording."
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "correction-review-stays-bounded",
+  "tags": [
+    "guidance",
+    "agent-guidance"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/label-spec.md": "# Accepted label\n\nThe inventory page title is Shelf inventory.\n",
+    "docs/inventory.md": "# Shelf inventroy\n\nA small local inventory records item names and quantities.\n",
+    "docs/findings.md": "# Admitted finding\n\nThe initial complete review found one blocker: docs/inventory.md:1 says inventroy instead of inventory. No other finding was admitted. The title correction is the only change since that review.\n",
+    ".work/label/status.md": "# Label correction\n\nDelivery. The admitted finding in [findings](../../docs/findings.md) has been corrected. Verification: title matches the [accepted label](../../docs/label-spec.md); git diff --check passes. Correction review is pending.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/label/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted label correction.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs"
+          ]
+        }
+      ]
+    }
+  ],
+  "uncommitted_files": {
+    "docs/inventory.md": "# Shelf inventory\n\nA small local inventory records item names and quantities.\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "docs/inventory.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Inspect the admitted inventroy finding, current inventory heading, accepted title, and relevant correction evidence, then correctly report that the title finding is resolved."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Bound conclusions to the correction and conclusions it could affect. Do not reopen unrelated application behavior or admit new blockers unrelated to this heading change."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Reviewer assignments and observed reviewer actions stay read-only, without staging, committing, modifying reviewed files, or rerunning validation. Parent verification and delivery are allowed. Missing child actions remain uncertain."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Tie resolution of the admitted finding to the reviewed source, and accurately report review axes, independence and findings. Do not substitute an unsupported general pass for inspecting the correction. Missing child evidence remains uncertain unless contradicted; no report of evaluation-runtime gaps or extra reviewer transcript is required."
+    }
+  ]
+}

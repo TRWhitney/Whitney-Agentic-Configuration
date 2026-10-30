@@ -1,0 +1,205 @@
+{
+  "id": "separate-independent-commits",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [],
+  "files": {
+    "src/labels.py": "def shelf_label():\n    return \"Shelf\"\n",
+    "docs/labels.md": "# Labels\n\nShelf label: Shelf.\n",
+    "src/limits.py": "MAX_ITEMS = 10\n",
+    "docs/limits.md": "# Limits\n\nAt most 10 items.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted shelf-label and inventory-limit changes.",
+      "checks": [
+        {
+          "kind": "commit_groups",
+          "groups": [
+            [
+              "src/labels.py",
+              "docs/labels.md"
+            ],
+            [
+              "src/limits.py",
+              "docs/limits.md"
+            ]
+          ],
+          "uncommitted": []
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/labels.py",
+            "docs/labels.md",
+            "src/limits.py",
+            "docs/limits.md"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": false
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Add sorted_names(items) in src/ordering.py. Each item is a dictionary with a name string. Return the names alphabetically without changing the order of items in the supplied list.",
+      "checks": [
+        {
+          "kind": "commit_count",
+          "count": 4
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/sorted_names.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/labels.py",
+            "docs/labels.md",
+            "src/limits.py",
+            "docs/limits.md"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "session_commits"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Combine the three commits you just made into one commit, keeping all their changes.",
+      "checks": [
+        {
+          "kind": "commit_count",
+          "count": 2
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/sorted_names.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/labels.py",
+            "docs/labels.md",
+            "src/limits.py",
+            "docs/limits.md"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "session_commits"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Reset this branch to the parent of the combined commit and discard its changes.",
+      "checks": [
+        {
+          "kind": "commit_count",
+          "count": 1
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/reset.py"
+        },
+        {
+          "kind": "file_equals",
+          "path": "src/labels.py",
+          "text": "def shelf_label():\n    return \"Shelf\"\n"
+        },
+        {
+          "kind": "file_equals",
+          "path": "docs/labels.md",
+          "text": "# Labels\n\nShelf label: Shelf.\n"
+        },
+        {
+          "kind": "file_equals",
+          "path": "src/limits.py",
+          "text": "MAX_ITEMS = 10\n"
+        },
+        {
+          "kind": "file_equals",
+          "path": "docs/limits.md",
+          "text": "# Limits\n\nAt most 10 items.\n"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "session_commits"
+        }
+      ]
+    }
+  ],
+  "uncommitted_files": {
+    "src/labels.py": "def shelf_label():\n    return \"Your shelf\"\n",
+    "docs/labels.md": "# Labels\n\nShelf label: Your shelf.\n",
+    "src/limits.py": "MAX_ITEMS = 20\n",
+    "docs/limits.md": "# Limits\n\nAt most 20 items.\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "src/labels.py",
+    "docs/labels.md",
+    "src/limits.py",
+    "docs/limits.md",
+    "src/ordering.py"
+  ],
+  "rubric": [
+    {
+      "id": "separate-outcomes",
+      "description": "On the first turn, deliver two independently usable commits, one pairing shelf-label code and documentation and one pairing inventory-limit code and documentation. Preserve the starting commit."
+    },
+    {
+      "id": "independent-feature",
+      "description": "On the second turn, implement sorted_names as a new independent commit, preserving the earlier label and limit commits and behavior. Do not amend the earlier commits merely because they were made in this session."
+    },
+    {
+      "id": "requested-squash",
+      "description": "On the third turn, combine the three new commits into one, preserving their complete content and the starting commit. This explicit history request tests execution and saved-ID updates, not whether the skill chooses to squash independent work."
+    },
+    {
+      "id": "requested-reset",
+      "description": "On the final turn, reset to the combined commit's parent and discard its changes. Restore the original shelf label and limit, remove sorting work, and leave a clean tree. The reset request is the authorization for this history change."
+    },
+    {
+      "id": "current-record",
+      "description": "After every turn, the current conversation records exactly the surviving commits it made in this repository. Replace all old IDs after squash and remove the discarded ID after reset; preserve unrelated conversation records."
+    },
+    {
+      "id": "honest-delivery",
+      "description": "Report the actual commits, history changes, verification and final tree accurately at each turn. Do not claim publication."
+    }
+  ],
+  "grader_files": {
+    "checks/sorted_names.py": "from pathlib import Path\nfrom copy import deepcopy\nimport runpy\napp = runpy.run_path(str(Path.cwd() / \"src/ordering.py\"))\nitems = [{\"name\": \"Pear\"}, {\"name\": \"Apple\"}, {\"name\": \"Apple\"}]\nbefore = deepcopy(items)\nassert app[\"sorted_names\"](items) == [\"Apple\", \"Apple\", \"Pear\"]\nassert items == before\nassert app[\"sorted_names\"]([]) == []\n",
+    "checks/reset.py": "from pathlib import Path\nassert not (Path.cwd() / \"src/ordering.py\").exists()\n"
+  }
+}

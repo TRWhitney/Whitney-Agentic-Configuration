@@ -1,0 +1,7 @@
+{
+  "README.md": "# Maple\n\nMaple is a small inventory project.\n",
+  "LICENSE": "Sample project notice for Maple. Copyright Example Studio.\n",
+  "AGENTS.md": "# Project\n\nProject name: Maple.\n",
+  ".github/workflows/check.yml": "name: Maple\non: push\njobs: {}\n",
+  "docs/project.md": "# Maple\n\nMaple records item names and quantities.\n"
+}

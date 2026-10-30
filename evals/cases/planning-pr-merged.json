@@ -1,0 +1,83 @@
+{
+  "id": "planning-pr-merged",
+  "tags": [
+    "github",
+    "planning",
+    "progression"
+  ],
+  "tracker": "github",
+  "github_pr_state": "MERGED",
+  "fixtures": [
+    "inventory",
+    "search-project-checks"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n",
+    "docs/planning/search/design.md": "# Name search design\n\n**Status:** accepted\n\nAll design and ticketing are complete. Add search_items(items, query) to src/app.py.\nReturn names containing the query using Unicode case folding, in input order. In particular,\nSTRASSE matches Straße. An empty query returns all items. No match or empty input returns [].\nInputs are already validated. Existing empty_message and stock_total behavior stays unchanged.\n\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement name search from issue #11.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_search.py"
+        },
+        {
+          "kind": "tracker",
+          "name": "github"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Reads the authoritative GitHub specification and implementation ticket and follows the selected GitHub tracker without creating a competing local tracker."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Verifies that the actual linked planning-document PR is merged and proceeds with implementation without demanding a redundant planning review."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Implements Unicode case-insensitive substring search in input order, including STRASSE matching Straße, empty query returning all items, missing matches returning [], and empty input returning []."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Runs current search verification successfully and preserves empty_message and stock_total behavior. A claimed pass without observed successful execution does not satisfy verification."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Updates useful completion information in the GitHub issues and reports the delivered search behavior and verification result. Accepts a later valid workflow state; does not require stopping in implementation."
+    }
+  ],
+  "artifacts": [
+    "src/app.py"
+  ],
+  "github_issues": {
+    "10": "# Name search\n\n**Status:** accepted\n\nAll design and ticketing are complete. Add search_items(items, query) to src/app.py.\nReturn names containing the query using Unicode case folding, in input order. In particular,\nSTRASSE matches Straße. An empty query returns all items. No match or empty input returns [].\nInputs are already validated. Existing empty_message and stock_total behavior stays unchanged.\n\nRepository planning documentation was committed and submitted in [planning-document pull request #12](https://github.com/example/inventory/pull/12), currently MERGED. Search implementation has not started.\n\n[Implementation ticket #11](https://github.com/example/inventory/issues/11).\n\n[Repository design](https://github.com/example/inventory/blob/main/docs/planning/search/design.md).\n",
+    "11": "# Search inventory names\n\n**Blocked by:** none\n\nReturn matching inventory records in input order using the [accepted specification](https://github.com/example/inventory/issues/10). Empty query returns all records; no matches and empty input return an empty list. Unicode case folding includes STRASSE matching Straße. Existing empty_message and stock_total behavior is unchanged.\n"
+  },
+  "github_issue_labels": {
+    "11": [
+      "ready-for-agent"
+    ]
+  }
+}

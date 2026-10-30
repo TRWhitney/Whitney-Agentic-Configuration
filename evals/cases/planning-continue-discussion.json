@@ -1,0 +1,95 @@
+{
+  "id": "planning-continue-discussion",
+  "tags": [
+    "planning",
+    "agreed-work",
+    "continuation"
+  ],
+  "files": {},
+  "fixtures": [
+    "inventory",
+    "search-export-planning"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null,
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "What still needs deciding in the search and export design?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Okay, continue.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The first answer identifies export format and empty-inventory behavior as unresolved, while retaining accepted case-insensitive search behavior."
+    },
+    {
+      "id": "criterion-2",
+      "description": "The follow-up advances a concrete export decision with relevant choices, tradeoffs, and a main question instead of implementing the ready search ticket."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Does not interpret Okay, continue as acceptance of CSV, JSON, or any proposed empty-input behavior. The design still represents unanswered choices honestly."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps the whole search-and-export effort in planning, preserves production source, and does not publish work."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/inventory/design.md",
+    ".work/inventory/status.md"
+  ]
+}

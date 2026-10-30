@@ -1,0 +1,65 @@
+{
+  "id": "unsupported-review-does-not-block",
+  "tags": [
+    "guidance",
+    "guidance-followup"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    ".work/total/spec.md": "# Inventory total\n\nAccepted: stock_total takes a list of item mappings with integer quantities and returns their sum. Strings and arbitrary objects are not supported inputs. \n",
+    ".work/total/status.md": "# Inventory total\n\nCurrent state: delivery. Validation passed. Review findings need assessment against the [accepted specification](spec.md).\n",
+    "docs/review.md": "# Proposed blockers\n\n1. Replace the sum expression with an explicit loop because I find loops easier to read. \n2. Add support for passing a string instead of a list. A caller might try it later. \n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/total/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted inventory-total change.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            ".work/total/spec.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Reject changing sum to an explicit loop as a blocker because it is a stylistic preference with no demonstrated incorrect supported result."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Reject adding string inputs as a blocker because the accepted boundary supports lists of mappings with integer quantities and explicitly excludes strings/arbitrary objects."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Explain each decision from concrete accepted evidence rather than accepting reviewer assertions or simply declaring both nonblocking."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Preserve the accepted implementation and specification, resolve the proposed blockers from supported behavior, and finish delivery with actual current checks and review findings. Do not add unsupported string-input behavior or claim completion while accepted work remains."
+    }
+  ]
+}

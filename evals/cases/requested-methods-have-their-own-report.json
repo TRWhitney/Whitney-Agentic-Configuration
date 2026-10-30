@@ -1,0 +1,60 @@
+{
+  "id": "requested-methods-have-their-own-report",
+  "tags": [
+    "prose-boundaries",
+    "leakage"
+  ],
+  "fixtures": [
+    "inventory",
+    "prose-camera"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Write docs/camera-guide.md for a photography beginner using the captions and source cards. Also write docs/methods.md explaining what you compared and which caption errors you corrected, with source links.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/camera-guide.md",
+    "docs/methods.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The guide correctly explains aperture as the lens opening controlling admitted light, shutter speed as exposure duration with motion-blur implications, and ISO's brightness/noise relationship."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Resolve the unreliable captions using the source cards; do not preserve the swapped aperture/shutter definitions or the false ISO-as-lens definition."
+    },
+    {
+      "id": "criterion-3",
+      "description": "The guide serves the photography beginner and does not narrate agent checking, instruction compliance, or caption-editing process as photography content."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The separate requested methods report explains the actual comparisons and all three caption corrections, with valid links to the supporting cards. Do not suppress relevant methods as forbidden process leakage."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Keep source records and unrelated application behavior intact, and do not claim comparisons unsupported by the observed work or finished report."
+    }
+  ]
+}

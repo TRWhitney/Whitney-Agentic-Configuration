@@ -1,0 +1,108 @@
+{
+  "id": "cancel-without-replacement",
+  "tags": [
+    "expansion",
+    "wayfinding"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-file-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nThe agreed work includes CSV export, empty-inventory behavior, and behavior when the destination file already exists. CSV with name and quantity columns is agreed. Empty-inventory behavior and existing-file behavior are both open and unblocked. Current question: empty-inventory behavior.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/export/status.md",
+      "substate": "wayfinding"
+    },
+    {
+      "kind": "message",
+      "prompt": "Cancel export planning. Keep its existing files.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs/planning/export"
+          ]
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": true
+        }
+      ],
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "What does stock_total([]) return in the current code?",
+      "checks": [
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs/planning/export"
+          ]
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "integration": false,
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Cancels and clears the current conversation navigation progress without starting a replacement workflow for export."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Preserves the existing export planning files and production source. A small cancellation update to the effort index is acceptable."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Answers the follow-up accurately: the current stock_total function returns 0 for an empty list, supported by inspecting or evaluating current code."
+    },
+    {
+      "id": "criterion-4",
+      "description": "The follow-up is handled as a code question without reviving cancelled export decisions or a wayfinding progress line, and no external publication occurs."
+    }
+  ],
+  "artifacts": []
+}

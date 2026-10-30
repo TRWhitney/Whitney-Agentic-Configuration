@@ -1,0 +1,125 @@
+{
+  "id": "changed-decision-tickets",
+  "tags": [
+    "planning",
+    "tickets",
+    "correction"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-text-planning"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning.\n\n[Accepted design](../../docs/planning/export/design.md). [Specification](spec.md). [Implementation](tickets/01-export-text.md). [Tests](tickets/02-export-tests.md).\n\nThe accepted specification includes a header row and refuses empty input. Both implementation tickets have been written. Implementation has not started.\n",
+    "docs/planning/export/design.md": "# Inventory export\n\n**Status:** resolved\n**Blocked by:** none\n**Type:** discussion\n\n## Questions\n\nNone.\n\n## Accepted answers\n\nexport_rows(items) accepts a list of records with name strings and nonnegative integer quantity values. It returns CSV text with name and quantity fields in input order. Use the standard csv module for quoting, a comma separator, and LF line endings. Inputs are already validated. Empty input raises ValueError(\"Inventory is empty.\") without returning CSV text. There is no file writing or interface work. Include the name,quantity header row.\n\n## Evidence\n\n[Specification](../../../.work/export/spec.md).\n",
+    "docs/planning/export/map.md": "# Inventory export\n\n## Destination\n\nReturn inventory CSV text from export_rows(items).\n\n## Decisions so far\n\n- [CSV output](design.md): name,quantity header, input order, standard CSV quoting, LF line endings.\n- [Empty input](design.md): raise ValueError(\"Inventory is empty.\").\n\n## Not yet specified\n\nNone.\n\n## Out of scope\n\nFile writing, an interface, and input validation.\n",
+    ".work/export/spec.md": "# Inventory export\n\n**Status:** accepted\n\nexport_rows(items) accepts a list of records with name strings and nonnegative integer quantity values. It returns CSV text with name and quantity fields in input order. Use the standard csv module for quoting, a comma separator, and LF line endings. Inputs are already validated. Empty input raises ValueError(\"Inventory is empty.\") without returning CSV text. There is no file writing or interface work. Include the name,quantity header row.\n",
+    ".work/export/tickets/01-export-text.md": "# Return inventory CSV text\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement export_rows(items) from the [specification](../spec.md).\n\n## Acceptance checks\n\n- Include the name,quantity header and preserve input order.\n- Quote commas, quotes, and newlines using the standard csv module. Use LF line endings.\n- Empty input raises ValueError(\"Inventory is empty.\") without returning CSV text.\n",
+    ".work/export/tickets/02-export-tests.md": "# Verify inventory CSV output\n\n**Status:** ready-for-agent\n**Blocked by:** [CSV implementation](01-export-text.md)\n\nUse the [specification](../spec.md).\n\n## Acceptance checks\n\n- Acceptance covers header names, input order, CSV quoting, and LF line endings.\n- Empty input raises ValueError(\"Inventory is empty.\") without returning CSV text.\n",
+    ".work/totals/tickets/01-stock-total.md": "# Keep inventory totals\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nstock_total(items) sums quantity values. An empty list totals zero; positive quantities are added.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null,
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Change the accepted empty-input behavior: export_rows([]) should return a header-only CSV, exactly \"name,quantity\\n\", instead of raising an error. Keep the accepted non-empty behavior.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/totals/tickets/01-stock-total.md",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "What should the implementation and its tests now do for empty input?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/totals/tickets/01-stock-total.md",
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Updates the accepted design, specification, map, effort index, and both existing affected tickets so each current statement of empty-input behavior returns exactly name,quantity followed by LF and no data rows."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Removes or clearly marks the old empty-input exception expectation as superseded. No active acceptance criterion still expects ValueError for empty input."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Preserves non-empty records in input order, CSV quoting for commas/quotes/newlines, the agreed header, and LF line endings across the implementation and verification requirements."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Explains the new implementation and test expectation accurately in the follow-up and leaves unrelated totals work, inventory documentation, and production code unchanged."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Keeps this as planning of the existing export feature without creating redundant feature tickets or publishing work."
+    }
+  ],
+  "artifacts": [
+    ".work/export/status.md",
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/spec.md",
+    ".work/export/tickets/01-export-text.md",
+    ".work/export/tickets/02-export-tests.md"
+  ]
+}

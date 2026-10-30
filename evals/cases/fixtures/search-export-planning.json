@@ -1,0 +1,5 @@
+{
+  ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work planning.\n\nAgreed work includes name search and inventory export.\n[Design](../../docs/planning/inventory/design.md) still has an open export decision.\n[Search ticket](tickets/01-search.md) has no dependencies.\n",
+  ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nMatch item names without regard to case and return matching items in input order.\nThe [design](../../../docs/planning/inventory/design.md) covers all agreed work.\n",
+  "docs/planning/inventory/design.md": "# Search and export\n\nThe agreed work includes both name search and inventory export.\nSearch uses case-insensitive substring matching in input order.\nExport remains unresolved: CSV or JSON, and how empty inventories behave.\nNo format has been accepted. The complete specification and remaining tickets\ncannot be written until those decisions settle.\n"
+}

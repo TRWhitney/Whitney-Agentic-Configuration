@@ -1,0 +1,71 @@
+{
+  "id": "incomplete-design",
+  "tags": [
+    "planning",
+    "agreed-work"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": null,
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "The search ticket has no dependencies. Please continue.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-planning"
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Reads the agreed work and identifies both unresolved export decisions: output format and empty-inventory behavior."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Explains why a dependency-free search ticket does not make the full agreed design ready for implementation."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Continues with a concrete export design discussion, gives relevant alternatives or a recommendation, and asks for the needed product decision instead of merely saying planning is incomplete."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps both search and export in the agreed work, remains in planning, and leaves production code unchanged without external publication."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/inventory/design.md",
+    ".work/inventory/status.md"
+  ]
+}

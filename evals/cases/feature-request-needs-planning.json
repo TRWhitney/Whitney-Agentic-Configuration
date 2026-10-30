@@ -1,0 +1,53 @@
+{
+  "purpose": "task",
+  "fixtures": [
+    "inventory"
+  ],
+  "tags": [
+    "accepted-expansion"
+  ],
+  "id": "feature-request-needs-planning",
+  "files": {},
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Add inventory sharing so the field team can work together. Some people should only look at the inventory and others should be able to change it. We sometimes work without an internet connection.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "ignore_substate": true
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "choose-planning",
+      "description": "Recognize a new feature with unsettled product choices and start planning. No workflow state, design, tickets, or list of open decisions is supplied."
+    },
+    {
+      "id": "useful-discussion",
+      "description": "Discuss a concrete decision needed for sharing, such as who may edit, what offline collaborators can do, or how conflicting edits are resolved. Explain meaningful alternatives and ask for the user decision. Do not require a particular first question."
+    },
+    {
+      "id": "no-invented-decisions",
+      "description": "Preserve shared team access, viewing versus editing, and offline use as requested needs. Do not silently choose account, permission, synchronization, or conflict behavior as accepted requirements."
+    },
+    {
+      "id": "no-premature-code",
+      "description": "Leave production code unchanged while these product choices are unresolved and do not publish work."
+    }
+  ]
+}

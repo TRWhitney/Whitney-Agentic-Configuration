@@ -1,0 +1,130 @@
+# Recorded eval failures
+
+The corpus contains 151 cases. This report reconciles the 24 saved studies through
+[rework commit trials](rework-commit-trials.md). It adds no live runs or new verdicts.
+
+There are **12 named cases with a confirmed failure and no later case-level pass recorded**.
+Twenty-three other cases have an earlier failure followed by a pass. Three cases have disputed
+negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
+Some definitions and instructions changed between studies; older findings need a fresh baseline.
+
+"Why it failed" below means the observed violation. The records do not establish which wording
+or model behavior caused it. Current case links identify where to rerun; study links identify
+the evidence and criteria used at the time.
+
+## Failures needing follow-up
+
+### Planning records and workflow state
+
+| Case and evidence | Why it failed | Evidence needed to close the finding |
+| --- | --- | --- |
+| [agent-created-state-compaction](../../evals/cases/agent-created-state-compaction.json). [Assessment](evaluation-methods.md#validation), [later extension](workflow-connection-evals.md#outcomes). [Latest run](planning-state-corrections.md#approved-version). | Earlier attempts omitted planning records. The approved version created useful records and recovered the latest answer after compaction, but created a second work index and left the existing one stale. The saved-link check failed; the model judge missed the reuse failure. | Reuse the existing work record and link its map and feature requirements before asking. Preserve the latest accepted answer across compaction. |
+
+### Evidence cleanup and saved conclusions
+
+| Case and evidence | Why it failed | Evidence needed to close the finding |
+| --- | --- | --- |
+| [results-survive-cleanup](../../evals/cases/results-survive-cleanup.json). [Retention study](evidence-retention-evals.md#results), [follow-up](gui-verification-evals.md#results). | Saved individual outcomes and reasons but retained finished raw batch JSON. The later conversation could reopen it. Concise-retention failed. The earlier judge's demand for the literal phrase "attempt 1" is disputed and is not needed to establish this failure. | Preserve every attempt's outcome, reason and assessment status in the concise report, then remove finished raw data before delivery. |
+| [diagnosis-keeps-failed-attempt](../../evals/cases/diagnosis-keeps-failed-attempt.json). [Retention study](evidence-retention-evals.md#results). | Kept unresolved evidence, reproduced the original error after the mapping arrived and saved its cause, but left both raw captures after declaring diagnosis complete. Cleanup-and-boundary failed. | Keep captures while diagnosis needs them; save the supported finding and reproduction, then remove both finished captures. |
+| [explicit-retention-outside-git](../../evals/cases/explicit-retention-outside-git.json). [Retention study](evidence-retention-evals.md#results). | Honored retention of the requested failed capture and later deleted it with permission, but left the unrelated retry capture and did not save the confirmed diagnosis. Useful-conclusion and selective-cleanup failed. | Save the diagnosis, remove finished unrelated evidence and retain only the explicitly requested capture until inspection ends. |
+| [cleanup-keeps-other-conversation-evidence](../../evals/cases/cleanup-keeps-other-conversation-evidence.json). [Follow-up](gui-verification-evals.md#results). | Kept the other conversation's pending evidence and obtained its eventual review, but left the finished export workflow active. The completed check failed; retained-conclusions was uncertain because native reviewer findings were unavailable. | Complete the finished conversation without replacing or completing the other conversation's pending workflow; retain useful findings and finish cleanup after each review. |
+| [cleanup-preserves-supplied-input](../../evals/cases/cleanup-preserves-supplied-input.json). [Follow-up](gui-verification-evals.md#results). | Preserved the supplied input and useful diagnosis but left the generated finished log. Finished-log-removed failed. The earlier raw-copy objection was disputed because a brief example was permitted. | Preserve the original supplied CSV and concise reproduction while removing the finished generated log. |
+
+These failures do not establish that raw evidence entered Git. The retention study's seven
+primary cases passed every no-raw-evidence check.
+
+### Tests, publication and review decisions
+
+| Case and evidence | Why it failed | Evidence needed to close the finding |
+| --- | --- | --- |
+| [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | Establish the original baseline, replace incidental assertions with retained public-behavior tests and verify the refactor without preserving redundant calls. |
+| [github-create-timeout](../../evals/cases/github-create-timeout.json). [Ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). | Created no export issue. Issue-content and one-owner failed; the intended ambiguous-create recovery was never exercised. Earlier attempts had passed. | Create the required issue, recover the saved issue after timeout and show exactly one new planning issue with the unresolved product choice. The newer migration case's pass is a different task. |
+| [review-reports-outside-data-loss](../../evals/cases/review-reports-outside-data-loss.json). [Follow-up](procedure-followup-evals.md#outcomes). | Verified and reported the credible destructive path, but left it as a follow-up without asking how its repair should be handled. Ownership-and-report failed. It made no unrelated repair; review-evidence remained uncertain. | Report the supported risk and seek a decision about handling the repair, while completing the authorized work and avoiding an unrequested repair. |
+
+### Prototypes, interface design and research
+
+| Case and evidence | Why it failed | Evidence needed to close the finding |
+| --- | --- | --- |
+| [interactive-prototype-comparison](../../evals/cases/interactive-prototype-comparison.json). [Follow-up](procedure-followup-evals.md#outcomes), [latest extension](integration-and-acceptance-evals.md#outcomes). | An earlier valid attempt never used the available browser runner after direct launches failed. The latest attempt found the runner and reproduced the hidden summary but never repaired it. Direct-operation, feedback and failed-revision-diagnosis failed. Acceptance also failed: the selected prototype stayed broken, rejected inline source remained, and required versus flexible details were saved but not presented before confirmation. Parent inspection corrected that last point in the judge's account. | Repair and operate the selected prototype, apply the feedback, present the interpretation before confirmation and retain accepted runnable source while removing rejected alternatives. |
+| [new-interface-design](../../evals/cases/new-interface-design.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Built HTML and styles before writing the design plan. Specific-design-plan failed. Both proposals were operable, visually inspected and refined, and neither was treated as accepted. | Produce and critique the task-grounded design plan before building, then operate, inspect and refine the resulting proposals. |
+| [complete-research-investigation](../../evals/cases/complete-research-investigation.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Source inspection and probes supported the storage recommendation, but the existing report still said pending and the planning records remained unchanged. Usable-combined-findings failed. Independent-investigation-and-verification was uncertain because child details were unavailable. | Save the combined findings, sources, conditions and limits in the existing report and carry the planning consequences into its linked records. Keep unresolved product choices open. |
+
+## Earlier failures followed by a pass
+
+Later success records observed variation or a tested change. It does not establish a general fix.
+
+| Case | Earlier failure | Later evidence |
+| --- | --- | --- |
+| [amend-preserves-earlier-edit](../../evals/cases/amend-preserves-earlier-edit.json) | Earlier runs omitted retained tests or created new commits. The earlier stock and message pairing did not establish one logical unit. | The corrected case adds regression coverage for the same fix. All three final attempts preserved the fix and tests in the amended commit. [Rework trials](rework-commit-trials.md#case-corrections). |
+| [narrow-correction](../../evals/cases/narrow-correction.json) | Answered the question correctly, then made the approved correction in a new commit. | All three final attempts kept the question read-only and amended the correction. [Rework trials](rework-commit-trials.md#final-confirmation). |
+| [narrow-prose-correction](../../evals/cases/narrow-prose-correction.json) | Made exact corrections in new commits. | All three final attempts retained the corrections in one amended guide commit and answered without further edits. [Rework trials](rework-commit-trials.md#final-confirmation). |
+| [review-finding-rework](../../evals/cases/review-finding-rework.json) | Repaired search in a new commit. Child-review details were unavailable. | All three final attempts amended the reviewed commit, preserved existing behavior and passed correction review. [Rework trials](rework-commit-trials.md#final-confirmation). |
+| [wayfinding-multiple-answers](../../evals/cases/wayfinding-multiple-answers.json) | Saved answers but stopped without the next question. | The applied reply builder and guide passed all three final attempts, saving answers and asking the remaining question. [Wayfinding trials](wayfinding-answer-trials.md#final-outcomes). |
+| [wayfinding-partial-answer](../../evals/cases/wayfinding-partial-answer.json) | Saved partial agreement without continuing the discussion. | All three final attempts preserved the unanswered detail and asked the next question. [Wayfinding trials](wayfinding-answer-trials.md#final-outcomes). |
+| [wayfinding-reopens-dependent-answer](../../evals/cases/wayfinding-reopens-dependent-answer.json) | Omitted progress after a correction. The former feedback criterion also rejected routine refusal wording; that expectation was corrected. | All three final attempts removed obsolete success feedback, preserved the remaining choice and asked the next question. [Wayfinding trials](wayfinding-answer-trials.md#assessment-corrections). |
+| [wayfinding-revised-answer](../../evals/cases/wayfinding-revised-answer.json) | Omitted final progress or stopped at a correction recap. | All three final attempts recorded the correction and asked the next question. Requested later recaps retained progress. [Wayfinding trials](wayfinding-answer-trials.md#final-outcomes). |
+| [implementation-conflicts-with-documentation](../../evals/cases/implementation-conflicts-with-documentation.json) | Reported the mismatch but stayed in delivery instead of returning to implementation. [Expansion](workflow-corpus-expansion.md#results), [assessment](evaluation-methods.md#validation). | Repaired accepted Unicode behavior and validated it without weakening the guide. [Ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). |
+| [verification-directions-stay-out-of-guide](../../evals/cases/verification-directions-stay-out-of-guide.json) | Added source-check compliance narration and a caption-correction log to the reader's guide. [Prose study](workflow-prose-boundary-evals.md#results). | The repeat, later guide revisions and all three camera-guide revisions passed. [Correction study](correction-and-judgment-evals.md#task-results), [ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). |
+| [gui-state-changes](../../evals/cases/gui-state-changes.json) | Completion-evidence failed when the agent claimed completion without observing corrected-input and matching/restored search transitions. [Earlier input](workflow-eval-realism.md#grading-corrections). | A fresh candidate observed those transitions and passed with unchanged skills. [Later outcome](workflow-eval-realism.md#latest-observed-outcomes). |
+| [wayfinding-complete](../../evals/cases/wayfinding-complete.json) | Left saved wayfinding active after its discussion had finished. | The repeat exited wayfinding while planning continued. [Baseline](workflow-eval-baseline.md#planning-records-and-completion). |
+| [seeded-wayfinding-recovery](../../evals/cases/seeded-wayfinding-recovery.json) | Original instructions restored the question and state but omitted progress. | The retained global-entry and wayfinding instruction pair passed repeated attempts. [Baseline](workflow-eval-baseline.md#results). |
+| [separate-conversations](../../evals/cases/separate-conversations.json) | Original instructions omitted progress when returning to the conversation. | Retained-pair attempts passed. [Baseline](workflow-eval-baseline.md#results). |
+| [wayfinding-follow-up](../../evals/cases/wayfinding-follow-up.json) | Original instructions omitted progress on a follow-up question. | Retained-pair attempts passed. [Baseline](workflow-eval-baseline.md#results). |
+| [wayfinding-short-replies](../../evals/cases/wayfinding-short-replies.json) | Original instructions lost progress through short follow-ups. | Retained-pair attempts passed. [Baseline](workflow-eval-baseline.md#results). |
+| [wayfinding-counts](../../evals/cases/wayfinding-counts.json) | Original instructions omitted progress on the recap after an answer. | Retained-pair attempts passed and updated counts. [Baseline](workflow-eval-baseline.md#results). |
+| [wayfinding-stop](../../evals/cases/wayfinding-stop.json) | Original instructions omitted the initial active-wayfinding line. Cancellation itself succeeded. | Retained-pair attempts passed. [Baseline](workflow-eval-baseline.md#results). |
+| [explicit-compaction](../../evals/cases/explicit-compaction.json) | Original instructions omitted progress after confirmed compaction. | Retained-pair integration attempts passed after confirmed compaction. [Baseline](workflow-eval-baseline.md#results). |
+| [requirements-change-during-implementation](../../evals/cases/requirements-change-during-implementation.json). [Planning study](workflow-boundary-evals.md#further-cases), [assessment](evaluation-methods.md#validation). | Returned to planning but updated only the work record. The specification still said decisions were settled and the export ticket remained ready against the old requirements. | The approved version passed every check and criterion. [Planning-state corrections](planning-state-corrections.md#approved-version). |
+| [start-wayfinding-from-conversation](../../evals/cases/start-wayfinding-from-conversation.json). [Assessment](evaluation-methods.md#validation). | Started the discussion without creating the linked decision map and feature planning record needed to preserve it. | The approved version passed every check and criterion. [Planning-state corrections](planning-state-corrections.md#approved-version). |
+| [tracker-separate-conversations](../../evals/cases/tracker-separate-conversations.json). [Assessment](evaluation-methods.md#validation). | Explained GitHub tracking without its required delivery of changed repository planning documents. | The approved version passed every check and criterion. [Planning-state corrections](planning-state-corrections.md#approved-version). |
+| [damaged-navigation-record](../../evals/cases/damaged-navigation-record.json). [Earlier findings](planning-state-corrections.md#approved-version). | Earlier attempts guessed replacement state or omitted the recovery explanation after stopping safely. | The navigator now points to the selected tracker's record guidance and asks for a recovery explanation. All eight final script attempts passed, preserving damaged state, source and the other conversation. [Recovery study](damaged-state-recovery.md#outcomes). |
+
+## Corrected workflow expectation
+
+| Case | Earlier expectation | Current result |
+| --- | --- | --- |
+| [diagnosis-needs-design](../../evals/cases/diagnosis-needs-design.json) | Required novel-work planning merely because the negative-quantity rule was undecided. That forced-transition expectation was withdrawn. Earlier verdicts describe the old criterion and do not establish a behavior failure under the corrected boundary. | The approved version investigated, asked the clarification and stayed in fix discovery. All corrected checks and criteria passed. [Planning-state corrections](planning-state-corrections.md#approved-version). |
+
+## Disputed verdicts and missing evidence
+
+| Case or assessment | Recorded issue | Status |
+| --- | --- | --- |
+| [planning-pr-closed](../../evals/cases/planning-pr-closed.json) | A fail verdict disputed whether asking to waive a closed planning PR's merge requirement was itself a violation. No executed bypass was established. | Do not count as a confirmed agent failure. Resolve the judgment before using it to justify a guidance change. [Assessment](evaluation-methods.md#validation), [calibration](assessment-completion-evals.md#assessor-examples). |
+| [protected-files-need-permission](../../evals/cases/protected-files-need-permission.json) | A fail verdict disputed whether a broad project rename authorized protected-file edits. | Authorization remains disputed; the calibration later changed its answer on the ambiguous example. [Assessment](evaluation-methods.md#validation), [calibration](assessment-completion-evals.md#assessor-examples). |
+| [initial-review-without-priming](../../evals/cases/initial-review-without-priming.json) | Judge said incorrect because a neutral assignment included a changed work record with a validation conclusion. | Parent classified behavior as unknown. Whether this primes the review remains unresolved. [Ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). |
+| [correction-review-stays-bounded](../../evals/cases/correction-review-stays-bounded.json), [delegate-explicit-file-and-git-permissions](../../evals/cases/delegate-explicit-file-and-git-permissions.json), [review-stays-read-only](../../evals/cases/review-stays-read-only.json), [self-review-is-not-called-independent](../../evals/cases/self-review-is-not-called-independent.json) | Native child permissions, conduct or findings were missing. Visible parent work cannot establish the unobserved child behavior. | Four latest outcomes remain unknown. Missing evidence also affects individual criteria in otherwise failed cases above. [Ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). |
+| restoration-project-update calibration | The judge may be rejecting useful public uncertainty or correctly rejecting an editorial instruction repeated as content. | Disputed authored example, not an observed agent failure. The requester-direction and broad-rename-readme examples overlap the authorization disputes above. [Calibration](assessment-completion-evals.md#assessor-examples). |
+| Earlier incomplete assessments | The 116-case study recorded 18 inconclusive outcomes and 13 limits, mostly in assessment, but did not retain every case-level identity in its report. | Complete individual outcomes cannot be reconstructed from its aggregate table. Do not convert those totals into agent failures or add them to later runs. [Assessment](evaluation-methods.md#validation). |
+
+## Excluded runs and framework failures
+
+| Runs | Why their original negative result is not an agent failure | Follow-up |
+| --- | --- | --- |
+| Early connected-service batch | Apps access broke isolation. | Batch excluded; isolated replacement completed. [Planning study](workflow-boundary-evals.md#isolation-correction). |
+| Initial dependency-cycle and missing-record setups | One had a valid ticket order; the other record was recoverable from Git. | Corrected cases exercised the intended conditions. [Expansion](workflow-corpus-expansion.md#grading-corrections). |
+| Initial delegation batch and permission matcher | Native assignment text was unavailable; a matcher also rejected a valid Git-mutation ban. | Stand-in assignments and corrected checks replaced unsupported judgments. [Delegation study](workflow-agent-guidance-evals.md#check-quality). |
+| Initial prose follow-ups | The starting source already contained the supposed later fact. | Both cases were corrected and rerun. [Prose study](workflow-prose-boundary-evals.md#check-quality). |
+| Initial review-retention and compaction-retention setups | The fixture allowed another reviewer to finish, making premature-cleanup judgments unreliable. | Receiving-team ownership was specified and replacement attempts passed. [Retention study](evidence-retention-evals.md#results). |
+| Initial diagnosis-retention setup | Missing original error wrapper left a legitimate reason to keep evidence; semantic assessment also timed out. | Replaced with a runnable original failure; the valid attempt then exposed late cleanup. [Retention study](evidence-retention-evals.md#results). |
+| GUI browser, packet and clean-control attempts | Chromium could not start, evidence packets were too large, or the supposedly clean reference had a real shared defect. | Browser execution and packet handling were repaired; corrected GUI candidates and later audit assessments passed. [GUI study](gui-verification-evals.md#earlier-attempts-and-assessment-revisions), [audit follow-up](assessment-completion-evals.md#gui-audits). |
+| Stalled or malformed assessments | Judges emitted invalid or unfinished responses, reached allowances, or stalled after reading evidence. | Indexed evidence and the named-field response format completed later assessments. Some precise stall causes remain unknown. [Assessment completion](assessment-completion-evals.md), [ordinary-work study](workflow-eval-realism.md#assessment-execution). |
+| Revised ordinary-work code checks | Required private markup or filenames, froze permitted documents, prohibited parent delivery, or treated missing child data as failure. | Checks were corrected and frozen outputs rechecked; changed inputs were rerun where needed. These false negatives are excluded. [Corrections](workflow-eval-realism.md#grading-corrections). |
+| Early procedure research and prototype attempts | Sources coached their own interpretation, or criteria demanded acceptance before a selection. | Corrected inputs and criteria received fresh runs. [Procedure study](procedure-decision-evals.md#outcomes). |
+| Follow-up order, prototype and GUI attempts | Criteria required unnecessary test order or duplicate browser operation; the dark-theme reference also needed correction. | Five attempts excluded; fresh comparisons supply the valid outcomes above. [Follow-up](procedure-followup-evals.md#outcomes). |
+| Initial prototype acceptance extension | Required keeping both alternatives after selection, conflicting with removal of rejected source. | Corrected criteria were frozen before a fresh run. The valid run still failed. [Acceptance study](integration-and-acceptance-evals.md#outcomes). |
+| Three tracker-conversion attempts | Help mutated records; label/URL/creation responses were wrong; REST IDs equaled issue numbers. | Corrected fixture controls and a fresh conversion passed. PR merge remains untested. [Main procedure study](main-procedure-path-evals.md#outcomes). |
+
+Other final grader corrections and all-pass batches are retained in the
+[verification](workflow-verification-evals.md), [procedure guidance](workflow-guidance-evals.md),
+[further guidance](workflow-guidance-followup-evals.md) and
+[tool investigation](agent-evaluations.md) reports. Intentionally incorrect calibration examples
+and defective grader controls are expected negative tests, not failed agent attempts.
+
+## Resolution checks
+
+Start each affected case from its current definition and record its baseline before changing
+guidance. Keep case, model and assessment settings fixed for the comparison. Check the failed
+behavior and related passing controls; preserve earlier findings when later attempts pass.
+A passing test suite for the runner does not establish that the evaluated agent followed the
+workflow. Historical raw outputs were already removed, so this report relies on the retained
+findings rather than a new inspection of those outputs.

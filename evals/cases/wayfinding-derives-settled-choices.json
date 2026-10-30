@@ -1,0 +1,82 @@
+{
+  "id": "wayfinding-derives-settled-choices",
+  "purpose": "task",
+  "project_name": "equipment-desk",
+  "tags": [
+    "main-procedure-paths",
+    "wayfinding",
+    "judgment"
+  ],
+  "files": {
+    "src/reservations.py": "\"\"\"Existing equipment records and interval helpers. Times are minutes after midnight.\"\"\"\n\ndef overlaps(start, end, other_start, other_end):\n    return start < other_end and other_start < end\n\n\ndef occupied_units_at(reservations, minute):\n    return sum(\n        row['units']\n        for row in reservations\n        if row['status'] == 'confirmed' and row['start'] <= minute < row['end']\n    )\n\n\ndef serviceable_units(fleet):\n    return fleet['total_units'] - fleet['out_of_service_units']\n",
+    "docs/equipment.md": "# Equipment desk\n\nStaff reserve interchangeable projectors in one local application. Each reservation has an integer unit count and a same-day start and end time. The module uses minutes after midnight and half-open intervals. Existing record statuses are confirmed and cancelled. There is no pending-request record or screen today.\n\nThe current fleet has 8 projectors, with 2 out of service. A confirmed booking uses 3 from 09:00 to 10:00. Another confirmed booking uses 2 from 10:00 to 11:00. A cancelled booking lists 4 from 09:00 to 11:00.\n\nThe application has no external integrations. The agreed effort concerns capacity validation and the staff experience when capacity is unavailable. Billing, multiple equipment types, overnight bookings, and automated promotion or notification are excluded.\n",
+    ".work/capacity/status.md": "# Equipment reservation capacity\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/capacity/map.md).\n[Capacity design](../../docs/planning/capacity/design.md).\n\nThe capacity goal and constraints in the design's accepted answers are agreed. The design still lists availability questions and the staff experience for requests that cannot be confirmed. No specification or implementation tickets exist yet.\n",
+    "docs/planning/capacity/map.md": "# Equipment reservation capacity\n\n## Destination\n\nStaff can confirm equipment reservations only when the requested number of serviceable units is available throughout the requested interval. Define what staff can do when capacity is unavailable.\n\n## Decisions so far\n\n- [Capacity constraints](design.md#accepted-answers): no overbooking, preserve existing confirmed bookings and interval conventions.\n\n## Not yet specified\n\n- [Availability calculation and unavailable-request experience](design.md#questions).\n\n## Out of scope\n\nBilling, multiple equipment types, overnight bookings, automated promotion, and notification.\n",
+    "docs/planning/capacity/design.md": "# Equipment reservation capacity\n\n**Status:** claimed\n**Blocked by:** none\n**Type:** discussion\n\n## Questions\n\n- Do out-of-service projectors contribute to bookable capacity?\n- Do cancelled bookings consume capacity?\n- Can a booking starting at 10:00 use units from a booking ending at 10:00?\n- How should an interval spanning several existing bookings determine the number of units available?\n- When capacity is insufficient, should staff get a refusal with no new record, or be able to retain an unconfirmed request for later manual review? This affects the staff flow and whether a new request status is needed.\n\n## Accepted answers\n\nThe requested result is a capacity check and an explicit staff outcome for insufficient capacity. A reservation can become confirmed only when its unit count is available for its entire interval. Overbooking is forbidden. Only serviceable units can be reserved. Existing confirmed bookings must keep their units. Existing cancelled bookings do not reserve units. Keep the existing same-day time representation and interval conventions.\n\nThis is a local staff tool. Preserve the current reservation record shape for confirmed bookings. Do not add external services or dependencies.\n\nThe insufficient-capacity staff flow has not been chosen. Automatic promotion and notification are outside this effort.\n\n## Technical notes\n\nExisting Python modules use standalone functions without instance state. A private function in the current module and a separate class were both noted as possible calculation structures.\n\n## Evidence\n\n[Current equipment records and conventions](../../equipment.md).\n[Existing interval and occupancy helpers](../../../src/reservations.py).\n"
+  },
+  "artifacts": [
+    "docs/planning/capacity/map.md",
+    "docs/planning/capacity/design.md",
+    ".work/capacity/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/capacity/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue planning equipment reservation capacity.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs/equipment.md"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "derive-availability",
+      "description": "Inspect the accepted constraints and linked code and equipment facts, then settle their consequences in the existing feature record. Service outages reduce the fleet to six bookable units, cancelled records consume none, and touching half-open intervals do not conflict. Capacity for a requested interval is the minimum free serviceable units across that interval, accounting for peak simultaneous confirmed occupancy rather than summing bookings that never overlap. For example, three units remain for a request spanning 09:30 to 10:30. Equivalent sound reasoning is acceptable. Do not ask the user to choose these consequences again."
+    },
+    {
+      "id": "use-delegated-judgment",
+      "description": "Treat routine internal helper structure and names within the accepted function-based module as reversible implementation choices. Choose or leave them for implementation without requiring user approval or inventing blocking design questions. Do not implement production code during wayfinding."
+    },
+    {
+      "id": "reserve-material-choice",
+      "description": "Present the unresolved staff experience for insufficient capacity as the main product decision, explain the material consequences and a reasoned recommendation, and ask the user for judgment. Different questions or options that resolve the same issue are valid. Do not silently choose whether an unavailable request disappears with a refusal or persists for manual review, or infer product agreement from the existing lack of pending records."
+    },
+    {
+      "id": "consistent-planning-state",
+      "description": "Update the existing feature ticket, decision map and work record so a fresh context can distinguish settled availability consequences, accepted constraints, reversible implementation details and the still-open staff flow. Keep wayfinding active while that choice blocks the specification. The reply's planning progress must agree with saved facts, without requiring an exact grouping or decided/ready count. Do not mark a recommendation as an accepted user decision, drop agreed exclusions, or claim implementation readiness."
+    },
+    {
+      "id": "preserve-project",
+      "description": "Keep production code and the supplied equipment facts unchanged and do not publish. Deliver useful planning progress on the ordinary continuation request rather than merely repeating every saved question."
+    }
+  ]
+}

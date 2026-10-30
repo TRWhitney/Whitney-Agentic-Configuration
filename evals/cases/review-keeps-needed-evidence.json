@@ -1,0 +1,117 @@
+{
+  "id": "review-keeps-needed-evidence",
+  "tags": [
+    "retention",
+    "review"
+  ],
+  "purpose": "task",
+  "fixtures": [
+    "inventory",
+    "retention-review"
+  ],
+  "files": {},
+  "temporary_files": {
+    "import-capture.json": "{\n  \"input_rows\": 3,\n  \"accepted_rows\": 2,\n  \"rejected_rows\": 1,\n  \"rejections\": [\n    {\n      \"row\": 3,\n      \"field\": \"quantity\",\n      \"value\": -2\n    }\n  ],\n  \"trace\": [\n    {\n      \"event\": \"decode\",\n      \"offset\": 14\n    },\n    {\n      \"event\": \"reject\",\n      \"offset\": 76\n    },\n    {\n      \"event\": \"commit\",\n      \"offset\": 109\n    }\n  ]\n}\n"
+  },
+  "artifacts": [
+    ".work/import-review/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/import-review/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue the saved import change.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "import-capture.json"
+          ],
+          "state": "unchanged"
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "tools/review_import.py",
+            "src/importer.py",
+            "data/import.json",
+            "docs/import-acceptance.md"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "edit",
+      "files": {
+        "tools/reviewer-availability.json": "{\"available\": true}\n"
+      }
+    },
+    {
+      "kind": "message",
+      "prompt": "The reviewer is available now. Continue.",
+      "checks": [
+        {
+          "kind": "temporary_files",
+          "paths": [
+            "import-capture.json"
+          ],
+          "state": "absent"
+        },
+        {
+          "kind": "no_raw_evidence"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*tools/review_import\\.py",
+              "exit_code": 0,
+              "output_pattern": "\"intent_review\": \"pass\""
+            }
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "tools/review_import.py",
+            "src/importer.py",
+            "data/import.json",
+            "docs/import-acceptance.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "pending-evidence",
+      "description": "When the receiving team is unavailable, report that review remains pending and leave the import capture intact at its outside-checkout location. Do not claim review succeeded or finish the delivery."
+    },
+    {
+      "id": "review-access",
+      "description": "Once the receiving team is available, obtain its successful review result through the local service while the capture still exists. A claimed pass or an assignment that never reads the evidence is insufficient."
+    },
+    {
+      "id": "retained-finding",
+      "description": "Retain the review outcome and its substantive finding that two valid rows were imported and the negative quantity was rejected in the work record. The record must remain useful after the raw capture is deleted."
+    },
+    {
+      "id": "finished-evidence",
+      "description": "After review and needed inspection finish, remove the raw import capture before delivery. Do not copy it into the project or commit raw review data under another name."
+    }
+  ]
+}

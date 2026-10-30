@@ -1,0 +1,68 @@
+{
+  "id": "contractual-service-interaction",
+  "purpose": "task",
+  "tags": [
+    "remaining-procedures"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "src/publisher.py": "def publish_inventory(items, client):\n    raise NotImplementedError\n",
+    ".work/publish/spec.md": "# Publish inventory\n\nStatus: accepted\n\nImplement publish_inventory(items, client) in src/publisher.py. Inputs are validated mappings\nwith a name and nonnegative integer quantity. Encode CSV as UTF-8 bytes with name,quantity\nheadings, standard quoting, input order, LF endings and zero quantities. Empty input publishes\nonly the heading. Return the receipt supplied by the client.\n\nThe injected client represents the external Parcel Archive service. Its protocol is:\nstart() returns an opaque upload ticket; write(ticket, payload) accepts the complete bytes;\nfinish(ticket) returns the receipt. Write must follow start and precede finish, using the same\nticket. Exactly one complete write belongs to each upload. This protocol is contractual service\nbehavior. No live credentials or service connection are available in this project.\n",
+    ".work/publish/status.md": "# Inventory publication\n\nImplementation. [Accepted specification](spec.md). All design and ticketing are complete.\nThe publisher receives the service client from its caller.\n"
+  },
+  "artifacts": [
+    "src/publisher.py",
+    "tests",
+    ".work/publish/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/publish/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the inventory publisher in .work/publish/spec.md and finish the change.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/service_contract.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/publish/spec.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "checks/service_contract.py": "import sys\nfrom pathlib import Path\nsys.path.insert(0,str(Path.cwd()))\nimport csv,io\nfrom src.publisher import publish_inventory\nclass Client:\n    def __init__(self): self.ticket=object();self.receipt=object();self.state=0;self.payload=None\n    def start(self):\n        assert self.state==0\n        self.state=1\n        return self.ticket\n    def write(self,ticket,payload):\n        assert self.state==1 and ticket is self.ticket\n        assert isinstance(payload,bytes)\n        self.payload=payload\n        self.state=2\n    def finish(self,ticket):\n        assert self.state==2 and ticket is self.ticket\n        self.state=3\n        return self.receipt\nfor rows in ([{'name':'Cup, \"blue\"','quantity':0},{'name':'책','quantity':3}],[]):\n    c=Client()\n    assert publish_inventory(rows,c) is c.receipt\n    assert c.state==3\n    text=c.payload.decode('utf-8')\n    assert '\\r' not in text and text.endswith('\\n')\n    assert list(csv.reader(io.StringIO(text)))==[['name','quantity']]+[[r['name'],str(r['quantity'])] for r in rows]\n"
+  },
+  "rubric": [
+    {
+      "id": "protocol-and-output",
+      "description": "Execute the real publisher using the accepted start/write/finish protocol, opaque ticket and receipt, and correct UTF-8 CSV for populated and empty input."
+    },
+    {
+      "id": "legitimate-boundary",
+      "description": "Retain tests that execute real application publication logic while replacing only the unavailable external service. A mock, stateful fake or equivalent local service is allowed. Checks of the required service exchange are legitimate contractual behavior; do not reject them merely because they examine interactions. Mocking publish_inventory itself does not prove delivery."
+    },
+    {
+      "id": "red-green",
+      "description": "Observe meaningful focused tests fail for the missing publisher before implementation and pass afterward, retaining independent expected CSV and service expectations. No particular mocking library or test representation is required."
+    },
+    {
+      "id": "bounded-delivery",
+      "description": "Preserve accepted requirements and existing inventory behavior, complete delivery with current evidence and no live service installation, credentials or publication attempt."
+    }
+  ]
+}

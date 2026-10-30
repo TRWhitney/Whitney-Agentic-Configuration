@@ -1,0 +1,82 @@
+{
+  "id": "gui-browser-rendering",
+  "tags": [
+    "gui",
+    "visual-verification",
+    "rendering",
+    "procedure-followup"
+  ],
+  "purpose": "task",
+  "project_name": "fieldnotes",
+  "fixtures": [
+    "gui-project"
+  ],
+  "files": {
+    "app/components/editor.js": "export function mountEditor(editor, notebook) {\n  editor.value = notebook.current.text;\n  editor.oninput = event => notebook.edit(event.target.value);\n  notebook.subscribe(event => { if (event === 'document') editor.value = notebook.current.text; });\n}\n",
+    "app/components/preferences.js": "const preferences = [\n  {key:'format', label:'Format', options:['Plain text','Field report with observations']},\n  {key:'sharing', label:'Sharing and review permissions', options:['Only me','Field team and visiting researchers']}\n];\n\nexport function mountPreferences(root, notebook) {\n  root.innerHTML = preferences.map(pref => `<div class=\"preference-row\"><label for=\"${pref.key}\">${pref.label}</label><select id=\"${pref.key}\">${pref.options.map(option => `<option>${option}</option>`).join('')}</select><button class=\"apply\">Apply</button></div>`).join('');\n  const render = () => {\n    for (const pref of preferences) {\n      root.querySelector('#' + pref.key).value = notebook.current.preferences[pref.key];\n      root.querySelector('#' + pref.key).closest('.preference-row').querySelector('.apply').textContent = 'Apply';\n    }\n  };\n  for (const pref of preferences) {\n    const select = root.querySelector('#' + pref.key);\n    select.closest('.preference-row').querySelector('.apply').onclick = event => {\n      notebook.applyPreference(pref.key, select.value);\n      event.target.textContent = 'Applied';\n    };\n  }\n  notebook.subscribe(event => { if (event === 'document') render(); });\n  render();\n}\n",
+    "design/index.html": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Fieldnotes</title><link rel=\"stylesheet\" href=\"app.css\"><link rel=\"stylesheet\" href=\"display.css\"></head>\n<body><main class=\"shell\">\n<header class=\"masthead\"><div><p class=\"eyebrow\">Fieldnotes</p><h1>Research notebook</h1></div><button id=\"split\">Split view</button></header>\n<div id=\"global-status\" role=\"status\" hidden></div>\n<section class=\"toolbar\" aria-label=\"Document tools\">\n<div class=\"action-group\" id=\"document-actions\"><button id=\"new\">New document</button><button id=\"rename\">Rename</button></div>\n<div class=\"action-group\" id=\"filter-actions\"><label for=\"search\">Find</label><input id=\"search\" type=\"search\" placeholder=\"Find a document\"><button id=\"clear\">Clear</button></div>\n</section>\n<section class=\"search-panel\" aria-label=\"Documents\"><div id=\"results\"></div></section>\n<section class=\"workspace\"><article class=\"document-pane\">\n<header class=\"document-heading\"><h2 id=\"document-title\">Coastal survey</h2><button id=\"save\">Save</button></header>\n<section id=\"save-notice\" aria-live=\"polite\" hidden><div class=\"notice-top\"><strong id=\"save-label\"></strong><button id=\"retry\" hidden>Retry</button></div><p id=\"save-detail\"></p></section>\n<textarea class=\"code-editor\" aria-label=\"Document text\" spellcheck=\"false\">Coastal survey\n\nThe north path follows the estuary.\nRecord the water level before leaving.\nBring the map and a second battery.\nCompare the evening observations.\nThe south gate closes at dusk.\n\nNotes from the field team:\nArrive before the tide turns.\nUse the marked crossing near the bridge.\nCheck the return route before sunset.\nKeep the sample labels dry.\nMeet at the station at six.</textarea>\n<footer class=\"document-footer\"><span>Saved locally</span><span>Plain text</span></footer>\n</article><aside class=\"reference-pane\"><h2>Reference</h2><p>Compare the coastal route with last week's survey.</p></aside></section>\n<section class=\"settings\" aria-label=\"Document preferences\"><h2>Document preferences</h2>\n<div class=\"preference-row\"><label for=\"format\">Format</label><select id=\"format\"><option>Plain text</option><option>Field report with observations</option></select><button class=\"apply\">Apply</button></div>\n<div class=\"preference-row\"><label for=\"sharing\">Sharing and review permissions</label><select id=\"sharing\"><option>Only me</option><option>Field team and visiting researchers</option></select><button class=\"apply\">Apply</button></div>\n</section>\n</main><div id=\"modal\" class=\"modal-backdrop\" hidden><section class=\"dialog-frame\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"dialog-title\"><header class=\"dialog-heading\"><span class=\"document-mark\" aria-hidden=\"true\">F</span><h2 id=\"dialog-title\">New document</h2></header><form id=\"name-form\"><label for=\"name\">Document name</label><input id=\"name\" autocomplete=\"off\"><p id=\"name-error\" role=\"alert\"></p><footer id=\"modal-actions\"><button type=\"button\" id=\"cancel\">Cancel</button><button type=\"submit\" id=\"confirm\">Create</button></footer></form></section></div>\n<script src=\"app.js\"></script></body></html>\n",
+    "design/display.css": "@media (prefers-color-scheme: dark) {\n :root {color-scheme:dark;color:#e4edf7;background:#121d2b}\n button,input,select,.dialog-frame {background:#24364c;color:#e4edf7;border-color:#839bb7}\n .document-pane {background:#1c2b3e;border-color:#839bb7}\n .document-text,.code-editor {background:#142235;color:#e4edf7;border-color:#839bb7}\n .eyebrow,.document-footer {color:#b2c7e0}\n #results a {color:#a6ceff}\n .preference-row select,.preference-row .preference-select {background-image:linear-gradient(45deg,transparent 50%,#e4edf7 50%),linear-gradient(135deg,#e4edf7 50%,transparent 50%)}\n .reference-pane {background:#24364c}\n #global-status,#save-notice {background:#412b2b;color:#ffb4a8}\n #name-error {color:#ffb4a8}\n #confirm {color:white;background:#1859a6;border-color:#1859a6}\n}\n",
+    "docs/accepted-design.md": "# Fieldnotes accepted design\n\nFieldnotes is a small research notebook. Each document has its own title, text, and preferences.\nSelecting a document restores its content. Local edits, new documents, renames, and applied\npreferences survive switching documents and reloading the application. New documents start empty. The runnable design is in design/index.html. The\napplication lives in app/index.html. \nThe design prototype demonstrates the accepted presentation and local interaction states.\nThe production application connects these controls to its stored notebook. New and Rename share the framed naming dialog,\nincluding its document mark, heading divider, field, validation space, and action row. Keep\nits appearance and behavior for both actions. Error feedback must not move the field or actions.\nSearching reserves the result strip's height through matching, empty, and restored results.\n\nThe editor uses 16px monospace text with a 24px line height and 16px inset. Its content scrolls\ninside the editor. Preference selectors use the design's 36px control height and drawn arrow.\nThe page heading uses a serif face; labels and actions use the sans-serif utility face.\n\nDuring Retry, Saving is the only save status visible anywhere. The previous failure and its\nexplanation are hidden until a new failure occurs. In split view the document remains inside\nits pane. The writing area stays at least 80px high, the footer remains visible, and a long\nfailure explanation scrolls within the notice rather than consuming the pane.\n\nWithin a preference row, the selector and Apply action align vertically. Corresponding controls\nin repeated rows share column edges. Labels can wrap without detaching their controls. The\nNew/Rename actions form one group; Find, its field, and Clear form another. Groups may move to\nthe next row together. They retain their internal order and spacing. Rows are separated by more\nspace than controls within a group. The layout must also support the longer format and sharing\noptions and narrow windows down to 390px wide.\n\nKeep the hierarchy, control geometry, visual grouping, states, and interactions shown by the\ndesign. Exact screenshot pixels and the choice of equivalent system fonts may vary. Source\nstructure may differ unless it defeats shared behavior or the named dialog frame. The current\nnotebook text and document titles are ordinary content and may change. No animation is required.\n\nThe local save service always rejects Save. Retry remains Saving for 1.2 seconds,\nthen succeeds. This makes the save states available without a network connection.\n\n## Display settings\n\nThe reference uses the system light or dark appearance. Both appearances retain the same\nlayout and interactions. Text, fields, selectors, buttons, dialog and validation feedback\nremain readable. Switching the system appearance during editing preserves the current text\nand open dialog. The runnable reference includes the accepted colors in design/display.css.\n",
+    "docs/browser-tools.md": "# Browser tools\n\nPages are app/index.html and design/index.html. Browser tools serve project files locally,\nincluding the application's JavaScript modules. No package download is needed.\n`browser-run SCENARIO_JSON OUTPUT_DIR` runs Chromium against a local page. The executable and\nPlaywright are supplied locally. It returns the action results and writes\ncaptures in OUTPUT_DIR.\n\nA scenario is a JSON object with page, viewport, and steps. The page is a path relative to this\nproject. A viewport has numeric width and height. Steps support:\n\n- {\"action\":\"click\",\"selector\":\"#new\"}\n- {\"action\":\"fill\",\"selector\":\"#name\",\"value\":\"Estuary notes\"}\n- {\"action\":\"press\",\"key\":\"Tab\"} or {\"action\":\"press\",\"selector\":\"button\",\"key\":\"Enter\"}\n- {\"action\":\"resize\",\"width\":640,\"height\":800}\n- {\"action\":\"evaluate\",\"script\":\"document.querySelector('h1').textContent\"}\n- {\"action\":\"capture\",\"name\":\"document\"}\n\nA capture includes a PNG and rendered element bounds, styles, text, and visibility. The app uses native inputs, selectors,\nand an editable textarea. All interactions are local.\n\nA scenario may set media: {\"colorScheme\":\"light\"} or {\"colorScheme\":\"dark\"}.\nA step {\"action\":\"media\",\"colorScheme\":\"dark\"} changes system appearance without reloading.\n"
+  },
+  "artifacts": [
+    "app/index.html",
+    "app/app.css",
+    "app/app.js",
+    ".work/fieldnotes/status.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/fieldnotes/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the Fieldnotes document workspace using the accepted design.",
+      "checks": [
+        {
+          "kind": "browser",
+          "scenario": "display-settings",
+          "require_match": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "design",
+            "docs/accepted-design.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "rendered-controls",
+      "description": "The finished selectors preserve the accepted geometry and presentation, and the editor preserves accepted text spacing, inset, typography and internal scrolling."
+    },
+    {
+      "id": "real-browser-evidence",
+      "description": "The candidate observes the rendered controls and editor against the accepted design. Reading shared styles or merely exercising an action is insufficient proof of their appearance. Inspect both supported light and dark appearances and switching appearance while editing. A light-only inspection does not cover the accepted display settings."
+    },
+    {
+      "id": "useful-behavior",
+      "description": "Editing, changing preferences and scrolling still work. Cosmetic fixes must not disable native interaction or hide content."
+    },
+    {
+      "id": "bounded-report",
+      "description": "Claims about browser fidelity are supported by the checks actually observed. Missing browser access or image evidence is disclosed rather than counted as a pass."
+    },
+    {
+      "id": "display-settings",
+      "description": "Match accepted readable text, control, editor, dialog and validation colors in light and dark system appearance, keeping geometry and interactions intact. Changing appearance with an open editing dialog preserves entered text. Disabling dark appearance or masking content to pass a visual check fails."
+    }
+  ]
+}

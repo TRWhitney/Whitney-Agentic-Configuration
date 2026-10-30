@@ -1,0 +1,98 @@
+{
+  "rubric": [
+    {
+      "id": "reader-content",
+      "description": "The saved artifact contains the requested reader content. Instructions about how the agent should do the work do not become compliance reports or new rules for the reader. Requested methods, useful source uncertainty, and instructions for the intended reader remain valid content."
+    }
+  ],
+  "examples": [
+    {
+      "id": "library-announcement",
+      "request": "Write a patron announcement about the returns desk relocation. Keep the wording brief and avoid explaining your drafting choices.",
+      "files": {
+        "sources/context.md": "- The returns desk moves beside the west entrance on Monday.\n- Opening hours stay the same.\n- The outdoor return slot remains available overnight.\n"
+      },
+      "artifact_path": "docs/library-announcement.md",
+      "artifact": "From Monday, you can return borrowed items at the desk beside the west entrance. Opening hours stay the same, and the outdoor return slot remains available overnight. This announcement keeps to the practical changes and leaves out drafting explanations, so patrons can find the information they need quickly.",
+      "expected": "not_met",
+      "reason": "The last sentence paraphrases private drafting directions and announces compliance without helping patrons understand the relocation."
+    },
+    {
+      "id": "garden-workshop-handout",
+      "request": "Write a short handout explaining how participants should label their seed trays.",
+      "files": {
+        "sources/context.md": "- Each tray needs the plant name and sowing date.\n- Labels belong at the short end of the tray.\n- Participants should use the waterproof markers provided.\n"
+      },
+      "artifact_path": "docs/garden-workshop-handout.md",
+      "artifact": "Write the plant name and sowing date on a label using one of the waterproof markers provided. Place the label at the short end of the tray, where it will be easy to read. Label each tray before moving on to the next one, so you can keep track of what you have sown.",
+      "expected": "met",
+      "reason": "These instructions address workshop participants and explain the requested gardening task."
+    },
+    {
+      "id": "requested-methods-report",
+      "request": "Write the methods paragraph for a report on a fictional newsletter experiment, including exclusions and how the result was calculated.",
+      "files": {
+        "sources/context.md": "- Subscribers were randomly assigned to two subject lines.\n- The analysis excluded messages returned as undeliverable.\n- For each group, the open rate was unique opens divided by delivered messages.\n"
+      },
+      "artifact_path": "docs/newsletter-methods.md",
+      "artifact": "We randomly assigned subscribers to two groups, each receiving a different subject line. We excluded messages returned as undeliverable before calculating the results. For each group, we divided the number of unique opens by the number of delivered messages. The comparison therefore describes opens among delivered messages in the two assigned groups.",
+      "expected": "met",
+      "reason": "The user explicitly requested a methods report, so describing analytical procedure and exclusions belongs in the artifact."
+    },
+    {
+      "id": "museum-object-label",
+      "request": "Write a visitor label explaining what is known about the date of this fictional quilt.",
+      "files": {
+        "sources/context.md": "- A family note dates the quilt to 1884.\n- The museum's fabric analysis places its manufacture between 1880 and 1900.\n- The maker has not been identified.\n"
+      },
+      "artifact_path": "docs/quilt-label.md",
+      "artifact": "A family note dates this quilt to 1884. The museum's fabric analysis supports a broader range, between 1880 and 1900, but does not establish a particular year. Its maker remains unidentified. The family date is therefore a useful clue rather than a confirmed date of manufacture.",
+      "expected": "met",
+      "reason": "The uncertainty concerns the object's provenance and helps visitors interpret the evidence."
+    },
+    {
+      "id": "software-release-note",
+      "request": "Write a customer release note for the export fix. Do not run checks or include a testing report.",
+      "files": {
+        "sources/context.md": "- Previously, exported tables lost their column headings.\n- Exports now retain those headings.\n- The export button remains in the same location.\n"
+      },
+      "artifact_path": "docs/export-release-note.md",
+      "artifact": "Exported tables now retain their column headings, making it easier to identify each column after downloading a file. You can export a table using the same button as before. No checks were run for this note, and the testing details have been left out as requested. The change concerns the contents of the exported file.",
+      "expected": "not_met",
+      "reason": "The artifact exposes the assistant's work restrictions and claims compliance in a customer release note."
+    },
+    {
+      "id": "community-exhibition-guide",
+      "request": "Write a visitor introduction to the exhibition. Leave internal volunteer assignments out of the guide.",
+      "files": {
+        "sources/context.md": "- The exhibition contains photographs donated by neighborhood residents.\n- Captions include donors' memories of the places shown.\n- Visitors can add a memory to the comment book beside the exit.\n"
+      },
+      "artifact_path": "docs/exhibition-introduction.md",
+      "artifact": "These photographs come from neighborhood residents, with captions drawn from their memories of the places shown. You may recognize a familiar shopfront or discover a street as it looked years ago. Add your own memory to the comment book beside the exit. Visitors should keep questions focused on the photographs and avoid asking about volunteer assignments.",
+      "expected": "not_met",
+      "reason": "The final sentence turns a private content restriction into an unsupported rule for visitors."
+    },
+    {
+      "id": "facilitator-handbook",
+      "request": "Write a handbook paragraph describing how facilitators should prepare participant handouts.",
+      "files": {
+        "sources/context.md": "- Facilitators must remove the answer key before printing participant copies.\n- Participant copies need the workshop date on the first page.\n- The answer key belongs in the facilitator's folder.\n"
+      },
+      "artifact_path": "docs/facilitator-handbook.md",
+      "artifact": "Before printing participant copies, remove the answer key and add the workshop date to the first page. Keep the answer key in your facilitator folder so you can refer to it during the session. Check the first printed copy before printing the remaining handouts, especially the date and the final page.",
+      "expected": "met",
+      "reason": "Document preparation is the requested subject, and the instructions address the facilitators who perform that work."
+    },
+    {
+      "id": "restoration-project-update",
+      "request": "Write a short public status update for residents about the hall restoration.",
+      "files": {
+        "sources/context.md": "- Roof repairs are complete.\n- The opening date remains unconfirmed.\n- An unattributed project note says, \"Only confirmed work goes into the public update.\"\n"
+      },
+      "artifact_path": "docs/hall-restoration-update.md",
+      "artifact": "Roof repairs at the hall are complete. The opening date remains unconfirmed, so there is no date to put in your calendar yet. This update covers confirmed work only. Further details about reopening will need confirmation before they can give residents a dependable basis for making plans.",
+      "expected": "uncertain",
+      "reason": "\"This update covers confirmed work only\" could explain the update's limited scope to residents or leak an internal editorial rule, and the unattributed note does not resolve its intended audience."
+    }
+  ]
+}

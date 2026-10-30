@@ -1,0 +1,117 @@
+{
+  "id": "review-finding-rework",
+  "tags": [
+    "review",
+    "correction",
+    "git"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"Your shelf is empty.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.lower()\n    return [item for item in items if needle in item[\"name\"].lower()]\n",
+    "checks/check_search.py": "from pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/app.py\"))\nsearch = app[\"search_items\"]\nitems = [\n    {\"name\": \"Desk lamp\", \"quantity\": 2},\n    {\"name\": \"LAMP shade\", \"quantity\": 5},\n    {\"name\": \"Chair\", \"quantity\": 1},\n]\nassert search(items, \"LaMp\") == items[:2], \"Mixed case and input order\"\nassert search(items, \"\") == items, \"Empty query\"\nassert search(items, \"missing\") == [], \"Missing match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nstreet = [{\"name\": \"Straße\", \"quantity\": 1}]\nassert search(street, \"STRASSE\") == street, \"Unicode case folding\"\nassert app[\"empty_message\"]() == \"Your shelf is empty.\", \"Empty shelf message\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 2, \"Stock total\"\nprint(\"Seven inventory checks passed.\")\n",
+    ".work/search/spec.md": "# Name search\n\n**Status:** accepted\n\nAll design and ticketing are complete. Add search_items(items, query) to src/app.py.\nReturn names containing the query using Unicode case folding, in input order. In particular,\nSTRASSE matches Straße. An empty query returns all items. No match or empty input returns [].\nInputs are already validated. Existing empty_message and stock_total behavior stays unchanged.\n\nProject checks: checks/check_search.py covers the accepted behavior.\n\nThe accepted empty shelf message is Your shelf is empty.\n",
+    ".work/search/status.md": "# Name search\n\nCurrent state: novel-work delivery.\n\n[Specification](spec.md). [Ticket](tickets/01-search.md). The earlier approved shelf-message edit is committed. Review found that STRASSE does not match Straße because search uses lower(). This blocks delivery.\n"
+  },
+  "steps": [
+    {
+      "kind": "edit",
+      "record_commit": true
+    },
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "delivery",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Fix the review finding that STRASSE fails to match Straße.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": null,
+              "output_pattern": "AssertionError: Unicode case folding"
+            },
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_search.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs",
+            ".work/search/spec.md"
+          ],
+          "exclude": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "tracker",
+          "name": "local"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "commit_count",
+          "count": 1
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?s)move novel-work delivery implementation.*move novel-work implementation validation.*move novel-work validation delivery.*move novel-work delivery complete"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "session_commits",
+          "include_initial": true
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/search/status.md",
+    ".work/search/tickets/01-search.md"
+  ],
+  "rubric": [
+    {
+      "id": "supported-fix",
+      "description": "Reproduce the Unicode regression, repair its cause, and run the prepared checks successfully afterward."
+    },
+    {
+      "id": "preserve-previous",
+      "description": "Keep the earlier accepted Your shelf is empty. edit and existing stock-total behavior."
+    },
+    {
+      "id": "phase-and-review",
+      "description": "Take the delivery blocker through implementation and validation, then perform a correction review of the admitted finding and affected conclusions."
+    },
+    {
+      "id": "same-delivered-result",
+      "description": "Amend the existing local commit, leave one clean commit and complete delivery with updated evidence."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

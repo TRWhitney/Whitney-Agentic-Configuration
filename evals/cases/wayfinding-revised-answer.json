@@ -1,0 +1,108 @@
+{
+  "id": "wayfinding-revised-answer",
+  "tags": [
+    "wayfinding",
+    "decisions",
+    "correction"
+  ],
+  "files": {
+    ".work/export/status.md": "# Inventory export\n\nCurrent state: novel-work planning, wayfinding active.\n\n[Decision map](../../docs/planning/export/map.md).\n[Design](../../docs/planning/export/design.md).\n\nCSV with name and quantity columns is agreed. An empty inventory creates a header-only CSV. Existing-file behavior remains open: replace the file or refuse without changing it.\n",
+    "docs/planning/export/map.md": "# Inventory export\n\n## Destination\n\nExport inventory to CSV with defined empty-inventory and existing-file behavior.\n\n## Decisions so far\n\n- [Format](design.md): CSV with name and quantity columns.\n- [Empty inventory](design.md): create a header-only CSV.\n\n## Not yet specified\n\n- [Existing file](design.md#questions): replace it or refuse without changing it. This decision is unblocked.\n\n## Out of scope\n\nRemote storage.\n",
+    "docs/planning/export/design.md": "# Inventory export\n\n**Status:** claimed\n**Blocked by:** none\n**Type:** discussion\n\n## Questions\n\nIf the destination file already exists, should export replace it or refuse without changing it?\n\n## Accepted answers\n\nCSV is agreed, with name and quantity columns. An empty inventory creates a header-only CSV.\n\n## Evidence\n\nThe inventory can be empty. Export writes to a selected local file.\n"
+  },
+  "fixtures": [
+    "inventory",
+    "export-planning"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Change the accepted empty-inventory behavior: refuse the export without creating a file. I have not decided what to do if the destination exists.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "What have we agreed about an empty inventory now, and what is still open?",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": "wayfinding"
+        },
+        {
+          "kind": "reply_regex",
+          "pattern": "\\APlanning:\\s*\\d+ decided,\\s*\\d+ ready,\\s*unspecified:",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Replaces header-only creation with refusal without creating a file in the existing design, map and effort index without leaving the old behavior as an active accepted answer."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Preserves accepted CSV name/quantity columns and keeps existing-destination replacement versus refusal unresolved."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Recalculates the progress account from the revised requirements instead of counting the revised answer as an additional accepted choice."
+    },
+    {
+      "id": "criterion-4",
+      "description": "After recording the correction, the first final reply asks an actionable question about the unresolved existing-file behavior. A clear yes-or-no question about a proposed behavior is valid; a recap alone or a question about whether to continue fails. The later recap clearly reports the new refusal behavior and remaining existing-file question; it need not ask the question again. Planning stays active, production source remains unchanged, and nothing is published."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

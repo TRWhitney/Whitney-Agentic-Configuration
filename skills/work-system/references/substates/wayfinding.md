@@ -3,6 +3,9 @@
 Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
 here, not production code. Use the displayed format for the map and feature tickets.
 
+Before asking the first question, create any missing map or feature planning ticket and link
+them from the work record. Reuse the existing work record for the feature.
+
 ## Define the goal
 
 Describe the finished result in one or two sentences. Agree on the full scope and its acceptance
@@ -14,14 +17,18 @@ refinements, and agreed answers in one combined research-and-planning ticket. Cr
 planning ticket only for a distinct feature under the tracker's rules. Identify how to answer
 its open questions and what blocks them. Do not add speculative questions just to fill the map.
 
-## Work through the next decisions
+## Continue after each answer or correction
 
 Choose precise, unanswered, unblocked questions that prevent specifying or building the agreed
-scope. They may be sections of one design issue. Claim a ticket before working on it. Use
-a compact progress line during discussion:
+scope. They may be sections of one design issue. Claim a ticket before working on it. Start
+each final reply with:
 
 `Planning: <n> decided, <n> ready, unspecified: <topics or none>`
 
+List the map's `Not yet specified` topics after `unspecified`.
+
+Use the displayed `reply` command to build each final reply and send its output unchanged.
+A requested summary without a new answer or correction uses `--recap` and needs no new question.
 Name the current decision and what it blocks. Give the facts and tradeoffs needed to decide,
 recommend an answer with its reason, and ask one main question. Group questions that use the
 same facts and are clearer to answer together. Do not split questions I can reliably answer
@@ -39,8 +46,10 @@ judgment to me. While research runs, work on another unblocked decision if one i
 
 ## Update the map and tickets
 
-After each answer, update the requirements and supporting sources in the feature ticket. Keep
-its planning open while a blocking question remains. Once settled, mark it resolved, update its
+After each answer or correction, update the requirements and supporting sources in the feature
+ticket. Before replying, check that the map lists only unanswered questions as open. Check that
+the reply starts with a progress line matching the map and asks the next ready question. Keep its
+planning open while a blocking question remains. Once settled, mark it resolved, update its
 issue state under the tracker's rules, and link the conclusion from the map.
 
 Reassess the next decisions and unspecified topics. Add a question to its feature ticket when it

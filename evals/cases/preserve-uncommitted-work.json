@@ -1,0 +1,106 @@
+{
+  "id": "preserve-uncommitted-work",
+  "tags": [
+    "implementation",
+    "correction",
+    "recovery"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    ".work/inventory/status.md": "# Search and export\n\nCurrent state: novel-work implementation.\n\n[Accepted specification](spec.md). [Search ticket](tickets/01-search.md). [Export ticket](tickets/02-export.md).\n\nAll design and ticketing are complete and accepted. Both implementation tickets are ready and independent. Neither feature has been implemented. Repository planning documents are committed.\n\nThe stock_total edit and .work/drafts/notes.md predate the current search work.\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match item names by Unicode case-insensitive substring and return matching item records in input order. STRASSE matches Straße. An empty query returns all items. No match or an empty input returns an empty list. Searching leaves the supplied records unchanged.\n\n## CSV export\n\nAdd export_rows(items) to src/app.py. Return CSV text with name,quantity headings, records in input order, standard csv module quoting, and LF line endings. Empty input returns a header-only CSV. File writing and interfaces are excluded. Export is independent of search.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nReturn item records matching the name query as defined in the [accepted specification](../spec.md). Acceptance covers Unicode case-insensitive substring matching, input order, empty queries, missing matches, empty input, and preservation of the supplied records.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "conversation": "main",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "substate": null,
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "For this round, implement name search from the accepted plan. My stock_total changes and draft inventory notes are unrelated work.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/inventory/spec.md",
+            ".work/inventory/tickets/02-export.md",
+            ".work/drafts/notes.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "grading/check_search_contract.py"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "main",
+      "prompt": "What work is still pending in this effort?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/inventory/spec.md",
+            ".work/inventory/tickets/02-export.md",
+            ".work/drafts/notes.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "grading/check_search_contract.py"
+        }
+      ]
+    }
+  ],
+  "uncommitted_files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(max(0, item[\"quantity\"]) for item in items)\n",
+    ".work/drafts/notes.md": "Draft inventory observations.\nKeep zero-quantity items visible while we discuss stock behavior.\n"
+  },
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Implements the accepted Unicode case-insensitive substring matching in input order, with empty-query, no-match, and empty-input behavior intact."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Preserves the pre-existing stock_total edit, so negative quantities are clamped to zero before summation, and preserves the exact existing untracked draft note contents."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Adds useful verification for the search behavior and actually runs relevant current checks successfully without overwriting unrelated user changes."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keeps CSV export unimplemented for this search round, preserves the full agreed work and accepted export requirements, and records search completion separately from pending export."
+    },
+    {
+      "id": "criterion-5",
+      "description": "The follow-up accurately says CSV export remains and does not claim the entire effort complete. Any valid later search workflow state is acceptable; an exact implementation stopping point is not required."
+    }
+  ],
+  "artifacts": [
+    "src/app.py",
+    ".work/inventory/status.md",
+    ".work/inventory/tickets/01-search.md"
+  ],
+  "grader_files": {
+    "grading/check_search_contract.py": "from copy import deepcopy\nfrom pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/app.py\"))\nsearch = app.get(\"search_items\")\nassert callable(search), \"Name search must be implemented\"\nitems = [\n    {\"name\": \"Straße lamp\", \"quantity\": 2, \"tag\": \"first\"},\n    {\"name\": \"Tea\", \"quantity\": 0, \"tag\": \"other\"},\n    {\"name\": \"STRASSE lampshade\", \"quantity\": 7, \"tag\": \"last\"},\n]\nbefore = deepcopy(items)\nassert search(items, \"STRASSE\") == [items[0], items[2]], \"Unicode folding and input order\"\nassert search(items, \"straße\") == [items[0], items[2]], \"Fold both names and query\"\nassert search(items, \"LAMP\") == [items[0], items[2]], \"Substring and mixed case\"\nassert search(items, \"\") == items, \"Empty query returns every record\"\nassert search(items, \"missing\") == [], \"No match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nassert items == before, \"Search must not mutate supplied records\"\nassert app[\"empty_message\"]() == \"No items saved.\", \"Preserve empty message\"\nassert app[\"stock_total\"]([]) == 0, \"Empty stock total\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 5, \"Preserve existing total behavior\"\nassert \"export_rows\" not in app, \"CSV export was not requested for this round\"\n"
+  }
+}

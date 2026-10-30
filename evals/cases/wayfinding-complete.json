@@ -1,0 +1,98 @@
+{
+  "id": "wayfinding-complete",
+  "tags": [
+    "wayfinding",
+    "planning",
+    "completion"
+  ],
+  "fixtures": [
+    "inventory",
+    "export-text-planning"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "substate": "wayfinding",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Include the name,quantity header row. That settles the last design question. What remains before implementation?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Are we ready to implement yet?",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Records inclusion of the name,quantity header as accepted in the existing export design/map and removes the stale open header question without losing prior accepted rules."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Preserves empty-input ValueError with Inventory is empty., input order, standard CSV quoting and LF line endings in the resolved requirements."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Marks the feature design resolved and exits wayfinding while remaining in overall planning because the accepted specification and implementation tickets do not yet exist."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Answers both readiness questions by identifying the missing specification and ticket set, without claiming readiness or treating an informational question as authorization to implement production code."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Keeps the map/index consistent with the resolved design and missing planning artifacts, preserves production code, and makes no publication."
+    }
+  ],
+  "artifacts": [
+    "docs/planning/export/design.md",
+    "docs/planning/export/map.md",
+    ".work/export/status.md"
+  ]
+}

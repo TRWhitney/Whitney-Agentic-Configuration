@@ -1,0 +1,4 @@
+{
+  ".gitignore": "__pycache__/\n",
+  "checks/check_search.py": "from pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/app.py\"))\nsearch = app[\"search_items\"]\nitems = [\n    {\"name\": \"Desk lamp\", \"quantity\": 2},\n    {\"name\": \"LAMP shade\", \"quantity\": 5},\n    {\"name\": \"Chair\", \"quantity\": 1},\n]\nassert search(items, \"LaMp\") == items[:2], \"Mixed case and input order\"\nassert search(items, \"\") == items, \"Empty query\"\nassert search(items, \"missing\") == [], \"Missing match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nstreet = [{\"name\": \"Straße\", \"quantity\": 1}]\nassert search(street, \"STRASSE\") == street, \"Unicode case folding\"\nassert app[\"empty_message\"]() == \"No items saved.\", \"Empty shelf message\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 2, \"Stock total\"\nprint(\"Seven inventory checks passed.\")\n"
+}

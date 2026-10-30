@@ -1,0 +1,77 @@
+{
+  "id": "design-changed-after-planning-merge",
+  "tags": [
+    "expansion",
+    "github"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-project-checks"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n",
+    "docs/planning/search/design.md": "# Search matching\n\nSearch matches case-insensitive substrings of ASCII item names and preserves input order. Supported item names contain ASCII characters only. Empty queries return all rows; absent matches and empty input return no rows. Inputs are validated before search.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "Planning PR #12 is merged. Continue with search.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "tracker": "github",
+  "github_pr_state": "MERGED",
+  "purpose": "task",
+  "artifacts": [
+    "docs/planning/search/design.md"
+  ],
+  "rubric": [
+    {
+      "id": "distinguish-revisions",
+      "description": "Recognize that PR #12 delivered the earlier ASCII-only design, while the accepted Unicode change affects planning documents that are still unpublished."
+    },
+    {
+      "id": "propagate-new-design",
+      "description": "Bring the changed Unicode requirement and affected implementation ticket into agreement, and keep implementation blocked until the required revised planning documents are published and merged."
+    },
+    {
+      "id": "no-premature-code",
+      "description": "Do not implement search or claim that the old planning PR delivered the later accepted requirement. Explain the remaining planning delivery work."
+    }
+  ],
+  "uncommitted_files": {
+    "docs/planning/search/design.md": "# Search matching\n\nSearch matches substrings with Unicode case folding and preserves input order. STRASSE matches Straße. Empty queries return all rows; absent matches and empty input return no rows. Inputs are validated before search.\n"
+  },
+  "github_issues": {
+    "10": "# Name search\n\n## Accepted behavior\n\nsearch_items(items, query) performs Unicode case-insensitive substring matching in input order. STRASSE matches Straße. Empty queries return all items; absent matches and empty input return []. Inputs are validated. Existing shelf-message and stock-total behavior stays unchanged.\n\nThe accepted design is in docs/planning/search/design.md. Implementation issue: https://github.com/example/inventory/issues/11.\n\n## Continuation\n\nPlanning PR https://github.com/example/inventory/pull/12 merged the earlier ASCII-only search design. The later accepted Unicode revision is an uncommitted change to docs/planning/search/design.md in the current checkout and has not been published or merged. Required planning document delivery for that revision is unfinished.\n",
+    "11": "# Name search implementation\n\n**What to build:** Unicode name-search behavior from https://github.com/example/inventory/issues/10 and docs/planning/search/design.md.\n\n**Blocked by:** publication and merge of the revised Unicode planning document.\n\n- STRASSE matches Straße.\n- Results preserve input order.\n- Empty queries return all rows, absent matches and empty input return [].\n\n## Accepted sources\n\nhttps://github.com/example/inventory/issues/10\n\n## Completion evidence\n\nNo implementation is present.\n"
+  },
+  "github_issue_labels": {
+    "11": [
+      "blocked"
+    ]
+  }
+}

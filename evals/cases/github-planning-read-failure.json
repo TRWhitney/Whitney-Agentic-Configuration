@@ -1,0 +1,86 @@
+{
+  "id": "github-planning-read-failure",
+  "tags": [
+    "expansion",
+    "github"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-project-checks"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n",
+    "docs/planning/search/design.md": "# Search matching\n\nsearch_items(items, query) matches Unicode case-insensitive name substrings in input order. STRASSE matches Straße. Empty queries return all rows; absent matches and empty input return []. Inputs are validated.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main"
+    },
+    {
+      "kind": "message",
+      "prompt": "Start the search work once its planning is complete.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "gh.*(?:pr|issue).*\\b(?:view|list)\\b|gh api",
+              "exit_code": null,
+              "output_pattern": "temporary read failure"
+            }
+          ]
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "tracker": "github",
+  "github_read_error": true,
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "read-authority",
+      "description": "Attempt to read the authoritative GitHub planning status rather than treating the local reading copy or a past claim as current readiness."
+    },
+    {
+      "id": "report-uncertain",
+      "description": "Explain that GitHub reads failed and required planning delivery cannot currently be confirmed. Do not claim the design is merged or unmerged without evidence."
+    },
+    {
+      "id": "hold-code",
+      "description": "Leave production code untouched and keep search pending with a concrete retry or access-restoration next action."
+    }
+  ],
+  "github_pr_state": "MERGED",
+  "github_issues": {
+    "10": "# Name search\n\n## Accepted behavior\n\nsearch_items(items, query) matches Unicode case-insensitive substrings in input order. STRASSE matches Straße. An empty query returns all items; absent matches and empty input return []. Inputs are validated; shelf-message and stock-total behavior stays unchanged. The repository design is docs/planning/search/design.md.\n\n## Continuation\n\nImplementation issue https://github.com/example/inventory/issues/11 is unimplemented. Planning document PR https://github.com/example/inventory/pull/12 is recorded as merged.\n",
+    "11": "# Name search implementation\n\n**What to build:** The accepted search behavior in https://github.com/example/inventory/issues/10.\n\n**Blocked by:** none after required planning delivery is confirmed.\n\n- Unicode case-folded matching, input order, empty query, absent matches and empty input follow the accepted design.\n\n## Accepted sources\n\nhttps://github.com/example/inventory/issues/10\n\n## Completion evidence\n\nNo implementation is present.\n"
+  },
+  "github_issue_labels": {
+    "11": [
+      "ready-for-agent"
+    ]
+  }
+}

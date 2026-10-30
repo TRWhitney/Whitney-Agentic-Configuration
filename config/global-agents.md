@@ -15,5 +15,5 @@ General:
 
 Harness Usage:
 - Do not add a timeout when using 'request_user_input'
-- After context compaction, read the work-system skill and follow its directions to restore
-  any active repository workflow before continuing.
+- For repository work and follow-up discussion, read the work-system skill and resume its
+  active workflow before answering or acting, including after context compaction.

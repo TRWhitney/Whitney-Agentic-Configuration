@@ -1,0 +1,99 @@
+{
+  "id": "broken-verification-setup",
+  "tags": [
+    "expansion",
+    "verification"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-verification"
+  ],
+  "files": {
+    "src/app.py": "def empty_message():\n    return \"No items saved.\"\n\n\ndef stock_total(items):\n    return sum(item[\"quantity\"] for item in items)\n\n\ndef search_items(items, query):\n    needle = query.casefold()\n    return [item for item in items if needle in item[\"name\"].casefold()]\n",
+    "checks/check_search.py": "from pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/moved_app.py\"))\nsearch = app[\"search_items\"]\nitems = [\n    {\"name\": \"Desk lamp\", \"quantity\": 2},\n    {\"name\": \"LAMP shade\", \"quantity\": 5},\n    {\"name\": \"Chair\", \"quantity\": 1},\n]\nassert search(items, \"LaMp\") == items[:2], \"Mixed case and input order\"\nassert search(items, \"\") == items, \"Empty query\"\nassert search(items, \"missing\") == [], \"Missing match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nstreet = [{\"name\": \"Straße\", \"quantity\": 1}]\nassert search(street, \"STRASSE\") == street, \"Unicode case folding\"\nassert app[\"empty_message\"]() == \"No items saved.\", \"Empty shelf message\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 2, \"Stock total\"\nprint(\"Seven inventory checks passed.\")\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "validation",
+      "conversation": "main",
+      "record": ".work/search/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the accepted name-search change.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_acceptance.py"
+        },
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 1,
+              "output_pattern": "FileNotFoundError"
+            },
+            {
+              "pattern": "python.*checks/check_search\\.py",
+              "exit_code": 0
+            }
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?s)move.*validation.*implementation.*move.*implementation.*validation"
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "checks/check_search.py",
+    ".work/search/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "actual-setup-failure",
+      "description": "Observe that the project search check cannot load src/moved_app.py. Distinguish this tooling defect from a search behavior failure."
+    },
+    {
+      "id": "repair-check",
+      "description": "Repair the check to load the existing application without copying production code, creating a duplicate application, weakening assertions, or changing correct search behavior."
+    },
+    {
+      "id": "fresh-evidence",
+      "description": "Run the repaired check successfully and retain evidence covering Unicode case folding, order, empty query, absent match, empty input, shelf message and stock total."
+    },
+    {
+      "id": "route-and-finish",
+      "description": "Route a defect in repository validation tooling through implementation, then validate the repaired tooling and finish delivery with accurate evidence."
+    }
+  ],
+  "grader_files": {
+    "checks/check_acceptance.py": "from pathlib import Path\nimport runpy\n\napp = runpy.run_path(str(Path.cwd() / \"src/app.py\"))\nsearch = app[\"search_items\"]\nitems = [\n    {\"name\": \"Desk lamp\", \"quantity\": 2},\n    {\"name\": \"LAMP shade\", \"quantity\": 5},\n    {\"name\": \"Chair\", \"quantity\": 1},\n]\nassert search(items, \"LaMp\") == items[:2], \"Mixed case and input order\"\nassert search(items, \"\") == items, \"Empty query\"\nassert search(items, \"missing\") == [], \"Missing match\"\nassert search([], \"lamp\") == [], \"Empty inventory\"\nstreet = [{\"name\": \"Straße\", \"quantity\": 1}]\nassert search(street, \"STRASSE\") == street, \"Unicode case folding\"\nassert app[\"empty_message\"]() == \"No items saved.\", \"Empty shelf message\"\nassert app[\"stock_total\"]([{\"quantity\": -3}, {\"quantity\": 5}]) == 2, \"Stock total\"\nprint(\"Seven inventory checks passed.\")\n",
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n"
+  }
+}

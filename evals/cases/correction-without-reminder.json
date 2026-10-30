@@ -1,0 +1,106 @@
+{
+  "id": "correction-without-reminder",
+  "tags": [
+    "verification",
+    "correction",
+    "without-reminders"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    ".gitignore": "__pycache__/\n",
+    ".work/message/status.md": "# Empty shelf message\n\nCurrent state: tweak validation.\n\n[Specification](spec.md). Implementation is present; validation is pending.\n",
+    ".work/message/spec.md": "# Empty shelf message\n\nReturn No items saved. from empty_message(). Other behavior is unchanged.\n",
+    "checks/check_message.py": "import runpy\nvalue = runpy.run_path(\"src/app.py\")[\"empty_message\"]()\nassert value == 'No items saved.'\nprint(\"Message check passed: \" + value)\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "validation",
+      "record": ".work/message/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the empty-shelf message task.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_message\\.py",
+              "exit_code": 0,
+              "output_pattern": "Message check passed: No items saved\\."
+            }
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Use \"Your shelf is empty.\" instead.",
+      "checks": [
+        {
+          "kind": "command_sequence",
+          "commands": [
+            {
+              "pattern": "python.*checks/check_message\\.py",
+              "exit_code": 0,
+              "output_pattern": "Message check passed: Your shelf is empty\\."
+            }
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_delivery_clean.py"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_result.py"
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "src/app.py",
+    ".work/message/spec.md",
+    "checks/check_message.py",
+    ".work/message/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "initial-evidence",
+      "description": "Check the initial accepted No items saved. message before treating the first task as finished."
+    },
+    {
+      "id": "apply-followup",
+      "description": "Apply the newly accepted Your shelf is empty. message to the application and its existing specification and message check."
+    },
+    {
+      "id": "current-check",
+      "description": "Observe successful execution of the updated message check after the correction. Earlier success for No items saved. cannot validate the new result."
+    },
+    {
+      "id": "finish-correction",
+      "description": "Complete the corrected task with consistent code, specification and tests, preserving stock totals and the agreed work."
+    }
+  ],
+  "grader_files": {
+    "checks/check_delivery_clean.py": "import subprocess\nassert not subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],text=True).strip(), 'Delivery has uncommitted or untracked changes'\n",
+    "checks/check_result.py": "import runpy\napp=runpy.run_path(\"src/app.py\")\nassert app[\"empty_message\"]()==\"Your shelf is empty.\"\nassert app[\"stock_total\"]([{\"quantity\":-3},{\"quantity\":5}])==2\n"
+  }
+}

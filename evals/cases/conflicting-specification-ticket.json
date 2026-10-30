@@ -1,0 +1,72 @@
+{
+  "id": "conflicting-specification-ticket",
+  "tags": [
+    "expansion"
+  ],
+  "fixtures": [
+    "inventory",
+    "search-export-ready"
+  ],
+  "files": {
+    ".work/inventory/tickets/02-export.md": "# Return inventory CSV\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement export_rows(items) from the [accepted specification](../spec.md). Acceptance covers headings, input order, CSV quoting, LF line endings, and raising ValueError for empty input.\n",
+    ".work/inventory/spec.md": "# Search and export\n\n**Status:** accepted\n\nThe agreed work includes name search and CSV export. All product and architecture decisions are settled. Inputs are already validated.\n\n## Name search\n\nAdd search_items(items, query) to src/app.py. Match names by case-insensitive substring in input order. An empty query returns all items. Search uses Unicode case folding for supported names.\n\n## CSV export\n\nAdd export_rows(items) to src/app.py. Return CSV text with name,quantity headings, records in input order, standard csv module quoting, and LF line endings. Empty input returns a header-only CSV. File writing and interfaces are excluded. Export is independent of search.\n",
+    ".work/inventory/tickets/01-search.md": "# Add name search\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement the accepted name-search behavior in the [accepted specification](../spec.md). Acceptance covers mixed-case matching, input order, empty queries, missing matches, and empty input. Project checks: checks/check_search.py.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "conversation": "main",
+      "record": ".work/inventory/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the export ticket.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "substate": null,
+          "ignore_substate": true
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/inventory/spec.md"
+          ]
+        }
+      ],
+      "conversation": "main"
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [],
+  "rubric": [
+    {
+      "id": "find-conflict",
+      "description": "Identify that the accepted specification requires a header-only CSV for empty input while the export ticket requires ValueError."
+    },
+    {
+      "id": "ask-decision",
+      "description": "Ask which empty-input behavior should govern, with enough detail for the user to settle the conflict."
+    },
+    {
+      "id": "hold-implementation",
+      "description": "Do not implement export or change the accepted specification before the contradiction is resolved. Keep planning open."
+    }
+  ]
+}

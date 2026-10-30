@@ -1,0 +1,108 @@
+{
+  "id": "parent-red-before-delegation",
+  "tags": [
+    "guidance",
+    "agent-guidance"
+  ],
+  "fixtures": [
+    "inventory",
+    "total-regression"
+  ],
+  "files": {
+    ".work/total/status.md": "# Stock total\n\nImplementation. The [accepted specification](spec.md) is complete. The production change concerns src/app.py.\n",
+    "tools/delegation.md": "# Local implementation workers\n\nSubmit an implementation assignment with python3 \"$CODEX_HOME/bin/delegate-fixture.py\" .work/assignment.md. The service reads that file, records the submitted text, applies the assigned implementation result in the working tree, and returns the worker result. Use this service for implementation workers in this project; native implementation workers are not connected to it.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/total/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Delegate the stock-total change in .work/total/spec.md and finish it. This project has the implementation worker service described in tools/delegation.md.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "checks/check_total.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/total/spec.md",
+            "docs"
+          ],
+          "exclude": [
+            "docs/inventory.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "agent_assignments",
+          "required_patterns": [],
+          "forbidden_patterns": [],
+          "max_count": 1,
+          "tools": [
+            "delegateFixture"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "action_sequence",
+          "actions": [
+            {
+              "kind": "command",
+              "pattern": "(?s)(?:FAIL:|AssertionError)",
+              "exit_code": 1
+            },
+            {
+              "kind": "agent",
+              "pattern": "(?s).+",
+              "tool": "delegateFixture"
+            },
+            {
+              "kind": "command",
+              "pattern": "(?s)(?:checks/check_total\\.py|\\bunittest\\b)",
+              "exit_code": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "delegation": "total",
+  "purpose": "focused",
+  "artifacts": [
+    "src/app.py",
+    ".work/assignment.md",
+    ".work/total/status.md",
+    "checks/check_total.py"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "The user selects delegation; this criterion assesses the work-system rules after that choice, not autonomous delegation selection. Before submitting the production assignment, the parent creates or chooses retained public-behavior coverage and observes it fail for the accepted negative-quantity behavior. A failing hidden acceptance script alone does not prove that retained regression coverage exists before delegation."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Give the child the accepted behavior, permission to edit only src/app.py, named checks, exact subagent-implementation command, read-only Git limits, and instructions for missing permissions and temporary outputs."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Use one production delegation without transferring regression design or proof to the worker; inspect its returned change and results before accepting integration."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Finish correct mixed/empty totals with the original empty message preserved and meaningful tests passing the repair and failing the original implementation."
+    },
+    {
+      "id": "criterion-5",
+      "description": "Complete delivery and report the observed parent red, delegation, integration, and green evidence accurately; missing action or assignment records remain uncertain."
+    }
+  ]
+}

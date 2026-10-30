@@ -1,0 +1,86 @@
+{
+  "id": "preserve-explicit-uncommitted-draft",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [],
+  "files": {
+    "src/labels.py": "def shelf_label():\n    return \"Shelf\"\n",
+    "docs/labels.md": "# Labels\n\nShelf label: Shelf.\n",
+    "src/limits.py": "MAX_ITEMS = 10\n",
+    "docs/limits.md": "# Limits\n\nAt most 10 items.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Commit the completed shelf-label and inventory-limit changes. Keep notes/draft.md unchanged and uncommitted.",
+      "checks": [
+        {
+          "kind": "commit_groups",
+          "groups": [
+            [
+              "src/labels.py",
+              "docs/labels.md"
+            ],
+            [
+              "src/limits.py",
+              "docs/limits.md"
+            ]
+          ],
+          "uncommitted": [
+            "notes/draft.md"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src/labels.py",
+            "docs/labels.md",
+            "src/limits.py",
+            "docs/limits.md",
+            "notes/draft.md"
+          ]
+        },
+        {
+          "kind": "completed"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "uncommitted_files": {
+    "src/labels.py": "def shelf_label():\n    return \"Your shelf\"\n",
+    "docs/labels.md": "# Labels\n\nShelf label: Your shelf.\n",
+    "src/limits.py": "MAX_ITEMS = 20\n",
+    "docs/limits.md": "# Limits\n\nAt most 20 items.\n",
+    "notes/draft.md": "Unfinished idea: optional remote storage.\n"
+  },
+  "purpose": "task",
+  "artifacts": [
+    "src/labels.py",
+    "docs/labels.md",
+    "src/limits.py",
+    "docs/limits.md",
+    "notes/draft.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Commit both completed results, keeping each implementation and its matching documentation together and separating the two independent outcomes."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Retain notes/draft.md byte-for-byte without staging or committing it, deleting it, moving it, or hiding it with an ignore rule."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Preserve all completed content and original history; inspect the entire final tree and establish that the draft is the only explicit remaining exception."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Report actual commit outcomes and the requested draft exception without treating it as a delivery blocker or claiming an entirely clean tree."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "replaced-decision-keeps-reason",
+  "tags": [
+    "guidance"
+  ],
+  "fixtures": [
+    "inventory"
+  ],
+  "files": {
+    "docs/decisions/01-csv.md": "# Export format\n\n**Status:** accepted\n\n## Context\n\nOperators use spreadsheet software and need to inspect exports without programming tools.\n\n## Decision\n\nCSV with name and quantity columns.\n\n## Reason\n\nCSV opens directly in their spreadsheet software.\n",
+    ".work/export/status.md": "# Export format\n\nCurrent state: novel-work planning.\n\n[Previous decision](../../docs/decisions/01-csv.md). JSON has now been accepted to preserve nested item attributes for automated consumers. CSV is replaced, not an additional supported format. Implementation has not started.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "JSON is now the accepted export format because our automated consumers need nested item attributes. Continue the export design with that decision.",
+      "checks": [
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning"
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "purpose": "task",
+  "artifacts": [
+    "docs/decisions/01-csv.md",
+    ".work/export/status.md"
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "Record JSON as the accepted replacement because automated consumers need nested item attributes, without leaving CSV as an additional current format."
+    },
+    {
+      "id": "criterion-2",
+      "description": "Mark the prior CSV decision replaced or superseded and provide a resolving link to the replacement decision."
+    },
+    {
+      "id": "criterion-3",
+      "description": "Preserve the old CSV decision's substantive context and reason: spreadsheet operators needed to inspect exports without programming tools and CSV opened in their spreadsheet software."
+    },
+    {
+      "id": "criterion-4",
+      "description": "Keep one record of each decision, update the export planning record with links as needed, and leave production implementation pending."
+    }
+  ]
+}
