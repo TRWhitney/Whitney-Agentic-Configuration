@@ -8,6 +8,26 @@
 
 ## Current state
 
+Study complete. [Interface and prototype trials](../../docs/research/interface-prototype-trials.md)
+cover 59 attempts across both historical failures and three related cases. All candidate
+assessments and all five joint comparisons completed. The final set reconciles to 13 correct
+and two unknown. Incomplete interface inspection and one uncompleted volunteer-first checkout
+remain unproved. Earlier failures and criterion disagreements remain in the table and findings.
+The [tested proposal](../../docs/research/interface-prototype-proposal.diff) remains unapplied.
+The prototype eval now allows production after necessary product and architecture decisions
+are settled. Its two blanket `src`-preservation checks are removed; the focused regression
+reproduced their false rejection before correction. All 13 focused tests, lint, formatting,
+strict typing and 151 definitions pass. The correction passes independent intent and engineering
+review. Historical trial verdicts remain under the earlier criteria; no fresh candidate or
+reassessment has run under the corrected expectation.
+The private GUI locator now anchors through editor and Save. Its footer-format regression
+failed before correction and passes after, including rejection of a missing dialog frame.
+All four saved baseline/visual GUI outputs passed 30 corrected checks each. All 468 framework
+tests, lint, formatting, typing, 151 definitions, 52 local links, patch applicability,
+tested-source identity and whitespace checks pass. Independent intent and engineering reviews
+pass. Intent review's criterion-retention finding was corrected and passed correction review.
+Raw evidence was inspected, reviewed and deleted before delivery. Native compaction remains deferred.
+
 Complete. The [deletion eval](../../evals/cases/review-reports-outside-data-loss.json)
 now expects repair of its documented bug without a permission question. Its private behavior
 check accepts two repair approaches and rejects the original bug, ineffective deletion and

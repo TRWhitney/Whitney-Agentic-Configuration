@@ -1,0 +1,69 @@
+--- a/skills/work-system/references/procedures/interface-design.md
++++ b/skills/work-system/references/procedures/interface-design.md
+@@ -57,7 +57,8 @@
+ because the model reaches them for unrelated products. Do not replace one overused default with
+ another or repeat a signature from previous work without subject-specific cause.
+
+-Work in two passes. First, make a compact design plan containing:
++Before building the interface or its prototype, write and critique a compact design plan
++containing:
+
+ - four to six named colors with exact values or accepted token references;
+ - two or more type roles with their scale and relationship;
+--- a/skills/work-system/references/procedures/prototype.md
++++ b/skills/work-system/references/procedures/prototype.md
+@@ -35,8 +35,9 @@
+ - Try the relevant interactions, states, themes, and display sizes yourself. Do not add
+   production regression tests or count these checks as production implementation tests or
+   validation.
+-- Launch and operate every interaction relevant to the decision before presenting it. Provide
+-  complete run instructions and any non-sensitive sample data so I can try it without rebuilding
++- Launch each alternative and complete every flow relevant to the decision before presenting it.
++  For visual prototypes, inspect each relevant state's image and rendered structure. Include
++  normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete run instructions and any non-sensitive sample data so I can try it without rebuilding
+   the environment or code.
+ - Include a clear prompt in the prototype stating what is under review. Give concrete steps to
+   try the behavior and say what to look for.
+@@ -56,8 +57,8 @@
+
+ ## Record the decision and save the source
+
+-Treat an agreed prototype as a requirement for production work. Record what production must
+-match and what it may change:
++Treat an agreed prototype as a requirement for production work. Before recording acceptance,
++present what production must match and what it may change:
+
+ - Required behavior, hierarchy, relationships, interactions, states, responsive layout, themes,
+   and things intentionally left out.
+@@ -66,15 +67,17 @@
+
+ Show me this interpretation and obtain explicit confirmation that it captures what matters.
+ Record the flows, states, actions, target elements, and results we used to accept the prototype.
++After I confirm, finish inspection and any required review, then remove rejected alternatives
++from the runnable source before replying.
+
+ Save notes in the repository's existing prototype documentation or
+ `docs/prototypes/<prototype-slug>.md`. Include the agreed requirements, preferences, supporting
+ findings, and complete run instructions. Link the runnable source. Keep that source in the
+ repository, separate from production use.
+
+-After inspection and required review, delete rejected alternatives and temporary captures before
+-delivery. Keep useful comparisons and rejection reasons in the existing notes. Save raw captures
+-only if I explicitly request them. Keeping runnable source does not require archiving
++Keep useful comparisons and rejection reasons in the existing notes. Delete temporary captures
++after inspection and required review, before delivery. Save raw captures only if I explicitly
++request them. Keeping runnable source does not require archiving
+ screenshots, logs, duplicate packages, or per-run outputs.
+
+ Production work still needs its own tests, error handling, and validation. Agreement on the
+--- a/skills/work-system/references/workflows/novel-work.json
++++ b/skills/work-system/references/workflows/novel-work.json
+@@ -28,7 +28,7 @@
+         },
+         "prototype": {
+           "status": "triggered",
+-          "cue": "Use when a small runnable prototype can settle a planning decision."
++          "cue": "Use when a small runnable prototype can settle a planning decision, or when I give feedback, select it, or confirm its requirements."
+         },
+         "research": {
+           "status": "allowed",

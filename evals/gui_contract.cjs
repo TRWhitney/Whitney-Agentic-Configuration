@@ -12,7 +12,7 @@ function container(anchor, ...contents) {
   for (const content of contents) ancestors = ancestors.filter({has:content});
   return ancestors.last();
 }
-const pane = page => container(editor(page), button(page, 'Save'), page.getByText('Plain text', {exact:true}));
+const pane = page => container(editor(page), button(page, 'Save'));
 const title = page => pane(page).getByRole('heading', {level:2});
 
 function preference(page, name) {

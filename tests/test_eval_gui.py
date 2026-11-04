@@ -152,6 +152,36 @@ class GuiTests(unittest.TestCase):
                 self.assertTrue(measurements["notebook/reload-current-text"]["matched"])
                 self.assertTrue(measurements["notebook/reload-other-text"]["matched"])
 
+    def test_design_check_allows_footer_to_follow_the_applied_format(self) -> None:
+        from evals.gui import collect_browser
+
+        case = next(
+            c
+            for c in load_cases(SOURCE / "evals/cases")
+            if c.id == "gui-accepted-design"
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            self.install_finished_application(workspace)
+            component = workspace.file("app/components/workspace.js")
+            component.write_text(
+                component.read_text().replace(
+                    "notebook.current.title;",
+                    "notebook.current.title;"
+                    " root.querySelector('.document-footer span:last-child')"
+                    ".textContent"
+                    " = notebook.current.preferences.format;",
+                )
+            )
+            good = collect_browser(workspace, "design")
+            self.assertTrue(good["matched"], self.measurements(good))
+
+            naming = workspace.file("app/components/naming.js")
+            naming.write_text(
+                naming.read_text().replace('class="dialog-frame"', 'class="unframed"')
+            )
+            bad = collect_browser(workspace, "design")
+            self.assertFalse(bad["matched"], self.measurements(bad))
+
     def test_storage_regression_fails_even_when_presentation_matches(self) -> None:
         from evals.gui import collect_browser
 

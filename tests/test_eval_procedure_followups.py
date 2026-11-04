@@ -21,6 +21,20 @@ class ProcedureFollowupTests(unittest.TestCase):
     def case(self, name: str) -> CaseSpec:
         return next(c for c in load_cases(SOURCE / "evals/cases") if c.id == name)
 
+    def test_prototype_selection_checks_allow_separate_production_source(self) -> None:
+        case = self.case("interactive-prototype-comparison")
+        with make_workspace(SOURCE, case) as workspace:
+            workspace.file("src/index.html").write_text(
+                "<main><button>Edit item</button></main>"
+            )
+            for step in case.steps[1:]:
+                with self.subTest(step=step):
+                    results = [
+                        check_result(check, Observation(), workspace, "t", [])
+                        for check in step.checks
+                    ]
+                    self.assertTrue(all(passed for passed, _ in results), results)
+
     def test_display_oracle_rejects_light_only_and_preserves_notebook_checks(
         self,
     ) -> None:
