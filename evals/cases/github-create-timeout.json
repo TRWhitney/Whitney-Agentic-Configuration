@@ -56,8 +56,11 @@
           ]
         },
         {
-          "kind": "no_publish",
-          "target": "pull_requests"
+          "kind": "github_state",
+          "resource": "prs",
+          "count": 1,
+          "number": 12,
+          "body_pattern": "\\S"
         }
       ],
       "conversation": "main"

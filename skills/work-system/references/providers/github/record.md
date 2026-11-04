@@ -29,6 +29,8 @@ When no open PR exists for the current work, ask in chat. If GitHub access preve
 reading the discussion, report that blocker in chat and ask there for any input needed to
 proceed.
 
+After failed GitHub reads, state what to retry or how to restore access.
+
 ## Records
 
 Use one parent issue for the effort's specification and status. Each feature has one combined
@@ -37,6 +39,8 @@ design. For a single-feature effort, the parent may serve as that feature issue.
 multi-feature effort, use feature sub-issues. Reuse the existing issue for that work. A tweak or
 fix uses one issue for its work, reusing an existing issue when available rather than creating
 another planning issue for an existing feature.
+
+Create the feature issue if it does not exist, and save unresolved questions there before replying.
 
 Decompose actual implementation into logical units of work, each with its own useful
 deliverable, acceptance checks, and genuine dependencies. Store these implementation tickets as

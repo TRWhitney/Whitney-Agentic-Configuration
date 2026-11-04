@@ -36,8 +36,11 @@
           "ignore_substate": true
         },
         {
-          "kind": "no_publish",
-          "target": "pull_requests"
+          "kind": "github_state",
+          "resource": "prs",
+          "count": 1,
+          "number": 12,
+          "body_pattern": "\\S"
         },
         {
           "kind": "github_state",
@@ -85,8 +88,11 @@
           ]
         },
         {
-          "kind": "no_publish",
-          "target": "pull_requests"
+          "kind": "github_state",
+          "resource": "prs",
+          "count": 1,
+          "number": 12,
+          "body_pattern": "\\S"
         }
       ],
       "conversation": "read"

@@ -1,10 +1,10 @@
 # Recorded eval failures
 
-The corpus contains 151 cases. This report reconciles the 25 saved studies through
-[evidence retention trials](evidence-retention-trials.md). It adds no live runs or new verdicts.
+The corpus contains 151 cases. This report reconciles retained studies through
+[GitHub recovery trials](github-recovery-trials.md). It adds no live runs or new verdicts.
 
-There are **7 named cases with a confirmed failure and no later case-level pass recorded**.
-Twenty-eight other cases have an earlier failure followed by a pass. Three cases have disputed
+There are **6 named cases with a confirmed failure and no later case-level pass recorded**.
+Twenty-nine other cases have an earlier failure followed by a pass. Three cases have disputed
 negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
 Some definitions and instructions changed between studies; older findings need a fresh baseline.
 
@@ -25,7 +25,6 @@ the evidence and criteria used at the time.
 | Case and evidence | Why it failed | Evidence needed to close the finding |
 | --- | --- | --- |
 | [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | Establish the original baseline, replace incidental assertions with retained public-behavior tests and verify the refactor without preserving redundant calls. |
-| [github-create-timeout](../../evals/cases/github-create-timeout.json). [Ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). | Created no export issue. Issue-content and one-owner failed; the intended ambiguous-create recovery was never exercised. Earlier attempts had passed. | Create the required issue, recover the saved issue after timeout and show exactly one new planning issue with the unresolved product choice. The newer migration case's pass is a different task. |
 | [review-reports-outside-data-loss](../../evals/cases/review-reports-outside-data-loss.json). [Follow-up](procedure-followup-evals.md#outcomes). | Verified and reported the credible destructive path, but left it as a follow-up without asking how its repair should be handled. Ownership-and-report failed. It made no unrelated repair; review-evidence remained uncertain. | Report the supported risk and seek a decision about handling the repair, while completing the authorized work and avoiding an unrequested repair. |
 
 ### Prototypes, interface design and research
@@ -42,6 +41,7 @@ Later success records observed variation or a tested change. It does not establi
 
 | Case | Earlier failure | Later evidence |
 | --- | --- | --- |
+| [github-create-timeout](../../evals/cases/github-create-timeout.json) | Created no export issue, so timeout recovery was not exercised. Earlier wording also omitted issue creation in repeated attempts. | All three final attempts created one export issue, recovered it after timeout and preserved the unresolved choice. The approved two-sentence GitHub guidance is applied unchanged. Earlier failures and assessment disagreements remain in the [recovery study](github-recovery-trials.md#outcomes). |
 | [amend-preserves-earlier-edit](../../evals/cases/amend-preserves-earlier-edit.json) | Earlier runs omitted retained tests or created new commits. The earlier stock and message pairing did not establish one logical unit. | The corrected case adds regression coverage for the same fix. All three final attempts preserved the fix and tests in the amended commit. [Rework trials](rework-commit-trials.md#case-corrections). |
 | [narrow-correction](../../evals/cases/narrow-correction.json) | Answered the question correctly, then made the approved correction in a new commit. | All three final attempts kept the question read-only and amended the correction. [Rework trials](rework-commit-trials.md#final-confirmation). |
 | [narrow-prose-correction](../../evals/cases/narrow-prose-correction.json) | Made exact corrections in new commits. | All three final attempts retained the corrections in one amended guide commit and answered without further edits. [Rework trials](rework-commit-trials.md#final-confirmation). |

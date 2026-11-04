@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import unittest
 
 from evals.fixtures import Workspace, git, make_workspace
@@ -11,6 +13,44 @@ from tests.test_eval_runner import SOURCE, FakeDriver
 
 
 class BoundaryCasesTests(unittest.TestCase):
+    def test_planning_discussion_allows_comments_but_rejects_new_prs(self) -> None:
+        from evals.models import GitHubStateCheck, NoPublishCheck
+
+        cases = {case.id: case for case in load_cases(SOURCE / "evals/cases")}
+        for name in ("github-create-timeout", "github-planning-edit-persists"):
+            case = cases[name]
+            checks = [
+                check
+                for step in case.steps
+                for check in step.checks
+                if (
+                    isinstance(check, NoPublishCheck)
+                    and check.target == "pull_requests"
+                )
+                or (isinstance(check, GitHubStateCheck) and check.resource == "prs")
+            ]
+            self.assertTrue(checks)
+            with self.subTest(case=name), make_workspace(SOURCE, case) as workspace:
+                command = [sys.executable, str(workspace.home / "bin/github.py")]
+                subprocess.run(
+                    [*command, "pr", "comment", "12", "--body", "Decision still open."],
+                    check=True,
+                    capture_output=True,
+                )
+                for check in checks:
+                    self.assertTrue(
+                        check_result(check, Observation(), workspace, "main", [])[0]
+                    )
+                subprocess.run(
+                    [*command, "pr", "create", "--title", "Redundant planning PR"],
+                    check=False,
+                    capture_output=True,
+                )
+                for check in checks:
+                    self.assertFalse(
+                        check_result(check, Observation(), workspace, "main", [])[0]
+                    )
+
     def test_github_readiness_requires_code_and_closed_pr_blocks_it(self) -> None:
         cases = {c.id: c for c in load_cases(SOURCE / "evals/cases")}
         for name in ("planning-pr-merged", "planning-without-document-pr"):

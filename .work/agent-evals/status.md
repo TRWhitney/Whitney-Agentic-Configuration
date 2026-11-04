@@ -8,6 +8,21 @@
 
 ## Current state
 
+Complete. [GitHub recovery trials](../../docs/research/github-recovery-trials.md) cover
+42 attempts across the timeout case and related planning-update, failed-read and local-conversion
+cases. All 12 final attempts are correct, three per case; all candidate assessments and joint
+blinded comparisons completed. Earlier failures, one unknown conversion and criterion
+disagreements remain in the report. The
+[approved two-sentence patch](../../docs/research/github-recovery-proposal.diff) is applied unchanged.
+Application passes 49 focused checks, all 151 definitions, 174 local links and anchors, and
+reverse-patch verification. The failure report lists six remaining cases, including compaction.
+The private PR checks now allow required comments on the existing PR while rejecting extra PRs;
+all 32 affected frames pass recheck. The regression failed before correction and passes after.
+467 framework tests, all 151 definitions, lint, formatting and strict typing pass. All 48 local
+links and anchors, patch applicability, tested-source identity and whitespace checks pass.
+Independent intent and engineering reviews pass with no findings. Raw evidence was inspected
+and reviewed, then deleted before delivery. Native compaction remains deferred.
+
 Study complete. [Testing-procedure placement trials](../../docs/research/test-quality-trials.md)
 add 16 attempts to the earlier 17. All 12 revised attempts passed the frozen criteria; all
 assessments and joint blinded comparisons completed. All three refactors loaded testing and
