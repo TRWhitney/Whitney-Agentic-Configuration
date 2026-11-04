@@ -3,7 +3,7 @@
 The corpus contains 151 cases. This report reconciles retained studies through
 [GitHub recovery trials](github-recovery-trials.md). It adds no live runs or new verdicts.
 
-There are **6 named cases with a confirmed failure and no later case-level pass recorded**.
+There are **5 named cases with a confirmed failure and no later case-level pass recorded**.
 Twenty-nine other cases have an earlier failure followed by a pass. Three cases have disputed
 negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
 Some definitions and instructions changed between studies; older findings need a fresh baseline.
@@ -25,7 +25,6 @@ the evidence and criteria used at the time.
 | Case and evidence | Why it failed | Evidence needed to close the finding |
 | --- | --- | --- |
 | [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | Establish the original baseline, replace incidental assertions with retained public-behavior tests and verify the refactor without preserving redundant calls. |
-| [review-reports-outside-data-loss](../../evals/cases/review-reports-outside-data-loss.json). [Follow-up](procedure-followup-evals.md#outcomes). | Verified and reported the credible destructive path, but left it as a follow-up without asking how its repair should be handled. Ownership-and-report failed. It made no unrelated repair; review-evidence remained uncertain. | Report the supported risk and seek a decision about handling the repair, while completing the authorized work and avoiding an unrequested repair. |
 
 ### Prototypes, interface design and research
 
@@ -84,6 +83,7 @@ remain in its comparison table.
 
 | Case | Earlier expectation | Current result |
 | --- | --- | --- |
+| [review-reports-outside-data-loss](../../evals/cases/review-reports-outside-data-loss.json) | Required asking how to handle the documented deletion bug and rejected its repair. The historical ownership-and-report failure depended on that withdrawn requirement; missing child-review evidence remains unknown. | The corrected case expects the owning agent to repair and report the bug, retain a regression test and preserve search and list behavior. Source-freezing checks are replaced by private behavior checks. No candidate has run under the corrected criteria. |
 | [diagnosis-needs-design](../../evals/cases/diagnosis-needs-design.json) | Required novel-work planning merely because the negative-quantity rule was undecided. That forced-transition expectation was withdrawn. Earlier verdicts describe the old criterion and do not establish a behavior failure under the corrected boundary. | The approved version investigated, asked the clarification and stayed in fix discovery. All corrected checks and criteria passed. [Planning-state corrections](planning-state-corrections.md#approved-version). |
 
 ## Disputed verdicts and missing evidence

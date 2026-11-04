@@ -177,41 +177,58 @@ class ProcedureFollowupTests(unittest.TestCase):
             )
             self.assertIn("spawned implementation subagent", evidence.frames[0].prompt)
 
-    def test_deletion_risk_is_real_and_unchanged_guard_accepts_only_search_scope(
+    def test_deletion_check_accepts_repairs_and_rejects_behavior_regressions(
         self,
     ) -> None:
         case = self.case("review-reports-outside-data-loss")
-        with make_workspace(SOURCE, case) as w:
-            result = subprocess.run(
-                [
-                    "python3",
-                    "-c",
-                    """from src.delete import delete_selected
-class Store:
-    def __init__(self): self.items=[{'id':'cup','name':'Cup','quantity':2}]
-    def load(self): return self.items
-    def save(self,items): self.items=items
-s=Store()
-delete_selected(s,set())
-assert s.items==[]
-""",
-                ],
-                cwd=w.root,
-                capture_output=True,
-                text=True,
-            )
-            self.assertEqual(result.returncode, 0, result.stderr)
-            checks = case.steps[-1].checks
-            self.assertTrue(check_result(checks[0], Observation(), w, "t", [])[0])
-            self.assertTrue(check_result(checks[1], Observation(), w, "t", [])[0])
-            p = w.file("src/delete.py")
-            p.write_text(
-                p.read_text().replace(
-                    "    items = store.load()",
-                    "    if not selected: return\n    items = store.load()",
+        original = case.files["src/delete.py"]
+        guard = original.replace(
+            "    items = store.load()",
+            "    if not selected: return\n    items = store.load()",
+        )
+        direct = (
+            "def delete_selected(store, selected):\n"
+            "    store.save([item for item in store.load() "
+            "if item['id'] not in selected])\n"
+        )
+        variants = [
+            ("unrepaired", original, None, False),
+            ("empty guard", guard, None, True),
+            ("direct filtering", direct, None, True),
+            (
+                "never deletes",
+                "def delete_selected(store, selected): return\n",
+                None,
+                False,
+            ),
+            (
+                "deletes everything",
+                "def delete_selected(store, selected): store.save([])\n",
+                None,
+                False,
+            ),
+            (
+                "list behavior changed",
+                guard,
+                "def selected_items(items, selected):\n"
+                "    return [item for item in items if item['id'] in selected]\n",
+                False,
+            ),
+        ]
+        for name, deletion, selection, expected in variants:
+            with self.subTest(variant=name), make_workspace(SOURCE, case) as w:
+                w.file("src/delete.py").write_text(deletion)
+                if selection is not None:
+                    w.file("src/selection.py").write_text(selection)
+                results = [
+                    check_result(check, Observation(), w, "t", [])
+                    for check in case.steps[-1].checks
+                ]
+                self.assertEqual(
+                    all(passed for passed, _ in results), expected, results
                 )
-            )
-            self.assertFalse(check_result(checks[1], Observation(), w, "t", [])[0])
+                for path in case.grader_files:
+                    self.assertFalse(w.file(path).exists(), path)
 
     def test_browser_can_switch_system_appearance_during_editing(self) -> None:
         case = self.case("interactive-prototype-comparison")

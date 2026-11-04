@@ -8,6 +8,19 @@
 
 ## Current state
 
+Complete. The [deletion eval](../../evals/cases/review-reports-outside-data-loss.json)
+now expects repair of its documented bug without a permission question. Its private behavior
+check accepts two repair approaches and rejects the original bug, ineffective deletion and
+changed list behavior. The focused regression failed under the old checks and passes after
+correction. Existing calibration examples now distinguish repair from unnecessary deferral.
+Skill guidance and candidate inputs are unchanged. No candidate has run under the revised criteria.
+All seven focused tests, all 151 definitions, lint, formatting, strict typing and 172 local links
+and anchors pass. All four revised examples agree with a blinded gpt-6.1-sol judge; every
+assessment completed. This calibration does not establish candidate behavior. Independent intent
+and engineering reviews pass with no findings. Raw assessment evidence was inspected, reviewed
+and deleted before delivery.
+Focused checks: `.venv/bin/python -m unittest tests.test_eval_calibration tests.test_eval_procedure_followups`.
+
 Complete. [GitHub recovery trials](../../docs/research/github-recovery-trials.md) cover
 42 attempts across the timeout case and related planning-update, failed-read and local-conversion
 cases. All 12 final attempts are correct, three per case; all candidate assessments and joint
