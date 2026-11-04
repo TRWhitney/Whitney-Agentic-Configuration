@@ -8,6 +8,17 @@
 
 ## Current state
 
+Study complete. [Testing-procedure placement trials](../../docs/research/test-quality-trials.md)
+add 16 attempts to the earlier 17. All 12 revised attempts passed the frozen criteria; all
+assessments and joint blinded comparisons completed. All three refactors loaded testing and
+retained passing public-output tests after an observed original baseline. One retained the
+double helper call after removing the mocked assertions; this limitation is saved in the report.
+The [revised diff](../../docs/research/test-quality-proposal.diff) remains unapplied for review.
+All 151 definitions, changed local links, patch applicability and whitespace checks pass.
+Earlier framework and quality checks remain applicable because their source is unchanged.
+Independent intent and engineering reviews pass with no findings. Raw evidence was inspected
+and reviewed, then deleted before delivery. Native compaction remains deferred.
+
 Complete. [Evidence retention trials](../../docs/research/evidence-retention-trials.md)
 cover 96 attempts. All 27 final attempts are correct, three per case or control; every assessment
 completed. All 149 raw-evidence checks passed. The

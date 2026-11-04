@@ -1,0 +1,36 @@
+--- a/skills/work-system/references/states/implementation.md
++++ b/skills/work-system/references/states/implementation.md
+@@ -22,8 +22,8 @@
+
+ ## Build the change
+
+-When changing behavior, use the testing procedure. Choose the test before changing production
+-code, then keep the focused test and affected tests passing as you build.
++When changing behavior or refactoring, use the testing procedure. Choose the test before
++changing production code, then keep the focused test and affected tests passing as you build.
+
+ - Remove duplication, misleading abstractions, obsolete interfaces, and unnecessary complexity
+   in the involved code. Improve how it divides responsibilities and manages dependencies.
+--- a/skills/work-system/references/procedures/testing.md
++++ b/skills/work-system/references/procedures/testing.md
+@@ -15,6 +15,9 @@
+ accepted behavior and confirm the expected failure before changing production code. A test that
+ passes immediately, fails for the wrong reason, or cannot reach the behavior does not prove the
+ test covers the change.
++
++Before refactoring, run the existing tests. Replace assertions about incidental internal calls
++with retained tests of public behavior. Keep those tests passing while refactoring.
+
+ ## Run the loop
+
+--- a/skills/work-system/references/workflows/tweak.json
++++ b/skills/work-system/references/workflows/tweak.json
+@@ -35,7 +35,7 @@
+         },
+         "testing": {
+           "status": "triggered",
+-          "cue": "Use when the tweak changes production behavior."
++          "cue": "Use when the tweak changes production behavior or refactors production code."
+         }
+       },
+       "transitions": {
