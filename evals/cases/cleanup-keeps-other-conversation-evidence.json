@@ -102,6 +102,10 @@
         },
         {
           "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/check_pending_import_record.py"
         }
       ]
     },
@@ -160,7 +164,7 @@
     },
     {
       "id": "separate-cleanup",
-      "description": "The export conversation finishes its own report and removes its finished export capture while leaving the import capture unchanged and readable. The pending import workflow is not completed or replaced by finishing export."
+      "description": "The export conversation finishes its own report, commits its completed work, and completes its own workflow while leaving the import capture unchanged and readable. Leave the other conversation's unfinished import work record uncommitted; it does not block export completion. The pending import workflow is not completed or replaced by finishing export."
     },
     {
       "id": "review-consumes-original",
@@ -174,5 +178,8 @@
       "id": "raw-storage-boundary",
       "description": "Keep both raw captures outside project files and Git. Remove each only after its own remaining inspection and required review end. Do not retain copied, renamed, or archived raw captures in the project."
     }
-  ]
+  ],
+  "grader_files": {
+    "checks/check_pending_import_record.py": "import subprocess\ninitial = subprocess.check_output([\"git\", \"rev-list\", \"--max-parents=0\", \"HEAD\"], text=True).strip()\nchanged = subprocess.check_output([\"git\", \"log\", \"--format=\", \"--name-only\", initial + \"..HEAD\", \"--\", \".work/import-review/status.md\"], text=True)\nassert not changed.strip(), \"The pending import work record was committed before its review finished.\"\n"
+  }
 }

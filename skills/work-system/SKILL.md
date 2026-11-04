@@ -20,6 +20,11 @@ outside the checkout. Keep them for required inspection and review, then delete 
 delivery. Do not save captures or full run histories for later replay unless I explicitly
 request it. Include these rules in delegated assignments.
 
+Before replying, update the existing report or work record with conclusions and remove each raw
+capture whose diagnosis, inspection, and required review are finished. Supplied trial captures
+are raw outputs. Preserve original source data and reusable checks. Keep retained captures
+outside the checkout and out of Git.
+
 ## Route spawned implementation subagents
 
 Apply this section only when system or developer instructions identify you as a spawned subagent

@@ -1,0 +1,26 @@
+--- a/skills/work-system/SKILL.md
++++ b/skills/work-system/SKILL.md
+@@ -19,6 +19,11 @@
+ outside the checkout. Keep them for required inspection and review, then delete them before
+ delivery. Do not save captures or full run histories for later replay unless I explicitly
+ request it. Include these rules in delegated assignments.
++
++Before replying, update the existing report or work record with conclusions and remove each raw
++capture whose diagnosis, inspection, and required review are finished. Supplied trial captures
++are raw outputs. Preserve original source data and reusable checks. Keep retained captures
++outside the checkout and out of Git.
+ 
+ ## Route spawned implementation subagents
+ 
+--- a/skills/work-system/references/procedures/commit.md
++++ b/skills/work-system/references/procedures/commit.md
+@@ -7,6 +7,9 @@
+ Include the entire repository working tree: my changes, pre-existing changes, and staged,
+ unstaged, or untracked files. Your task limits what you change, not which completed changes you
+ commit.
++
++Leave another conversation's unfinished work record uncommitted. It is an exception to the
++requirement for a clean working tree and does not block this conversation's delivery.
+ 
+ Run `git status --short --untracked-files=all` from the repository root before deciding that no
+ commit is needed. That is true only when the tree is clean or I explicitly exempted every

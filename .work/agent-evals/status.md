@@ -8,6 +8,26 @@
 
 ## Current state
 
+Complete. [Evidence retention trials](../../docs/research/evidence-retention-trials.md)
+cover 96 attempts. All 27 final attempts are correct, three per case or control; every assessment
+completed. All 149 raw-evidence checks passed. The
+[tested diff](../../docs/research/evidence-retention-proposal.diff) adds cleanup wording and
+allows delivery while another conversation's unfinished work record remains uncommitted.
+The approved wording is applied unchanged. All 52 focused application checks pass, as do
+all 151 definitions and 170 local links. The failure report now lists seven remaining cases,
+including the deferred compaction case.
+The private eval checks that the pending record stays uncommitted; its regression accepts an
+export-only commit and rejects committing the pending import record.
+466 framework tests, all 151 definitions, lint, formatting, strict typing, and changed local
+links pass. Independent intent and engineering reviews pass with no findings. Raw evidence was
+inspected and reviewed, then deleted before delivery. Native compaction remains deferred.
+
+Verification commands: `.venv/bin/python -m unittest discover -s tests`,
+`.venv/bin/ruff check .`, `.venv/bin/ruff format --check .`,
+`.venv/bin/mypy evals scripts tests`, and `.venv/bin/python -m evals validate`.
+Application checks: `.venv/bin/python -m unittest tests.test_work_system tests.test_navigators tests.test_eval_retention`
+and reverse application of the tested diff.
+
 Complete. [Ticket 21](tickets/21-rework-commit-trials.md) applies the accepted commit conditions
 and navigator operations. [Results](../../docs/research/rework-commit-trials.md): all 27 final
 attempts correct, three per case or control; every assessment complete. The three unchanged

@@ -8,6 +8,9 @@ Include the entire repository working tree: my changes, pre-existing changes, an
 unstaged, or untracked files. Your task limits what you change, not which completed changes you
 commit.
 
+Leave another conversation's unfinished work record uncommitted. It is an exception to the
+requirement for a clean working tree and does not block this conversation's delivery.
+
 Run `git status --short --untracked-files=all` from the repository root before deciding that no
 commit is needed. That is true only when the tree is clean or I explicitly exempted every
 remaining change. If I told you to leave specific changes uncommitted, leave those changes and

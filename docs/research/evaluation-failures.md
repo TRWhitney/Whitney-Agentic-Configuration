@@ -1,10 +1,10 @@
 # Recorded eval failures
 
-The corpus contains 151 cases. This report reconciles the 24 saved studies through
-[rework commit trials](rework-commit-trials.md). It adds no live runs or new verdicts.
+The corpus contains 151 cases. This report reconciles the 25 saved studies through
+[evidence retention trials](evidence-retention-trials.md). It adds no live runs or new verdicts.
 
-There are **12 named cases with a confirmed failure and no later case-level pass recorded**.
-Twenty-three other cases have an earlier failure followed by a pass. Three cases have disputed
+There are **7 named cases with a confirmed failure and no later case-level pass recorded**.
+Twenty-eight other cases have an earlier failure followed by a pass. Three cases have disputed
 negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
 Some definitions and instructions changed between studies; older findings need a fresh baseline.
 
@@ -19,19 +19,6 @@ the evidence and criteria used at the time.
 | Case and evidence | Why it failed | Evidence needed to close the finding |
 | --- | --- | --- |
 | [agent-created-state-compaction](../../evals/cases/agent-created-state-compaction.json). [Assessment](evaluation-methods.md#validation), [later extension](workflow-connection-evals.md#outcomes). [Latest run](planning-state-corrections.md#approved-version). | Earlier attempts omitted planning records. The approved version created useful records and recovered the latest answer after compaction, but created a second work index and left the existing one stale. The saved-link check failed; the model judge missed the reuse failure. | Reuse the existing work record and link its map and feature requirements before asking. Preserve the latest accepted answer across compaction. |
-
-### Evidence cleanup and saved conclusions
-
-| Case and evidence | Why it failed | Evidence needed to close the finding |
-| --- | --- | --- |
-| [results-survive-cleanup](../../evals/cases/results-survive-cleanup.json). [Retention study](evidence-retention-evals.md#results), [follow-up](gui-verification-evals.md#results). | Saved individual outcomes and reasons but retained finished raw batch JSON. The later conversation could reopen it. Concise-retention failed. The earlier judge's demand for the literal phrase "attempt 1" is disputed and is not needed to establish this failure. | Preserve every attempt's outcome, reason and assessment status in the concise report, then remove finished raw data before delivery. |
-| [diagnosis-keeps-failed-attempt](../../evals/cases/diagnosis-keeps-failed-attempt.json). [Retention study](evidence-retention-evals.md#results). | Kept unresolved evidence, reproduced the original error after the mapping arrived and saved its cause, but left both raw captures after declaring diagnosis complete. Cleanup-and-boundary failed. | Keep captures while diagnosis needs them; save the supported finding and reproduction, then remove both finished captures. |
-| [explicit-retention-outside-git](../../evals/cases/explicit-retention-outside-git.json). [Retention study](evidence-retention-evals.md#results). | Honored retention of the requested failed capture and later deleted it with permission, but left the unrelated retry capture and did not save the confirmed diagnosis. Useful-conclusion and selective-cleanup failed. | Save the diagnosis, remove finished unrelated evidence and retain only the explicitly requested capture until inspection ends. |
-| [cleanup-keeps-other-conversation-evidence](../../evals/cases/cleanup-keeps-other-conversation-evidence.json). [Follow-up](gui-verification-evals.md#results). | Kept the other conversation's pending evidence and obtained its eventual review, but left the finished export workflow active. The completed check failed; retained-conclusions was uncertain because native reviewer findings were unavailable. | Complete the finished conversation without replacing or completing the other conversation's pending workflow; retain useful findings and finish cleanup after each review. |
-| [cleanup-preserves-supplied-input](../../evals/cases/cleanup-preserves-supplied-input.json). [Follow-up](gui-verification-evals.md#results). | Preserved the supplied input and useful diagnosis but left the generated finished log. Finished-log-removed failed. The earlier raw-copy objection was disputed because a brief example was permitted. | Preserve the original supplied CSV and concise reproduction while removing the finished generated log. |
-
-These failures do not establish that raw evidence entered Git. The retention study's seven
-primary cases passed every no-raw-evidence check.
 
 ### Tests, publication and review decisions
 
@@ -78,6 +65,20 @@ Later success records observed variation or a tested change. It does not establi
 | [start-wayfinding-from-conversation](../../evals/cases/start-wayfinding-from-conversation.json). [Assessment](evaluation-methods.md#validation). | Started the discussion without creating the linked decision map and feature planning record needed to preserve it. | The approved version passed every check and criterion. [Planning-state corrections](planning-state-corrections.md#approved-version). |
 | [tracker-separate-conversations](../../evals/cases/tracker-separate-conversations.json). [Assessment](evaluation-methods.md#validation). | Explained GitHub tracking without its required delivery of changed repository planning documents. | The approved version passed every check and criterion. [Planning-state corrections](planning-state-corrections.md#approved-version). |
 | [damaged-navigation-record](../../evals/cases/damaged-navigation-record.json). [Earlier findings](planning-state-corrections.md#approved-version). | Earlier attempts guessed replacement state or omitted the recovery explanation after stopping safely. | The navigator now points to the selected tracker's record guidance and asks for a recovery explanation. All eight final script attempts passed, preserving damaged state, source and the other conversation. [Recovery study](damaged-state-recovery.md#outcomes). |
+
+### Evidence cleanup and saved conclusions
+
+| Case and evidence | Why it failed | Later evidence |
+| --- | --- | --- |
+| [results-survive-cleanup](../../evals/cases/results-survive-cleanup.json). [Retention study](evidence-retention-evals.md#results), [follow-up](gui-verification-evals.md#results). | Saved individual outcomes and reasons but retained finished raw batch JSON. The later conversation could reopen it. Concise-retention failed. The earlier judge's demand for the literal phrase "attempt 1" is disputed and is not needed to establish this failure. | All three final attempts saved every outcome, reason and assessment status, removed the batch and answered the follow-up from the saved report. [Retention trials](evidence-retention-trials.md#outcomes). |
+| [diagnosis-keeps-failed-attempt](../../evals/cases/diagnosis-keeps-failed-attempt.json). [Retention study](evidence-retention-evals.md#results). | Kept unresolved evidence, reproduced the original error after the mapping arrived and saved its cause, but left both raw captures after declaring diagnosis complete. Cleanup-and-boundary failed. | All three final attempts retained unresolved evidence, reproduced the original failure, saved its cause and removed both finished captures. [Retention trials](evidence-retention-trials.md#outcomes). |
+| [explicit-retention-outside-git](../../evals/cases/explicit-retention-outside-git.json). [Retention study](evidence-retention-evals.md#results). | Honored retention of the requested failed capture and later deleted it with permission, but left the unrelated retry capture and did not save the confirmed diagnosis. Useful-conclusion and selective-cleanup failed. | All three final attempts saved the diagnosis, removed the unrelated retry and kept only the requested capture until inspection ended. [Retention trials](evidence-retention-trials.md#outcomes). |
+| [cleanup-keeps-other-conversation-evidence](../../evals/cases/cleanup-keeps-other-conversation-evidence.json). [Follow-up](gui-verification-evals.md#results). | Kept the other conversation's pending evidence and obtained its eventual review, but left the finished export workflow active. The completed check failed; retained-conclusions was uncertain because native reviewer findings were unavailable. | All three final attempts completed export with the pending import record uncommitted. Import evidence survived until review, findings were saved and each finished capture was removed. [Retention trials](evidence-retention-trials.md#outcomes). |
+| [cleanup-preserves-supplied-input](../../evals/cases/cleanup-preserves-supplied-input.json). [Follow-up](gui-verification-evals.md#results). | Preserved the supplied input and useful diagnosis but left the generated finished log. Finished-log-removed failed. The earlier raw-copy objection was disputed because a brief example was permitted. | All three final attempts preserved the original CSV and concise reproduction while removing the generated finished log. [Retention trials](evidence-retention-trials.md#outcomes). |
+
+Earlier failures do not establish that raw evidence entered Git. All 149 raw-evidence checks
+across 80 retention attempts passed in the latest study. Earlier failures and disputed judgments
+remain in its comparison table.
 
 ## Corrected workflow expectation
 

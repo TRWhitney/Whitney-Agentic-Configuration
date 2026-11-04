@@ -12,6 +12,39 @@ from tests.test_eval_runner import SOURCE, FakeDriver
 
 
 class RetentionTests(unittest.TestCase):
+    def test_export_can_commit_without_committing_pending_import_record(self) -> None:
+        from evals.models import load_cases
+
+        case = next(
+            case
+            for case in load_cases(SOURCE / "evals/cases")
+            if case.id == "cleanup-keeps-other-conversation-evidence"
+        )
+        check = next(
+            check
+            for step in case.steps
+            for check in step.checks
+            if check.kind == "python_check"
+            and check.path == "checks/check_pending_import_record.py"
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            workspace.file(".work/import-review/status.md").write_text(
+                "Receiving-team approval is still pending.\n"
+            )
+            workspace.file("docs/export-evaluation.md").write_text(
+                "Both export rows retained their names and quantities.\n"
+            )
+            git(workspace.root, "add", "docs/export-evaluation.md")
+            git(workspace.root, "commit", "-qm", "Finish export report")
+            self.assertTrue(
+                check_result(check, Observation(), workspace, "export", [])[0]
+            )
+            git(workspace.root, "add", ".work/import-review/status.md")
+            git(workspace.root, "commit", "-qm", "Commit pending import record")
+            self.assertFalse(
+                check_result(check, Observation(), workspace, "export", [])[0]
+            )
+
     def case(self) -> CaseSpec:
         return CaseSpec.model_validate(
             {
