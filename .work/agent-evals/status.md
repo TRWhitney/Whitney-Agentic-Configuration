@@ -8,6 +8,27 @@
 
 ## Current state
 
+Complete. The research case excludes hidden-assignment checks.
+Neutral assignments remain expected but uncheckable.
+The private criterion retains observable delegation, child work and parent verification.
+The [study](../../docs/research/research-completion-trials.md#uncheckable-assignment-requirements)
+records the coverage limit. The six-word change is applied unchanged and matches the tested instruction digest.
+
+Three fresh baseline attempts and three isolated six-word trials use the revised criterion,
+with unchanged requests, fixtures and gpt-6.1-sol settings. The applied wording passes all three;
+the baseline is C/U/C because one direct investigation lacks tool-availability evidence.
+A joint blinded comparison agrees; all twelve assessments completed. Both groups keep earlier
+findings, so passing cannot be attributed solely to the wording.
+Earlier baseline U/F/F and trial U/U/U remain historical results, with all assessments complete.
+The previous trial preserved stable IDs and duplicate-title acceptance in all three reports.
+Related controls, citation-grading corrections and all 48 calibration judgments were inspected
+and reviewed. All 489 framework tests and quality checks pass with the applied change;
+22 affected checks and all 151 definitions pass.
+Independent intent and engineering reviews of the applied change, grading corrections,
+revised criterion and six attempts pass. Raw evidence was inspected, reviewed and deleted.
+The child workflow-start observation remains ungraded because exceptions cannot be checked.
+The full corpus was not rerun; native compaction remains deferred.
+
 Complete. [Eval reliability](spec.md#eval-reliability) adds calibrated run gates, recording
 coverage, fault diagnosis, native per-attempt permissions, external raw-output storage and
 audited reassessment. Original checks, judgments and assessment failures remain preserved.

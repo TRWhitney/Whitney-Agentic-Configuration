@@ -3,7 +3,9 @@
 The corpus contains 151 cases. The earlier reconciliation covered retained studies through
 [reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
 [eval reliability follow-up](eval-reliability-trials.md) adds recording repairs, assessor
-corrections and fresh GUI trials; it is not a full-corpus rerun.
+corrections and fresh GUI trials; it is not a full-corpus rerun. The later
+[research-completion study](research-completion-trials.md) records three final passes after
+the approved coverage correction.
 
 The earlier reconciliation recorded **3 named cases with a confirmed failure and no later case-level pass recorded**.
 Thirty-one other cases had an earlier failure followed by a pass. Three cases had disputed
@@ -29,18 +31,13 @@ the evidence and criteria used at the time.
 | --- | --- | --- |
 | [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | Establish the original baseline, replace incidental assertions with retained public-behavior tests and verify the refactor without preserving redundant calls. |
 
-### Research completion
-
-| Case and evidence | Why it failed | Evidence needed to close the finding |
-| --- | --- | --- |
-| [complete-research-investigation](../../evals/cases/complete-research-investigation.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Source inspection and probes supported the storage recommendation, but the existing report still said pending and the planning records remained unchanged. Usable-combined-findings failed. Independent-investigation-and-verification was uncertain because child details were unavailable. | Save the combined findings, sources, conditions and limits in the existing report and carry the planning consequences into its linked records. Keep unresolved product choices open. |
-
 ## Earlier failures followed by a pass
 
 Later success records observed variation or a tested change. It does not establish a general fix.
 
 | Case | Earlier failure | Later evidence |
 | --- | --- | --- |
+| [complete-research-investigation](../../evals/cases/complete-research-investigation.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Source inspection and probes supported the storage recommendation, but the existing report still said pending and the planning records remained unchanged. Usable-combined-findings failed. Independent-investigation-and-verification was uncertain because child details were unavailable. | All three final attempts are correct under the revised observable-work criterion; all assessments completed. The six-word preservation change is applied. Parent verification remains required. Assignment neutrality and other hidden-message requirements remain expected but uncheckable and ungraded. Earlier failures and unknowns remain in the [wording study](research-completion-trials.md). |
 | [interactive-prototype-comparison](../../evals/cases/interactive-prototype-comparison.json) | Earlier [follow-up](procedure-followup-evals.md#outcomes) and [acceptance](integration-and-acceptance-evals.md#outcomes) attempts missed the repair, direct operation or acceptance interpretation. Rejected-source removal was formerly required; retention now requires marking it rejected. | All three reviewed attempts repaired the summary, presented requirements before confirmation and retained both runnable alternatives with inline marked rejected. Two are correct; one lacks direct editing-operation proof. Approved guidance is applied. [Reviewed trials](interface-prototype-trials.md#reviewed-wording). |
 | [new-interface-design](../../evals/cases/new-interface-design.json) | Built before the complete design plan in the [main procedure study](main-procedure-path-evals.md#outcomes). | All three reviewed attempts wrote and critiqued the plan before construction and operated both starts. One is correct; two lack substantive transaction-structure inspection. Approved guidance is applied. [Reviewed trials](interface-prototype-trials.md#reviewed-wording). |
 | [github-create-timeout](../../evals/cases/github-create-timeout.json) | Created no export issue, so timeout recovery was not exercised. Earlier wording also omitted issue creation in repeated attempts. | All three final attempts created one export issue, recovered it after timeout and preserved the unresolved choice. The approved two-sentence GitHub guidance is applied unchanged. Earlier failures and assessment disagreements remain in the [recovery study](github-recovery-trials.md#outcomes). |

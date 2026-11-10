@@ -54,7 +54,8 @@ rather than filling the gap with an assumption.
 
 Create a research report only when future work needs its findings, reasons, or citations and no
 existing report covers the subject. Use the repository's research layout or
-`docs/research/<research-slug>.md`. Update that report for later questions and experiments. Keep
+`docs/research/<research-slug>.md`. Update that report for later questions and experiments. Preserve earlier findings that still
+apply. Keep
 it under 500 words plus a compact results table unless I explicitly request more. Include the
 question, scope, conclusion, supporting sources, disagreements, limitations, and effects on the
 work. Link sources rather than copying them. Otherwise record findings in the answer, decision,
