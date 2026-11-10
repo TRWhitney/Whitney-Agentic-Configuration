@@ -22,8 +22,8 @@ Keep behavior outside the agreed change unchanged and keep affected tests passin
 
 ## Build the change
 
-When changing behavior, use the testing procedure. Choose the test before changing production
-code, then keep the focused test and affected tests passing as you build.
+When changing behavior or refactoring, use the testing procedure. Choose the test before
+changing production code, then keep the focused test and affected tests passing as you build.
 
 - Remove duplication, misleading abstractions, obsolete interfaces, and unnecessary complexity
   in the involved code. Improve how it divides responsibilities and manages dependencies.

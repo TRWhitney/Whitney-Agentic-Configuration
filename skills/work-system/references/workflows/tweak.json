@@ -35,7 +35,7 @@
         },
         "testing": {
           "status": "triggered",
-          "cue": "Use when the tweak changes production behavior."
+          "cue": "Use when the tweak changes production behavior or refactors production code."
         }
       },
       "transitions": {

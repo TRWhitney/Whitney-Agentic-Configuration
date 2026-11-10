@@ -1,8 +1,7 @@
 # Test quality trials
 
 All 12 revised attempts passed the unchanged criteria. The [proposed diff](test-quality-proposal.diff)
-routes refactoring to testing and places its detailed instructions there. Skill sources remain
-unchanged pending review.
+routes refactoring to testing and places its detailed instructions there. The tested diff is applied unchanged.
 
 ## Outcomes
 
@@ -56,9 +55,8 @@ to be reassessed; no candidate was rerun or excluded.
 
 Earlier raw evidence was deleted after independent intent and engineering reviews passed.
 Independent intent and engineering reviews of the revised study also passed with no findings.
-Current raw evidence was inspected and reviewed, then deleted before delivery. All 151
-definitions and changed links pass. The earlier
-466 framework and quality checks remain applicable because framework source is unchanged.
+Current raw evidence was inspected and reviewed, then deleted before delivery. Application passes 42 work-system and navigator tests, all 151 definitions, lint, formatting,
+strict typing and reverse-patch verification. The full framework run passes 489 tests.
 These small reconstructed tasks and same-family judges do not establish a production failure
 rate or a full-corpus result. Native compaction remains deferred.
 

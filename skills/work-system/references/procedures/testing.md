@@ -16,6 +16,9 @@ accepted behavior and confirm the expected failure before changing production co
 passes immediately, fails for the wrong reason, or cannot reach the behavior does not prove the
 test covers the change.
 
+Before refactoring, run the existing tests. Replace assertions about incidental internal calls
+with retained tests of public behavior. Keep those tests passing while refactoring.
+
 ## Run the loop
 
 For each behavior:

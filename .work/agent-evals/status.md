@@ -96,14 +96,16 @@ links and anchors, patch applicability, tested-source identity and whitespace ch
 Independent intent and engineering reviews pass with no findings. Raw evidence was inspected
 and reviewed, then deleted before delivery. Native compaction remains deferred.
 
-Study complete. [Testing-procedure placement trials](../../docs/research/test-quality-trials.md)
+Complete. [Testing-procedure placement trials](../../docs/research/test-quality-trials.md)
 add 16 attempts to the earlier 17. All 12 revised attempts passed the frozen criteria; all
 assessments and joint blinded comparisons completed. All three refactors loaded testing and
 retained passing public-output tests after an observed original baseline. One retained the
 double helper call after removing the mocked assertions; this limitation is saved in the report.
-The [revised diff](../../docs/research/test-quality-proposal.diff) remains unapplied for review.
+The [revised diff](../../docs/research/test-quality-proposal.diff) is applied unchanged.
+Application passes 42 work-system and navigator tests, all 151 definitions, quality checks
+and reverse-patch verification.
 All 151 definitions, changed local links, patch applicability and whitespace checks pass.
-Earlier framework and quality checks remain applicable because their source is unchanged.
+All 489 framework tests pass.
 Independent intent and engineering reviews pass with no findings. Raw evidence was inspected
 and reviewed, then deleted before delivery. Native compaction remains deferred.
 
