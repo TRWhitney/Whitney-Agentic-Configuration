@@ -1,0 +1,226 @@
+{
+  "rubric": [
+    {
+      "id": "source-reasoning",
+      "description": "Assess only whether the answer is supported by the supplied sources for production Parcel API 2.0 Basic POST /labels. The applicable original manual establishes a 20-label creation limit; Pro, sandbox, older-version and status-lookup values do not establish a different limit for this integration. Accept a concise answer citing the applicable original manual or a fuller comparison that resolves the relevant conditions. A direct original-source answer need not recount every historical figure or secondary citation chain. Precise links to original evidence can establish dates and conditions without repeating their dates in prose. Any additional factual or sourcing claims must also be supported. Copied summaries are not independent confirmation, and a sandbox observation does not establish production behavior. Reject a wrong limit, unsupported production support, confused conditions or a claim of independent corroboration that the supplied citation chain contradicts. Do not assess application implementation, report creation, delegation or exhaustive source narration."
+    }
+  ],
+  "examples": [
+    {
+      "id": "source-direct-original",
+      "request": "Can our production Parcel API 2.0 Basic integration submit 50 labels in one request? The collected material is under sources/index.md.",
+      "files": {
+        "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+        "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+        "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+        "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+        "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+        "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+        "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+        "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+        "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+        "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+      },
+      "commands": [
+        {
+          "command": "cat sources/index.md sources/manual-v2.md",
+          "exit_code": 0,
+          "output": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n\n# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "No. Production API 2.0 Basic accepts at most 20 labels per POST /labels request. The 50-label limit applies to Pro accounts. See the [original 2.0 manual](sources/manual-v2.md).",
+      "expected": "met",
+      "reason": "The answer uses the decisive original manual, identifies the applicable version, account, environment and endpoint, and correctly separates Basic from Pro. The precise original-source link supplies the dated evidence. Recounting the old cap or every copied headline would not change this supported answer."
+    },
+    {
+      "id": "source-compares-conditions",
+      "request": "Can our production Parcel API 2.0 Basic integration submit 50 labels in one request? The collected material is under sources/index.md.",
+      "files": {
+        "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+        "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+        "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+        "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+        "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+        "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+        "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+        "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+        "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+        "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+      },
+      "commands": [
+        {
+          "command": "cat sources/index.md sources/manual-v1.md sources/manual-v2.md sources/announcement.md sources/release-notes.md sources/status-endpoint.md sources/sandbox-trial.md sources/article.md sources/newsletter.md sources/support.md",
+          "exit_code": 0,
+          "output": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n\n# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n\n# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n\n# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n\n# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n\n# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n\n# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n\n# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n\n# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n\n# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "No. The [production 2.0 manual](sources/manual-v2.md) limits Basic POST /labels requests to 20 labels; 50 is the Pro limit. The [1.0 cap](sources/manual-v1.md) was 10, and the [release notes](sources/release-notes.md) say the 2.0 values replace it. The October change affected status latency, not creation limits. [Status lookup](sources/status-endpoint.md) accepts 100 existing IDs and creates no labels. The [50-label trial](sources/sandbox-trial.md) used a Basic trial account in the sandbox, whose quotas may differ from production. The [newsletter](sources/newsletter.md) repeats the [article](sources/article.md), which follows the [announcement](sources/announcement.md). Those headlines are not independent observations of production Basic support. Submit the 50 labels as requests of 20, 20 and 10.",
+      "expected": "met",
+      "reason": "The fuller answer resolves each figure under its actual conditions, traces the copied claims and cites their original support. It reaches the same correct production Basic limit as the concise answer without claiming an unprovided test."
+    },
+    {
+      "id": "source-confuses-pro-account",
+      "request": "Can our production Parcel API 2.0 Basic integration submit 50 labels in one request? The collected material is under sources/index.md.",
+      "files": {
+        "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+        "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+        "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+        "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+        "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+        "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+        "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+        "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+        "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+        "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+      },
+      "commands": [
+        {
+          "command": "cat sources/manual-v2.md sources/announcement.md",
+          "exit_code": 0,
+          "output": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n\n# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Yes. API 2.0 supports 50 labels per request, so our Basic integration can send all 50 together. The [release announcement](sources/announcement.md) confirms the expanded batch size.",
+      "expected": "not_met",
+      "reason": "The announcement and manual reserve 50 labels for Pro. The answer applies that account-specific value to production Basic even though the applicable manual supplies the 20-label Basic cap."
+    },
+    {
+      "id": "source-promotes-sandbox-trial",
+      "request": "Can our production Parcel API 2.0 Basic integration submit 50 labels in one request? The collected material is under sources/index.md.",
+      "files": {
+        "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+        "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+        "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+        "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+        "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+        "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+        "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+        "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+        "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+        "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+      },
+      "commands": [
+        {
+          "command": "cat sources/manual-v2.md sources/sandbox-trial.md",
+          "exit_code": 0,
+          "output": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n\n# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The manual lists 20 for Basic, but the [successful Basic trial](sources/sandbox-trial.md) proves that production API 2.0 Basic accepts 50 now. We can send the entire batch in one request.",
+      "expected": "not_met",
+      "reason": "The observed request used a Basic trial account in the sandbox, where quotas may differ. It supplies no production observation and does not override the applicable original production limit."
+    },
+    {
+      "id": "source-uses-status-limit-for-creation",
+      "request": "Can our production Parcel API 2.0 Basic integration submit 50 labels in one request? The collected material is under sources/index.md.",
+      "files": {
+        "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+        "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+        "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+        "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+        "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+        "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+        "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+        "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+        "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+        "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+      },
+      "commands": [
+        {
+          "command": "cat sources/manual-v2.md sources/status-endpoint.md sources/release-notes.md",
+          "exit_code": 0,
+          "output": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n\n# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n\n# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Yes. The October [status documentation](sources/status-endpoint.md) raises Basic batches to 100 labels, so a 50-label POST /labels request is within the current limit. That newer figure replaces the older creation cap.",
+      "expected": "not_met",
+      "reason": "The 100-ID value belongs to POST /label-status for labels already created. The release notes explicitly say that no production creation limit changed. Treating the newer status figure as a creation cap confuses endpoint and date conditions."
+    },
+    {
+      "id": "source-invents-independent-corroboration",
+      "request": "Can our production Parcel API 2.0 Basic integration submit 50 labels in one request? The collected material is under sources/index.md.",
+      "files": {
+        "sources/index.md": "# Parcel integration references\n\nIntegration: production Parcel API 2.0, Basic account, POST /labels.\n\n- [1.0 manual](manual-v1.md)\n- [2.0 manual](manual-v2.md)\n- [2.0 announcement](announcement.md)\n- [Release notes](release-notes.md)\n- [Status endpoint](status-endpoint.md)\n- [Sandbox trial](sandbox-trial.md)\n- [Trade article](article.md)\n- [Operations newsletter](newsletter.md)\n- [Support exchange](support.md)\n",
+        "sources/manual-v1.md": "# Parcel API 1.0 manual\n\nReleased 2025-03-01. POST /labels accepts at most 10 labels per batch for Basic and Pro accounts. This manual covers production API 1.0.\n",
+        "sources/manual-v2.md": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n",
+        "sources/announcement.md": "# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n",
+        "sources/release-notes.md": "# Parcel release notes\n\n2026-08-01: API 2.0 production release. The /labels limits in the 2.0 manual replace the 1.0 values when clients select version 2.0.\n\n2026-10-15: Improved status-lookup latency. No production label-creation limit changed in this release.\n",
+        "sources/status-endpoint.md": "# Status lookup\n\nAPI 2.0, updated 2026-10-15. POST /label-status accepts up to 100 existing label IDs for Basic and Pro accounts. It returns the status of labels already created and does not create labels.\n",
+        "sources/sandbox-trial.md": "# Integration sandbox trial\n\n2026-10-20. Account: Basic trial. Environment: sandbox. Endpoint: POST /labels, API 2.0. A request containing 50 test labels succeeded. The sandbox documentation attached to this trial says trial quotas may differ from production. No production request was included in this trial.\n",
+        "sources/article.md": "# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n",
+        "sources/newsletter.md": "# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n",
+        "sources/support.md": "# Support exchange\n\n2026-10-22. Customer: Does the October status update raise our production Basic creation limit to 100? Support: Status lookup and label creation are different endpoints. Use the limit for your account and API version in the production creation manual.\n"
+      },
+      "commands": [
+        {
+          "command": "cat sources/manual-v2.md sources/announcement.md sources/article.md sources/newsletter.md",
+          "exit_code": 0,
+          "output": "# Parcel API 2.0 manual\n\nReleased 2026-08-01. In production, POST /labels accepts at most 20 labels per batch for Basic accounts and 50 for Pro accounts. The request limit is separate from any daily allowance or status-lookup limit.\n\n# Parcel API 2.0 announcement\n\nPublished 2026-08-01. Pro customers can now create 50 labels in one batch. API 2.0 also raises the Basic creation limit. See the [2.0 manual](manual-v2.md) for account limits.\n\n# Parcel expands batch labels\n\nPublished 2026-08-03. Parcel now supports 50 labels per batch. Our report follows the [release announcement](announcement.md).\n\n# Operations newsletter\n\nPublished 2026-10-21. Parcel supports 50-label batches, according to this [trade report](article.md). A team also submitted a [sandbox trial](sandbox-trial.md) this week.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "No. The [2.0 manual](sources/manual-v2.md) limits production Basic creation requests to 20 labels and allows Pro to send 50. This account distinction is independently confirmed by the [announcement](sources/announcement.md), [article](sources/article.md) and [newsletter](sources/newsletter.md), giving us three separate confirmations of the manual.",
+      "expected": "not_met",
+      "reason": "The practical limit is correct, but the answer adds a false claim about its support. The article follows the announcement and the newsletter follows the article; the summaries do not even retain the account distinction. They are copied claims, not three independent confirmations."
+    }
+  ]
+}

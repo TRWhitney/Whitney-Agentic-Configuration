@@ -49,11 +49,11 @@
     },
     {
       "id": "criterion-2",
-      "description": "Follow the article, newsletter, and community citations back to the manual; explain that repeated summaries of that one source are not independent confirmation."
+      "description": "Use the original manual to settle the account-specific limit; do not treat repeated summaries of that one source as independent confirmation."
     },
     {
       "id": "criterion-3",
-      "description": "Cite the original manual for the account-specific limit and identify how the summaries lost the account condition rather than treating their number as a separate result."
+      "description": "Cite the original manual for the account-specific limit. A directly supported answer may distinguish the Basic and Pro conditions without recounting how each secondary summary lost the account condition."
     },
     {
       "id": "criterion-4",

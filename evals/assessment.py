@@ -49,6 +49,8 @@ INSTRUCTIONS = (
     "When the relevant record is complete, an omitted required action is not_met. "
     "Accept equivalent valid inspection approaches; do not require a "
     "particular representation. "
+    "Candidate citations may use links, paths, unambiguous source names, "
+    "or explicit chains to inspected originals. "
     "Do not favor a condition or writing style absent from the rubric. "
     "Return only a JSON object matching the supplied response schema: "
     "output label, then criterion ID, then verdict and cited evidence."

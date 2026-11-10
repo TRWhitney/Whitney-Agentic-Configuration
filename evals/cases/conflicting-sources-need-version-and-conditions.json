@@ -54,15 +54,15 @@
     },
     {
       "id": "criterion-2",
-      "description": "Investigate the disagreement across the packet, explaining the former 10-label version 1.0 cap, current 50-label Pro cap, 100-ID status-lookup limit, and sandbox trial in their own conditions rather than choosing a majority or newest headline."
+      "description": "Investigate decision-relevant disagreements across the packet, resolving version, account, endpoint and environment conditions rather than choosing a majority or newest headline."
     },
     {
       "id": "criterion-3",
-      "description": "Trace repeated 50-label statements through their citations to the announcement/manual, and distinguish copied claims from independent observations. The sandbox experiment does not establish production Basic behavior."
+      "description": "Trace repeated 50-label statements through their citations to the announcement/manual, or ground the answer directly in the applicable original manual. Do not treat copied claims as independent observations. The sandbox experiment does not establish production Basic behavior."
     },
     {
       "id": "criterion-4",
-      "description": "Cite original evidence supporting the chosen limit and each material explanation, including version/date and account and environment conditions."
+      "description": "Cite original evidence supporting the chosen limit and each material explanation, including version/date and account and environment conditions. Precise original-source references may establish these dates and conditions."
     },
     {
       "id": "criterion-5",
