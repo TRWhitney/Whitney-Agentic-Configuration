@@ -8,6 +8,28 @@
 
 ## Current state
 
+Complete. [Eval reliability](spec.md#eval-reliability) adds calibrated run gates, recording
+coverage, fault diagnosis, native per-attempt permissions, external raw-output storage and
+audited reassessment. Original checks, judgments and assessment failures remain preserved.
+[Ticket 22](tickets/22-eval-reliability.md) and the
+[trial study](../../docs/research/eval-reliability-trials.md) retain the requirements, excluded
+attempts, disagreements and corrections. Subject skills are unchanged.
+
+The final inspected set has six correct attempts and three genuine verification omissions,
+with no unknown behavior; all nine assessments completed. All three fresh GUI attempts open
+both the finished app and accepted prototype in a browser. Prototype repeat 3 never verifies
+post-error input editability; two design repeats omit transaction-structure inspection.
+The recovery calibration accepts interaction and equivalent runtime inspection without a fixed
+input sequence. All 18 revised judgments match; the study preserves all 115 classifications,
+including both earlier disagreements.
+
+All 489 framework tests, 20 affected checks, lint, formatting, strict typing across 82 source
+files, JavaScript syntax and all 151 definitions pass. Initial independent intent and engineering
+reviews identified two reassessment defects. Parent correction review and regressions pass;
+independent evidence inspections confirm the final behavior judgments. Finished raw evidence
+was inspected, reviewed and deleted. The full corpus was not rerun; native compaction remains
+deferred.
+
 Complete. The [reviewed interface/prototype diff](../../docs/research/interface-prototype-proposal.diff)
 is applied unchanged to both procedures, the existing prototype cue and local retention guidance.
 It keeps rejected alternatives available and marked, covers decisions about existing prototypes,

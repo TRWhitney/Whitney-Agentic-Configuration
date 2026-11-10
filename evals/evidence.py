@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Literal
 from pydantic import JsonValue, TypeAdapter
 
 from evals.fixtures import Workspace, git
+from evals.recording import Recording
 
 if TYPE_CHECKING:
     from evals.runner import Observation
@@ -32,6 +33,7 @@ class EvidenceFrame:
     completed: bool = True
     partial_reply: str = ""
     commentary: list[str] = field(default_factory=list)
+    recording: Recording = field(default_factory=Recording)
 
 
 @dataclass
@@ -44,6 +46,12 @@ class EvidenceRun:
     _threads: dict[str, str] = field(default_factory=dict, repr=False)
     initial_service_state: dict[str, JsonValue] | None = None
     _browser_records: int = field(default=0, repr=False)
+    instructions: dict[str, str] = field(default_factory=dict)
+    definition: dict[str, JsonValue] = field(default_factory=dict)
+    framework: dict[str, str] = field(default_factory=dict)
+    isolation_status: str = "unverified"
+    checks: list[dict[str, JsonValue]] = field(default_factory=list)
+    execution: dict[str, JsonValue] = field(default_factory=dict)
 
     def observe(
         self,
@@ -76,6 +84,14 @@ class EvidenceRun:
             return value
 
         if not self.frames:
+            self.instructions = {
+                path.relative_to(workspace.home).as_posix(): clean(path.read_text())
+                for path in [
+                    workspace.home / "AGENTS.md",
+                    *sorted((workspace.home / "skills").rglob("*")),
+                ]
+                if path.is_file() and path.suffix in {".md", ".json"}
+            }
             self.initial_files = {
                 p: clean(b.decode("utf-8")) for p, b in workspace.baseline.items()
             }
@@ -130,6 +146,11 @@ class EvidenceRun:
                         **(
                             {"agent_results": clean_value(action.agent_results)}
                             if action.agent_results is not None
+                            else {}
+                        ),
+                        **(
+                            {"agent_findings": clean_value(action.agent_findings)}
+                            if action.agent_findings is not None
                             else {}
                         ),
                         "assignment_visibility": (
@@ -201,7 +222,16 @@ class EvidenceRun:
         )
         from evals.gui import candidate_browser
 
-        records = candidate_browser(workspace)
+        recording = Recording(
+            observation.recording.actions,
+            [clean(p) for p in observation.recording.problems],
+            dict(observation.recording.channels),
+        )
+        browser_problems: list[str] = []
+        records = candidate_browser(workspace, browser_problems)
+        recording.problems.extend(clean(p) for p in browser_problems)
+        recording.channels["browser"] = "partial" if browser_problems else "complete"
+        recording.channels["artifacts"] = "complete"
         browser = records[self._browser_records :]
         self._browser_records = len(records)
         browser.extend(observation.browser_evidence)
@@ -230,5 +260,6 @@ class EvidenceRun:
                 observation.completed,
                 clean(observation.partial_reply),
                 [clean(message) for message in observation.commentary],
+                recording,
             )
         )

@@ -92,8 +92,9 @@ async function run(scenarioPath, output) {
     failure = String(error.message || error);
     throw error;
   } finally {
-    const receipt = {origin:'candidate_browser', page:scenario.page,
-      viewport:scenario.viewport, media:scenario.media, steps:completed, observations, images:captures,
+    const receipt = {origin:'candidate_browser', request_id:process.env.EVAL_BROWSER_REQUEST_ID, page:scenario.page,
+      viewport:scenario.viewport, media:scenario.media, requested_steps:scenario.steps,
+      steps:completed, observations, images:captures,
       status:failure ? 'failed' : 'completed', error:failure};
     const journal = process.env.EVAL_BROWSER_JOURNAL;
     try {

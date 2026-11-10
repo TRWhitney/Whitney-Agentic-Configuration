@@ -24,7 +24,10 @@ EVIDENCE_FORMAT = (
     "message frames are observed results of the candidate's turn; shell commands "
     "do not include every editing tool. file_changes actions preserve native patches "
     "and their completion status. "
-    "A frame with completed=false was interrupted. "
+    "A frame with completed=false was interrupted. recording reports action coverage, "
+    "channel coverage and collection problems separately. Unknown or partial coverage "
+    "cannot prove an action was omitted; complete coverage applies only to supported "
+    "recorded tools and that channel. Inspect actual receipts and outputs as well. "
     "agent_results preserves observed native child turns or status messages. "
     "Child turns are fetched after the parent turn; agentCompleted records the "
     "runtime completion notification in the parent action order. "
@@ -74,6 +77,10 @@ def write_inputs(root: Path, packet: dict[str, object]) -> dict[str, object]:
                 cast(dict[str, str], output["initial_files"])
             ),
             "initial_service_state": output["initial_service_state"],
+            "isolation_status": output.get("isolation_status", "unverified"),
+            "instructions": artifacts(
+                cast(dict[str, str], output.get("instructions", {}))
+            ),
             "frames": [],
         }
         frames = cast(list[dict[str, object]], index["frames"])
@@ -172,6 +179,8 @@ def blind_outputs(
         outputs.append(
             {
                 "initial_files": run.initial_files,
+                "instructions": run.instructions,
+                "isolation_status": run.isolation_status,
                 "initial_service_state": run.initial_service_state,
                 "frames": frames,
             }

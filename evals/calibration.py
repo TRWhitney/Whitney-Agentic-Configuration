@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, JsonValue, model_validator
 
 from evals.assessment_models import Verdict
 from evals.evidence import EvidenceFrame, EvidenceRun
@@ -15,14 +15,25 @@ from evals.models import (
     RelativePath,
     RubricCriterion,
 )
+from evals.recording import Recording
 
 
 class Example(Definition):
     id: Identifier
     request: NonemptyText
     files: dict[RelativePath, str]
-    artifact_path: RelativePath
-    artifact: NonemptyText
+    artifact_path: RelativePath | None = None
+    artifact: NonemptyText | None = None
+    commands: list[dict[str, JsonValue]] = Field(default_factory=list)
+    recording: Recording = Field(default_factory=Recording)
+    completed: bool = True
+
+    @model_validator(mode="after")
+    def paired_artifact(self) -> Example:
+        if (self.artifact_path is None) != (self.artifact is None):
+            raise ValueError("Artifact path and contents must be supplied together.")
+        return self
+
     reply: str = ""
     expected: Verdict
     reason: NonemptyText
@@ -49,10 +60,20 @@ def load_calibration(
                 "conversation-1",
                 example.request,
                 example.reply,
-                {**example.files, example.artifact_path: example.artifact},
-                [],
+                {
+                    **example.files,
+                    **(
+                        {example.artifact_path: example.artifact}
+                        if example.artifact_path is not None
+                        and example.artifact is not None
+                        else {}
+                    ),
+                },
+                [dict(command) for command in example.commands],
                 None,
                 {},
+                completed=example.completed,
+                recording=example.recording,
             )
         )
         runs.append(run)

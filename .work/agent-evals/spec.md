@@ -513,6 +513,49 @@ compaction deferred. Repeat the affected cases and controls on the final version
 only as needed to fix observed failures while preserving the accepted wording and design.
 Keep all attempt outcomes and assessment status separate from framework validation.
 
+## Eval reliability
+
+Provide a reusable way to detect and repair faulty evals across the corpus. Normal completed
+runs should yield an unambiguous behavior verdict. Distinguish an agent's omitted required
+action from missing observations and ambiguous expectations. Repair evaluation defects without
+weakening accepted behavior or changing subject guidance to satisfy a faulty assessment.
+
+Enforce reliability in the eval tooling, with evidence-backed investigation and review for
+repairs that affect intended behavior. Extend existing recording and assessment interfaces;
+do not automatically rewrite criteria or subject instructions.
+
+Verify per-attempt filesystem isolation before candidate or judge work. Grant minimum system
+reads, the supplied project and skills, required local Git/state writes, and private scratch.
+Deny shared temporary helpers and private criteria, block tool network access, and confirm the
+selected native permission profile. Record setup validity separately from behavior. Check that
+required work remains possible; a boundary that prevents legitimate work is an eval defect.
+Reject raw output destinations inside Git or instruction-source checkouts at the storage API.
+
+Record capture coverage and faults separately from candidate completion. Unknown recording
+coverage cannot establish an omitted action. A complete relevant record can establish omission;
+missing captures, unsupported tools, interrupted turns and unavailable child findings cannot.
+Expose the cause of uncertain judgments and route them to capture repair, criterion review or
+assessment investigation. Preserve independently observed failures even when another criterion
+cannot be decided. A capture fault prevents an unsupported overall pass.
+
+Calibration supports actions and recording conditions as well as artifacts, and exits
+unsuccessfully on any disagreement or incomplete assessment. Keep expected labels and reasons
+out of judge inputs. Include different valid approaches, real violations and unavailable
+observations, including the current prototype and interface inspection requirements.
+
+Provide read-only diagnosis of saved review evidence. An explicit `--diagnose` run option
+starts one investigation on failed calibration or unresolved judgments. Inspect original requirements, observed
+work and judgments; return cited findings and the appropriate repair, not an automatic verdict
+replacement. Preserve previous scored assessments, errors and raw responses. Reassess saved work only when
+the task and criteria are unchanged and evidence is sufficient. Assessment failures, uncertain
+required judgments and collection warnings require a read-only review before reusing the observations.
+Preserve original warnings; do not let an unsupported warning replace otherwise established
+behavior. Missing relevant observations require a fresh comparison after capture repair.
+Reports identify unresolved evaluation problems separately from behavior and assessment
+completion, with the next repair or investigation needed. Keep original outcomes visible.
+
+[Ticket 22](tickets/22-eval-reliability.md) covers implementation and verification.
+
 ## Out of Scope
 
 Additional agent runtimes, automatic instruction changes, hosted

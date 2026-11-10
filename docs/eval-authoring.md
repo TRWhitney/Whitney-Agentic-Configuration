@@ -139,6 +139,23 @@ process-language cues for inspection; these are not verdicts, and a clean scan d
 that a case is sound. Report what was reviewed, which cases changed, and which retained inputs
 are necessary triggers or controls. Do not carry earlier passing outcomes onto changed cases.
 
+Resolve evaluation defects before attributing an uncertain judgment to subject guidance.
+Check whether the requirement follows accepted intent, the fixture exercises it, the relevant
+actions were observable, and the judgment follows the evidence. A completed turn does not
+establish complete recording. An omitted required action fails when its relevant record is
+complete; unavailable observations require capture investigation.
+
+Use independently authored calibration examples for different valid approaches, actual
+violations and lost observations. A disagreement fails calibration. Add a regression that
+exposes a confirmed defect before repairing capture, fixtures, criteria or grading. Investigate
+assessor disagreements against evidence rather than deciding by vote.
+
+Use the runner's [diagnosis and reassessment commands](agent-evaluations.md#repair-an-eval)
+to investigate retained evidence without replacing earlier judgments. Reassess unchanged work
+only when its task and criteria are unchanged and sufficient evidence remains. Missing evidence
+or changed expectations requires fresh runs. Apply shared repairs to affected cases, preserve
+genuine failures, and keep unresolved evaluation findings separate from behavior verdicts.
+
 ## Run a blinded comparison
 
 Give each candidate a separate project and home. Check the loaded instruction source, available

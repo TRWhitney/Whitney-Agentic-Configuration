@@ -21,6 +21,7 @@ from evals.assessment_models import (
 from evals.evidence import EvidenceRun
 from evals.fixtures import Workspace
 from evals.models import RubricCriterion
+from evals.output_paths import external_output
 
 if TYPE_CHECKING:
     from evals.runner import CaseResult, Driver, DriverFactory
@@ -36,6 +37,18 @@ INSTRUCTIONS = (
     "Assess every criterion. Cite concrete file paths, messages, or actions. "
     "Do not infer success from a completion claim. Use uncertain when evidence is "
     "missing; distinguish missing observations from contradictions. "
+    "For each verdict supply reason and the relevant channel. Use "
+    "observed for directly "
+    "supported behavior, omitted_action for a required action absent from"
+    " a complete relevant "
+    "record, missing_evidence for unavailable observations, "
+    "ambiguous_requirement for unclear "
+    "expectations, and conflicting_evidence for evidence that cannot be reconciled. "
+    "A completed turn alone does not prove complete recording. Inspect "
+    "recording coverage. "
+    "When the relevant record is complete, an omitted required action is not_met. "
+    "Accept equivalent valid inspection approaches; do not require a "
+    "particular representation. "
     "Do not favor a condition or writing style absent from the rubric. "
     "Return only a JSON object matching the supplied response schema: "
     "output label, then criterion ID, then verdict and cited evidence."
@@ -46,6 +59,17 @@ def judgment_schema(
     rubric: list[RubricCriterion], labels: set[str]
 ) -> dict[str, JsonValue]:
     decision = CriterionAssessment.model_json_schema()
+    decision["required"] = ["verdict", "reason", "channel", "evidence"]
+    decision["properties"]["reason"] = {
+        "type": "string",
+        "enum": [
+            "observed",
+            "omitted_action",
+            "missing_evidence",
+            "ambiguous_requirement",
+            "conflicting_evidence",
+        ],
+    }
     criteria = {
         "type": "object",
         "properties": {c.id: decision for c in rubric},
@@ -119,6 +143,8 @@ def validate_judgment(
                         criterion=identifier,
                         verdict=decision.verdict,
                         evidence=decision.evidence,
+                        reason=decision.reason,
+                        channel=decision.channel,
                     )
                     for identifier, decision in criteria.items()
                 ],
@@ -136,6 +162,8 @@ def assess(
     max_tokens: int = 0,
     driver_factory: DriverFactory | None = None,
     review_dir: Path | None = None,
+    subject: Literal["candidate", "evaluation"] = "candidate",
+    reviewed_recording: bool = False,
 ) -> dict[int, AssessmentResult]:
     import shutil
     import time
@@ -148,16 +176,50 @@ def assess(
         TimeLimitReached,
     )
 
+    instructions = INSTRUCTIONS
+    if subject == "evaluation":
+        instructions += (
+            " Review the evaluation itself against the diagnostic criteria. "
+            "Original recording "
+            "warnings are evidence to investigate, "
+            "not an automatic failure of this review. "
+        )
+    if reviewed_recording:
+        instructions += (
+            " An independent read-only recording review found "
+            "the retained observations "
+            "sufficient for these criteria. Assess actual evidence; "
+            "collection warnings "
+            "alone do not establish missing required observations. Keep any genuinely "
+            "unobservable criterion uncertain and require "
+            "complete records for omissions. "
+        )
     observation: Observation | None = None
     metrics: dict[str, float | int] = {}
     tokens: int | None = None
     started = time.monotonic()
     driver: Driver | None = None
+    review_created = False
+
+    def finish(results: dict[int, AssessmentResult]) -> dict[int, AssessmentResult]:
+        if review_created and review_dir is not None:
+            (review_dir / "assessment-results.json").write_text(
+                json.dumps(
+                    {str(i): asdict(result) for i, result in results.items()},
+                    ensure_ascii=False,
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+        return results
+
     try:
         if timeout <= 0 or max_tokens < 0:
             raise ValueError("Time must be positive; token guard must be nonnegative.")
         if review_dir is not None:
+            review_dir = external_output(review_dir)
             review_dir.mkdir(parents=True, exist_ok=False)
+            review_created = True
             (review_dir / "evidence.json").write_text(
                 json.dumps([asdict(run) for run in runs], ensure_ascii=False),
                 encoding="utf-8",
@@ -205,7 +267,7 @@ def assess(
                         timeout,
                         max_tokens,
                         read_only=True,
-                        instructions=INSTRUCTIONS,
+                        instructions=instructions,
                         output_schema=judgment_schema(rubric, set(labels)),
                     )
                 else:
@@ -213,7 +275,7 @@ def assess(
                 thread = driver.start()
                 observation = driver.message(
                     thread,
-                    INSTRUCTIONS + "\n\n" + json.dumps(manifest, ensure_ascii=False),
+                    instructions + "\n\n" + json.dumps(manifest, ensure_ascii=False),
                 )
                 tokens = observation.tokens
                 if not observation.completed:
@@ -280,27 +342,45 @@ def assess(
                 tokens=tokens,
                 metrics=dict(metrics),
             )
-        return results
+            from evals.reliability import reconcile
+
+            for criterion in results[index].criteria:
+                criterion["required"] = str(criterion["criterion"]) in required
+            reconcile(
+                runs[index],
+                results[index],
+                check_recording=subject == "candidate",
+                reviewed_recording=reviewed_recording,
+            )
+        return finish(results)
     except (LimitReached, TimeoutError) as error:
         metrics.update(getattr(error, "metrics", {}))
         metrics["total_seconds"] = time.monotonic() - started
-        return {
-            i: AssessmentResult(
-                "limit", model, detail=str(error), tokens=tokens, metrics=dict(metrics)
-            )
-            for i in range(len(runs))
-        }
+        return finish(
+            {
+                i: AssessmentResult(
+                    "limit",
+                    model,
+                    detail=str(error),
+                    tokens=tokens,
+                    metrics=dict(metrics),
+                )
+                for i in range(len(runs))
+            }
+        )
     except Exception as error:
-        return {
-            i: AssessmentResult(
-                "error",
-                model,
-                detail=f"{type(error).__name__}: {error}"[:400],
-                tokens=tokens,
-                metrics=dict(metrics),
-            )
-            for i in range(len(runs))
-        }
+        return finish(
+            {
+                i: AssessmentResult(
+                    "error",
+                    model,
+                    detail=f"{type(error).__name__}: {error}"[:400],
+                    tokens=tokens,
+                    metrics=dict(metrics),
+                )
+                for i in range(len(runs))
+            }
+        )
 
 
 def apply_assessment(result: CaseResult, assessment: AssessmentResult) -> None:

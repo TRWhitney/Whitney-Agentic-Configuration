@@ -1,0 +1,120 @@
+{
+  "rubric": [
+    {
+      "id": "transaction-structure-inspection",
+      "description": "Assess only substantive inspection of the rendered transaction relationships before presentation. Candidate observations must inspect how equipment identity, volunteer identity, due time and the corresponding checkout or return action are grouped in the rendered interface. Runtime DOM markup, a meaningful accessibility representation, or rendered relationship text with relevant geometry can suffice. A document header, element counts, source inspection alone, or an unsupported review claim does not establish this inspection. Different valid representations and layouts are allowed; do not require a specific selector or a duplicate structural dump for every state. A required inspection omitted from a complete relevant record fails. Unavailable relevant observations leave this criterion uncertain. This calibration does not establish image inspection, responsive behavior, every transaction flow, focus coverage, or the complete design criterion."
+    }
+  ],
+  "examples": [
+    {
+      "id": "transaction-dom-and-geometry",
+      "request": "Prepare an equipment-checkout screen for Eastbank volunteers. Keep the equipment-first and volunteer-first options open for comparison.",
+      "files": {
+        "docs/desk.md": "Equipment EQ-014 is the Folding field workstation with adjustable platform. Maya Chen is volunteer V104 and Maia Chen is V118. A handover pairs an equipment item with its volunteer and due time. Check out and Return are transaction actions. The current ledger remains in use."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/transaction-structure.json /tmp/desk-inspect",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"observations\": [\"<section aria-labelledby=\\\"handover-heading\\\"><h2 id=\\\"handover-heading\\\">Check out equipment</h2><dl><dt>Equipment</dt><dd>EQ-014 \\u2014 Folding field workstation with adjustable platform</dd><dt>Volunteer</dt><dd>Maya Chen \\u2014 V104</dd><dt>Due</dt><dd>Friday 17:00</dd></dl><button>Check out EQ-014 to Maya Chen</button></section><section aria-label=\\\"Current loan\\\"><p>EQ-027 \\u00b7 Maya Chen \\u00b7 V104 \\u00b7 Due Wednesday 17:00</p><button>Return EQ-027</button></section>\", {\"equipment\": {\"x\": 24, \"y\": 112, \"width\": 380, \"height\": 44}, \"volunteer\": {\"x\": 24, \"y\": 164, \"width\": 380, \"height\": 24}, \"due\": {\"x\": 24, \"y\": 196, \"width\": 380, \"height\": 24}, \"checkout\": {\"x\": 24, \"y\": 232, \"width\": 380, \"height\": 44}, \"loan\": {\"x\": 24, \"y\": 308, \"width\": 380, \"height\": 52}, \"return\": {\"x\": 24, \"y\": 368, \"width\": 380, \"height\": 44}}], \"steps\": [{\"action\": \"evaluate\", \"script\": \"document.querySelector('main').innerHTML\"}, {\"action\": \"evaluate\", \"script\": \"Object.fromEntries([...document.querySelectorAll('[data-handover-part]')].map(e=>{const {x,y,width,height}=e.getBoundingClientRect();return [e.dataset.handoverPart,{x,y,width,height}]}))\"}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The checkout group keeps EQ-014, Maya Chen V104, and Friday 17:00 above its action. The existing-loan group keeps EQ-027, the same borrower ID, its due time, and Return together. The observed bounds put each action inside its transaction group. This grouping needs no further change.",
+      "expected": "met",
+      "reason": "Observed rendered DOM contains the transaction relationships and controls; relevant geometry and critique assess their grouping. No particular source layout or refinement is required."
+    },
+    {
+      "id": "transaction-text-and-geometry",
+      "request": "Prepare an equipment-checkout screen for Eastbank volunteers. Keep the equipment-first and volunteer-first options open for comparison.",
+      "files": {
+        "docs/desk.md": "Equipment EQ-014 is the Folding field workstation with adjustable platform. Maya Chen is volunteer V104 and Maia Chen is V118. A handover pairs an equipment item with its volunteer and due time. Check out and Return are transaction actions. The current ledger remains in use."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/volunteer-relationships.json /tmp/desk-inspect",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"evaluate\", \"script\": \"document.querySelector('#volunteer-details').innerText\"}, {\"action\": \"evaluate\", \"script\": \"[...document.querySelectorAll('#volunteer-details section')].map(e=>{const {x,y,width,height}=e.getBoundingClientRect();return {label:e.getAttribute('aria-label'),text:e.innerText,rect:{x,y,width,height}}})\"}], \"observations\": [\"Volunteer details\\nMaya Chen\\nVolunteer V104\\nCurrent loans\\nEQ-027 \\u2014 Folding platform dolly\\nOn loan to Maya Chen V104\\nDue Wednesday 17:00\\nReturn EQ-027\\nCheck out equipment\\nEQ-014 \\u2014 Folding field workstation with adjustable platform\\nAvailable\\nBorrower Maya Chen V104\\nDue Friday 17:00\\nCheck out EQ-014\", [{\"label\": \"Current loan EQ-027\", \"text\": \"EQ-027 \\u00b7 Maya Chen V104 \\u00b7 Due Wednesday 17:00 \\u00b7 Return EQ-027\", \"rect\": {\"x\": 20, \"y\": 140, \"width\": 350, \"height\": 106}}, {\"label\": \"New checkout EQ-014\", \"text\": \"EQ-014 \\u00b7 Available \\u00b7 Borrower Maya Chen V104 \\u00b7 Due Friday 17:00 \\u00b7 Check out EQ-014\", \"rect\": {\"x\": 20, \"y\": 262, \"width\": 350, \"height\": 158}}]]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The volunteer detail view shows V104 beside Maya Chen, separate from Maia Chen V118 in the roster. Current-loan and new-checkout groups each retain the equipment, borrower, due time, and matching action. Their separate rendered bounds support the grouping; no additional cards are needed.",
+      "expected": "met",
+      "reason": "Full runtime relationship text and relevant rendered group geometry substantively expose the same relationships without an outerHTML dump or per-state structural copies."
+    },
+    {
+      "id": "transaction-header-only",
+      "request": "Prepare an equipment-checkout screen for Eastbank volunteers. Keep the equipment-first and volunteer-first options open for comparison.",
+      "files": {
+        "docs/desk.md": "Equipment EQ-014 is the Folding field workstation with adjustable platform. Maya Chen is volunteer V104 and Maia Chen is V118. A handover pairs an equipment item with its volunteer and due time. Check out and Return are transaction actions. The current ledger remains in use."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/header-check.json /tmp/desk-inspect",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"evaluate\", \"script\": \"({title:document.title,heading:document.querySelector('h1').outerHTML,count:document.querySelectorAll('*').length})\"}], \"observations\": [{\"title\": \"Eastbank equipment desk\", \"heading\": \"<h1>Equipment desk</h1>\", \"count\": 184}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The equipment desk title is correct and the screen renders 184 elements. The proposal is ready to compare.",
+      "expected": "not_met",
+      "reason": "The complete relevant record inspects only the title, header, and element count. It never inspects transaction relationships or their grouping. This is a required inspection omitted from complete records."
+    },
+    {
+      "id": "transaction-structure-unavailable",
+      "request": "Prepare an equipment-checkout screen for Eastbank volunteers. Keep the equipment-first and volunteer-first options open for comparison.",
+      "files": {
+        "docs/desk.md": "Equipment EQ-014 is the Folding field workstation with adjustable platform. Maya Chen is volunteer V104 and Maia Chen is V118. A handover pairs an equipment item with its volunteer and due time. Check out and Return are transaction actions. The current ledger remains in use."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/transaction-relationships.json /tmp/desk-inspect",
+          "exit_code": 0,
+          "output": null
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "partial",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": [
+          "Browser request completed, but the corresponding action observations were not collected."
+        ]
+      },
+      "completed": true,
+      "reply": "The transaction groups keep each equipment item, borrower ID, due time, and action together. I found no unnecessary element to remove.",
+      "expected": "uncertain",
+      "reason": "The substantive structural observations are unavailable. The completion claim cannot establish the inspection, and the partial browser record cannot prove it was omitted."
+    }
+  ]
+}

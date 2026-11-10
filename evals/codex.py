@@ -15,10 +15,13 @@ from openai_codex import LocalImageInput, TextInput
 from openai_codex._inputs import InputItem
 from openai_codex.api import Thread
 from openai_codex.client import CodexClient, CodexConfig
+from openai_codex.generated.v2_all import ActivePermissionProfile, ThreadStartResponse
 from openai_codex.models import JsonObject, Notification
-from pydantic import BaseModel, JsonValue, TypeAdapter
+from pydantic import BaseModel, Field, JsonValue, TypeAdapter
 
 from evals.fixtures import Workspace
+from evals.isolation import RuntimeIsolation
+from evals.recording import Recording
 from evals.runner import (
     CommandResult,
     ExecutionFailed,
@@ -27,6 +30,12 @@ from evals.runner import (
     ObservedAction,
     TimeLimitReached,
 )
+
+
+class ProfiledThreadStartResponse(ThreadStartResponse):
+    active_permission_profile: ActivePermissionProfile | None = Field(
+        default=None, alias="activePermissionProfile"
+    )
 
 
 def mapping(value: object) -> dict[str, object]:
@@ -119,27 +128,28 @@ class CodexDriver:
         self.tokens: dict[str, int] = {}
         self.expired = threading.Event()
         environment = workspace.environment()
-        self.client = ObservableClient(
-            CodexConfig(
-                cwd=str(workspace.root),
-                env=environment,
-                experimental_api=False,
-                config_overrides=(
-                    'web_search="disabled"',
-                    "features.apps=false",
-                    "sandbox_workspace_write.network_access=false",
-                    "sandbox_workspace_write.writable_roots="
-                    + json.dumps(
-                        [
-                            str(workspace.home / "work-system"),
-                            str(workspace.root / ".git"),
-                        ]
-                    ),
-                    "shell_environment_policy.set.PATH="
-                    + json.dumps(environment["PATH"]),
-                ),
-            )
+        config = CodexConfig(
+            cwd=str(workspace.root),
+            env=environment,
+            experimental_api=False,
+            config_overrides=(
+                'web_search="disabled"',
+                "features.apps=false",
+                "mcp_servers={}",
+                "shell_environment_policy.set.PATH=" + json.dumps(environment["PATH"]),
+            ),
         )
+        self.isolation = RuntimeIsolation(
+            workspace.home.parent,
+            workspace=workspace.root,
+            home=workspace.home,
+            read_only=read_only,
+        )
+        environment["TMPDIR"] = str(self.isolation.scratch)
+        config.config_overrides = (*config.config_overrides, *self.isolation.overrides)
+        self.isolation.verify(environment)
+        self.client = ObservableClient(config)
+        self.isolation_verified = False
         self.timer = threading.Timer(timeout, self._expire)
         self.timer.daemon = True
         self.timer.start()
@@ -168,16 +178,26 @@ class CodexDriver:
     def start(self) -> str:
         started = perf_counter()
         try:
-            response = self.client.thread_start(
+            self.isolation_verified = False
+            response = self.client.request(
+                "thread/start",
                 {
                     "cwd": str(self.workspace.root),
                     "model": self.model,
-                    "sandbox": "read-only" if self.read_only else "workspace-write",
                     "developerInstructions": self.instructions,
                     "approvalPolicy": "never",
                     "ephemeral": self.read_only,
-                }
+                },
+                response_model=ProfiledThreadStartResponse,
             )
+            if (
+                response.active_permission_profile is None
+                or response.active_permission_profile.id != "eval"
+            ):
+                raise ValueError(
+                    "Runtime did not confirm the evaluation permission profile."
+                )
+            self.isolation_verified = True
             return response.thread.id
         except Exception as error:
             if self.expired.is_set() or isinstance(error, TimeoutError):
@@ -257,10 +277,10 @@ class CodexDriver:
                 ):
                     raise ValueError("Invalid native child turn items.")
                 for item in items:
-                    if (
-                        isinstance(item, dict)
-                        and item.get("type") == "subAgentActivity"
-                    ):
+                    if isinstance(item, dict) and item.get("type") in {
+                        "subAgentActivity",
+                        "collabAgentToolCall",
+                    }:
                         item.pop("model", None)
                         item.pop("reasoningEffort", None)
                 turn["items"] = [
@@ -282,9 +302,11 @@ class CodexDriver:
         command_results: list[CommandResult] = []
         actions: list[ObservedAction] = []
         native_children: dict[str, ObservedAction] = {}
+        collab_children: dict[str, list[ObservedAction]] = {}
         browser_evidence: list[dict[str, JsonValue]] = []
         reported = False
         turn_completed = False
+        recording = Recording()
 
         def observation(*, completed: bool) -> Observation:
             return Observation(
@@ -297,6 +319,13 @@ class CodexDriver:
                 completed=completed,
                 partial_reply="\n".join("".join(parts) for parts in pending.values()),
                 commentary=list(commentary),
+                recording=Recording(
+                    "complete"
+                    if completed and recording.actions != "partial"
+                    else "partial",
+                    list(recording.problems),
+                    dict(recording.channels),
+                ),
             )
 
         try:
@@ -345,6 +374,23 @@ class CodexDriver:
                     self._usage(data, thread, enforce=not replies)
                 elif event.method == "item/completed":
                     item = mapping(data["item"])
+                    if item.get("type") not in {
+                        "agentMessage",
+                        "reasoning",
+                        "userMessage",
+                        "commandExecution",
+                        "imageView",
+                        "subAgentActivity",
+                        "fileChange",
+                        "collabAgentToolCall",
+                        "mcpToolCall",
+                        "plan",
+                        "contextCompaction",
+                    }:
+                        recording.actions = "partial"
+                        recording.problems.append(
+                            f"Unrecorded native item type: {item.get('type')}"
+                        )
                     identifier = item.get("id")
                     if isinstance(identifier, str):
                         pending.pop(identifier, None)
@@ -412,6 +458,22 @@ class CodexDriver:
                                 else None,
                             )
                         )
+                        identifiers = item.get("receiverThreadIds")
+                        if not isinstance(identifiers, list):
+                            states = item.get("agentsStates")
+                            identifiers = (
+                                list(states) if isinstance(states, dict) else []
+                            )
+                        if not identifiers and tool != "wait":
+                            recording.channels["children"] = "partial"
+                            recording.problems.append(
+                                "Native child identifiers unavailable."
+                            )
+                        for child in identifiers:
+                            if isinstance(child, str):
+                                collab_children.setdefault(child, []).append(
+                                    actions[-1]
+                                )
                     if item.get("type") == "imageView":
                         path = item.get("path")
                         if not isinstance(path, str):
@@ -431,6 +493,11 @@ class CodexDriver:
                                         + base64.b64encode(raw).decode("ascii"),
                                     }
                                 )
+                        if not images:
+                            recording.channels["images"] = "partial"
+                            recording.problems.append(
+                                f"Viewed image bytes unavailable: {path}"
+                            )
                         browser_evidence.append(
                             {
                                 "origin": "candidate_image_view",
@@ -440,7 +507,8 @@ class CodexDriver:
                         )
                     if item.get("type") == "mcpToolCall":
                         raise ValueError(
-                            "External service tool used in isolated evaluation."
+                            "External service tool used in isolated evaluation: "
+                            f"{item.get('server')}/{item.get('tool')}"
                         )
                     if item.get("type") == "agentMessage" and isinstance(
                         item.get("text"), str
@@ -458,6 +526,11 @@ class CodexDriver:
                             raise ValueError("Invalid command exit code from Codex.")
                         if output is not None and not isinstance(output, str):
                             raise ValueError("Invalid command output from Codex.")
+                        if exit_code is None:
+                            recording.channels["commands"] = "partial"
+                            recording.problems.append(
+                                "Completed command has no exit code."
+                            )
                         command_results.append(
                             CommandResult(command, exit_code, output)
                         )
@@ -505,12 +578,24 @@ class CodexDriver:
                 raise TimeLimitReached("Time allowance exhausted during message.")
             if not turn_completed:
                 raise ValueError("Codex stream ended without a completed turn.")
-            for identifier, action in native_children.items():
-                action.agent_results = self._native_child_results(identifier)
+            for identifier in native_children.keys() | collab_children.keys():
+                findings = self._native_child_results(identifier)
+                if identifier in native_children:
+                    native_children[identifier].agent_results = findings
+                for action in collab_children.get(identifier, []):
+                    action.agent_findings = findings
+                if any(
+                    isinstance(v, dict) and "unavailable" in v
+                    for v in findings.values()
+                ):
+                    recording.channels["children"] = "partial"
+                    recording.problems.append("Native child findings unavailable.")
             if self.expired.is_set():
                 raise TimeLimitReached(
                     "Time allowance exhausted collecting child work."
                 )
+            for channel in ("commands", "images", "children"):
+                recording.channels.setdefault(channel, "complete")
             return observation(completed=True)
         except Exception as error:
             partial = observation(completed=False)

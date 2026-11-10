@@ -1,10 +1,12 @@
 # Recorded eval failures
 
-The corpus contains 151 cases. This report reconciles retained studies through
-[reviewed interface and prototype trials](interface-prototype-trials.md). It adds no live runs or new verdicts.
+The corpus contains 151 cases. The earlier reconciliation covered retained studies through
+[reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
+[eval reliability follow-up](eval-reliability-trials.md) adds recording repairs, assessor
+corrections and fresh GUI trials; it is not a full-corpus rerun.
 
-There are **3 named cases with a confirmed failure and no later case-level pass recorded**.
-Thirty-one other cases have an earlier failure followed by a pass. Three cases have disputed
+The earlier reconciliation recorded **3 named cases with a confirmed failure and no later case-level pass recorded**.
+Thirty-one other cases had an earlier failure followed by a pass. Three cases had disputed
 negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
 Some definitions and instructions changed between studies; older findings need a fresh baseline.
 An additional ungraded retention violation needs follow-up and is separate from these verdict counts.
@@ -124,6 +126,14 @@ Other final grader corrections and all-pass batches are retained in the
 and defective grader controls are expected negative tests, not failed agent attempts.
 
 ## Resolution checks
+
+The [reliability study](eval-reliability-trials.md) preserves original unknowns and failures
+separately from inspected conclusions. Quiet-command and untargeted-wait warnings were false
+capture alarms. The prototype verification omission remains a failure: the candidate never
+established that the field stayed editable after blank-name feedback. Two interface attempts
+omit substantive transaction-structure inspection. Visual comparison requires opening both
+the application and accepted prototype in a browser; all three fresh GUI assessments pass
+that clarified criterion. Independent evidence inspection confirms all three passes.
 
 Start each affected case from its current definition and record its baseline before changing
 guidance. Keep case, model and assessment settings fixed for the comparison. Check the failed

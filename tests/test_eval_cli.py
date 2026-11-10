@@ -61,6 +61,19 @@ class EvaluationCommandTests(unittest.TestCase):
             self.assertTrue(output.strip())
         self.assertEqual(self.workspaces, [])
 
+    def test_zero_disables_token_guards_and_negative_guards_are_rejected(self) -> None:
+        arguments = ("run", "--cases", str(self.cases), "--model", "example-model")
+        for option in ("--max-tokens", "--judge-max-tokens"):
+            with self.subTest(option=option), self.assertRaises(SystemExit) as error:
+                self.invoke(*arguments, option, "-1")
+            self.assertEqual(error.exception.code, 2)
+        self.assertEqual(self.workspaces, [])
+        result, output = self.invoke(
+            *arguments, "--max-tokens", "0", "--judge-max-tokens", "0"
+        )
+        self.assertEqual(result, 0)
+        self.assertEqual(json.loads(output)["counts"]["pass"], 1)
+
     def test_variants_and_repeats_use_independent_environments(self) -> None:
         result, output = self.invoke(
             "run",

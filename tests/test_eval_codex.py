@@ -34,7 +34,16 @@ class FakeClient:
 
     def thread_start(self, arguments: dict[str, object]) -> SimpleNamespace:
         self.starts.append(arguments)
-        return SimpleNamespace(thread=SimpleNamespace(id="runtime-thread"))
+        return SimpleNamespace(
+            thread=SimpleNamespace(id="runtime-thread"),
+            active_permission_profile=SimpleNamespace(id="eval"),
+        )
+
+    def request(
+        self, method: str, params: dict[str, object], *, response_model: object
+    ) -> SimpleNamespace:
+        assert method == "thread/start"
+        return self.thread_start(params)
 
     def start(self) -> None:
         pass
@@ -129,6 +138,99 @@ class CodexAdapterTests(unittest.TestCase):
         )
         replacement.start()
         self.addCleanup(replacement.stop)
+
+    def test_wait_without_targets_does_not_hide_available_child_findings(self) -> None:
+        self.stream(
+            [
+                event(
+                    "item/completed",
+                    item={
+                        "type": "subAgentActivity",
+                        "kind": "completed",
+                        "agentThreadId": "child",
+                    },
+                ),
+                event(
+                    "item/completed",
+                    item={
+                        "type": "collabAgentToolCall",
+                        "tool": "wait",
+                        "status": "completed",
+                        "receiverThreadIds": [],
+                        "agentsStates": {},
+                    },
+                ),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        snapshot = RootModel[dict[str, object]](
+            {
+                "thread": {
+                    "turns": [
+                        {
+                            "items": [
+                                {
+                                    "type": "agentMessage",
+                                    "text": "Reviewed source; no findings.",
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        )
+        with patch.object(
+            self.client, "thread_read", return_value=snapshot, create=True
+        ):
+            result = self.driver().message("thread", "Finish.")
+        self.assertEqual(result.recording.channels["children"], "complete")
+        self.assertEqual(result.recording.problems, [])
+
+    def test_collaboration_status_does_not_establish_available_findings(self) -> None:
+        self.stream(
+            [
+                event(
+                    "item/completed",
+                    item={
+                        "type": "collabAgentToolCall",
+                        "tool": "wait",
+                        "status": "completed",
+                        "receiverThreadIds": ["child"],
+                        "agentsStates": {"child": {"status": "completed"}},
+                    },
+                ),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        result = self.driver().message("thread", "Continue.")
+        self.assertEqual(result.recording.channels["children"], "partial")
+        self.assertTrue(result.recording.problems)
+
+    def test_unknown_native_action_is_reported_as_partial_recording(self) -> None:
+        self.stream(
+            [
+                event("item/completed", item={"type": "unhandledTool", "id": "new"}),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        result = self.driver().message("thread", "Continue.")
+        self.assertTrue(result.completed)
+        self.assertEqual(result.recording.actions, "partial")
+        self.assertTrue(result.recording.problems)
+
+    def test_missing_viewed_image_is_a_capture_problem(self) -> None:
+        self.stream(
+            [
+                event(
+                    "item/completed", item={"type": "imageView", "path": "/missing.png"}
+                ),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        result = self.driver().message("thread", "Inspect.")
+        self.assertTrue(result.completed)
+        self.assertEqual(result.recording.channels["images"], "partial")
+        self.assertTrue(result.recording.problems)
 
     def test_native_image_views_are_observed_separately_from_capture_generation(
         self,
@@ -773,6 +875,25 @@ class CodexAdapterTests(unittest.TestCase):
         self.assertEqual(result.command, "python check.py")
         self.assertEqual(result.exit_code, 1)
         self.assertEqual(result.output, "AssertionError: Unicode")
+
+    def test_quiet_successful_command_is_not_a_recording_fault(self) -> None:
+        self.stream(
+            [
+                event(
+                    "item/completed",
+                    item={
+                        "type": "commandExecution",
+                        "command": "git diff --check",
+                        "exitCode": 0,
+                        "aggregatedOutput": None,
+                    },
+                ),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        result = self.driver().message("one", "Check the edit.")
+        self.assertEqual(result.recording.channels["commands"], "complete")
+        self.assertEqual(result.recording.problems, [])
 
     def test_missing_command_result_fields_remain_unknown(self) -> None:
         self.stream(

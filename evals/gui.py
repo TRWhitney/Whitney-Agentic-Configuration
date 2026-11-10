@@ -136,7 +136,12 @@ class BrowserWorker:
                         raw,
                     ],
                     cwd=self.workspace.root,
-                    env=self.environment,
+                    env={
+                        **self.environment,
+                        "EVAL_BROWSER_REQUEST_ID": request.name.removesuffix(
+                            ".request.json"
+                        ),
+                    },
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -280,21 +285,53 @@ def collect_browser(workspace: Workspace, scenario: str) -> dict[str, JsonValue]
     return observed
 
 
-def candidate_browser(workspace: Workspace) -> list[dict[str, JsonValue]]:
+def candidate_browser(
+    workspace: Workspace, problems: list[str] | None = None
+) -> list[dict[str, JsonValue]]:
     journal = workspace.home / "work-system/browser-journal.jsonl"
-    if not journal.exists():
-        return []
-    records = [
-        TypeAdapter(dict[str, JsonValue]).validate_json(line)
-        for line in journal.read_text().splitlines()
-    ]
+    records = []
+    for number, line in enumerate(
+        journal.read_text().splitlines() if journal.exists() else []
+    ):
+        try:
+            record = TypeAdapter(dict[str, JsonValue]).validate_json(line)
+            if record.get("request_id") is not None and not isinstance(
+                record["request_id"], str
+            ):
+                raise ValueError("Invalid browser request identifier.")
+            records.append(record)
+        except ValueError:
+            if problems is None:
+                raise
+            problems.append(f"Unreadable browser receipt at line {number + 1}.")
+    if problems is not None:
+        identifiers = {r.get("request_id") for r in records}
+        queue = workspace.home / "work-system/browser-queue"
+        for response in queue.glob("*.response.json"):
+            if response.name.removesuffix(".response.json") not in identifiers:
+                problems.append(
+                    "Browser request has no operation receipt: " + response.stem
+                )
+        for pending in queue.glob("*.request.json"):
+            problems.append("Browser request still pending: " + pending.stem)
     for record in records:
         record["origin"] = "candidate_browser"
         images = record.get("images")
         if isinstance(images, list):
+            valid: list[JsonValue] = []
             for item in images:
-                if isinstance(item, dict) and isinstance(item.get("data_url"), str):
+                try:
+                    if not isinstance(item, dict) or not isinstance(
+                        item.get("data_url"), str
+                    ):
+                        raise ValueError("Missing browser image data.")
                     data = item["data_url"]
                     assert isinstance(data, str)
                     workspace.raw_temporary_contents.add(image_bytes(data))
+                    valid.append(item)
+                except ValueError as error:
+                    if problems is None:
+                        raise
+                    problems.append("Unreadable browser image: " + str(error))
+            record["images"] = valid
     return records

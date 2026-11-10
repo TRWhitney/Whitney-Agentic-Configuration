@@ -48,6 +48,7 @@ from evals.models import (
     TrackerCheck,
     UnchangedCheck,
 )
+from evals.recording import Recording
 from evals.retention import no_raw_evidence, temporary_check
 
 
@@ -66,6 +67,7 @@ class ObservedAction:
     tool: str | None = None
     status: str | None = None
     agent_results: dict[str, JsonValue] | None = None
+    agent_findings: dict[str, JsonValue] | None = None
 
 
 @dataclass
@@ -81,6 +83,7 @@ class Observation:
     completed: bool = True
     partial_reply: str = ""
     commentary: list[str] = field(default_factory=list)
+    recording: Recording = field(default_factory=Recording)
 
 
 class Driver(Protocol):
@@ -144,6 +147,7 @@ class CaseResult:
     source_revision: str | None = None
     detail: str = ""
     purpose: str = "focused"
+    isolation_status: str = "unverified"
     assessment: AssessmentResult | None = None
     mechanical_status: Outcome | None = None
     metrics: dict[str, float | int] = field(default_factory=dict)
@@ -677,6 +681,11 @@ def run_case(
             result.source_digest = workspace.source_digest
             result.source_revision = workspace.source_revision
             driver = driver_factory(workspace, model, timeout, max_tokens)
+            result.isolation_status = (
+                "verified"
+                if getattr(driver, "isolation_verified", False)
+                else "unverified"
+            )
             try:
                 threads: dict[str, str] = {}
                 tokens: dict[str, int] = {}
@@ -795,6 +804,11 @@ def run_case(
                     "pass" if all(check.passed for check in result.checks) else "fail"
                 )
             finally:
+                result.isolation_status = (
+                    "verified"
+                    if getattr(driver, "isolation_verified", False)
+                    else "unverified"
+                )
                 result.metrics.update(getattr(driver, "metrics", {}))
                 driver.close()
     except (LimitReached, TimeoutError) as error:

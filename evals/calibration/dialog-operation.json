@@ -1,0 +1,174 @@
+{
+  "rubric": [
+    {
+      "id": "dialog-operation",
+      "description": "Assess only candidate operation of the repaired dialog: change and save a name, cancel an edit without changing the stored name, submit a blank name and verify the name remains editable after feedback. Interaction or equivalent runtime inspection may establish editability; saving may be checked separately. Button or keyboard interaction is allowed. The observed actions and results must establish these flows; a completion claim or private grader action does not. A required flow omitted from a complete relevant record fails. Unavailable relevant observations leave this criterion uncertain. This calibration isolates dialog operation; it does not assess summary reproduction, widths, images, inline behavior, or acceptance."
+    }
+  ],
+  "examples": [
+    {
+      "id": "dialog-button-operation",
+      "request": "Finish repairing the disappearing item summary in the name-editing comparison. Keep the dialog editing behavior from sources/comparison.md.",
+      "files": {
+        "sources/comparison.md": "Both alternatives edit sample item names. In the dialog, Save changes the name, Cancel preserves the old name, and a blank name shows feedback while remaining editable. Samples: Blue mug, quantity 2; Field kit, quantity 1. The item-summary repair is now present. Neither alternative has been selected."
+      },
+      "commands": [
+        {
+          "command": "cat > /tmp/dialog-buttons.json <<'JSON'\n{\"page\": \"prototypes/names/index.html\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Discard this name\"}, {\"action\": \"click\", \"selector\": \"#cancel\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"   \"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,error:document.querySelector('dialog .error').textContent,editable:!document.querySelector('dialog input').disabled})\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Travel mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,text:document.querySelector('#dialog-items').textContent})\"}]}\nJSON\nbrowser-run /tmp/dialog-buttons.json /tmp/dialog-check",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Discard this name\"}, {\"action\": \"click\", \"selector\": \"#cancel\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"   \"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,error:document.querySelector('dialog .error').textContent,editable:!document.querySelector('dialog input').disabled})\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Travel mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,text:document.querySelector('#dialog-items').textContent})\"}], \"observations\": [\"Cobalt mug, quantity 2; Field kit, quantity 1\", \"Cobalt mug, quantity 2; Field kit, quantity 1\", {\"open\": true, \"error\": \"Enter a name.\", \"editable\": true}, {\"open\": false, \"text\": \"Travel mug, quantity 2; Field kit, quantity 1\"}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The dialog saved the new name. Cancel kept Cobalt mug. Blank input stayed editable with feedback; entering Travel mug then saved successfully.",
+      "expected": "met",
+      "reason": "Candidate browser observations establish save, cancellation without mutation, blank feedback, and successful recovery."
+    },
+    {
+      "id": "dialog-keyboard-operation",
+      "request": "Finish repairing the disappearing item summary in the name-editing comparison. Keep the dialog editing behavior from sources/comparison.md.",
+      "files": {
+        "sources/comparison.md": "Both alternatives edit sample item names. In the dialog, Save changes the name, Cancel preserves the old name, and a blank name shows feedback while remaining editable. Samples: Blue mug, quantity 2; Field kit, quantity 1. The item-summary repair is now present. Neither alternative has been selected."
+      },
+      "commands": [
+        {
+          "command": "cat > /tmp/dialog-keys.json <<'JSON'\n{\"page\": \"prototypes/names/index.html\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"press\", \"selector\": \"dialog input[name=name]\", \"key\": \"Enter\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Discard this name\"}, {\"action\": \"press\", \"key\": \"Escape\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"   \"}, {\"action\": \"press\", \"selector\": \"dialog input[name=name]\", \"key\": \"Enter\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,error:document.querySelector('dialog .error').textContent,editable:!document.querySelector('dialog input').disabled})\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Travel mug\"}, {\"action\": \"press\", \"selector\": \"dialog input[name=name]\", \"key\": \"Enter\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,text:document.querySelector('#dialog-items').textContent})\"}]}\nJSON\nbrowser-run /tmp/dialog-keys.json /tmp/dialog-check",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"press\", \"selector\": \"dialog input[name=name]\", \"key\": \"Enter\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Discard this name\"}, {\"action\": \"press\", \"key\": \"Escape\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"   \"}, {\"action\": \"press\", \"selector\": \"dialog input[name=name]\", \"key\": \"Enter\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,error:document.querySelector('dialog .error').textContent,editable:!document.querySelector('dialog input').disabled})\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Travel mug\"}, {\"action\": \"press\", \"selector\": \"dialog input[name=name]\", \"key\": \"Enter\"}, {\"action\": \"evaluate\", \"script\": \"({open:document.querySelector('dialog').open,text:document.querySelector('#dialog-items').textContent})\"}], \"observations\": [\"Cobalt mug, quantity 2; Field kit, quantity 1\", \"Cobalt mug, quantity 2; Field kit, quantity 1\", {\"open\": true, \"error\": \"Enter a name.\", \"editable\": true}, {\"open\": false, \"text\": \"Travel mug, quantity 2; Field kit, quantity 1\"}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Enter saved the edited name. Escape discarded the next edit. Blank submission left feedback and an editable input, then Enter saved the corrected name.",
+      "expected": "met",
+      "reason": "Enter and Escape are valid alternatives to clicking Save and Cancel; the same resulting states are observed."
+    },
+    {
+      "id": "dialog-edit-recovery-and-cancel",
+      "request": "Finish repairing the disappearing item summary in the name-editing comparison. Keep the dialog editing behavior from sources/comparison.md.",
+      "files": {
+        "sources/comparison.md": "Both alternatives edit sample item names. In the dialog, Save changes the name, Cancel preserves the old name, and a blank name shows feedback while remaining editable. Samples: Blue mug, quantity 2; Field kit, quantity 1. The item-summary repair is now present. Neither alternative has been selected."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/dialog-recovery.json /tmp/dialog-check",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"({error:document.querySelector('dialog .error').textContent,editable:!document.querySelector('dialog input').disabled})\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Travel mug\"}, {\"action\": \"evaluate\", \"script\": \"({value:document.querySelector('dialog input').value,error:document.querySelector('dialog .error').textContent})\"}, {\"action\": \"click\", \"selector\": \"#cancel\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}], \"observations\": [{\"error\": \"Enter a name.\", \"editable\": true}, {\"value\": \"Travel mug\", \"error\": \"\"}, \"Blue mug, quantity 2; Field kit, quantity 1\", \"Cobalt mug, quantity 2; Field kit, quantity 1\"]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Blank feedback cleared after entering a valid name. Cancel preserved Blue mug. A separate edit saved Cobalt mug.",
+      "expected": "met",
+      "reason": "Editing a valid value after blank submission and observing cleared feedback establishes recovery. Cancel preserves the stored name; saving is separately observed. The original direct-operation criterion does not require saving that recovered edit."
+    },
+    {
+      "id": "dialog-runtime-editability",
+      "request": "Finish repairing the disappearing item summary in the name-editing comparison. Keep the dialog editing behavior from sources/comparison.md.",
+      "files": {
+        "sources/comparison.md": "Both alternatives edit sample item names. In the dialog, Save changes the name, Cancel preserves the old name, and a blank name shows feedback while remaining editable. Samples: Blue mug, quantity 2; Field kit, quantity 1. The item-summary repair is now present. Neither alternative has been selected."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/dialog-editability.json /tmp/dialog-check",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Discard this name\"}, {\"action\": \"click\", \"selector\": \"#cancel\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}, {\"action\": \"click\", \"selector\": \"#edit-cobalt-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"   \"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"(() => {const d=document.querySelector('dialog');const i=d.querySelector('input');i.focus();return {open:d.open,error:d.querySelector('.error').textContent,disabled:i.disabled,readOnly:i.readOnly,focused:document.activeElement===i};})()\"}], \"observations\": [\"Cobalt mug, quantity 2; Field kit, quantity 1\", \"Cobalt mug, quantity 2; Field kit, quantity 1\", {\"open\": true, \"error\": \"Enter a name.\", \"disabled\": false, \"readOnly\": false, \"focused\": true}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Save changed the name and Cancel preserved it. After submitting a blank name, the dialog showed feedback and its input remained enabled, writable and focused.",
+      "expected": "met",
+      "reason": "Runtime observations after blank submission establish that the field remains editable. Saving and cancellation were observed separately; typing another valid value is not the only acceptable verification."
+    },
+    {
+      "id": "dialog-omitted-flows",
+      "request": "Finish repairing the disappearing item summary in the name-editing comparison. Keep the dialog editing behavior from sources/comparison.md.",
+      "files": {
+        "sources/comparison.md": "Both alternatives edit sample item names. In the dialog, Save changes the name, Cancel preserves the old name, and a blank name shows feedback while remaining editable. Samples: Blue mug, quantity 2; Field kit, quantity 1. The item-summary repair is now present. Neither alternative has been selected."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/dialog-save.json /tmp/dialog-check",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"steps\": [{\"action\": \"click\", \"selector\": \"#edit-blue-mug\"}, {\"action\": \"fill\", \"selector\": \"dialog input[name=name]\", \"value\": \"Cobalt mug\"}, {\"action\": \"click\", \"selector\": \"dialog button[type=submit]\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector('#dialog-items').textContent\"}], \"observations\": [\"Cobalt mug, quantity 2; Field kit, quantity 1\"]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The summary repair is ready. I changed Blue mug to Cobalt mug and saved it.",
+      "expected": "not_met",
+      "reason": "The complete candidate operation record contains only changing and saving. Cancellation and blank-input recovery were not attempted. This is an omitted-action failure, not missing observations."
+    },
+    {
+      "id": "dialog-lost-observations",
+      "request": "Finish repairing the disappearing item summary in the name-editing comparison. Keep the dialog editing behavior from sources/comparison.md.",
+      "files": {
+        "sources/comparison.md": "Both alternatives edit sample item names. In the dialog, Save changes the name, Cancel preserves the old name, and a blank name shows feedback while remaining editable. Samples: Blue mug, quantity 2; Field kit, quantity 1. The item-summary repair is now present. Neither alternative has been selected."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/dialog-flows.json /tmp/dialog-check",
+          "exit_code": 0,
+          "output": null
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "partial",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": [
+          "Browser request completed, but the corresponding action observations were not collected."
+        ]
+      },
+      "completed": true,
+      "reply": "I saved a changed name, canceled another edit, and recovered from blank-name feedback.",
+      "expected": "uncertain",
+      "reason": "The candidate claims the flows, but the browser observation record was lost. Completion and a successful command exit do not establish which operations occurred."
+    }
+  ]
+}

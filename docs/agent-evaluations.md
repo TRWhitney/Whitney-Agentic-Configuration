@@ -137,8 +137,8 @@ finished files, final replies, observed actions, starting and changed tracker re
 confirmed compaction events in a separate context. Supplied file updates are identified
 separately from agent edits. Every selected case
 must have a rubric. The judge gets all attempts and conditions for that case under shuffled
-labels, after candidate writing ends. It receives no subject skills, expected verdicts, model
-names, condition labels, or earlier scores. It reads frozen evidence files in a read-only
+labels, after candidate writing ends. It receives the installed instruction snapshot as evidence,
+but no expected verdicts, model names, condition labels, or earlier scores. It reads frozen evidence files in a read-only
 workspace, using shell commands and image viewing. Delegation and evidence changes invalidate
 the assessment. Available native child turns and status messages are included separately from
 assignments. Structured model metadata is excluded from native child items.
@@ -160,10 +160,19 @@ family; a later run can select a different judge family through a supported adap
 defaults to 600 seconds with no cumulative token cutoff. Set `--judge-timeout` and
 `--judge-max-tokens` to change them. Each case's outputs share one assessment call.
 
+Native runs use a named [permission profile](https://learn.chatgpt.com/docs/permissions)
+with minimum system reads and explicit access to the fixture, installed skills and private
+scratch directory. `TMPDIR` points to that directory. Shared temporary files, other attempts
+and private case definitions are unavailable. Candidate Git metadata remains writable; judge
+evidence stays read-only. Preflight probes check outside-file denial, private scratch writes,
+Git metadata access and blocked tool network connections. Startup verifies the runtime selected
+the profile. A failed probe stops before model work; reports record `isolation_status` separately.
+Linux native execution requires the existing bubblewrap sandbox; no package is installed.
+
 Use `--review-dir PATH` with judging to keep temporary evidence for inspection. It must be a
 new directory outside instruction source checkouts. It saves complete observed outputs before
-assessment, followed by readable judge inputs, the private label map, and the judge's observed
-work and response. The map is never sent to the judge. A small manifest points to each output's
+assessment, followed by readable judge inputs, the private label map, the judge's observed
+work and response, and the scored assessment including errors or limits. The map is never sent to the judge. A small manifest points to each output's
 index. Those indexes link complete artifacts, requests, final replies, progress messages,
 actions, browser observations, and images. Repeated artifacts and identical images share files. There is no packet byte limit,
 file-size limit, or image-count limit. Evidence is not shortened to fit a prompt.
@@ -227,8 +236,18 @@ preparation time and evidence size. A failed assessment leaves behavior unknown 
 observed check or criterion already establishes a failure. Passing code checks alone cannot
 establish correct behavior for unassessed required criteria.
 
-Judge responses use output labels as keys, then criterion IDs, with a verdict and cited evidence
-for each. The supplied schema and local parser require every label and criterion. Duplicate keys,
+Judge responses use output labels as keys, then criterion IDs, with a verdict, reason, relevant
+recording channel and cited evidence for each. Reasons distinguish observed behavior, an omitted
+action, missing evidence, ambiguous requirements and conflicting evidence. Recording coverage
+and collection problems appear separately from candidate completion. Unsupported native events,
+missing command results, unavailable child findings, missing viewed images, malformed browser
+receipts and requests without receipts identify capture gaps. Valid browser observations survive
+a malformed later receipt. An omitted-action failure without complete relevant recording is
+retained as an original judgment but becomes uncertain pending investigation.
+
+Reports include `evaluation_status` and assessment `issues` with the next investigation or
+repair. A capture problem prevents an overall pass but does not erase an observed violation.
+The supplied schema and local parser require every label and criterion. Duplicate keys,
 unknown fields, empty evidence, and incomplete JSON are errors. This format avoids the unfinished
 outer-array output observed in the [ordinary-work revision](research/workflow-eval-realism.md).
 
@@ -236,6 +255,65 @@ Routine recovery supplies saved state and a work record to a fresh conversation.
 restoration from that input. The integration case requests native compaction in the same
 conversation and waits for its completed compaction item and completed turn before continuing.
 It uses a short conversation and does not fill the context window.
+
+## Repair an eval
+
+Calibration exits 0 only when every expected judgment agrees, 1 on disagreement, and 2 when
+assessment is incomplete or fails. Examples can supply observed commands, recording coverage
+and candidate completion as well as artifacts. Expected labels and their reasons remain private.
+The dialog-operation and transaction-structure suites check valid alternatives, actual omissions
+and lost observations; they do not establish the entire prototype or interface case.
+
+Add repeatable `--calibration PATH` arguments to `run` to check the selected assessor before
+candidate execution. A failed calibration stops the run, writes its findings to the report and
+starts no candidates. Calibration needs `--judge-model` and uses its model and allowances.
+
+```sh
+.venv/bin/python -m evals run --case interactive-prototype-comparison \
+  --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --calibration evals/calibration/dialog-operation.json \
+  --review-dir /tmp/prototype-review --report /tmp/prototype-report.json --diagnose
+```
+
+With `--diagnose`, a failed calibration or unresolved judged case starts one read-only
+investigation automatically. The run report links its diagnosis; the original behavior verdict
+is preserved. This option requires both judging and an external review directory. It does not
+retry candidates or edit evaluation definitions.
+
+Use the per-case review directory to investigate the original criteria, installed instructions,
+recorded work, check results and judgment in a separate read-only model context:
+
+```sh
+.venv/bin/python -m evals.repair diagnose \
+  --evidence /tmp/prototype-review/interactive-prototype-comparison \
+  --model gpt-6.1-sol --review-dir /tmp/prototype-diagnosis \
+  --report /tmp/prototype-diagnosis.json
+```
+
+Diagnosis reports cited defects or unresolved questions about expectations, recording and
+judgment, with the appropriate repair. It does not edit criteria, source or original verdicts.
+Its findings distinguish expectations, recording sufficiency, warning classification and the
+original judgment. They require inspection and a regression proving a proposed correction. It can inspect
+an invalid or unfinished original assessment when the input evidence and label map survived.
+
+After a supported assessor repair, replace `diagnose` with `reassess` and use new output paths.
+Reassessment preserves original criteria, checks, verdicts and assessment errors, and reports
+judgment changes for inspection. It rejects changed case definitions, missing original
+definitions and interrupted candidate work. An original assessment failure, uncertain required
+criterion or collection warning first triggers a separate read-only review. Reassessment
+proceeds only when that review establishes sound expectations and sufficient retained
+observations. Otherwise it reports what needs resolution. Original warnings remain in the saved evidence.
+The new assessor still leaves genuinely unavailable requirements uncertain and needs complete
+relevant records to establish an omission. The original mechanical failures remain behavior failures; this
+command does not rerun code checks. Corrected code checks need their own recheck or a fresh run.
+Changed expectations and missing observations require a fresh comparison. Legacy archives
+without definitions can still be diagnosed but cannot establish unchanged inputs for reassessment.
+
+Repair commands exit 0 when no problem is found, 1 for defects, uncertainty or changed judgments,
+and 2 on execution or input errors. All reports and review directories must be new and outside
+Git and instruction-source checkouts. The assessment API enforces this boundary as well as the
+commands. Keep evidence through inspection and required review, then delete it. Preserve
+concise findings and reusable regression examples.
 
 ## Add cases
 

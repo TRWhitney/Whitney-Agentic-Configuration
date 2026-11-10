@@ -62,7 +62,7 @@
     },
     {
       "id": "observed-comparison",
-      "description": "The candidate actually compares rendered application states with the accepted runnable design, using observed browser actions and visual evidence. Private grader captures cannot establish that this comparison occurred."
+      "description": "The candidate opens both the application and accepted prototype in a browser and compares their rendered states using observed browser actions and visual evidence. Private grader captures cannot establish that this comparison occurred."
     },
     {
       "id": "honest-completion",
