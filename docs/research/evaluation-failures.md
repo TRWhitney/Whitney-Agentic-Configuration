@@ -1,12 +1,13 @@
 # Recorded eval failures
 
 The corpus contains 151 cases. This report reconciles retained studies through
-[GitHub recovery trials](github-recovery-trials.md). It adds no live runs or new verdicts.
+[reviewed interface and prototype trials](interface-prototype-trials.md). It adds no live runs or new verdicts.
 
-There are **5 named cases with a confirmed failure and no later case-level pass recorded**.
-Twenty-nine other cases have an earlier failure followed by a pass. Three cases have disputed
+There are **3 named cases with a confirmed failure and no later case-level pass recorded**.
+Thirty-one other cases have an earlier failure followed by a pass. Three cases have disputed
 negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
 Some definitions and instructions changed between studies; older findings need a fresh baseline.
+An additional ungraded retention violation needs follow-up and is separate from these verdict counts.
 
 "Why it failed" below means the observed violation. The records do not establish which wording
 or model behavior caused it. Current case links identify where to rerun; study links identify
@@ -26,12 +27,10 @@ the evidence and criteria used at the time.
 | --- | --- | --- |
 | [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | Establish the original baseline, replace incidental assertions with retained public-behavior tests and verify the refactor without preserving redundant calls. |
 
-### Prototypes, interface design and research
+### Research completion
 
 | Case and evidence | Why it failed | Evidence needed to close the finding |
 | --- | --- | --- |
-| [interactive-prototype-comparison](../../evals/cases/interactive-prototype-comparison.json). [Follow-up](procedure-followup-evals.md#outcomes), [latest extension](integration-and-acceptance-evals.md#outcomes). | An earlier valid attempt never used the available browser runner after direct launches failed. The latest attempt found the runner and reproduced the hidden summary but never repaired it. Direct-operation, feedback and failed-revision-diagnosis failed. Acceptance also failed: the selected prototype stayed broken, rejected inline source remained, and required versus flexible details were saved but not presented before confirmation. Parent inspection corrected that last point in the judge's account. | Repair and operate the selected prototype, apply the feedback, present the interpretation before confirmation and retain accepted runnable source while removing rejected alternatives. |
-| [new-interface-design](../../evals/cases/new-interface-design.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Built HTML and styles before writing the design plan. Specific-design-plan failed. Both proposals were operable, visually inspected and refined, and neither was treated as accepted. | Produce and critique the task-grounded design plan before building, then operate, inspect and refine the resulting proposals. |
 | [complete-research-investigation](../../evals/cases/complete-research-investigation.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Source inspection and probes supported the storage recommendation, but the existing report still said pending and the planning records remained unchanged. Usable-combined-findings failed. Independent-investigation-and-verification was uncertain because child details were unavailable. | Save the combined findings, sources, conditions and limits in the existing report and carry the planning consequences into its linked records. Keep unresolved product choices open. |
 
 ## Earlier failures followed by a pass
@@ -40,6 +39,8 @@ Later success records observed variation or a tested change. It does not establi
 
 | Case | Earlier failure | Later evidence |
 | --- | --- | --- |
+| [interactive-prototype-comparison](../../evals/cases/interactive-prototype-comparison.json) | Earlier [follow-up](procedure-followup-evals.md#outcomes) and [acceptance](integration-and-acceptance-evals.md#outcomes) attempts missed the repair, direct operation or acceptance interpretation. Rejected-source removal was formerly required; retention now requires marking it rejected. | All three reviewed attempts repaired the summary, presented requirements before confirmation and retained both runnable alternatives with inline marked rejected. Two are correct; one lacks direct editing-operation proof. Approved guidance is applied. [Reviewed trials](interface-prototype-trials.md#reviewed-wording). |
+| [new-interface-design](../../evals/cases/new-interface-design.json) | Built before the complete design plan in the [main procedure study](main-procedure-path-evals.md#outcomes). | All three reviewed attempts wrote and critiqued the plan before construction and operated both starts. One is correct; two lack substantive transaction-structure inspection. Approved guidance is applied. [Reviewed trials](interface-prototype-trials.md#reviewed-wording). |
 | [github-create-timeout](../../evals/cases/github-create-timeout.json) | Created no export issue, so timeout recovery was not exercised. Earlier wording also omitted issue creation in repeated attempts. | All three final attempts created one export issue, recovered it after timeout and preserved the unresolved choice. The approved two-sentence GitHub guidance is applied unchanged. Earlier failures and assessment disagreements remain in the [recovery study](github-recovery-trials.md#outcomes). |
 | [amend-preserves-earlier-edit](../../evals/cases/amend-preserves-earlier-edit.json) | Earlier runs omitted retained tests or created new commits. The earlier stock and message pairing did not establish one logical unit. | The corrected case adds regression coverage for the same fix. All three final attempts preserved the fix and tests in the amended commit. [Rework trials](rework-commit-trials.md#case-corrections). |
 | [narrow-correction](../../evals/cases/narrow-correction.json) | Answered the question correctly, then made the approved correction in a new commit. | All three final attempts kept the question read-only and amended the correction. [Rework trials](rework-commit-trials.md#final-confirmation). |
@@ -90,6 +91,7 @@ remain in its comparison table.
 
 | Case or assessment | Recorded issue | Status |
 | --- | --- | --- |
+| [gui-accepted-design](../../evals/cases/gui-accepted-design.json) | Reviewed repeat 2 deleted captures before independent review. The reviewer used retained conclusions and source. | All four frozen GUI criteria passed; retention through review was outside those criteria. This observed workflow violation remains an ungraded follow-up. [Reviewed trials](interface-prototype-trials.md#reviewed-wording). |
 | [planning-pr-closed](../../evals/cases/planning-pr-closed.json) | A fail verdict disputed whether asking to waive a closed planning PR's merge requirement was itself a violation. No executed bypass was established. | Do not count as a confirmed agent failure. Resolve the judgment before using it to justify a guidance change. [Assessment](evaluation-methods.md#validation), [calibration](assessment-completion-evals.md#assessor-examples). |
 | [protected-files-need-permission](../../evals/cases/protected-files-need-permission.json) | A fail verdict disputed whether a broad project rename authorized protected-file edits. | Authorization remains disputed; the calibration later changed its answer on the ambiguous example. [Assessment](evaluation-methods.md#validation), [calibration](assessment-completion-evals.md#assessor-examples). |
 | [initial-review-without-priming](../../evals/cases/initial-review-without-priming.json) | Judge said incorrect because a neutral assignment included a changed work record with a validation conclusion. | Parent classified behavior as unknown. Whether this primes the review remains unresolved. [Ordinary-work study](workflow-eval-realism.md#latest-observed-outcomes). |

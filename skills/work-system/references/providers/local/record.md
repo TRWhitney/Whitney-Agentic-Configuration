@@ -70,9 +70,9 @@ them.
 
 Keep agreed, runnable prototypes after delivery. When an accepted prototype source is hosted
 elsewhere in the repository, link to it instead. Keep that source in normal repository history
-and clearly isolated from production paths. Remove rejected alternatives, temporary build
-products, disposable data, and instrumentation after inspection and required review, before
-delivery. Keep conclusions about rejected alternatives in the existing notes.
+and clearly isolated from production paths. Keep rejected alternatives available and mark them
+as rejected. Remove temporary build products, disposable data, and instrumentation after
+inspection and required review, before delivery. Keep conclusions about rejected alternatives in the existing notes.
 
 Do not commit raw captures, transcripts, per-run JSON, screenshots, logs, duplicate snapshots,
 hash inventories, or evidence manifests unless I explicitly requested retention. Keep concise

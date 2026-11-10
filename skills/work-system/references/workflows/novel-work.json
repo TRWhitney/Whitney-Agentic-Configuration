@@ -28,7 +28,7 @@
         },
         "prototype": {
           "status": "triggered",
-          "cue": "Use when a small runnable prototype can settle a planning decision."
+          "cue": "Use when a small runnable prototype can settle a planning decision, or when revising or recording a decision about an existing prototype."
         },
         "research": {
           "status": "allowed",

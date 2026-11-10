@@ -5,14 +5,14 @@
  another or repeat a signature from previous work without subject-specific cause.
 
 -Work in two passes. First, make a compact design plan containing:
-+Before building the interface or its prototype, write and critique a compact design plan
++Before building the interface or any prototypes for it, write and critique a compact design plan
 +containing:
 
  - four to six named colors with exact values or accepted token references;
  - two or more type roles with their scale and relationship;
 --- a/skills/work-system/references/procedures/prototype.md
 +++ b/skills/work-system/references/procedures/prototype.md
-@@ -35,8 +35,9 @@
+@@ -35,8 +35,10 @@
  - Try the relevant interactions, states, themes, and display sizes yourself. Do not add
    production regression tests or count these checks as production implementation tests or
    validation.
@@ -20,11 +20,12 @@
 -  complete run instructions and any non-sensitive sample data so I can try it without rebuilding
 +- Launch each alternative and complete every flow relevant to the decision before presenting it.
 +  For visual prototypes, inspect each relevant state's image and rendered structure. Include
-+  normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete run instructions and any non-sensitive sample data so I can try it without rebuilding
++  normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
++  run instructions and any non-sensitive sample data so I can try it without rebuilding
    the environment or code.
  - Include a clear prompt in the prototype stating what is under review. Give concrete steps to
    try the behavior and say what to look for.
-@@ -56,8 +57,8 @@
+@@ -56,8 +58,8 @@
 
  ## Record the decision and save the source
 
@@ -35,12 +36,12 @@
 
  - Required behavior, hierarchy, relationships, interactions, states, responsive layout, themes,
    and things intentionally left out.
-@@ -66,15 +67,17 @@
+@@ -66,15 +68,17 @@
 
  Show me this interpretation and obtain explicit confirmation that it captures what matters.
  Record the flows, states, actions, target elements, and results we used to accept the prototype.
-+After I confirm, finish inspection and any required review, then remove rejected alternatives
-+from the runnable source before replying.
++After I confirm, finish inspection and any required review, then keep rejected alternatives
++available and mark them as rejected before replying.
 
  Save notes in the repository's existing prototype documentation or
  `docs/prototypes/<prototype-slug>.md`. Include the agreed requirements, preferences, supporting
@@ -56,6 +57,21 @@
  screenshots, logs, duplicate packages, or per-run outputs.
 
  Production work still needs its own tests, error handling, and validation. Agreement on the
+--- a/skills/work-system/references/providers/local/record.md
++++ b/skills/work-system/references/providers/local/record.md
+@@ -70,9 +70,9 @@
+
+ Keep agreed, runnable prototypes after delivery. When an accepted prototype source is hosted
+ elsewhere in the repository, link to it instead. Keep that source in normal repository history
+-and clearly isolated from production paths. Remove rejected alternatives, temporary build
+-products, disposable data, and instrumentation after inspection and required review, before
+-delivery. Keep conclusions about rejected alternatives in the existing notes.
++and clearly isolated from production paths. Keep rejected alternatives available and mark them
++as rejected. Remove temporary build products, disposable data, and instrumentation after
++inspection and required review, before delivery. Keep conclusions about rejected alternatives in the existing notes.
+
+ Do not commit raw captures, transcripts, per-run JSON, screenshots, logs, duplicate snapshots,
+ hash inventories, or evidence manifests unless I explicitly requested retention. Keep concise
 --- a/skills/work-system/references/workflows/novel-work.json
 +++ b/skills/work-system/references/workflows/novel-work.json
 @@ -28,7 +28,7 @@
@@ -63,7 +79,7 @@
          "prototype": {
            "status": "triggered",
 -          "cue": "Use when a small runnable prototype can settle a planning decision."
-+          "cue": "Use when a small runnable prototype can settle a planning decision, or when I give feedback, select it, or confirm its requirements."
++          "cue": "Use when a small runnable prototype can settle a planning decision, or when revising or recording a decision about an existing prototype."
          },
          "research": {
            "status": "allowed",

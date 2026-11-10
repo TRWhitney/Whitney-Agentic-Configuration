@@ -1,17 +1,18 @@
 # Interface and prototype trials
 
-Trials investigate [prototype comparison](integration-and-acceptance-evals.md#outcomes)
-and [interface design](main-procedure-path-evals.md#outcomes). The
-[proposed skill diff](interface-prototype-proposal.diff) remains unapplied.
+Trials investigate [prototype comparison](integration-and-acceptance-evals.md#outcomes) and
+[interface design](main-procedure-path-evals.md#outcomes). The
+[reviewed diff](interface-prototype-proposal.diff) is applied unchanged.
 
-## Outcomes
+## Historical outcomes
 
-C means correct, F incorrect, U unknown. "Not run" marks an untested pairing. Each entry is one
-attempt in execution order. All 59 candidate assessments and five joint comparisons completed.
-Final behavior is 13 C and two U. No candidate attempt is excluded.
+All 59 candidate assessments and five joint comparisons completed. The last set was 13 correct
+and two unknown. These verdicts used the earlier deletion expectation and production ban.
+Raw evidence was deleted after review; the revised criteria do not relabel these attempts.
 
-Plan means `specific-design-plan`, inspection `rendered-inspection-and-critique`, and operation
-`runnable-choice`. Tags identify every failed or uncertain criterion; all others are met.
+C means correct, F incorrect, U unknown. Entries follow execution order. Plan means
+`specific-design-plan`, inspection `rendered-inspection-and-critique`, and operation
+`runnable-choice`. Tags identify every failed or uncertain criterion; other criteria are met.
 
 | Instruction condition | interactive-prototype-comparison | new-interface-design | prototype-returns-to-planning | delivery-retains-accepted-prototype | gui-accepted-design |
 | --- | --- | --- | --- | --- | --- |
@@ -28,45 +29,56 @@ Plan means `specific-design-plan`, inspection `rendered-inspection-and-critique`
 | Cleanup beside confirmation repeats | C<br>C<br>F acceptance: unanswered production decisions | U inspection: structure/states<br>C<br>U inspection: structure/states/focus | C/C/C | C/C/C | C/C/C |
 | Inspect each state; use keyboard | C/C/C | U inspection: structure/error view<br>U operation: volunteer checkout; U inspection: checkout/structure<br>C | C/C/C | C/C/C | C/C/C |
 
-The comparison baseline repaired and operated the summary, but acceptance failed through early
-recording and retained inline source. Its first screen never loaded the edited procedure and
-implemented production after confirmation. Extending the cue reached the procedure and improved
-interpretation, but cleanup still failed. An explicit deadline passed once, then all three
-visual repeats retained inline source. Moving cleanup beside confirmation removed it in all
-three repeats; one implemented production after silently settling an unanswered app/storage
-choice. Its F and source-preservation failures used the old production ban. Production
-is allowed after necessary decisions are settled; both checks are removed. Historical
-verdicts remain; corrected behavior is untested.
-Visual repeat 2 also lacks direct-operation proof.
+The first prototype screen never loaded the procedure; extending the cue exposed acceptance
+guidance. Deadline changes varied across attempts. Deletion-based and blanket-production
+failures remain historical; they do not assess revised retention. Visual repeat 2 lacks direct
+save/recovery operation.
 
-The design baseline and first screen built before the complete plan. Moving the planning
-instruction first corrected that criterion. Later U outcomes concern rendered inspection;
-the visual screen also lacks a completed volunteer-first checkout trial. Focus and state
-inspection remain incomplete in several attempts despite useful observed refinements.
+Moving the instruction first met planning. Inspection uncertainties remain; the visual screen
+omitted completed volunteer-first checkout. Judges passed several outcomes retained as U, including visual
+repeats, adjacent repeat 1, the plan-order screen and final repeat 1. Introductory HTML or
+lengths and incomplete state inspection were insufficient. Final repeat 2 lacked checkout.
+Final repeat 3 is C despite its original U: rendered relationships, keyboard destination and
+an inspected focus ring suffice together. Duplicate cancellation subtypes and per-state structural
+copies are unnecessary. Criticism of blocked production planning and demands for invented
+rejection reasons exceed the rubric.
 
-Judges pass several inspection outcomes retained here as U: introductory HTML or lengths and
-incomplete state inspection remain insufficient. These include visual repeats, adjacent repeat 1,
-the plan-order screen and final repeat 1. Final repeat 2 lacks completed
-volunteer-first checkout. Final repeat 3 is C despite its original U: rendered relationship text,
-keyboard destination and an inspected focus ring suffice together. Per-state structural copies
-and duplicate cancellation subtypes are unnecessary. Criticism of blocked production planning
-and demands for invented rejection reasons exceed the rubric.
+One visual GUI repeat originally errored because its grader located the pane through permanent
+"Plain text" footer content. Editor and Save anchors fix that unsupported assumption. The
+regression failed before correction, passed after, and rejects a missing dialog frame. All
+four saved baseline/visual outputs passed 30 corrected checks.
 
-One visual GUI repeat originally errored because the private grader located its pane through
-permanent "Plain text" footer content. Applied format may change that content. Anchoring through
-editor and Save fixes it. The regression fails before correction, passes after, and still
-rejects a missing dialog frame. All four saved baseline/visual outputs pass 30 corrected checks.
+## Reviewed wording
+
+The comparison now retains both runnable alternatives with inline clearly marked rejected.
+Production may follow settled necessary decisions. Candidate requests, fixtures and checks did
+not change.
+
+| Case | Fresh baseline | Reviewed repeats |
+| --- | --- | --- |
+| interactive-prototype-comparison | F operable-comparison: no rejected label; F acceptance: early recording/no label | U direct-operation: editing/save/recovery<br>C<br>C |
+| new-interface-design | F plan: built first; U inspection: focus/transaction structure | U inspection: transaction structure<br>C<br>U inspection: transaction structure |
+| prototype-returns-to-planning | C | C/C/C |
+| delivery-retains-accepted-prototype | C | C/C/C |
+| gui-accepted-design | C | C/C/C |
+
+All 20 fresh assessments and five joint comparisons completed. Reviewed repeats reconcile to
+12 C and three U. All three prototype repeats marked and kept rejected alternatives; all three design repeats
+planned before building. Unknown criteria are tagged above. The joint judge passes design
+repeat 1, which remains U.
+Repeat 2 is C despite its original U: full runtime relationship text supports inspection, and
+the joint judge agrees. An explicit no-refinement-needed statement is unnecessary.
+GUI repeat 2 deleted captures before independent review, an observed violation outside its
+four frozen criteria. Its passing case verdict does not establish retention compliance.
 
 ## Method and limits
 
-Baseline `ba604f4` supplies repository skills, global instructions and declared unslop. Candidate
-and separate blinded judge use gpt-6.1-sol, 1800/1200-second allowances and disabled token guards.
-Tasks, resolved fixtures and private criteria are fixed. Publication and browser services are
-local. The related cases cover continuation after a requested experiment, accepted-source
-retention and production design adherence. They do not establish autonomous prototype selection.
-
-468 framework tests, 151 definitions, lint, formatting and strict typing pass. Outputs, actions,
-images and available child findings were inspected. Independent intent and engineering reviews
-pass. Raw evidence was deleted after review. Fixtures and same-family judges do not establish
+Historical baseline is `ba604f4`; the fresh baseline is `705d93d`. Source copies include
+repository skills, global instructions and declared unslop. Candidate and separate blinded
+judge use gpt-6.1-sol, 1800/1200-second allowances and disabled token guards. Inputs and private
+criteria stay fixed within each comparison. Browser and service fixtures are local. Related
+cases establish requested experiments and accepted-source handling, not autonomous prototyping.
+469 framework tests, quality checks and 151 definitions pass. Both independent reviews pass.
+Raw evidence was deleted afterward.
+Native compaction remains deferred. Same-family judges and these fixtures do not establish
 production reliability or full-corpus rates.
-The two final unknowns remain unresolved. Native compaction remains deferred.

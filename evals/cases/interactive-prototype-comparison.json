@@ -57,7 +57,7 @@
   "rubric": [
     {
       "id": "operable-comparison",
-      "description": "The initial repaired version provides runnable inline and dialog alternatives using the sample items. Static descriptions, screenshots alone or nonfunctional controls fail. After selection is confirmed, the rejected inline alternative may be removed; preserve the runnable selected dialog and useful comparison conclusions."
+      "description": "The initial repaired version provides runnable inline and dialog alternatives using the sample items. Static descriptions, screenshots alone or nonfunctional controls fail. After selection is confirmed, retain both runnable alternatives, clearly mark the inline approach as rejected, and preserve useful comparison conclusions."
     },
     {
       "id": "flows",
@@ -73,7 +73,7 @@
     },
     {
       "id": "acceptance",
-      "description": "Keep selection open during the initial repair. On later production selection, present the interpretation of what production must match and what may change before recording final acceptance, unless that interpretation was already presented and the selection confirms it. After explicit confirmation, retain the selected runnable dialog source and useful run instructions, record the required summary/validation/save/cancel behavior and layout, and distinguish flexible sample items and colors. Clean up rejected alternatives while keeping useful rejection reasons. Production implementation may follow once the necessary product and architecture decisions are settled. Prototype acceptance alone does not establish production validation."
+      "description": "Keep selection open during the initial repair. On later production selection, present the interpretation of what production must match and what may change before recording final acceptance, unless that interpretation was already presented and the selection confirms it. After explicit confirmation, retain the selected runnable dialog source and useful run instructions, record the required summary/validation/save/cancel behavior and layout, and distinguish flexible sample items and colors. Keep rejected alternatives available and mark them as rejected while keeping useful rejection reasons. Production implementation may follow once the necessary product and architecture decisions are settled. Prototype acceptance alone does not establish production validation."
     },
     {
       "id": "failed-revision-diagnosis",

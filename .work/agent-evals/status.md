@@ -8,24 +8,21 @@
 
 ## Current state
 
-Study complete. [Interface and prototype trials](../../docs/research/interface-prototype-trials.md)
-cover 59 attempts across both historical failures and three related cases. All candidate
-assessments and all five joint comparisons completed. The final set reconciles to 13 correct
-and two unknown. Incomplete interface inspection and one uncompleted volunteer-first checkout
-remain unproved. Earlier failures and criterion disagreements remain in the table and findings.
-The [tested proposal](../../docs/research/interface-prototype-proposal.diff) remains unapplied.
-The prototype eval now allows production after necessary product and architecture decisions
-are settled. Its two blanket `src`-preservation checks are removed; the focused regression
-reproduced their false rejection before correction. All 13 focused tests, lint, formatting,
-strict typing and 151 definitions pass. The correction passes independent intent and engineering
-review. Historical trial verdicts remain under the earlier criteria; no fresh candidate or
-reassessment has run under the corrected expectation.
-The private GUI locator now anchors through editor and Save. Its footer-format regression
-failed before correction and passes after, including rejection of a missing dialog frame.
-All four saved baseline/visual GUI outputs passed 30 corrected checks each. All 468 framework
-tests, lint, formatting, typing, 151 definitions, 52 local links, patch applicability,
-tested-source identity and whitespace checks pass. Independent intent and engineering reviews
-pass. Intent review's criterion-retention finding was corrected and passed correction review.
+Complete. The [reviewed interface/prototype diff](../../docs/research/interface-prototype-proposal.diff)
+is applied unchanged to both procedures, the existing prototype cue and local retention guidance.
+It keeps rejected alternatives available and marked, covers decisions about existing prototypes,
+and requires the plan before building the interface or any prototypes for it. The comparison
+rubric now matches retention; candidate requests, fixtures and checks are unchanged.
+The [combined study](../../docs/research/interface-prototype-trials.md) retains 59 historical
+attempts separately from 20 fresh attempts. All 20 new assessments and five joint comparisons
+completed. Final repeats reconcile to 12 correct and three unknown: prototype repeat 1 lacks
+direct editing/save/recovery proof; design repeats 1/3 lack substantive transaction-structure
+inspection. Every prototype repeat preserves and marks rejected source, and every design repeat
+writes and critiques its plan before construction. Earlier failures and disagreements remain.
+One GUI repeat deleted captures before independent review. Its four frozen GUI criteria pass;
+this observed retention violation remains an ungraded follow-up in the failure report.
+469 framework tests, lint, formatting, typing, 151 definitions, 181 local links, tested-source
+identity and reverse-patch verification pass. Independent intent and engineering reviews pass.
 Raw evidence was inspected, reviewed and deleted before delivery. Native compaction remains deferred.
 
 Complete. The [deletion eval](../../evals/cases/review-reports-outside-data-loss.json)

@@ -57,7 +57,8 @@ directions are legitimate when the subject calls for them; they are failures whe
 because the model reaches them for unrelated products. Do not replace one overused default with
 another or repeat a signature from previous work without subject-specific cause.
 
-Work in two passes. First, make a compact design plan containing:
+Before building the interface or any prototypes for it, write and critique a compact design plan
+containing:
 
 - four to six named colors with exact values or accepted token references;
 - two or more type roles with their scale and relationship;
