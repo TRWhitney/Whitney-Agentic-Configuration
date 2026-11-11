@@ -47,6 +47,8 @@ INSTRUCTIONS = (
     "A completed turn alone does not prove complete recording. Inspect "
     "recording coverage. "
     "When the relevant record is complete, an omitted required action is not_met. "
+    "Creating captures does not establish inspection. Check what the candidate's "
+    "reads, queries, and image views actually showed. "
     "Accept equivalent valid inspection approaches; do not require a "
     "particular representation. "
     "Candidate citations may use links, paths, unambiguous source names, "
