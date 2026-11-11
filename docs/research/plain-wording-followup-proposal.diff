@@ -1,0 +1,53 @@
+--- a/skills/work-system/references/procedures/prototype.md
++++ b/skills/work-system/references/procedures/prototype.md
+@@ -35,10 +35,11 @@
+ - Try the relevant interactions, states, themes, and display sizes yourself. Do not add
+   production regression tests or count these checks as production implementation tests or
+   validation.
+-- Launch each alternative. Complete every flow relevant to the decision in each one before
+-  presenting it.
+-  For visual prototypes, inspect each relevant state's image and rendered structure. Include
+-  normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
++- Launch each alternative. Check each task from start to finish, including cancellation and
++  error cases, in each one before presenting it.
++  For visual prototypes, inspect each relevant state's image and rendered structure. Check
++  content variations at each display size where they could change the layout. Include normal,
++  empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
+   run instructions and any non-sensitive sample data so I can try it without rebuilding
+   the environment or code.
+ - Include a clear prompt in the prototype stating what is under review. Give concrete steps to
+--- a/skills/work-system/references/procedures/testing.md
++++ b/skills/work-system/references/procedures/testing.md
+@@ -16,8 +16,8 @@
+ passes immediately, fails for the wrong reason, or cannot reach the behavior does not prove the
+ test covers the change.
+
+-Before refactoring, run the existing tests. Replace assertions about incidental internal calls
+-with retained tests of public behavior. Keep those tests passing while refactoring.
++Before refactoring, run the existing tests. If a test requires clearly wrong or unnecessary
++behavior, correct the test. Do not preserve that behavior just to make the test pass.
+
+ ## Run the loop
+
+--- a/skills/work-system/references/states/implementation.md
++++ b/skills/work-system/references/states/implementation.md
+@@ -22,8 +22,7 @@
+
+ ## Build the change
+
+-When changing behavior or refactoring, use the testing procedure. Choose the test before
+-changing production code, then keep the focused test and affected tests passing as you build.
++Use the testing procedure when changing behavior or refactoring.
+
+ - Remove duplication, misleading abstractions, obsolete interfaces, and unnecessary complexity
+   in the involved code. Improve how it divides responsibilities and manages dependencies.
+--- a/skills/work-system/references/states/validation.md
++++ b/skills/work-system/references/states/validation.md
+@@ -46,6 +46,6 @@
+ not replace direct operation and inspection.
+
+ Exercise themes, display sizes, intermediate states, and data conditions that can affect the
+-change. Complete each relevant user flow successfully. Verify the recovery action from each relevant error state. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style
++change. Check that the affected tasks work from start to finish, including correcting errors and trying again. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style
+ leakage. When an accepted prototype exists, open both it and the finished interface in a browser,
+ replay its recorded flows, and compare the result with the prototype and its agreed requirements.

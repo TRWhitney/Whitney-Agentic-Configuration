@@ -35,10 +35,11 @@ interaction.
 - Try the relevant interactions, states, themes, and display sizes yourself. Do not add
   production regression tests or count these checks as production implementation tests or
   validation.
-- Launch each alternative. Complete every flow relevant to the decision in each one before
-  presenting it.
-  For visual prototypes, inspect each relevant state's image and rendered structure. Include
-  normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
+- Launch each alternative. Check each task from start to finish, including cancellation and
+  error cases, in each one before presenting it.
+  For visual prototypes, inspect each relevant state's image and rendered structure. Check
+  content variations at each display size where they could change the layout. Include normal,
+  empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
   run instructions and any non-sensitive sample data so I can try it without rebuilding
   the environment or code.
 - Include a clear prompt in the prototype stating what is under review. Give concrete steps to

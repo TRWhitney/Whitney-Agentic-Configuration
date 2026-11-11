@@ -46,7 +46,7 @@ inspection are both required. Automated assertions, unattended scripts, and gene
 not replace direct operation and inspection.
 
 Exercise themes, display sizes, intermediate states, and data conditions that can affect the
-change. Complete each relevant user flow successfully. Verify the recovery action from each relevant error state. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style
+change. Check that the affected tasks work from start to finish, including correcting errors and trying again. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style
 leakage. When an accepted prototype exists, open both it and the finished interface in a browser,
 replay its recorded flows, and compare the result with the prototype and its agreed requirements.
 

@@ -8,6 +8,32 @@
 
 ## Current state
 
+Complete. The [plain wording follow-up](../../docs/research/plain-wording-trials.md#follow-up-trials)
+adds 64 candidates across seven fresh baselines and three instruction versions. All candidate
+assessments and 71 joint reassessments completed; the final version is correct in all 21 attempts, three per case
+or control. The [complete tested diff](../../docs/research/plain-wording-followup-proposal.diff)
+is applied unchanged. Tasks, fixtures, criteria and model settings are unchanged.
+
+Earlier prototype and cancellation failures remain recorded. Independent investigations confirm
+the prototype recovery omission and correct a design false pass. Final joint comparisons
+completed. Independent testing-intent, UI-intent and engineering reviews pass. All 151 definitions,
+local links/anchors, skill validity and proposal identity pass. Raw evidence was inspected,
+reviewed and deleted. The full corpus was not rerun; compaction remains deferred.
+
+Complete. The [plain wording trial](../../docs/research/plain-wording-trials.md) records seven
+fresh baselines and 21 proposed-wording attempts. All candidate assessments and 28 joint
+reassessments completed. Proposed behavior is 18 correct and three incorrect: prototype F/F/C,
+design C/F/C, and all twelve testing and three accepted-GUI attempts correct. The
+[proposal](../../docs/research/plain-wording-proposal.diff) remains unapplied; repository skill,
+eval, test and runner sources are unchanged.
+
+Independent testing-intent, UI-intent and engineering reviews pass. Diagnosis rejects invented
+prototype rejection reasons; independent inspection corrects the design false pass. The design
+candidates read none of the changed passages, so that failure does not establish a wording
+effect. All 151 definitions, proposal applicability and 197 local links and anchors pass.
+Raw evidence was inspected, reviewed and deleted. The full corpus was not rerun; compaction
+remains deferred.
+
 Complete. The pending test-quality patch is applied unchanged and committed as `b1268c2`;
 its independent reviews and application checks pass.
 
