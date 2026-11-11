@@ -8,6 +8,24 @@
 
 ## Current state
 
+Complete. The pending test-quality patch is applied unchanged and committed as `b1268c2`;
+its independent reviews and application checks pass.
+
+The [UI study](../../docs/research/ui-verification-trials.md) records 77 candidate attempts and
+three excluded setup slots. The [tested diff](../../docs/research/ui-verification-proposal.diff)
+is applied unchanged. All nine final attempts are correct, three per case/control. All
+assessments and final blinded joint comparisons completed. Independent intent and engineering
+correction reviews pass. The earlier design F/C/C correction and rejected assessor trial remain.
+
+All 81 authored calibration judgments match. The assessor's actual-read clarification matches
+18/18 targeted judgments versus 9/18 before it. A seven-output extension exposes a further false
+pass; an extra sentence fails to fix it and is rejected. All 28 extension assessments completed.
+Rejected browser requests now receive failure receipts, with recorded regression red/green proof
+and a genuine missing-receipt control. All 490 framework tests, affected checks, quality checks
+and 151 definitions pass. Final application passes 42 checks and installed-source identity.
+Raw evidence was inspected, reviewed and deleted. The full corpus was not rerun; compaction
+remains deferred.
+
 Complete. The research case excludes hidden-assignment checks.
 Neutral assignments remain expected but uncheckable.
 The private criterion retains observable delegation, child work and parent verification.

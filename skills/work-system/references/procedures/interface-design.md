@@ -91,8 +91,12 @@ case, and remove filler. Each element does one job. Avoid em dashes, sales pitch
 implementation terminology, design rationale, and feature inventories in consumer-facing prose.
 
 Render and inspect the interface throughout the build across relevant interactions, themes,
-sizes, and states. Inspect both its appearance and an available structural representation for
-hierarchy, semantics, alignment, clipping, contrast, focus, and reflow. Watch for style
+sizes, and states. For each relevant state, inspect both its appearance and an available
+structural representation for hierarchy, semantics, alignment, clipping, contrast, focus, and
+reflow. Read the related content, labels, values, and actions together in each relevant state.
+Headings alone, file keys, lengths, and total element counts do not show these relationships.
+Continue reading if a snippet
+cuts them off. Watch for style
 precedence that causes rules to cancel or override one another. Compare the result with the
 accepted design direction, remove one unnecessary element, and refine the details that define
 the design.

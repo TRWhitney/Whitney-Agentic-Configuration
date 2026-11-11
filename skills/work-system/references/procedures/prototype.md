@@ -35,7 +35,8 @@ interaction.
 - Try the relevant interactions, states, themes, and display sizes yourself. Do not add
   production regression tests or count these checks as production implementation tests or
   validation.
-- Launch each alternative and complete every flow relevant to the decision before presenting it.
+- Launch each alternative. Complete every flow relevant to the decision in each one before
+  presenting it.
   For visual prototypes, inspect each relevant state's image and rendered structure. Include
   normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
   run instructions and any non-sensitive sample data so I can try it without rebuilding
@@ -66,7 +67,8 @@ present what production must match and what it may change:
 - Flexible placeholder content, sample data, implementation choices, and details I allowed you
   to change.
 
-Show me this interpretation and obtain explicit confirmation that it captures what matters.
+Show me this interpretation and obtain explicit confirmation that it captures what matters before
+recording acceptance.
 Record the flows, states, actions, target elements, and results we used to accept the prototype.
 After I confirm, finish inspection and any required review, then keep rejected alternatives
 available and mark them as rejected before replying.

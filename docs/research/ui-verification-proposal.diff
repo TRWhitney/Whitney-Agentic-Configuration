@@ -1,0 +1,46 @@
+--- a/skills/work-system/references/procedures/interface-design.md
++++ b/skills/work-system/references/procedures/interface-design.md
+@@ -92,6 +92,10 @@
+
+ Render and inspect the interface throughout the build across relevant interactions, themes,
+-sizes, and states. Inspect both its appearance and an available structural representation for
+-hierarchy, semantics, alignment, clipping, contrast, focus, and reflow. Watch for style
++sizes, and states. For each relevant state, inspect both its appearance and an available
++structural representation for hierarchy, semantics, alignment, clipping, contrast, focus, and
++reflow. Read the related content, labels, values, and actions together in each relevant state.
++Headings alone, file keys, lengths, and total element counts do not show these relationships.
++Continue reading if a snippet
++cuts them off. Watch for style
+ precedence that causes rules to cancel or override one another. Compare the result with the
+ accepted design direction, remove one unnecessary element, and refine the details that define
+--- a/skills/work-system/references/procedures/prototype.md
++++ b/skills/work-system/references/procedures/prototype.md
+@@ -36,5 +36,6 @@
+   production regression tests or count these checks as production implementation tests or
+   validation.
+-- Launch each alternative and complete every flow relevant to the decision before presenting it.
++- Launch each alternative. Complete every flow relevant to the decision in each one before
++  presenting it.
+   For visual prototypes, inspect each relevant state's image and rendered structure. Include
+   normal, empty, error, and unavailable states. Use the keyboard to check focus. Provide complete
+@@ -67,5 +68,6 @@
+   to change.
+
+-Show me this interpretation and obtain explicit confirmation that it captures what matters.
++Show me this interpretation and obtain explicit confirmation that it captures what matters before
++recording acceptance.
+ Record the flows, states, actions, target elements, and results we used to accept the prototype.
+ After I confirm, finish inspection and any required review, then keep rejected alternatives
+--- a/skills/work-system/references/states/validation.md
++++ b/skills/work-system/references/states/validation.md
+@@ -47,7 +47,7 @@
+
+ Exercise themes, display sizes, intermediate states, and data conditions that can affect the
+-change. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style
+-leakage. When an accepted prototype exists, replay its recorded flows and compare the result
+-with the prototype and its agreed requirements.
++change. Complete each relevant user flow successfully. Verify the recovery action from each relevant error state. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style
++leakage. When an accepted prototype exists, open both it and the finished interface in a browser,
++replay its recorded flows, and compare the result with the prototype and its agreed requirements.
+
+ ## Handle failures
