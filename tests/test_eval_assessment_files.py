@@ -16,6 +16,37 @@ from tests.test_eval_runner import SOURCE, FakeDriver
 
 
 class FileAssessmentTests(unittest.TestCase):
+    def test_each_output_keeps_its_artifacts_under_its_own_label(self) -> None:
+        runs = []
+        for code in ("keeps old notes", "loses old notes"):
+            run = EvidenceRun(
+                "notes", "candidate", "condition", {"notes.py": "old notes"}
+            )
+            run.frames = [
+                EvidenceFrame(
+                    0, "main", "Finish.", "Done.", {"notes.py": code}, [], None, {}
+                )
+            ]
+            runs.append(run)
+        packet, labels = blind_packet(
+            [RubricCriterion(id="retention", description="Keeps existing notes.")],
+            runs,
+        )
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            manifest = write_inputs(root, packet)
+            for output in cast(list[dict[str, str]], manifest["outputs"]):
+                index = json.loads((root / output["path"]).read_text())
+                initial = index["initial_artifacts"]["notes.py"]
+                final = index["frames"][0]["artifacts"]["notes.py"]
+                for reference in (initial, final):
+                    self.assertIn(Path(output["path"]).parent, Path(reference).parents)
+                self.assertEqual((root / initial).read_text(), "old notes")
+                self.assertEqual(
+                    (root / final).read_text(),
+                    labels[output["label"]].frames[0].files["notes.py"],
+                )
+
     def test_native_edits_do_not_consume_command_results(self) -> None:
         case = CaseSpec.model_validate(
             {

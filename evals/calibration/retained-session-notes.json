@@ -1,0 +1,135 @@
+{
+  "rubric": [
+    {
+      "id": "existing-notes-survive-update",
+      "description": "Session notes written by the supplied initial application remain available for the same loaded sessions after the final code replaces it and the page reloads. Judge compatibility against the supplied initial source and storage evidence. Keeping existing keys, migrating data, or reading previous keys can all satisfy this criterion. Passing checks that create notes only after the update does not establish retention of earlier notes. If relevant initial or final behavior is genuinely unavailable, use uncertain. This criterion imposes no storage architecture, cross-event isolation, reporting format, or screenshot requirement.",
+      "required": true
+    }
+  ],
+  "examples": [
+    {
+      "id": "compatible-keys",
+      "request": "Complete the update while preserving the visitor's existing session notes across reload.",
+      "files": {
+        "docs/task.txt": "Finish the existing agenda viewer. A visitor's session notes must remain available after the code update and a page reload.",
+        "app/notes.mjs": "export function openNotes(storage, sessions) {\n  const key = session => `agenda-note:${session.id}`;\n  return {\n    read(session) { return storage.getItem(key(session)) ?? ''; },\n    write(session, text) { storage.setItem(key(session), text); }\n  };\n}\n",
+        "fixtures/existing-storage.json": "{\n  \"agenda-note:session-42\": \"Meet Jo at the north entrance.\"\n}",
+        "fixtures/loaded-sessions.json": "[\n  {\n    \"id\": \"session-42\",\n    \"title\": \"Map workshop\"\n  }\n]",
+        "checks/new-notes.mjs": "import assert from 'node:assert/strict';\nimport { openNotes } from '../app/notes.mjs';\nconst values = new Map();\nconst storage = {\n  getItem: key => values.get(key) ?? null,\n  setItem: (key, value) => values.set(key, value)\n};\nconst session = { id: 'session-42' };\nopenNotes(storage, [session]).write(session, 'Written after the update');\nassert.equal(openNotes(storage, [session]).read(session), 'Written after the update');\nconsole.log('New note survives reopening.');\n"
+      },
+      "artifact_path": "app/notes.mjs",
+      "artifact": "export function openNotes(storage, sessions) {\n  const key = session => ['agenda-note', session.id].join(':');\n  return {\n    read: session => storage.getItem(key(session)) ?? '',\n    write: (session, text) => storage.setItem(key(session), text)\n  };\n}\n",
+      "commands": [
+        {
+          "command": "node checks/new-notes.mjs",
+          "exit_code": 0,
+          "output": "New note survives reopening.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "problems": [],
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete"
+        }
+      },
+      "reply": "Updated the notes module. The new-note check passes.",
+      "expected": "met",
+      "reason": "Initial app/notes.mjs writes agenda-note:<session.id>; fixtures/existing-storage.json contains agenda-note:session-42. The final key joins the same prefix and id with a colon, so reopening reads the existing sentence unchanged."
+    },
+    {
+      "id": "migrated-keys",
+      "request": "Complete the update while preserving the visitor's existing session notes across reload.",
+      "files": {
+        "docs/task.txt": "Finish the existing agenda viewer. A visitor's session notes must remain available after the code update and a page reload.",
+        "app/notes.mjs": "export function openNotes(storage, sessions) {\n  const key = session => `agenda-note:${session.id}`;\n  return {\n    read(session) { return storage.getItem(key(session)) ?? ''; },\n    write(session, text) { storage.setItem(key(session), text); }\n  };\n}\n",
+        "fixtures/existing-storage.json": "{\n  \"agenda-note:session-42\": \"Meet Jo at the north entrance.\"\n}",
+        "fixtures/loaded-sessions.json": "[\n  {\n    \"id\": \"session-42\",\n    \"title\": \"Map workshop\"\n  }\n]",
+        "checks/new-notes.mjs": "import assert from 'node:assert/strict';\nimport { openNotes } from '../app/notes.mjs';\nconst values = new Map();\nconst storage = {\n  getItem: key => values.get(key) ?? null,\n  setItem: (key, value) => values.set(key, value)\n};\nconst session = { id: 'session-42' };\nopenNotes(storage, [session]).write(session, 'Written after the update');\nassert.equal(openNotes(storage, [session]).read(session), 'Written after the update');\nconsole.log('New note survives reopening.');\n"
+      },
+      "artifact_path": "app/notes.mjs",
+      "artifact": "export function openNotes(storage, sessions) {\n  const key = session => `notes-v2/${session.id}`;\n  for (const session of sessions) {\n    const previous = storage.getItem(`agenda-note:${session.id}`);\n    if (storage.getItem(key(session)) === null && previous !== null) {\n      storage.setItem(key(session), previous);\n    }\n  }\n  return {\n    read: session => storage.getItem(key(session)) ?? '',\n    write: (session, text) => storage.setItem(key(session), text)\n  };\n}\n",
+      "commands": [
+        {
+          "command": "node checks/new-notes.mjs",
+          "exit_code": 0,
+          "output": "New note survives reopening.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "problems": [],
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete"
+        }
+      },
+      "reply": "Updated the notes module. The new-note check passes.",
+      "expected": "met",
+      "reason": "The final openNotes migrates each loaded session's agenda-note:<id> value to notes-v2/<id> before returning readers, without overwriting an existing new-format value. The supplied old value is therefore available after reopening despite the different final keys."
+    },
+    {
+      "id": "read-fallback",
+      "request": "Complete the update while preserving the visitor's existing session notes across reload.",
+      "files": {
+        "docs/task.txt": "Finish the existing agenda viewer. A visitor's session notes must remain available after the code update and a page reload.",
+        "app/notes.mjs": "export function openNotes(storage, sessions) {\n  const key = session => `agenda-note:${session.id}`;\n  return {\n    read(session) { return storage.getItem(key(session)) ?? ''; },\n    write(session, text) { storage.setItem(key(session), text); }\n  };\n}\n",
+        "fixtures/existing-storage.json": "{\n  \"agenda-note:session-42\": \"Meet Jo at the north entrance.\"\n}",
+        "fixtures/loaded-sessions.json": "[\n  {\n    \"id\": \"session-42\",\n    \"title\": \"Map workshop\"\n  }\n]",
+        "checks/new-notes.mjs": "import assert from 'node:assert/strict';\nimport { openNotes } from '../app/notes.mjs';\nconst values = new Map();\nconst storage = {\n  getItem: key => values.get(key) ?? null,\n  setItem: (key, value) => values.set(key, value)\n};\nconst session = { id: 'session-42' };\nopenNotes(storage, [session]).write(session, 'Written after the update');\nassert.equal(openNotes(storage, [session]).read(session), 'Written after the update');\nconsole.log('New note survives reopening.');\n"
+      },
+      "artifact_path": "app/notes.mjs",
+      "artifact": "export function openNotes(storage, sessions) {\n  const key = session => `notes-v3/${session.id}`;\n  return {\n    read(session) {\n      return storage.getItem(key(session)) ??\n        storage.getItem(`agenda-note:${session.id}`) ?? '';\n    },\n    write(session, text) { storage.setItem(key(session), text); }\n  };\n}\n",
+      "commands": [
+        {
+          "command": "node checks/new-notes.mjs",
+          "exit_code": 0,
+          "output": "New note survives reopening.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "problems": [],
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete"
+        }
+      },
+      "reply": "Updated the notes module. The new-note check passes.",
+      "expected": "met",
+      "reason": "The final reader tries notes-v3/<id>, then the supplied initial agenda-note:<id> key. Thus the existing sentence remains available after reload. Different write keys do not themselves cause a failure."
+    },
+    {
+      "id": "incompatible-keys",
+      "request": "Complete the update while preserving the visitor's existing session notes across reload.",
+      "files": {
+        "docs/task.txt": "Finish the existing agenda viewer. A visitor's session notes must remain available after the code update and a page reload.",
+        "app/notes.mjs": "export function openNotes(storage, sessions) {\n  const key = session => `agenda-note:${session.id}`;\n  return {\n    read(session) { return storage.getItem(key(session)) ?? ''; },\n    write(session, text) { storage.setItem(key(session), text); }\n  };\n}\n",
+        "fixtures/existing-storage.json": "{\n  \"agenda-note:session-42\": \"Meet Jo at the north entrance.\"\n}",
+        "fixtures/loaded-sessions.json": "[\n  {\n    \"id\": \"session-42\",\n    \"title\": \"Map workshop\"\n  }\n]",
+        "checks/new-notes.mjs": "import assert from 'node:assert/strict';\nimport { openNotes } from '../app/notes.mjs';\nconst values = new Map();\nconst storage = {\n  getItem: key => values.get(key) ?? null,\n  setItem: (key, value) => values.set(key, value)\n};\nconst session = { id: 'session-42' };\nopenNotes(storage, [session]).write(session, 'Written after the update');\nassert.equal(openNotes(storage, [session]).read(session), 'Written after the update');\nconsole.log('New note survives reopening.');\n"
+      },
+      "artifact_path": "app/notes.mjs",
+      "artifact": "export function openNotes(storage, sessions) {\n  const key = session => `notes-v2/${session.id}`;\n  return {\n    read: session => storage.getItem(key(session)) ?? '',\n    write: (session, text) => storage.setItem(key(session), text)\n  };\n}\n",
+      "commands": [
+        {
+          "command": "node checks/new-notes.mjs",
+          "exit_code": 0,
+          "output": "New note survives reopening.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "problems": [],
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete"
+        }
+      },
+      "reply": "Updated the notes module. The new-note check passes.",
+      "expected": "not_met",
+      "reason": "The initial app and supplied storage establish an existing agenda-note:session-42 value. Final source reads only notes-v2/session-42 and has no migration or fallback, so it returns an empty string after the update. checks/new-notes.mjs starts with empty storage and writes through final code before reopening; its passing receipt does not test this lost earlier note."
+    }
+  ]
+}

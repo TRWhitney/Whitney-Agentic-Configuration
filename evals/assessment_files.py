@@ -56,11 +56,11 @@ def write_inputs(root: Path, packet: dict[str, object]) -> dict[str, object]:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(image_bytes(data))
 
-    def artifacts(files: dict[str, str]) -> dict[str, str]:
+    def artifacts(files: dict[str, str], prefix: str) -> dict[str, str]:
         result = {}
         for name, text in files.items():
             digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
-            relative = "artifacts/" + digest + ".txt"
+            relative = prefix + "/artifacts/" + digest + ".txt"
             path = root / relative
             if not path.exists():
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -74,12 +74,12 @@ def write_inputs(root: Path, packet: dict[str, object]) -> dict[str, object]:
         prefix = "outputs/" + label
         index: dict[str, object] = {
             "initial_artifacts": artifacts(
-                cast(dict[str, str], output["initial_files"])
+                cast(dict[str, str], output["initial_files"]), prefix
             ),
             "initial_service_state": output["initial_service_state"],
             "isolation_status": output.get("isolation_status", "unverified"),
             "instructions": artifacts(
-                cast(dict[str, str], output.get("instructions", {}))
+                cast(dict[str, str], output.get("instructions", {})), prefix
             ),
             "frames": [],
         }
@@ -101,7 +101,7 @@ def write_inputs(root: Path, packet: dict[str, object]) -> dict[str, object]:
                     "commentary",
                 }
             }
-            current = artifacts(cast(dict[str, str], frame["files"]))
+            current = artifacts(cast(dict[str, str], frame["files"]), prefix)
             entry["artifacts"] = current
             entry["artifact_changes"] = {
                 "added": sorted(current.keys() - previous.keys()),
