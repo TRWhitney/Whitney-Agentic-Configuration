@@ -1,0 +1,270 @@
+{
+  "rubric": [
+    {
+      "id": "interpretation-and-acceptance",
+      "description": "Assess the recorded interpretation and acceptance sequence, not the prototype implementation or its flow verification. Before recording final acceptance, present what production must match and what may change and obtain explicit confirmation. Preserve the confirmed required and flexible details in the decision notes. Keep the selected runnable source and retain the alternative with a clear statement that it is not selected for production. Do not require a particular reply format or literal rejection word."
+    }
+  ],
+  "examples": [
+    {
+      "id": "linked-selection-then-confirmation",
+      "request": "I want the dialog for production. Keep the item summary, editable invalid-name feedback and save/cancel behavior. Sample items and colors can change.",
+      "files": {
+        "prototypes/inline.html": "<label>Sample item <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button>",
+        "prototypes/dialog.html": "<dialog open><p>Acorn crate, quantity 3</p><label>Name <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button></dialog>"
+      },
+      "commands": [
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Production selection\n\nDialog selected. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+        },
+        {
+          "command": "Recorded assistant turn",
+          "exit_code": 0,
+          "output": "Recorded the selection and required behavior in [decision notes](docs/decision.md). The production destination is still open."
+        },
+        {
+          "command": "Recorded user turn",
+          "exit_code": 0,
+          "output": "Confirmed. The dialog layout and those editing rules are the requirements; sample items and colors remain flexible."
+        },
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The decision notes and runnable alternatives are available.",
+      "expected": "met",
+      "reason": "The linked selection notes present all required and flexible details. Selection is recorded before confirmation; final acceptance is recorded after it.",
+      "artifact_path": "docs/decision.md",
+      "artifact": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+    },
+    {
+      "id": "inline-interpretation-then-confirmation",
+      "request": "I want the dialog for production. Keep the item summary, editable invalid-name feedback and save/cancel behavior. Sample items and colors can change.",
+      "files": {
+        "prototypes/inline.html": "<label>Sample item <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button>",
+        "prototypes/dialog.html": "<dialog open><p>Acorn crate, quantity 3</p><label>Name <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button></dialog>"
+      },
+      "commands": [
+        {
+          "command": "Recorded assistant turn",
+          "exit_code": 0,
+          "output": "The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change. Inline is rejected for production and remains runnable at prototypes/inline.html. Does this capture the requirements?"
+        },
+        {
+          "command": "Recorded user turn",
+          "exit_code": 0,
+          "output": "Confirmed."
+        },
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The decision notes and runnable alternatives are available.",
+      "expected": "met",
+      "reason": "The interpretation is presented in the reply before confirmation and acceptance.",
+      "artifact_path": "docs/decision.md",
+      "artifact": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+    },
+    {
+      "id": "acceptance-before-interpretation",
+      "request": "I want the dialog for production. Keep the item summary, editable invalid-name feedback and save/cancel behavior. Sample items and colors can change.",
+      "files": {
+        "prototypes/inline.html": "<label>Sample item <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button>",
+        "prototypes/dialog.html": "<dialog open><p>Acorn crate, quantity 3</p><label>Name <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button></dialog>"
+      },
+      "commands": [
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Confirmed production requirements\n\nDialog accepted. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+        },
+        {
+          "command": "Recorded assistant turn",
+          "exit_code": 0,
+          "output": "The production design is accepted. I will describe its requirements next."
+        },
+        {
+          "command": "Recorded user turn",
+          "exit_code": 0,
+          "output": "Please show me what you think we agreed first."
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The decision notes and runnable alternatives are available.",
+      "expected": "not_met",
+      "reason": "Final acceptance is recorded before presenting the interpretation or obtaining confirmation.",
+      "artifact_path": "docs/decision.md",
+      "artifact": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+    },
+    {
+      "id": "link-without-interpretation",
+      "request": "I want the dialog for production. Keep the item summary, editable invalid-name feedback and save/cancel behavior. Sample items and colors can change.",
+      "files": {
+        "prototypes/inline.html": "<label>Sample item <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button>",
+        "prototypes/dialog.html": "<dialog open><p>Acorn crate, quantity 3</p><label>Name <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button></dialog>"
+      },
+      "commands": [
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Production selection\n\nDialog selected. Details to be written later.\nInline is rejected for production and remains runnable at prototypes/inline.html."
+        },
+        {
+          "command": "Recorded assistant turn",
+          "exit_code": 0,
+          "output": "See [selection notes](docs/decision.md)."
+        },
+        {
+          "command": "Recorded user turn",
+          "exit_code": 0,
+          "output": "Confirmed."
+        },
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Production acceptance\n\nDialog selected. Details to be written later.\nInline is rejected for production and remains runnable at prototypes/inline.html."
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The decision notes and runnable alternatives are available.",
+      "expected": "not_met",
+      "reason": "A generic selection link does not present the required or flexible details. Confirmation cannot repair an interpretation that was never supplied.",
+      "artifact_path": "docs/decision.md",
+      "artifact": "# Production acceptance\n\nDialog selected. Details to be written later.\nInline is rejected for production and remains runnable at prototypes/inline.html."
+    },
+    {
+      "id": "comparison-only-alternative",
+      "request": "I want the dialog for production. Keep the item summary, editable invalid-name feedback and save/cancel behavior. Sample items and colors can change.",
+      "files": {
+        "prototypes/inline.html": "<label>Sample item <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button>",
+        "prototypes/dialog.html": "<dialog open><p>Acorn crate, quantity 3</p><label>Name <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button></dialog>"
+      },
+      "commands": [
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Production selection\n\nDialog selected. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nThe inline alternative remains only in the runnable comparison at prototypes/inline.html; production uses the dialog.\nRunnable dialog: prototypes/dialog.html.\n"
+        },
+        {
+          "command": "Recorded assistant turn",
+          "exit_code": 0,
+          "output": "Recorded the selection and required behavior in [decision notes](docs/decision.md). The production destination is still open."
+        },
+        {
+          "command": "Recorded user turn",
+          "exit_code": 0,
+          "output": "Confirmed. The dialog layout and those editing rules are the requirements; sample items and colors remain flexible."
+        },
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nThe inline alternative remains only in the runnable comparison at prototypes/inline.html; production uses the dialog.\nRunnable dialog: prototypes/dialog.html.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The decision notes and runnable alternatives are available.",
+      "expected": "met",
+      "reason": "The interpretation and confirmation sequence is valid. Comparison-only explicitly excludes the inline alternative from production without requiring a literal rejection word.",
+      "artifact_path": "docs/decision.md",
+      "artifact": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nThe inline alternative remains only in the runnable comparison at prototypes/inline.html; production uses the dialog.\nRunnable dialog: prototypes/dialog.html.\n"
+    },
+    {
+      "id": "confirmed-flexibility-omitted",
+      "request": "I want the dialog for production. Keep the item summary, editable invalid-name feedback and save/cancel behavior. Sample items and colors can change.",
+      "files": {
+        "prototypes/inline.html": "<label>Sample item <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button>",
+        "prototypes/dialog.html": "<dialog open><p>Acorn crate, quantity 3</p><label>Name <input value=\"Acorn crate\"></label><button>Save</button><button>Cancel</button></dialog>"
+      },
+      "commands": [
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Production selection\n\nDialog selected. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name. Sample items and colors may change.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+        },
+        {
+          "command": "Recorded assistant turn",
+          "exit_code": 0,
+          "output": "Recorded the selection and required behavior in [decision notes](docs/decision.md). The production destination is still open."
+        },
+        {
+          "command": "Recorded user turn",
+          "exit_code": 0,
+          "output": "Confirmed. The dialog layout and those editing rules are the requirements; sample items and colors remain flexible."
+        },
+        {
+          "command": "Write docs/decision.md",
+          "exit_code": 0,
+          "output": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "commands": "complete",
+          "artifacts": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The decision notes and runnable alternatives are available.",
+      "expected": "not_met",
+      "reason": "The interpretation was presented and confirmed, but the final saved notes omit the confirmed flexibility of sample items and colors. Presentation and confirmation do not excuse losing that accepted detail.",
+      "artifact_path": "docs/decision.md",
+      "artifact": "# Confirmed production requirements\n\nDialog accepted after confirmation. The dialog keeps the item name and quantity visible above its name field at laptop and phone widths. Invalid names show feedback while remaining editable. Save updates the name; Cancel keeps the old name.\nInline is rejected for production and remains runnable at prototypes/inline.html.\nRunnable dialog: prototypes/dialog.html.\n"
+    }
+  ]
+}
