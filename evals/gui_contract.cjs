@@ -248,6 +248,17 @@ async function inspectNotebook(browser) {
     await create('Downstream station');
     check('second-document-empty', '', await editor(page).inputValue());
     await editor(page).fill('Water level 0.8m\nSouth bank sample collected.');
+    await page.setViewportSize({width:390,height:844});
+    const resultHeight = (await documents(page).boundingBox()).height;
+    const checkSearchHeight = async state => {
+      const height = (await documents(page).boundingBox()).height;
+      measurements.push({name:'search/narrow-' + state + '-height', expected:resultHeight, actual:height, matched:resultHeight === height});
+    };
+    await find(page).fill('no matching document');
+    await checkSearchHeight('empty');
+    await button(page, 'Clear').click();
+    await checkSearchHeight('restored');
+    await page.setViewportSize({width:1000,height:900});
     await select('Upstream station');
     check('selected-document-title', 'Upstream station', await title(page).innerText());
     check('selected-document-text', 'Water level 1.4m\nNorth bank sample collected.', await editor(page).inputValue());

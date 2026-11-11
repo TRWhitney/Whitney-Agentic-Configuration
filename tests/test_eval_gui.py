@@ -152,6 +152,28 @@ class GuiTests(unittest.TestCase):
                 self.assertTrue(measurements["notebook/reload-current-text"]["matched"])
                 self.assertTrue(measurements["notebook/reload-other-text"]["matched"])
 
+    def test_search_height_check_covers_added_documents_at_narrow_width(self) -> None:
+        from evals.gui import collect_browser
+
+        case = next(
+            c for c in load_cases(SOURCE / "evals/cases") if c.id == "gui-state-changes"
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            self.install_finished_application(workspace)
+            css = workspace.file("app/app.css")
+            original = css.read_text()
+            css.write_text(original + "\n#results {flex-wrap:wrap;}\n")
+            bad = collect_browser(workspace, "transitions")
+            failures = {
+                str(item["name"])
+                for item in self.measurements(bad)
+                if not item["matched"]
+            }
+            self.assertEqual(failures, {"search/narrow-empty-height"})
+            css.write_text(original)
+            good = collect_browser(workspace, "transitions")
+            self.assertTrue(good["matched"], good)
+
     def test_design_check_allows_footer_to_follow_the_applied_format(self) -> None:
         from evals.gui import collect_browser
 
