@@ -117,7 +117,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 153 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 154 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -218,6 +218,26 @@ clear short descriptions, missing consequences and unsupported claims.
 
 The [trial study](research/pr-description-trials.md) records grading corrections, earlier
 failures and the final comparison.
+
+## Visual state selection
+
+`gui-state-selection` asks for a finished conference agenda viewer. Its data checks pass while
+revealed descriptions, long locations and crowded day navigation have presentation defects.
+The private criteria assess both the finished application and the candidate's own inspection.
+An existing saved visit makes retained notes available from the first page load. A private
+executable check rejects changes that hide old notes even when newly written notes persist.
+The [calibration examples](../evals/calibration/visual-state-selection.json) distinguish useful
+examples, easy examples, unopened content and unavailable browser observations.
+
+The fixture regression proves that the starting visual defects disappear with either scrolling
+or wrapping navigation while agenda loading and session notes remain usable. These private
+checks do not count as the candidate's inspection.
+
+The assessor's artifact files stay under each output's neutral label. Its index identifies the
+initial and final contents. The [retention calibration](../evals/calibration/retained-session-notes.json)
+includes compatible keys, migration, fallback and a change that loses existing notes.
+The [study](research/visual-inspection-coverage-trials.md) records rejected wording trials and
+distinguishes observed product behavior from candidate inspection.
 
 ## Read results
 

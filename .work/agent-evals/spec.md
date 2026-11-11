@@ -569,6 +569,18 @@ Test an actual filed PR and a description-only correction through the disposable
 Keep requirements private, check the published body, calibrate meaning separately from headings,
 and compare fixed tasks and model settings against fresh baselines.
 
+## Visual inspection coverage
+
+Select rendered inspection states from supported actions, agreed requirements and accepted
+prototypes. Use content and available space that can expose failures to see, understand or
+operate the interface. Apply these checks during visual verification, and review whether required
+inspections are missing from the evidence.
+
+The conference-agenda task reconstructs the gap between passing data checks and uninspected
+presentation: revealed descriptions, full locations and day navigation that exceeds the row.
+Assess the useful finished application separately from the candidate's observed inspection.
+Compare fixed tasks against fresh baselines and retain a correct-interface control.
+
 ## Out of Scope
 
 Additional agent runtimes, automatic instruction changes, hosted

@@ -42,6 +42,11 @@ not rerun validation checks or turn review into another validation pass.
   architecture and dependency boundaries, maintainability, types, error handling, security,
   focused test quality, and unnecessary complexity.
 
+For changes to a user interface, compare the inspected views, states, and conditions with the
+agreed requirements and accepted prototypes. Trace the recorded actions and observations through
+the affected tasks. Identify required states that the next action replaces before they are
+observed, even when every supplied check passed.
+
 Require each finding to identify the affected file and line when applicable, the violated source
 or observable consequence, and its impact. Separate objective defects, judgment calls, and
 missing evidence. Omit praise and implementation narration, and state `no findings` when an axis

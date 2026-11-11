@@ -8,6 +8,18 @@
 
 ## Current state
 
+Complete. [Visual verification placement](tickets/24-visual-inspection-coverage.md) correction is applied
+with the [exact tested diff](../../docs/research/visual-verification-placement-proposal.diff).
+The detailed method now belongs to visual verification in validation; generic implementation is
+restored. All twelve final attempts are correct, three per case/control, after independent evidence
+inspection and four blinded baseline comparisons. Application identity, guide ownership, affected structure and quality checks pass. Independent intent and engineering reviews
+pass with no findings.
+
+The [combined study](../../docs/research/visual-inspection-coverage-trials.md) preserves earlier
+56- and 86-candidate studies, new rejected trials, original quota errors, four interrupted attempts
+and four unstarted slots. All 35 completed new outputs receive completed assessment, including
+recovery; 36 additional comparison/recovery judgments complete. Raw evidence was inspected, reviewed and deleted. The full corpus was not rerun.
+
 Complete. [PR descriptions](tickets/23-pr-descriptions.md) adds a publication case and a
 description-only control. The [study](../../docs/research/pr-description-trials.md) records
 46 completed candidates and 50 joint reassessments. All six final attempts are correct, three

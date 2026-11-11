@@ -1,6 +1,6 @@
 # Recorded eval failures
 
-The corpus contains 153 cases. The earlier reconciliation covered retained studies through
+The corpus contains 154 cases. The earlier reconciliation covered retained studies through
 [reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
 [eval reliability follow-up](eval-reliability-trials.md) adds recording repairs, assessor
 corrections and fresh GUI trials; it is not a full-corpus rerun. The later
@@ -14,6 +14,15 @@ attempts. Independent intent and engineering reviews pass; the complete tested d
 The [PR-description study](pr-description-trials.md) adds two cases, preserves earlier format
 and evidence failures, and records three correct final attempts per case/control. It corrects
 overly literal audience judgments and faulty code checks. The shared writing guidance is applied.
+The [visual-coverage study](visual-inspection-coverage-trials.md) retains 56 earlier candidates
+and adds 86 follow-up candidates. All assessments and 76 joint judgments completed. All twelve
+final attempts are correct, three per case/control. The tested guidance is applied unchanged;
+independent intent and engineering reviews pass. Earlier failures, false passes and private-check
+repairs remain.
+The later placement correction keeps the method in visual verification and restores generic
+implementation. All twelve final attempts are correct after 35 completed outputs; four interrupted
+attempts remain unknown and four unstarted slots are excluded. Original quota-related assessment
+errors and completed recovery remain in the same study.
 
 The earlier reconciliation recorded **3 named cases with a confirmed failure and no later case-level pass recorded**.
 Thirty-one other cases had an earlier failure followed by a pass. Three cases had disputed
@@ -39,6 +48,8 @@ Later success records observed variation or a tested change. It does not establi
 
 | Case | Earlier failure | Later evidence |
 | --- | --- | --- |
+| [gui-state-changes](../../evals/cases/gui-state-changes.json) | Earlier trials omit corrected-input or restored-search inspection; some also retain narrow-search collapse. Four original wording versions and V5 to V15 remain inconsistent. | All three V16 attempts observe the required changes and pass product checks. Independent inspection and a blinded baseline comparison agree. V17 to V19 retain further inspection omissions. All three V20 attempts also pass; its exact tested method is applied in visual verification, with generic implementation restored. The [study](visual-inspection-coverage-trials.md) retains false passes, fixture clarification and earlier failures. |
+| [gui-state-selection](../../evals/cases/gui-state-selection.json) | An optional note-key rewrite hid existing notes; both original judges missed it. | A supplied saved visit and private retention check expose old-note loss. The fresh baseline and all twelve saved-visit wording attempts pass. All three V16 attempts also pass after independent inspection and blinded comparison; its guidance is applied. [Study](visual-inspection-coverage-trials.md). |
 | [github-pr-description](../../evals/cases/github-pr-description.json) | Both fresh baselines omit the required sections and separate rationale. | Three final attempts explain the export change, its consequences, examples and revision evidence in all seven sections. Earlier audience judgments and code-check corrections remain in the [study](pr-description-trials.md). |
 | [github-pr-description-small](../../evals/cases/github-pr-description-small.json) | Baselines omit sections and revision evidence. Earlier wording omits links; later attempts omit the required structure or final issue reference. | Three final descriptions keep every section, supported examples, evidence links and the issue reference while leaving the repository and branch unchanged. The [study](pr-description-trials.md) retains earlier failures. |
 | [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | All three testing-procedure trials pass: original tests ran first and retained public-behavior tests passed before and after refactoring. The tested patch is applied unchanged. One attempt still retained the redundant helper call; passing the existing criteria does not establish consistent removal. [Study](test-quality-trials.md). The [plain wording follow-up](plain-wording-trials.md#follow-up-trials) records three final proposed-wording refactors that remove both mocked counts and duplicate calls; the wording is applied unchanged. |

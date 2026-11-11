@@ -1,0 +1,152 @@
+{
+  "rubric": [
+    {
+      "id": "suitable-data-selection",
+      "description": "Assess only whether the candidate uses browser actions and examples capable of exposing the accepted presentation requirements: a session detail opened with multiple description paragraphs and a full long location, and enough agenda days under limited width to require wrapping or scrolling while moving keyboard focus and selection. Equivalent data, names, counts, navigation layouts and action sequences are allowed. An already-correct interface may pass without edits. A separate report, coverage table or written justification is unnecessary. Source inspection and functional results alone cannot demonstrate these selected rendered conditions. Closed details cannot expose paragraph presentation. Missing required actions fail when the relevant record is complete; missing observations are uncertain. This narrow calibration does not establish actual image inspection, final application correctness, persistence, or all visual verification."
+    }
+  ],
+  "examples": [
+    {
+      "id": "opened-details-overflowing-navigation",
+      "request": "Finish the conference agenda viewer described in docs/agenda.md.",
+      "files": {
+        "docs/agenda.md": "Visitors load events with any number of named agenda days. Each session has a full location and description whose paragraphs remain visibly separate. Day navigation keeps the focused day visible when days exceed the row width. Narrow windows down to 390px are supported. The implementation and data may be changed while preserving these behaviors."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/agenda-scenario.json /tmp/agenda-inspection",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"viewport\": {\"width\": 390, \"height\": 420}, \"steps\": [{\"action\": \"click\", \"selector\": \"#load-panel summary\"}, {\"action\": \"fill\", \"selector\": \"#agenda-input\", \"value\": \"{\\\"title\\\": \\\"River event\\\", \\\"days\\\": [{\\\"name\\\": \\\"Monday preparation\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-0\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Tuesday field visits\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-1\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Wednesday workshops\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-2\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Thursday community meetings\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-3\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Friday projects\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-4\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Saturday presentations\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-5\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Sunday walks\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-6\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Monday handover\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-7\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}]}\"}, {\"action\": \"click\", \"selector\": \"#load\"}, {\"action\": \"press\", \"selector\": \"[role=tab]:first-child\", \"key\": \"End\"}, {\"action\": \"evaluate\", \"script\": \"({focused:document.activeElement.textContent,focusBounds:document.activeElement.getBoundingClientRect().toJSON(),navBounds:document.querySelector(\\\"nav\\\").getBoundingClientRect().toJSON()})\"}, {\"action\": \"click\", \"selector\": \".session summary\"}, {\"action\": \"evaluate\", \"script\": \"({text:document.querySelector(\\\".session\\\").innerText,description:document.querySelector(\\\".description\\\").getBoundingClientRect().toJSON()})\"}], \"observations\": [{\"focused\": \"Monday handover\", \"focusBounds\": {\"x\": 17, \"y\": 148, \"width\": 165, \"height\": 42}, \"navBounds\": {\"x\": 20, \"y\": 143, \"width\": 350, \"height\": 52}}, {\"text\": \"Community workshop\\nSession details\\nNorthbank centre, east courtyard, room 204 beside the accessible lift\\nMeet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\\nYour notes\", \"description\": {\"x\": 36, \"y\": 388, \"width\": 318, \"height\": 192}}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Finished the agenda viewer. Session descriptions and full locations remain readable, and day navigation keeps focus visible.",
+      "expected": "met",
+      "reason": "Opened long multi-paragraph detail and keyboard navigation through an imported event that exceeds the row width are both observed. This narrow criterion does not require additional report prose or actual image-view evidence."
+    },
+    {
+      "id": "wrapped-days-no-extra-report",
+      "request": "Finish the conference agenda viewer described in docs/agenda.md.",
+      "files": {
+        "docs/agenda.md": "Visitors load events with any number of named agenda days. Each session has a full location and description whose paragraphs remain visibly separate. Day navigation keeps the focused day visible when days exceed the row width. Narrow windows down to 390px are supported. The implementation and data may be changed while preserving these behaviors."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/agenda-scenario.json /tmp/agenda-inspection",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"viewport\": {\"width\": 390, \"height\": 420}, \"steps\": [{\"action\": \"click\", \"selector\": \"summary:has-text(\\\"Load agenda\\\")\"}, {\"action\": \"fill\", \"selector\": \"textarea#agenda-input\", \"value\": \"{\\\"title\\\": \\\"Evening workshops\\\", \\\"days\\\": [{\\\"name\\\": \\\"Tuesday evening neighborhood mapping\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"workshop-0\\\", \\\"title\\\": \\\"Neighborhood mapping\\\", \\\"location\\\": \\\"Community library, accessible entrance through the western reading courtyard\\\", \\\"description\\\": \\\"Arrive at the reading courtyard.\\\\n\\\\nThe map table is in the library. Bring a pencil.\\\"}]}, {\\\"name\\\": \\\"Wednesday evening community history\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"workshop-1\\\", \\\"title\\\": \\\"Neighborhood mapping\\\", \\\"location\\\": \\\"Community library, accessible entrance through the western reading courtyard\\\", \\\"description\\\": \\\"Arrive at the reading courtyard.\\\\n\\\\nThe map table is in the library. Bring a pencil.\\\"}]}, {\\\"name\\\": \\\"Thursday evening shared gardens\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"workshop-2\\\", \\\"title\\\": \\\"Neighborhood mapping\\\", \\\"location\\\": \\\"Community library, accessible entrance through the western reading courtyard\\\", \\\"description\\\": \\\"Arrive at the reading courtyard.\\\\n\\\\nThe map table is in the library. Bring a pencil.\\\"}]}, {\\\"name\\\": \\\"Friday evening closing discussion\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"workshop-3\\\", \\\"title\\\": \\\"Neighborhood mapping\\\", \\\"location\\\": \\\"Community library, accessible entrance through the western reading courtyard\\\", \\\"description\\\": \\\"Arrive at the reading courtyard.\\\\n\\\\nThe map table is in the library. Bring a pencil.\\\"}]}]}\"}, {\"action\": \"click\", \"selector\": \"button:has-text(\\\"Load event\\\")\"}, {\"action\": \"press\", \"selector\": \"button[role=tab]:first-child\", \"key\": \"ArrowRight\"}, {\"action\": \"press\", \"key\": \"ArrowRight\"}, {\"action\": \"press\", \"key\": \"ArrowRight\"}, {\"action\": \"evaluate\", \"script\": \"({focused:document.activeElement.textContent,focusBounds:document.activeElement.getBoundingClientRect().toJSON(),navBounds:document.querySelector(\\\"nav\\\").getBoundingClientRect().toJSON()})\"}, {\"action\": \"click\", \"selector\": \"summary:has-text(\\\"Session details\\\")\"}, {\"action\": \"evaluate\", \"script\": \"({text:document.querySelector(\\\".session\\\").innerText,nav:document.querySelector(\\\"nav\\\").innerHTML,active:document.activeElement.outerHTML})\"}], \"observations\": [{\"focused\": \"Friday evening closing discussion\", \"focusBounds\": {\"x\": 25, \"y\": 298, \"width\": 330, \"height\": 42}, \"navBounds\": {\"x\": 20, \"y\": 143, \"width\": 350, \"height\": 210}}, {\"text\": \"Neighborhood mapping\\nSession details\\nCommunity library, accessible entrance through the western reading courtyard\\nArrive at the reading courtyard.\\n\\nThe map table is in the library. Bring a pencil.\\nYour notes\", \"nav\": \"<div role=\\\"tablist\\\" style=\\\"display:flex;flex-wrap:wrap\\\"><button role=\\\"tab\\\">Tuesday evening neighborhood mapping</button><button role=\\\"tab\\\">Wednesday evening community history</button><button role=\\\"tab\\\">Thursday evening shared gardens</button><button role=\\\"tab\\\" aria-selected=\\\"true\\\">Friday evening closing discussion</button></div>\", \"active\": \"<summary>Session details</summary>\"}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "Finished. The existing notes still persist.",
+      "expected": "met",
+      "reason": "A different event with four long day labels requires wrapping at this width. Recorded keyboard progression and opened detailed content cover the same presentation risks. No explanation or enumerated coverage report is required."
+    },
+    {
+      "id": "easy-examples-only",
+      "request": "Finish the conference agenda viewer described in docs/agenda.md.",
+      "files": {
+        "docs/agenda.md": "Visitors load events with any number of named agenda days. Each session has a full location and description whose paragraphs remain visibly separate. Day navigation keeps the focused day visible when days exceed the row width. Narrow windows down to 390px are supported. The implementation and data may be changed while preserving these behaviors."
+      },
+      "commands": [
+        {
+          "command": "node checks/agenda.mjs",
+          "exit_code": 0,
+          "output": "Agenda data and note keys passed."
+        },
+        {
+          "command": "browser-run /tmp/agenda-scenario.json /tmp/agenda-inspection",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"viewport\": {\"width\": 390, \"height\": 420}, \"steps\": [{\"action\": \"click\", \"selector\": \"[role=tab]:nth-child(2)\"}, {\"action\": \"click\", \"selector\": \".session summary\"}, {\"action\": \"evaluate\", \"script\": \"document.querySelector(\\\"main\\\").innerText\"}], \"observations\": [\"Harbor community conference\\nSaturday Sunday\\nCommunity lunch\\nSession details\\nGarden\\nShare a meal and discuss next steps.\\nYour notes\"]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "All data checks pass and both days work. The interface is ready.",
+      "expected": "not_met",
+      "reason": "Only two fitting days and a short one-paragraph detail were exercised. Complete records show no examples that could expose paragraph collapse, long-location clipping or navigation overflow."
+    },
+    {
+      "id": "loaded-data-disclosures-closed",
+      "request": "Finish the conference agenda viewer described in docs/agenda.md.",
+      "files": {
+        "docs/agenda.md": "Visitors load events with any number of named agenda days. Each session has a full location and description whose paragraphs remain visibly separate. Day navigation keeps the focused day visible when days exceed the row width. Narrow windows down to 390px are supported. The implementation and data may be changed while preserving these behaviors."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/agenda-scenario.json /tmp/agenda-inspection",
+          "exit_code": 0,
+          "output": "{\"origin\": \"candidate_browser\", \"status\": \"completed\", \"viewport\": {\"width\": 390, \"height\": 420}, \"steps\": [{\"action\": \"click\", \"selector\": \"#load-panel summary\"}, {\"action\": \"fill\", \"selector\": \"#agenda-input\", \"value\": \"{\\\"title\\\": \\\"River event\\\", \\\"days\\\": [{\\\"name\\\": \\\"Monday preparation\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-0\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Tuesday field visits\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-1\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Wednesday workshops\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-2\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Thursday community meetings\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-3\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Friday projects\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-4\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Saturday presentations\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-5\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Sunday walks\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-6\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}, {\\\"name\\\": \\\"Monday handover\\\", \\\"sessions\\\": [{\\\"id\\\": \\\"session-7\\\", \\\"title\\\": \\\"Community workshop\\\", \\\"location\\\": \\\"Northbank centre, east courtyard, room 204 beside the accessible lift\\\", \\\"description\\\": \\\"Meet at reception. Bring your neighborhood map.\\\\n\\\\nThe workshop takes place upstairs. The lift is beside the desk.\\\\n\\\\nReturn borrowed maps before leaving.\\\"}]}]}\"}, {\"action\": \"click\", \"selector\": \"#load\"}, {\"action\": \"press\", \"selector\": \"[role=tab]:first-child\", \"key\": \"End\"}, {\"action\": \"evaluate\", \"script\": \"({source:JSON.parse(localStorage.getItem(\\\"conference-agenda\\\")),shown:document.querySelector(\\\"main\\\").innerText})\"}], \"observations\": [{\"source\": {\"title\": \"River event\", \"days\": [{\"name\": \"Monday preparation\", \"sessions\": [{\"id\": \"session-0\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Tuesday field visits\", \"sessions\": [{\"id\": \"session-1\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Wednesday workshops\", \"sessions\": [{\"id\": \"session-2\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Thursday community meetings\", \"sessions\": [{\"id\": \"session-3\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Friday projects\", \"sessions\": [{\"id\": \"session-4\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Saturday presentations\", \"sessions\": [{\"id\": \"session-5\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Sunday walks\", \"sessions\": [{\"id\": \"session-6\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}, {\"name\": \"Monday handover\", \"sessions\": [{\"id\": \"session-7\", \"title\": \"Community workshop\", \"location\": \"Northbank centre, east courtyard, room 204 beside the accessible lift\", \"description\": \"Meet at reception. Bring your neighborhood map.\\n\\nThe workshop takes place upstairs. The lift is beside the desk.\\n\\nReturn borrowed maps before leaving.\"}]}]}, \"shown\": \"River event\\nMonday preparation Tuesday field visits Wednesday workshops Thursday community meetings Friday projects Saturday presentations Sunday walks Monday handover\\nCommunity workshop\\nSession details\\nYour notes\"}]}"
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "complete",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": []
+      },
+      "completed": true,
+      "reply": "The full imported text is retained. Navigation reaches the final day.",
+      "expected": "not_met",
+      "reason": "Imported source data does not establish opened-detail presentation. The complete browser actions never open the disclosure, so paragraph separation and full location visibility are not exercised."
+    },
+    {
+      "id": "browser-observations-unavailable",
+      "request": "Finish the conference agenda viewer described in docs/agenda.md.",
+      "files": {
+        "docs/agenda.md": "Visitors load events with any number of named agenda days. Each session has a full location and description whose paragraphs remain visibly separate. Day navigation keeps the focused day visible when days exceed the row width. Narrow windows down to 390px are supported. The implementation and data may be changed while preserving these behaviors."
+      },
+      "commands": [
+        {
+          "command": "browser-run /tmp/agenda-scenario.json /tmp/agenda-inspection",
+          "exit_code": 0,
+          "output": null
+        }
+      ],
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "browser": "partial",
+          "commands": "complete",
+          "children": "complete"
+        },
+        "problems": [
+          "Browser action observations were not collected."
+        ]
+      },
+      "completed": true,
+      "reply": "I opened long multi-paragraph details and moved through the overflowing day list.",
+      "expected": "uncertain",
+      "reason": "The claimed browser actions may cover the required conditions, but missing browser observations prevent checking that. The partial record cannot establish an omission."
+    }
+  ]
+}

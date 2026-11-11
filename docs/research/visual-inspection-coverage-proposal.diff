@@ -1,0 +1,42 @@
+--- a/skills/work-system/references/states/implementation.md
++++ b/skills/work-system/references/states/implementation.md
+@@ -44,6 +44,9 @@
+ Connect all layers needed for the user-visible result. An internal helper alone does not satisfy
+ an acceptance check that requires the complete feature.
+
++For interface changes, apply validation's visual inspection requirements while building. Use the
++findings to correct the interface before handing it to validation.
++
+ Use available specialist procedures when their cues apply and include their results in this
+ change. Passing implementation tests supports development; validation still needs to check the
+ final result.
+--- a/skills/work-system/references/states/validation.md
++++ b/skills/work-system/references/states/validation.md
+@@ -37,6 +37,14 @@
+
+ For a reported symptom, repeat the same action through the same interface with the relevant data
+ and environment, and observe the expected result directly.
++
++Find the affected interface states by following supported tasks through completion and recovery.
++Read the agreed requirements and accepted prototypes. Include controls that reveal additional
++content or change what is displayed.
++When an action changes what is displayed, inspect that state before taking the next action.
++
++For each state, identify what the person using it must be able to see, understand, and operate.
++Use content and display conditions that could prevent those things.
+
+ For GUI changes, use the rendered interface. Perform the exact triggering action on the exact
+ target and observe the resulting interface state. Capture and inspect screenshots of each
+--- a/skills/work-system/references/procedures/review.md
++++ b/skills/work-system/references/procedures/review.md
+@@ -41,6 +41,10 @@
+ - **Engineering axis:** Compare the change with applicable engineering constraints. Inspect
+   architecture and dependency boundaries, maintainability, types, error handling, security,
+   focused test quality, and unnecessary complexity.
++
++For interface changes, compare the inspected views, states, and conditions with the agreed
++requirements and accepted prototypes. Identify required inspections missing from the evidence,
++even when every supplied check passed.
+
+ Require each finding to identify the affected file and line when applicable, the violated source
+ or observable consequence, and its impact. Separate objective defects, judgment calls, and

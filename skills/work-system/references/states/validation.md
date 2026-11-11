@@ -38,12 +38,37 @@ missing proof and its impact when a check cannot run; unavailable evidence is no
 For a reported symptom, repeat the same action through the same interface with the relevant data
 and environment, and observe the expected result directly.
 
+### Visual verification
+
 For GUI changes, use the rendered interface. Perform the exact triggering action on the exact
 target and observe the resulting interface state. Capture and inspect screenshots of each
 relevant visual state. Also inspect the available DOM, accessibility tree, or component
 hierarchy for identity, state, semantics, and layout relationships. Structural and visual
 inspection are both required. Automated assertions, unattended scripts, and generated files do
 not replace direct operation and inspection.
+
+Select and inspect the required visual states:
+
+1. Read the agreed requirements, accepted prototypes, and affected interface code. Make a
+   working list of the display changes caused by each affected control, including changes while
+   editing input. Use that list to check each affected requirement. Identify what must remain
+   visible and usable, and which positions or sizes must stay unchanged. Include controls that
+   reveal additional content or change what is displayed.
+2. In each affected part of the interface, use realistic content that exercises its wrapping,
+   scrolling, and formatting. Vary text length, item count, and content structure where supported.
+   Keep that content in place through interactions that hide or restore it. Combine content and
+   display conditions when they can affect one another.
+3. Follow each affected task through success, failure, and recovery where supported. Inspect
+   feedback when it appears, changes, and clears, including while editing input before submitting
+   again. Inspect content when it becomes empty or returns.
+   Observe each change before taking the next action. In automated flows, capture or query the
+   rendered interface after each action that changes content, feedback, or layout. Inspect those
+   observations, including the changed content and surrounding layout.
+4. After repairs, repeat the checks those repairs could affect.
+
+After the checks pass, compare the working list with the recorded actions and observations,
+step by step. Inspect any required state that the next action replaced before it was observed.
+Complete those inspections before finishing visual verification.
 
 Exercise themes, display sizes, intermediate states, and data conditions that can affect the
 change. Check that the affected tasks work from start to finish, including correcting errors and trying again. Inspect alignment, hierarchy, contrast, wrapping, overflow, clipping, gaps, and style

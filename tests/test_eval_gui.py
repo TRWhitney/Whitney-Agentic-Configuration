@@ -275,9 +275,9 @@ class GuiTests(unittest.TestCase):
                     failures, ["retry/previous-detail-visible"] if stale else []
                 )
 
-    def test_gui_cases_request_delivery_and_preserve_product_data_flow(self) -> None:
+    def test_fieldnotes_cases_preserve_requests_and_product_data_flow(self) -> None:
         cases = [
-            c for c in load_cases(SOURCE / "evals/cases") if c.id.startswith("gui-")
+            c for c in load_cases(SOURCE / "evals/cases") if "gui-project" in c.fixtures
         ]
         self.assertEqual(len(cases), 9)
         for case in cases:
