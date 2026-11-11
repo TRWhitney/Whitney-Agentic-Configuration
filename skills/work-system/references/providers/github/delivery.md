@@ -12,23 +12,69 @@ required checks and reviews, including review bots that run after a push.
 
 ## PR title and description
 
-Write for someone who has not read the ticket history or code. Link the ticket.
+Use the title to say what someone can now do or what behavior changes.
 
-- Use the title to say what someone can now do or what behavior changes.
-- Describe the old behavior and what this PR changes. Say what earlier PRs already delivered.
-- Explain the change before showing an example.
-- Include a realistic example in every PR description. Show what someone does and what happens.
-  Use code, a command, or a concrete interaction. Give separate concepts separate examples.
-- State required setup and limits that affect use. Say what runs automatically and what the
-  person using it must do or provide.
-- Report the checks you ran and their results. Link relevant docs and runnable examples or
-  acceptance tests at the commit under review. Say what each explains or tests. Read the linked
-  files to confirm they support your claims.
-- After changing the work, update the title, description, examples, and links to match.
-  Leave out abandoned approaches and conversation history unless they explain a needed tradeoff.
-- Use simple words and short sentences. A small change may need only a few sentences, an example,
-  and check results. Include technical details when they explain behavior, compatibility, or
-  risk. Cut vague benefits, lists of changed files, and claims about following instructions.
+Write the description for someone who has no knowledge of the project, its domain, or its
+implementation, and no technical background. Introduce the project or component when needed.
+Explain necessary terms before relying on them. The description must explain the change and
+what accepting it entails without requiring the reader to follow links.
+
+Use all seven sections below in every PR description, including small changes. Use level-two
+headings in this order. Scale the length to the change while keeping each section's required
+information:
+
+### Problem
+
+Explain the existing behavior, a recognizable trigger, and the concrete problem it causes.
+Say what earlier work already delivered when needed to understand this PR's changes.
+
+### What changed
+
+Describe the resulting behavior and practical consequences. Explain what triggers it, what now happens, what
+someone using it must do, and what happens after a failure or edit when relevant. Describe
+behavior rather than listing files or internal names.
+
+### Code example
+
+Show a realistic example supported by the implementation. Use code, configuration, a command,
+or a concrete interaction as appropriate. Explain what it does and the relevant success or
+failure outcomes. Give different concepts separate examples. Do not invent code to fill this
+section.
+
+### Why this was needed
+
+Explain why the old behavior was inadequate and the practical requirement this change meets.
+
+### Why this approach
+
+Explain why this solution fits the problem, including the meaningful tradeoff or constraint
+behind the choice. Include implementation details only when they help assess that choice.
+
+### Setup and limits
+
+State required installation, configuration, dependencies, and supported environments. Explain
+what happens automatically and what a person using or integrating the change must supply.
+Keep limitations that affect use or review, including extra work, unsupported cases,
+compatibility changes, debugging consequences, and failure behavior. Explain what happens when
+a limit is reached, including whether work stops, skips that part, or continues. A small change
+may need only a brief statement that no new setup is required.
+
+### Validation
+
+State what was checked, at which revision, and what the results establish. Distinguish completed
+checks from pending or unavailable evidence. Include links to the documentation, runnable
+examples, and tests that support the claims, using the reviewed revision in each link. Explain
+what they demonstrate. Do not dump command histories,
+resolved temporary setup problems, or unexplained test counts.
+
+End the description with the relevant issue reference, using a closing reference when appropriate.
+
+Before publishing, check the seven headings, their order, and the final issue reference. Read
+the description as someone encountering the project for the first time.
+Check that it explains the problem, change, example, need, solution choice, setup, consequences,
+limits, and evidence. Read the linked files and verify examples and links against the final
+implementation. Rewrite the title, description, examples, and links when the work changes.
+Omit conversation history and abandoned approaches unless they explain a necessary tradeoff.
 
 ## Watch and respond
 

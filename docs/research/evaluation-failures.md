@@ -1,6 +1,6 @@
 # Recorded eval failures
 
-The corpus contains 151 cases. The earlier reconciliation covered retained studies through
+The corpus contains 153 cases. The earlier reconciliation covered retained studies through
 [reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
 [eval reliability follow-up](eval-reliability-trials.md) adds recording repairs, assessor
 corrections and fresh GUI trials; it is not a full-corpus rerun. The later
@@ -11,6 +11,9 @@ three fresh passes per case/control after correcting a design-inspection omissio
 UI attempts; the twelve testing and three GUI attempts are correct.
 The [follow-up](plain-wording-trials.md#follow-up-trials) adds 64 candidates and 21 correct final
 attempts. Independent intent and engineering reviews pass; the complete tested diff is applied unchanged.
+The [PR-description study](pr-description-trials.md) adds two cases, preserves earlier format
+and evidence failures, and records three correct final attempts per case/control. It corrects
+overly literal audience judgments and faulty code checks. The shared writing guidance is applied.
 
 The earlier reconciliation recorded **3 named cases with a confirmed failure and no later case-level pass recorded**.
 Thirty-one other cases had an earlier failure followed by a pass. Three cases had disputed
@@ -36,6 +39,8 @@ Later success records observed variation or a tested change. It does not establi
 
 | Case | Earlier failure | Later evidence |
 | --- | --- | --- |
+| [github-pr-description](../../evals/cases/github-pr-description.json) | Both fresh baselines omit the required sections and separate rationale. | Three final attempts explain the export change, its consequences, examples and revision evidence in all seven sections. Earlier audience judgments and code-check corrections remain in the [study](pr-description-trials.md). |
+| [github-pr-description-small](../../evals/cases/github-pr-description-small.json) | Baselines omit sections and revision evidence. Earlier wording omits links; later attempts omit the required structure or final issue reference. | Three final descriptions keep every section, supported examples, evidence links and the issue reference while leaving the repository and branch unchanged. The [study](pr-description-trials.md) retains earlier failures. |
 | [refactor-brittle-internal-test](../../evals/cases/refactor-brittle-internal-test.json). [Procedure study](procedure-decision-evals.md#outcomes). | Retained mocked internal calls and exact call counts, preserving redundant calls to satisfy them. Public output stayed correct, but comparisons were temporary and no original test baseline was observed. Behavioral-tests and refactor-evidence failed. | All three testing-procedure trials pass: original tests ran first and retained public-behavior tests passed before and after refactoring. The tested patch is applied unchanged. One attempt still retained the redundant helper call; passing the existing criteria does not establish consistent removal. [Study](test-quality-trials.md). The [plain wording follow-up](plain-wording-trials.md#follow-up-trials) records three final proposed-wording refactors that remove both mocked counts and duplicate calls; the wording is applied unchanged. |
 | [complete-research-investigation](../../evals/cases/complete-research-investigation.json). [Main procedure study](main-procedure-path-evals.md#outcomes). | Source inspection and probes supported the storage recommendation, but the existing report still said pending and the planning records remained unchanged. Usable-combined-findings failed. Independent-investigation-and-verification was uncertain because child details were unavailable. | All three final attempts are correct under the revised observable-work criterion; all assessments completed. The six-word preservation change is applied. Parent verification remains required. Assignment neutrality and other hidden-message requirements remain expected but uncheckable and ungraded. Earlier failures and unknowns remain in the [wording study](research-completion-trials.md). |
 | [interactive-prototype-comparison](../../evals/cases/interactive-prototype-comparison.json) | Earlier [follow-up](procedure-followup-evals.md#outcomes) and [acceptance](integration-and-acceptance-evals.md#outcomes) attempts missed the repair, direct operation or acceptance interpretation. Rejected-source removal was formerly required; retention now requires marking it rejected. | Earlier reviewed trials had two correct attempts and one editing-verification omission. All three final verification attempts are correct after wording trials, rubric clarification and repair of false recording warnings. Both runnable alternatives remain available, with inline rejected. [Latest study](ui-verification-trials.md). The later [plain wording trial](plain-wording-trials.md) is F/F/C, with an unanswered production choice overridden and incomplete item/width inspection. The follow-up passes three final attempts after a further recovery omission; its final proposal is applied unchanged. |

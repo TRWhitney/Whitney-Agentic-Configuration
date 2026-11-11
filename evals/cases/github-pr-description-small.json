@@ -1,0 +1,92 @@
+{
+  "id": "github-pr-description-small",
+  "tags": [
+    "github",
+    "prose",
+    "pr-description"
+  ],
+  "purpose": "control",
+  "tracker": "github",
+  "local_remote": true,
+  "github_pr_state": "OPEN",
+  "github_issues": {
+    "11": "# Fix the saved-note list help command\n\nThe help page said `python3 -m src.notes --list`, but the program accepts `python3 -m src.notes list`. Only docs/notes.md changed. No program behavior, dependencies or configuration changed. The documentation correction is already committed on the branch for PR #12. Python 3.10+ is required; no packages are needed. No platform qualification is claimed."
+  },
+  "files": {
+    "src/__init__.py": "",
+    "src/notes.py": "import sys\n\nif sys.argv[1:] == [\"list\"]:\n    print(\"Field trip notes\")\nelse:\n    print(\"Use: python3 -m src.notes list\", file=sys.stderr)\n    raise SystemExit(2)\n",
+    "docs/notes.md": "# Saved notes\n\nUse Python 3.10 or later from the repository root. Run `python3 -m src.notes list` to show the saved note titles. The sample prints Field trip notes. No extra installation or configuration is required. The old help page incorrectly used --list; that form prints usage and exits with status 2. This correction changes the instructions only.\n"
+  },
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Rewrite PR #12's description for the completed help-page correction. Leave the repository and branch as they are. I'll handle reviews and merging.",
+      "checks": [
+        {
+          "kind": "github_state",
+          "resource": "prs",
+          "count": 1,
+          "number": 12,
+          "body_pattern": "(?ms)\\A\\s*^## Problem[ \\t\\r]*$.+?^## What changed[ \\t\\r]*$.+?^## Code example[ \\t\\r]*$.+?^## Why this was needed[ \\t\\r]*$.+?^## Why this approach[ \\t\\r]*$.+?^## Setup and limits[ \\t\\r]*$.+?^## Validation[ \\t\\r]*$.+?\\b(?i:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\\s+(?:https://github\\.com/example/inventory/issues/|(?:example/inventory)?#)11\\b.*\\Z"
+        },
+        {
+          "kind": "github_state",
+          "resource": "prs",
+          "body_pattern": "(?i)https://github\\.com/example/inventory/(?:blob|tree|commit)/[0-9a-f]{7,40}\\b"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "docs"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "commit_count",
+          "count": 1
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "(?:git\\s+(?:push|commit)|gh\\s+pr\\s+create)",
+          "absent": true
+        },
+        {
+          "kind": "tracker",
+          "name": "github"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "published-format",
+      "description": "The actual filed PR body, not just the chat reply or a local draft, contains all seven required H2 sections in order: Problem, What changed, Code example, Why this was needed, Why this approach, Setup and limits, Validation. Each section supplies its required content and the body ends with the relevant issue reference, closing it when the PR completes it. Scale length to the change without dropping sections."
+    },
+    {
+      "id": "outside-reader",
+      "description": "A reader with no project, programming or domain knowledge can understand what the project does, the trigger and consequence of the old behavior, what changes, and what accepting the PR entails. Explain necessary terms before relying on them. Describe behavior rather than files or internal abstractions. Headings added to jargon or links replacing explanations fail. Do not grade taste, a banned-word count or a required sentence. Assess the full explanation. Accept technical terms whose relevant meaning is clear from the behavior or example; do not require a glossary or explanations of incidental names or syntax. Fail when a missing explanation prevents the reader from understanding the change, its consequences, required actions or limits."
+    },
+    {
+      "id": "supported-example",
+      "description": "Code example contains a realistic command, code, configuration or concrete interaction supported by the final implementation. Explain what the example does and the relevant success or failure outcome. Distinct concepts have distinct explained examples when needed; a bare block, invented operation, or misleading outcome fails."
+    },
+    {
+      "id": "need-and-choice",
+      "description": "Why this was needed explains the practical requirement the old behavior failed. Why this approach separately explains why the chosen solution fits and any meaningful constraint or tradeoff supported by the work. Avoid duplicated change lists or invented alternatives. A small documentation correction may have a simple reason."
+    },
+    {
+      "id": "setup-and-consequences",
+      "description": "Setup and limits accurately explains installation/configuration/dependencies and supported environments relevant to this change, what is automatic versus supplied by the person using it, and material consequences and limitations. Preserve unfavorable consequences rather than shortening them away. Do not invent restrictions or copy setup from another project. For batch export, explain output folders must exist, existing files are refused, the first failure stops later jobs, and earlier completed exports remain. For a help-text-only correction, an accurate brief no-new-setup/no-program-behavior-change statement is sufficient."
+    },
+    {
+      "id": "revision-evidence",
+      "description": "Validation names the reviewed revision and explains what completed checks demonstrate, with useful docs/examples/tests linked at that revision when available. Distinguish pending/unavailable evidence from completed checks. Claims and example/link targets must match actual source and observed actions or supplied factual history. Do not invent test execution, platform support or implementation changes. Do not dump commands or unexplained test counts. Scope changes must be reflected in the final body."
+    }
+  ]
+}

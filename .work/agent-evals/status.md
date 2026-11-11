@@ -8,6 +8,14 @@
 
 ## Current state
 
+Complete. [PR descriptions](tickets/23-pr-descriptions.md) adds a publication case and a
+description-only control. The [study](../../docs/research/pr-description-trials.md) records
+46 completed candidates and 50 joint reassessments. All six final attempts are correct, three
+per case/control. The shared guidance is applied unchanged and matches the tested source.
+All 494 framework tests, 153 definitions, quality checks and 42 calibration judgments pass.
+Independent intent and engineering reviews pass. Raw evidence was inspected, reviewed and
+deleted. The full corpus was not rerun.
+
 Complete. The [plain wording follow-up](../../docs/research/plain-wording-trials.md#follow-up-trials)
 adds 64 candidates across seven fresh baselines and three instruction versions. All candidate
 assessments and 71 joint reassessments completed; the final version is correct in all 21 attempts, three per case

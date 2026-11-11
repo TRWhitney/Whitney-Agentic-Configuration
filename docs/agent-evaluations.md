@@ -117,7 +117,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 151 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 153 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -199,6 +199,25 @@ Calibration reports clear examples separately from ambiguous examples. Expected 
 their reasons stay out of the judge's input. Read every task artifact and relevant action,
 reconcile disagreements, and remove temporary review evidence after review. The
 [method study](research/evaluation-methods.md) records the initial audit and pilot.
+
+## PR description cases
+
+`github-pr-description` files a PR for a completed batch-export change.
+`github-pr-description-small` rewrites a help-page PR while leaving its repository and branch
+unchanged. Checks read the filed bodies, with private assessment for meaning and evidence.
+The [shared writing guidance](../skills/work-system/references/providers/github/delivery.md#pr-title-and-description)
+defines the format. [Calibration examples](../evals/calibration/pr-descriptions.json) include
+clear short descriptions, missing consequences and unsupported claims.
+
+```sh
+.venv/bin/python -m evals run --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --case github-pr-description --case github-pr-description-small \
+  --calibration evals/calibration/pr-descriptions.json --repeat 3 \
+  --timeout 1800 --judge-timeout 1200 --max-tokens 0 --judge-max-tokens 0
+```
+
+The [trial study](research/pr-description-trials.md) records grading corrections, earlier
+failures and the final comparison.
 
 ## Read results
 

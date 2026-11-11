@@ -556,6 +556,19 @@ completion, with the next repair or investigation needed. Keep original outcomes
 
 [Ticket 22](tickets/22-eval-reliability.md) covers implementation and verification.
 
+## PR descriptions
+
+Use the seven-section format from the accepted PR descriptions: Problem, What changed, Code
+example, Why this was needed, Why this approach, Setup and limits, and Validation. End with the
+relevant issue reference. A reader without project, technical or domain knowledge can understand
+the change, why it matters, the example, the reason for the solution, and the setup, consequences,
+limits and evidence. Links supplement the explanation. Small changes keep the structure and
+necessary information. The shared rule belongs in GitHub delivery guidance.
+
+Test an actual filed PR and a description-only correction through the disposable GitHub fixture.
+Keep requirements private, check the published body, calibrate meaning separately from headings,
+and compare fixed tasks and model settings against fresh baselines.
+
 ## Out of Scope
 
 Additional agent runtimes, automatic instruction changes, hosted

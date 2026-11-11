@@ -15,6 +15,9 @@ exists, keep questions, clarification, decision requests, and work discussion in
 Reply in the relevant review thread when the discussion concerns that finding; otherwise use a
 PR conversation comment. Read the existing discussion before asking or replying.
 
+Use the [PR title and description guidance](delivery.md#pr-title-and-description) when writing
+or revising a PR.
+
 A request to rewrite or clarify a PR description authorizes editing that description. It does
 not, by itself, authorize repository changes or a commit or push. Identify a separate code
 change already covered by the agreed scope before changing repository files. If that need would

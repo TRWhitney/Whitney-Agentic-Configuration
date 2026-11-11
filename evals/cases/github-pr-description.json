@@ -1,0 +1,85 @@
+{
+  "id": "github-pr-description",
+  "tags": [
+    "github",
+    "prose",
+    "pr-description"
+  ],
+  "purpose": "task",
+  "tracker": "github",
+  "local_remote": true,
+  "github_pr_state": null,
+  "github_issues": {
+    "10": "# Batch export\n\nAccepted. Stop the batch when any output file cannot be written. Earlier completed files remain; later jobs do not run. CSV output and refusal to replace existing files already work. See implementation issue #11. No planning-document changes are needed.",
+    "11": "# Stop batch export after a failed write\n\nImplement the accepted behavior in #10. docs/export.md describes use and limitations. All product decisions are settled. The code and tests are present for final checking and delivery."
+  },
+  "files": {
+    "src/__init__.py": "",
+    "src/exporter.py": "import csv\nimport json\nimport sys\n\n\ndef export_all(jobs):\n    for job in jobs:\n        try:\n            with open(job[\"destination\"], \"x\", newline=\"\", encoding=\"utf-8\") as stream:\n                writer = csv.writer(stream, lineterminator=\"\\n\")\n                writer.writerow([\"name\", \"quantity\"])\n                writer.writerows((item[\"name\"], item[\"quantity\"]) for item in job[\"items\"])\n        except OSError as error:\n            print(str(error), file=sys.stderr)\n\n\nif __name__ == \"__main__\":\n    export_all(json.loads(open(sys.argv[1], encoding=\"utf-8\").read()))\n",
+    "docs/export.md": "# Shelf inventory export\n\nPython 3.10+. JSON jobs write name and quantity CSV files. Existing files are refused. The command logs failed writes and continues later jobs.\n",
+    "examples/jobs.json": "[\n  {\n    \"destination\": \"output/stock.csv\",\n    \"items\": [\n      {\n        \"name\": \"Mug, blue\",\n        \"quantity\": 2\n      }\n    ]\n  }\n]\n",
+    "examples/missing-folder.json": "[\n  {\n    \"destination\": \"missing-output-folder/stock.csv\",\n    \"items\": []\n  }\n]\n"
+  },
+  "uncommitted_files": {
+    "src/exporter.py": "import csv\nimport json\nimport sys\n\n\nclass ExportError(Exception):\n    pass\n\n\ndef export_all(jobs):\n    for job in jobs:\n        try:\n            with open(job[\"destination\"], \"x\", newline=\"\", encoding=\"utf-8\") as stream:\n                writer = csv.writer(stream, lineterminator=\"\\n\")\n                writer.writerow([\"name\", \"quantity\"])\n                writer.writerows((item[\"name\"], item[\"quantity\"]) for item in job[\"items\"])\n        except OSError as error:\n            raise ExportError(f\"Export stopped at {job['destination']}: {error}\") from error\n\n\nif __name__ == \"__main__\":\n    try:\n        export_all(json.loads(open(sys.argv[1], encoding=\"utf-8\").read()))\n    except ExportError as error:\n        print(str(error), file=sys.stderr)\n        raise SystemExit(2)\n",
+    "docs/export.md": "# Shelf inventory exports\n\nShelf inventory keeps names and quantities of equipment. The export command writes a list of jobs to separate spreadsheet-readable CSV files with name and quantity columns. Earlier work already supplied CSV output and refusal to replace existing files. This change stops the job list on its first failed write instead of continuing and exiting successfully.\n\nPython 3.10 or later is required. No packages or application installation are required. Run commands from the repository root. The caller supplies a JSON job list and creates the destination folders before running the command. Paths in that list are relative to the current directory. Existing files are refused. There are no new environment variables or options.\n\nCreate an empty output folder with `mkdir output`, then run `python3 -m src.exporter examples/jobs.json`. It creates output/stock.csv containing name,quantity and a row for Mug, blue with quantity 2. Names containing commas are quoted. A job with no items still creates the column headings.\n\nA failed write prints the destination and error, exits with status 2 and skips all remaining jobs. Files completed before that failure remain. The command does not undo earlier exports or guarantee recovery of a partly written failing file. Fix the destination problem, remove completed jobs from the job list or give them new filenames, then run again. This avoids silently retrying existing files or duplicating earlier work.\n\n`python3 -m unittest discover -s tests` checks quoted names, zero quantities, empty inventory, existing-file preservation, retained earlier files, skipped later jobs and the failed command's exit status. These checks run locally on Linux; Windows and macOS have not been exercised. There is no browser interface or network service.\n",
+    "tests/test_export.py": "import subprocess\nimport sys\nimport tempfile\nimport unittest\nfrom pathlib import Path\nfrom src.exporter import ExportError, export_all\n\n\nclass ExportTests(unittest.TestCase):\n    def test_csv_quotes_names_and_keeps_zero(self):\n        with tempfile.TemporaryDirectory() as directory:\n            target = Path(directory) / \"stock.csv\"\n            export_all([{\"destination\": str(target), \"items\": [{\"name\": \"Mug, blue\", \"quantity\": 0}]}])\n            self.assertEqual(target.read_text(), 'name,quantity\\n\"Mug, blue\",0\\n')\n\n    def test_empty_inventory_writes_headings(self):\n        with tempfile.TemporaryDirectory() as directory:\n            target = Path(directory) / \"stock.csv\"\n            export_all([{\"destination\": str(target), \"items\": []}])\n            self.assertEqual(target.read_text(), \"name,quantity\\n\")\n\n    def test_first_failure_stops_later_jobs_and_keeps_earlier_files(self):\n        with tempfile.TemporaryDirectory() as directory:\n            first, later = Path(directory) / \"first.csv\", Path(directory) / \"later.csv\"\n            jobs = [{\"destination\": str(path), \"items\": []} for path in [first, Path(directory) / \"missing\" / \"bad.csv\", later]]\n            with self.assertRaises(ExportError):\n                export_all(jobs)\n            self.assertTrue(first.exists())\n            self.assertFalse(later.exists())\n\n    def test_existing_destination_is_left_unchanged(self):\n        with tempfile.TemporaryDirectory() as directory:\n            target = Path(directory) / \"stock.csv\"\n            target.write_text(\"previous export\")\n            with self.assertRaises(ExportError):\n                export_all([{\"destination\": str(target), \"items\": []}])\n            self.assertEqual(target.read_text(), \"previous export\")\n\n    def test_command_failure_returns_two(self):\n        result = subprocess.run([sys.executable, \"-m\", \"src.exporter\", \"examples/missing-folder.json\"], capture_output=True, text=True)\n        self.assertEqual(result.returncode, 2)\n        self.assertIn(\"Export stopped at\", result.stderr)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "validation"
+    },
+    {
+      "kind": "message",
+      "prompt": "The batch export change is implemented. Finish the change and open its PR. I'll handle reviews and merging after you send me the link.",
+      "checks": [
+        {
+          "kind": "github_state",
+          "resource": "prs",
+          "count": 1,
+          "body_pattern": "(?ms)\\A\\s*^## Problem[ \\t\\r]*$.+?^## What changed[ \\t\\r]*$.+?^## Code example[ \\t\\r]*$.+?^## Why this was needed[ \\t\\r]*$.+?^## Why this approach[ \\t\\r]*$.+?^## Setup and limits[ \\t\\r]*$.+?^## Validation[ \\t\\r]*$.+?\\b(?i:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\\s+(?:https://github\\.com/example/inventory/issues/|(?:example/inventory)?#)11\\b.*\\Z"
+        },
+        {
+          "kind": "github_state",
+          "resource": "prs",
+          "body_pattern": "(?i)https://github\\.com/example/inventory/(?:blob|tree|commit)/[0-9a-f]{7,40}\\b"
+        },
+        {
+          "kind": "tracker",
+          "name": "github"
+        },
+        {
+          "kind": "no_raw_evidence"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "published-format",
+      "description": "The actual filed PR body, not just the chat reply or a local draft, contains all seven required H2 sections in order: Problem, What changed, Code example, Why this was needed, Why this approach, Setup and limits, Validation. Each section supplies its required content and the body ends with the relevant issue reference, closing it when the PR completes it. Scale length to the change without dropping sections."
+    },
+    {
+      "id": "outside-reader",
+      "description": "A reader with no project, programming or domain knowledge can understand what the project does, the trigger and consequence of the old behavior, what changes, and what accepting the PR entails. Explain necessary terms before relying on them. Describe behavior rather than files or internal abstractions. Headings added to jargon or links replacing explanations fail. Do not grade taste, a banned-word count or a required sentence. Assess the full explanation. Accept technical terms whose relevant meaning is clear from the behavior or example; do not require a glossary or explanations of incidental names or syntax. Fail when a missing explanation prevents the reader from understanding the change, its consequences, required actions or limits."
+    },
+    {
+      "id": "supported-example",
+      "description": "Code example contains a realistic command, code, configuration or concrete interaction supported by the final implementation. Explain what the example does and the relevant success or failure outcome. Distinct concepts have distinct explained examples when needed; a bare block, invented operation, or misleading outcome fails."
+    },
+    {
+      "id": "need-and-choice",
+      "description": "Why this was needed explains the practical requirement the old behavior failed. Why this approach separately explains why the chosen solution fits and any meaningful constraint or tradeoff supported by the work. Avoid duplicated change lists or invented alternatives. A small documentation correction may have a simple reason."
+    },
+    {
+      "id": "setup-and-consequences",
+      "description": "Setup and limits accurately explains installation/configuration/dependencies and supported environments relevant to this change, what is automatic versus supplied by the person using it, and material consequences and limitations. Preserve unfavorable consequences rather than shortening them away. Do not invent restrictions or copy setup from another project. For batch export, explain output folders must exist, existing files are refused, the first failure stops later jobs, and earlier completed exports remain. For a help-text-only correction, an accurate brief no-new-setup/no-program-behavior-change statement is sufficient."
+    },
+    {
+      "id": "revision-evidence",
+      "description": "Validation names the reviewed revision and explains what completed checks demonstrate, with useful docs/examples/tests linked at that revision when available. Distinguish pending/unavailable evidence from completed checks. Claims and example/link targets must match actual source and observed actions or supplied factual history. Do not invent test execution, platform support or implementation changes. Do not dump commands or unexplained test counts. Scope changes must be reflected in the final body."
+    }
+  ]
+}
