@@ -376,6 +376,50 @@ class GuiTests(unittest.TestCase):
 
 
 class BrowserEvidenceTests(unittest.TestCase):
+    def test_rejected_browser_request_does_not_lose_recording(self) -> None:
+        import subprocess
+        import tempfile
+        from pathlib import Path
+
+        from evals.gui import candidate_browser, install_browser
+        from evals.models import CaseSpec
+
+        case = CaseSpec.model_validate(
+            {
+                "id": "rejected-browser-request",
+                "tags": [],
+                "files": {"page.html": "<button>Preview</button>"},
+                "steps": [
+                    {
+                        "kind": "message",
+                        "prompt": "Open the supplied preview.",
+                        "checks": [{"kind": "no_publish"}],
+                    }
+                ],
+            }
+        )
+        with (
+            make_workspace(SOURCE, case) as workspace,
+            tempfile.TemporaryDirectory() as raw,
+        ):
+            install_browser(workspace)
+            scenario = Path(raw) / "scenario.json"
+            scenario.write_text(json.dumps({"url": "file:///project/page.html"}))
+            result = subprocess.run(
+                [str(workspace.home / "bin/browser-run"), str(scenario), raw],
+                cwd=workspace.root,
+                env=workspace.environment(),
+                capture_output=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            problems: list[str] = []
+            records = candidate_browser(workspace, problems)
+            self.assertEqual(problems, [])
+            self.assertEqual(len(records), 1)
+            self.assertEqual(records[0]["status"], "failed")
+            self.assertEqual(records[0]["steps"], [])
+            self.assertTrue(records[0]["error"])
+
     def test_candidate_capture_is_kept_after_candidate_deletes_its_raw_files(
         self,
     ) -> None:

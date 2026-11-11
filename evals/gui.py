@@ -114,13 +114,29 @@ class BrowserWorker:
         self.thread.start()
 
     def _execute(self, request: Path) -> dict[str, JsonValue]:
-        scenario = TypeAdapter(dict[str, JsonValue]).validate_json(request.read_text())
-        page = scenario.get("page")
-        if not isinstance(page, str):
-            raise ValueError("Browser requests need a local project page.")
-        scenario["page"] = (
-            self.workspace.file(page).relative_to(self.workspace.root).as_posix()
-        )
+        try:
+            scenario = TypeAdapter(dict[str, JsonValue]).validate_json(
+                request.read_text()
+            )
+            page = scenario.get("page")
+            if not isinstance(page, str):
+                raise ValueError("Browser requests need a local project page.")
+            scenario["page"] = (
+                self.workspace.file(page).relative_to(self.workspace.root).as_posix()
+            )
+        except ValueError as error:
+            # Rejected inputs never reach the browser's receipt writer.
+            receipt: dict[str, JsonValue] = {
+                "request_id": request.name.removesuffix(".request.json"),
+                "status": "failed",
+                "steps": [],
+                "observations": [],
+                "images": [],
+                "error": str(error),
+            }
+            with Path(self.environment["EVAL_BROWSER_JOURNAL"]).open("a") as journal:
+                journal.write(json.dumps(receipt) + "\n")
+            raise
         with tempfile.TemporaryDirectory(prefix="browser-request-") as raw:
             directory = Path(raw)
             path = directory / "scenario.json"
