@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 import shutil
 import subprocess
 import sys
@@ -73,6 +74,66 @@ class DeployTests(unittest.TestCase):
         )
         write_skill(self.source_root, "alpha")
         write_skill(self.source_root, "beta")
+
+    def add_work_system(self) -> None:
+        shutil.copytree(
+            REPO_ROOT / "skills/work-system",
+            self.source_root / "skills/work-system",
+            ignore=shutil.ignore_patterns("__pycache__"),
+        )
+        (self.source_root / "scripts").mkdir(exist_ok=True)
+        shutil.copy2(
+            REPO_ROOT / "scripts/navigator_source.py",
+            self.source_root / "scripts/navigator_source.py",
+        )
+
+    def test_deploy_configures_and_repairs_hook_in_selected_home(self) -> None:
+        self.add_work_system()
+        self.codex_home = self.codex_home.with_name("custom codex home")
+        self.codex_home.mkdir()
+        target = self.codex_home / "hooks.json"
+        existing = {
+            "hooks": {
+                "Stop": [{"hooks": [{"type": "command", "command": "existing-review"}]}]
+            }
+        }
+        target.write_text(json.dumps(existing))
+        before = target.read_bytes()
+        deploy(self.source_root, self.codex_home, dry_run=True)
+        self.assertEqual(target.read_bytes(), before)
+        self.assertFalse((self.codex_home / "skills").exists())
+
+        deploy(self.source_root, self.codex_home)
+        updated = json.loads(target.read_text())
+        self.assertEqual(updated["hooks"]["Stop"], existing["hooks"]["Stop"])
+        group = updated["hooks"]["SessionStart"][0]
+        self.assertEqual(group["matcher"], "^compact$")
+        command = shlex.split(group["hooks"][0]["command"])
+        self.assertEqual(
+            Path(command[1]),
+            self.codex_home / "skills/work-system/scripts/compaction.py",
+        )
+        self.assertEqual(command[-1], str(self.codex_home))
+        self.assertNotIn("bypass_hook_trust", target.read_text())
+        self.assertEqual(deploy(self.source_root, self.codex_home), ())
+        target.write_text(json.dumps(existing))
+        deploy(self.source_root, self.codex_home)
+        self.assertIn("SessionStart", json.loads(target.read_text())["hooks"])
+
+    def test_hook_dry_run_leaves_new_home_absent(self) -> None:
+        self.add_work_system()
+        deploy(self.source_root, self.codex_home, dry_run=True)
+        self.assertFalse(self.codex_home.exists())
+
+    def test_invalid_hook_configuration_prevents_deployment(self) -> None:
+        self.add_work_system()
+        self.codex_home.mkdir()
+        target = self.codex_home / "hooks.json"
+        target.write_text("{invalid")
+        with self.assertRaises(DeploymentError):
+            deploy(self.source_root, self.codex_home)
+        self.assertEqual(target.read_text(), "{invalid")
+        self.assertFalse((self.codex_home / "AGENTS.md").exists())
 
     def configure_external_unslop(self, body: str = "external initial") -> Path:
         upstream = Path(self.temporary_directory.name) / "pstack"

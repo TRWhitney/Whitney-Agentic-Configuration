@@ -670,6 +670,41 @@ def _deploy_validated(
     return tuple(actions)
 
 
+def _configure_compaction_hook(
+    skill: Path | None, codex_home: Path, *, dry_run: bool
+) -> tuple[str, ...]:
+    if skill is None or not (skill / "scripts/compaction.py").is_file():
+        return ()
+    arguments = [
+        sys.executable,
+        "-B",
+        str(skill / "scripts/compaction.py"),
+        "configure",
+        "--application",
+        "codex",
+        "--config-home",
+        str(codex_home),
+        "--recovery-script",
+        str(codex_home / "skills/work-system/scripts/compaction.py"),
+    ]
+    if dry_run:
+        arguments.append("--dry-run")
+    try:
+        result = subprocess.run(
+            arguments, capture_output=True, text=True, timeout=20, check=False
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        _fail(f"Cannot configure compaction recovery: {error}")
+    if result.returncode:
+        _fail(f"Cannot configure compaction recovery: {result.stderr.strip()}")
+    target = codex_home / "hooks.json"
+    if dry_run:
+        proposed = json.loads(result.stdout)
+        if target.is_file() and json.loads(target.read_text()) == proposed:
+            return ()
+    return ("CONFIGURE Codex compaction hook",)
+
+
 def deploy(
     source_root: Path,
     codex_home: Path,
@@ -686,6 +721,9 @@ def deploy(
         dry_run=dry_run,
     ) as (external_skills, external_actions):
         instructions, source_skills = _validate_sources(source_root, external_skills)
+        hook_actions = _configure_compaction_hook(
+            source_skills.get("work-system"), codex_home, dry_run=True
+        )
         deployment_actions = _deploy_validated(
             source_root,
             codex_home,
@@ -694,7 +732,11 @@ def deploy(
             dry_run=dry_run,
             force=force,
         )
-        return external_actions + deployment_actions
+        if hook_actions and not dry_run:
+            _configure_compaction_hook(
+                source_skills.get("work-system"), codex_home, dry_run=False
+            )
+        return external_actions + deployment_actions + hook_actions
 
 
 def _parse_args(arguments: Sequence[str]) -> argparse.Namespace:

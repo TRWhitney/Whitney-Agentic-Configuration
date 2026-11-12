@@ -13,10 +13,14 @@ remove only content managed by this repository.
 
 ## Compaction recovery
 
-After installing work-system, run its hook setup for each application you use:
+Deployment configures the Codex compaction hook automatically, including when work-system is
+already current. `--dry-run` previews hook setup without writing configuration. Existing hooks
+and settings are preserved. Review and trust the hook through Codex's `/hooks` interface;
+deployment does not bypass trust.
+
+For Claude Code, run the setup command after installing work-system:
 
 ```sh
-python3 ~/.codex/skills/work-system/scripts/compaction.py configure --application codex
 python3 ~/.codex/skills/work-system/scripts/compaction.py configure --application claude
 ```
 

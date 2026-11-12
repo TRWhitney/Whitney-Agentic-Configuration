@@ -26,7 +26,9 @@ def configuration_home(application: str) -> Path:
     return Path(os.environ.get(variable, Path.home() / directory)).expanduser()
 
 
-def configure(application: str, home: Path, *, dry_run: bool) -> str:
+def configure(
+    application: str, home: Path, *, dry_run: bool, recovery_script: Path | None = None
+) -> str:
     target = home / ("hooks.json" if application == "codex" else "settings.json")
     if home.is_symlink() or target.is_symlink():
         raise ValueError(f"Refusing symlinked hook configuration: {target}")
@@ -39,7 +41,7 @@ def configure(application: str, home: Path, *, dry_run: bool) -> str:
     groups = hooks.setdefault("SessionStart", [])
     if not isinstance(groups, list):
         raise ValueError("SessionStart hooks must be a list.")
-    script = str(Path(__file__).resolve())
+    script = str((recovery_script or Path(__file__)).resolve())
     command = shlex.join(
         [
             sys.executable,
@@ -162,6 +164,11 @@ def main() -> int:
     parser.add_argument("--application", choices=("codex", "claude"), required=True)
     parser.add_argument("--config-home", type=Path)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--recovery-script",
+        type=Path,
+        help="Recovery script to register, defaulting to this installed script.",
+    )
     options = parser.parse_args()
     home = (
         (options.config_home or configuration_home(options.application))
@@ -170,7 +177,14 @@ def main() -> int:
     )
     try:
         if options.command == "configure":
-            print(configure(options.application, home, dry_run=options.dry_run))
+            print(
+                configure(
+                    options.application,
+                    home,
+                    dry_run=options.dry_run,
+                    recovery_script=options.recovery_script,
+                )
+            )
         else:
             output = recover(
                 options.application,
