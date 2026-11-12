@@ -1,0 +1,346 @@
+--- a/skills/work-system/SKILL.md
++++ b/skills/work-system/SKILL.md
+@@ -56,7 +56,8 @@
+ The saved workflow state records which workflow and state this conversation is in.
+ It also stores the substate and work-record link when present.
+
+-After context compaction, run:
++After context compaction, use the workflow guidance restored by the hook. If no hook restored
++it, run:
+
+ ```text
+ python3 <skill-directory>/scripts/navigate.py resume
+@@ -65,6 +66,8 @@
+ The navigator restores this conversation's saved workflow state. Read its linked work record before
+ continuing when one is saved. If there is no active workflow, route the prompt. Named-location
+ resume loads guidance without changing the saved workflow state.
++
++For automatic recovery, see [compaction hooks](references/compaction-hooks.md).
+
+ If the saved workflow state is damaged, leave its file unchanged, report the error, and stop that
+ conversation's workflow.
+@@ -87,9 +90,9 @@
+ Use `question`, `tweak`, `fix`, or `novel-work` as standard workflows. Use
+ `subagent-implementation` only under the spawned-implementation-subagent rule.
+
+-Enter a workflow with `start`. Use `--record <path-or-url>` to link its work record. Workflow state is
+-saved separately for each conversation. Use `cancel` when the workflow is cancelled.
+-The navigator uses `CODEX_THREAD_ID` to identify the conversation. If it is unavailable, supply
++Enter a workflow with `start`. After finding or creating its work record, link it with
++`start <workflow> --record <path-or-url>`. Workflow state is saved separately for each conversation. Use `cancel` when the workflow is cancelled.
++The navigator uses the application's conversation ID. If it is unavailable, supply
+ `--conversation <id>`; displayed continuation commands keep that argument. The navigator returns
+ the active state and the procedures related to it:
+
+@@ -130,7 +133,8 @@
+ ## Track state
+
+ The navigator stores the saved workflow state under
+-`<Codex home>/work-system/state/`, using `CODEX_HOME` or `.codex` under the home directory. Keep the
++`<application home>/work-system/state/`. The [hook setup](references/compaction-hooks.md)
++identifies each application's home and conversation ID. Keep the
+ current question, accepted sources, findings, this task's uncommitted paths, and next action in
+ the work record when one is required, or in conversation otherwise. Follow the work-record
+ guidance returned by the navigator. Update its resume command, agreed decisions, checks that
+--- /dev/null
++++ b/skills/work-system/references/compaction-hooks.md
+@@ -0,0 +1,36 @@
++# Compaction hooks
++
++Run the setup command from the installed work-system directory for each application:
++
++```sh
++python3 scripts/compaction.py configure --application codex
++python3 scripts/compaction.py configure --application claude
++```
++
++Use `--dry-run` to inspect the proposed configuration. Use `--config-home PATH` for a separate
++application home. Setup preserves unrelated settings and hooks. It uses this installed copy of
++work-system, so keep that directory in place.
++
++Codex uses `CODEX_HOME`, or `~/.codex`, and writes `hooks.json`. Review and trust the hook through
++Codex's `/hooks` interface before relying on it. Changed hooks may require renewed trust.
++Claude Code uses `CLAUDE_CONFIG_DIR`, or `~/.claude`, and writes `settings.json`.
++
++Both configurations run `compaction.py resume` for `SessionStart` with source `compact`. The
++command reads the event's conversation ID and runs the navigator to restore that conversation's
++workflow, substate and work-record link. Read the linked record before continuing. If a runtime
++provides no hook output, use the manual resume command from `SKILL.md`.
++
++Normal navigator commands identify Codex conversations through `CODEX_THREAD_ID` and Claude
++Code conversations through `CLAUDE_CODE_SESSION_ID`. Automatic Claude recovery requires that
++variable. State stays under the selected application home in `work-system/state/`.
++
++Keep the existing work record current during work. The recovery hook reads saved state; it
++cannot reconstruct decisions or findings that were never saved. It creates no replacement work
++record and retains no transcript copy.
++
++If restoration fails, Codex stops the turn and reports the error. Claude receives an instruction
++to stop and report it. Native Claude failure handling has not been verified here.
++
++See [Codex hooks](https://learn.chatgpt.com/docs/hooks#sessionstart),
++[Claude Code hooks](https://code.claude.com/docs/en/hooks#sessionstart), and
++[Claude session identity](https://code.claude.com/docs/en/env-vars).
+--- a/skills/work-system/references/substates/wayfinding.md
++++ b/skills/work-system/references/substates/wayfinding.md
+@@ -3,8 +3,9 @@
+ Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
+ here, not production code. Use the displayed format for the map and feature tickets.
+
+-Before asking the first question, create any missing map or feature planning ticket and link
+-them from the work record. Reuse the existing work record for the feature.
++Before asking the first question, create any missing map or feature planning ticket. Link both
++the map and the feature planning ticket from the work record. Reuse the existing work record
++for the feature.
+
+ ## Define the goal
+
+@@ -28,8 +29,9 @@
+ List the map's `Not yet specified` topics after `unspecified`.
+
+ Use the displayed `reply` command to build each final reply and send its output unchanged.
+-A requested summary without a new answer or correction uses `--recap` and needs no new question.
+-Name the current decision and what it blocks. Give the facts and tradeoffs needed to decide,
++Use `--recap` only when I explicitly ask for a summary without giving a new answer or correction.
++That reply needs no new question. Otherwise, ask the next unresolved question, including after compaction.
++Name the current decision and what it blocks. Explain the relevant facts and the consequences of each option,
+ recommend an answer with its reason, and ask one main question. Group questions that use the
+ same facts and are clearer to answer together. Do not split questions I can reliably answer
+ together. Separate questions do not need separate records.
+--- a/skills/work-system/references/providers/local/record.md
++++ b/skills/work-system/references/providers/local/record.md
+@@ -1,4 +1,7 @@
+ # Local Work Store
++
++Search `.work/` with hidden files included before creating an effort. Reuse the existing record
++for the same work.
+
+ An effort is the saved record for one novel-work goal. Store each effort under
+ `.work/<effort-slug>/` and keep it as an uncommitted continuation record while the workflow is
+--- /dev/null
++++ b/skills/work-system/scripts/compaction.py
+@@ -0,0 +1,194 @@
++#!/usr/bin/env python3
++"""Configure compaction recovery or restore work from a SessionStart hook."""
++
++from __future__ import annotations
++
++import argparse
++import json
++import os
++import shlex
++import subprocess
++import sys
++import tempfile
++from pathlib import Path
++
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++import navigation as core
++import sessions
++
++
++def configuration_home(application: str) -> Path:
++    variable, directory = (
++        ("CODEX_HOME", ".codex")
++        if application == "codex"
++        else ("CLAUDE_CONFIG_DIR", ".claude")
++    )
++    return Path(os.environ.get(variable, Path.home() / directory)).expanduser()
++
++
++def configure(application: str, home: Path, *, dry_run: bool) -> str:
++    target = home / ("hooks.json" if application == "codex" else "settings.json")
++    if home.is_symlink() or target.is_symlink():
++        raise ValueError(f"Refusing symlinked hook configuration: {target}")
++    configuration = (
++        core.mapping(json.loads(target.read_text()), "application configuration")
++        if target.exists()
++        else {}
++    )
++    hooks = core.mapping(configuration.setdefault("hooks", {}), "hooks")
++    groups = hooks.setdefault("SessionStart", [])
++    if not isinstance(groups, list):
++        raise ValueError("SessionStart hooks must be a list.")
++    script = str(Path(__file__).resolve())
++    command = shlex.join(
++        [
++            sys.executable,
++            script,
++            "resume",
++            "--application",
++            application,
++            "--config-home",
++            str(home.resolve()),
++        ]
++    )
++    handler: dict[str, object] = {"type": "command", "command": command, "timeout": 20}
++    if application == "codex":
++        handler["additionalContextLimit"] = 0
++    replacement = {"matcher": "^compact$", "hooks": [handler]}
++    for index, raw in enumerate(groups):
++        group = core.mapping(raw, "SessionStart group")
++        handlers = group.get("hooks", [])
++        if not isinstance(handlers, list):
++            raise ValueError("Hook handlers must be a list.")
++        for item in handlers:
++            existing = core.mapping(item, "hook handler")
++            value = existing.get("command")
++            if not isinstance(value, str):
++                continue
++            parts = shlex.split(value)
++            if len(parts) >= 3 and parts[1:3] == [script, "resume"]:
++                if len(handlers) != 1 or group.get("matcher") != "^compact$":
++                    raise ValueError(
++                        "Existing recovery hook was edited; reconcile it first."
++                    )
++                groups[index] = replacement
++                break
++        else:
++            continue
++        break
++    else:
++        groups.append(replacement)
++    configuration["hooks"] = hooks
++    content = json.dumps(configuration, indent=2) + "\n"
++    if dry_run:
++        return content
++    if target.exists() and target.read_text() == content:
++        return f"Hook already configured: {target}"
++    home.mkdir(parents=True, exist_ok=True)
++    temporary: str | None = None
++    try:
++        with tempfile.NamedTemporaryFile(
++            mode="w", encoding="utf-8", dir=home, delete=False
++        ) as output:
++            temporary = output.name
++            output.write(content)
++        if target.exists():
++            os.chmod(temporary, target.stat().st_mode & 0o777)
++        os.replace(temporary, target)
++    finally:
++        if temporary and Path(temporary).exists():
++            Path(temporary).unlink()
++    return f"Configured compaction recovery: {target}"
++
++
++def recover(
++    application: str, home: Path, event: dict[str, object]
++) -> dict[str, object] | None:
++    if (
++        event.get("hook_event_name") != "SessionStart"
++        or event.get("source") != "compact"
++    ):
++        return None
++    identifier = sessions.conversation_id(
++        core.text(event.get("session_id"), "session_id")
++    )
++    cwd = Path(core.text(event.get("cwd"), "cwd"))
++    if not cwd.is_absolute() or not cwd.is_dir():
++        raise ValueError("Hook cwd must be an existing absolute directory.")
++    environment = dict(os.environ)
++    environment.pop("CODEX_THREAD_ID", None)
++    environment.pop("CLAUDE_CODE_SESSION_ID", None)
++    if application == "codex":
++        environment.update(CODEX_HOME=str(home), CODEX_THREAD_ID=identifier)
++    else:
++        environment.update(
++            CLAUDE_CONFIG_DIR=str(home), CLAUDE_CODE_SESSION_ID=identifier
++        )
++    navigator = Path(__file__).resolve().with_name("navigate.py")
++    arguments = [sys.executable, str(navigator), "resume", "--conversation", identifier]
++    result = subprocess.run(
++        arguments, cwd=cwd, env=environment, capture_output=True, text=True, timeout=15
++    )
++    if result.returncode:
++        context = (
++            "Work-system recovery failed. Stop work and report this error. "
++            "Leave the saved state unchanged.\n\n" + result.stderr
++        )
++    else:
++        context = (
++            f"Read {navigator.parent.parent / 'SKILL.md'} before continuing.\n\n"
++            f"Recovered with {shlex.join(arguments)}:\n\n{result.stdout}"
++        )
++    output: dict[str, object] = {
++        "hookSpecificOutput": {
++            "hookEventName": "SessionStart",
++            "additionalContext": context,
++        }
++    }
++    if result.returncode and application == "codex":
++        output.update(
++            {
++                "continue": False,
++                "stopReason": result.stderr.strip(),
++                "systemMessage": result.stderr.strip(),
++            }
++        )
++    return output
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("command", choices=("configure", "resume"))
++    parser.add_argument("--application", choices=("codex", "claude"), required=True)
++    parser.add_argument("--config-home", type=Path)
++    parser.add_argument("--dry-run", action="store_true")
++    options = parser.parse_args()
++    home = (
++        (options.config_home or configuration_home(options.application))
++        .expanduser()
++        .absolute()
++    )
++    try:
++        if options.command == "configure":
++            print(configure(options.application, home, dry_run=options.dry_run))
++        else:
++            output = recover(
++                options.application,
++                home,
++                core.mapping(json.load(sys.stdin), "hook input"),
++            )
++            if output is not None:
++                print(json.dumps(output))
++    except (
++        ValueError,
++        OSError,
++        core.NavigationError,
++        subprocess.TimeoutExpired,
++    ) as error:
++        print(f"Compaction recovery error: {error}", file=sys.stderr)
++        return 2
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/skills/work-system/scripts/sessions.py
++++ b/skills/work-system/scripts/sessions.py
+@@ -25,7 +25,14 @@
+
+
+ def conversation_id(identifier: str | None) -> str:
+-    value = identifier if identifier is not None else os.environ.get("CODEX_THREAD_ID")
++    value = (
++        identifier
++        if identifier is not None
++        else (
++            os.environ.get("CODEX_THREAD_ID")
++            or os.environ.get("CLAUDE_CODE_SESSION_ID")
++        )
++    )
+     if value is None:
+         raise core.NavigationError(
+             "Conversation ID unavailable. Supply --conversation <id>."
+@@ -36,5 +43,10 @@
+
+
+ def location() -> Path:
+-    home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
++    if os.environ.get("CLAUDE_CODE_SESSION_ID") and not os.environ.get(
++        "CODEX_THREAD_ID"
++    ):
++        home = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude"))
++    else:
++        home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+     return home.expanduser().resolve() / "work-system" / "state"

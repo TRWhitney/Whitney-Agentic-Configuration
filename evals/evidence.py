@@ -88,9 +88,10 @@ class EvidenceRun:
                 path.relative_to(workspace.home).as_posix(): clean(path.read_text())
                 for path in [
                     workspace.home / "AGENTS.md",
+                    workspace.home / "hooks.json",
                     *sorted((workspace.home / "skills").rglob("*")),
                 ]
-                if path.is_file() and path.suffix in {".md", ".json"}
+                if path.is_file() and path.suffix in {".md", ".json", ".py"}
             }
             self.initial_files = {
                 p: clean(b.decode("utf-8")) for p, b in workspace.baseline.items()
@@ -128,7 +129,15 @@ class EvidenceRun:
         commands: list[dict[str, object]] = []
         results = iter(observation.command_results)
         for action in observation.actions:
-            if action.kind == "image":
+            if action.kind == "hook":
+                commands.append(
+                    {
+                        "hook": action.tool,
+                        "status": action.status,
+                        "context": clean(action.text),
+                    }
+                )
+            elif action.kind == "image":
                 commands.append({"image_view": clean(action.text)})
             elif action.kind == "file":
                 changes = TypeAdapter(list[dict[str, JsonValue]]).validate_python(

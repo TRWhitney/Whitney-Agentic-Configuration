@@ -11,6 +11,30 @@ skills declared in `config/external-skills.json` into the Codex home. It records
 content hashes in `.whitney-workflow-deployment.json` so later runs can update or
 remove only content managed by this repository.
 
+## Compaction recovery
+
+After installing work-system, run its hook setup for each application you use:
+
+```sh
+python3 ~/.codex/skills/work-system/scripts/compaction.py configure --application codex
+python3 ~/.codex/skills/work-system/scripts/compaction.py configure --application claude
+```
+
+The script can run from another installed work-system directory. It registers that copy's
+recovery command; keep the directory in place. The existing deployment command installs Codex
+skills. Hook setup does not install skills or entry instructions in Claude Code.
+
+Setup preserves other hooks and settings. Add `--dry-run` to inspect the proposed configuration,
+or `--config-home PATH` to select another application home. Codex writes `hooks.json` under
+`CODEX_HOME`, normally `~/.codex`. Claude writes `settings.json` under `CLAUDE_CONFIG_DIR`, normally
+`~/.claude`. Review and trust the Codex hook through `/hooks`; setup does not bypass trust.
+
+The hook reloads the active workflow after compaction and points to its existing work record.
+It preserves no transcript copy. Keep decisions and next work current in that record. Manual
+`navigate.py resume` remains available when hooks are disabled or unavailable.
+
+[Native trials and limits](research/compaction-recovery-trials.md).
+
 ## YouTube setup
 
 Configure YouTube acquisition from a host terminal with:

@@ -16,6 +16,46 @@ from tests.test_eval_runner import SOURCE, FakeDriver
 
 
 class FileAssessmentTests(unittest.TestCase):
+    def test_hook_context_does_not_consume_command_output(self) -> None:
+        case = CaseSpec.model_validate(
+            {
+                "id": "hook-context",
+                "tags": [],
+                "files": {},
+                "steps": [
+                    {
+                        "kind": "message",
+                        "prompt": "Continue.",
+                        "checks": [{"kind": "no_publish"}],
+                    }
+                ],
+            }
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            run = EvidenceRun(case.id, "candidate", "condition")
+            run.observe(
+                workspace,
+                0,
+                "thread",
+                "Continue.",
+                Observation(
+                    command_results=(
+                        CommandResult("read record", 0, "Pending review"),
+                    ),
+                    actions=(
+                        ObservedAction(
+                            "hook",
+                            "Recovered planning",
+                            tool="sessionStart",
+                            status="completed",
+                        ),
+                        ObservedAction("command", "read record", exit_code=0),
+                    ),
+                ),
+            )
+            self.assertEqual(run.frames[0].commands[0]["context"], "Recovered planning")
+            self.assertEqual(run.frames[0].commands[1]["output"], "Pending review")
+
     def test_each_output_keeps_its_artifacts_under_its_own_label(self) -> None:
         runs = []
         for code in ("keeps old notes", "loses old notes"):

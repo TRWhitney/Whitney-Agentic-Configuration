@@ -56,7 +56,8 @@ including when I ask the primary agent to delegate work.
 The saved workflow state records which workflow and state this conversation is in.
 It also stores the substate and work-record link when present.
 
-After context compaction, run:
+After context compaction, use the workflow guidance restored by the hook. If no hook restored
+it, run:
 
 ```text
 python3 <skill-directory>/scripts/navigate.py resume
@@ -65,6 +66,8 @@ python3 <skill-directory>/scripts/navigate.py resume
 The navigator restores this conversation's saved workflow state. Read its linked work record before
 continuing when one is saved. If there is no active workflow, route the prompt. Named-location
 resume loads guidance without changing the saved workflow state.
+
+For automatic recovery, see [compaction hooks](references/compaction-hooks.md).
 
 If the saved workflow state is damaged, leave its file unchanged, report the error, and stop that
 conversation's workflow.
@@ -87,9 +90,9 @@ python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destinati
 Use `question`, `tweak`, `fix`, or `novel-work` as standard workflows. Use
 `subagent-implementation` only under the spawned-implementation-subagent rule.
 
-Enter a workflow with `start`. Use `--record <path-or-url>` to link its work record. Workflow state is
-saved separately for each conversation. Use `cancel` when the workflow is cancelled.
-The navigator uses `CODEX_THREAD_ID` to identify the conversation. If it is unavailable, supply
+Enter a workflow with `start`. After finding or creating its work record, link it with
+`start <workflow> --record <path-or-url>`. Workflow state is saved separately for each conversation. Use `cancel` when the workflow is cancelled.
+The navigator uses the application's conversation ID. If it is unavailable, supply
 `--conversation <id>`; displayed continuation commands keep that argument. The navigator returns
 the active state and the procedures related to it:
 
@@ -130,7 +133,8 @@ remove its saved workflow state.
 ## Track state
 
 The navigator stores the saved workflow state under
-`<Codex home>/work-system/state/`, using `CODEX_HOME` or `.codex` under the home directory. Keep the
+`<application home>/work-system/state/`. The [hook setup](references/compaction-hooks.md)
+identifies each application's home and conversation ID. Keep the
 current question, accepted sources, findings, this task's uncommitted paths, and next action in
 the work record when one is required, or in conversation otherwise. Follow the work-record
 guidance returned by the navigator. Update its resume command, agreed decisions, checks that

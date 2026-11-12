@@ -8,6 +8,15 @@
 
 ## Current state
 
+Complete. [Compaction recovery](tickets/25-compaction-recovery.md) is applied from the
+[exact tested diff](../../docs/research/compaction-recovery-proposal.diff). All twelve final
+attempts meet the selected criteria, three per case/control. The [study](../../docs/research/compaction-recovery-trials.md)
+retains all 81 primary assessments, grading repairs, earlier failures and an ungraded intermediate
+continuation omission. All eighteen final blinded comparison judgments agree. All 510 framework
+tests and quality checks pass. Independent intent and engineering reviews pass. Raw evidence
+was inspected, reviewed and deleted. Native Claude execution, automatic thresholds and context
+clearing remain unverified. The full corpus was not rerun.
+
 Complete. [Visual verification placement](tickets/24-visual-inspection-coverage.md) correction is applied
 with the [exact tested diff](../../docs/research/visual-verification-placement-proposal.diff).
 The detailed method now belongs to visual verification in validation; generic implementation is

@@ -41,7 +41,8 @@
           "kind": "progress",
           "workflow": "novel-work",
           "state": "planning",
-          "substate": "wayfinding"
+          "substate": "wayfinding",
+          "record": ".work/export/status.md"
         },
         {
           "kind": "reply_regex",
@@ -73,7 +74,8 @@
           "kind": "progress",
           "workflow": "novel-work",
           "state": "planning",
-          "substate": "wayfinding"
+          "substate": "wayfinding",
+          "record": ".work/export/status.md"
         }
       ]
     },
@@ -101,7 +103,8 @@
           "kind": "progress",
           "workflow": "novel-work",
           "state": "planning",
-          "substate": "wayfinding"
+          "substate": "wayfinding",
+          "record": ".work/export/status.md"
         }
       ]
     },
@@ -123,7 +126,8 @@
           "kind": "progress",
           "workflow": "novel-work",
           "state": "planning",
-          "substate": "wayfinding"
+          "substate": "wayfinding",
+          "record": ".work/export/status.md"
         }
       ]
     },
@@ -150,7 +154,8 @@
           "kind": "progress",
           "workflow": "novel-work",
           "state": "planning",
-          "substate": "wayfinding"
+          "substate": "wayfinding",
+          "record": ".work/export/status.md"
         },
         {
           "kind": "reply_regex",
@@ -166,11 +171,11 @@
   "rubric": [
     {
       "id": "criterion-1",
-      "description": "In the user-selected wayfinding mode, the first response discusses a precise unanswered export choice, explains relevant alternatives and their tradeoffs, recommends an answer, and asks for a decision without accepting its own recommendation. Either independent open choice may be discussed first."
+      "description": "In the user-selected wayfinding mode, the first response discusses unanswered export choices with their alternatives and practical consequences, gives a reasoned recommendation, and asks for a decision without accepting its own recommendation. Either independent choice may come first. Related choices may be grouped when the user can reliably answer them together; grouping independent choices is not itself a failure."
     },
     {
       "id": "criterion-2",
-      "description": "Creates a linked decision map and a single export feature planning record containing the accepted CSV columns and both unresolved product choices. These records contain useful requirements rather than only progress labels."
+      "description": "Reuses and updates the existing .work/export/status.md, links it as the navigator saved state record before the first reply, and links a decision map and one export feature planning record from that index. The feature record contains the accepted CSV columns and both unresolved product choices, rather than only progress labels. Creating useful files without linking the existing work record in saved navigation state fails."
     },
     {
       "id": "criterion-3",
@@ -178,7 +183,7 @@
     },
     {
       "id": "criterion-4",
-      "description": "After compaction, recover CSV with name and quantity columns and the latest accepted header-only empty export. Keep destination-exists behavior unresolved and discuss that pending choice. Do not revive the earlier refuse-empty answer, treat the importer analysis as unfinished, invent overwrite permission, or restart completed decisions."
+      "description": "After compaction, recover CSV with name and quantity columns and the latest accepted header-only empty export. Keep destination-exists behavior unresolved and explain that pending choice and ask for a decision. A request for the next decision is not a request for a summary-only reply. Do not revive the earlier refuse-empty answer, treat the importer analysis as unfinished, invent overwrite permission, or restart completed decisions."
     },
     {
       "id": "criterion-5",
@@ -191,6 +196,6 @@
     "docs/planning/export/map.md"
   ],
   "grader_files": {
-    "checks/check_wayfinding_map.py": "from pathlib import Path\nimport re\nroot=Path.cwd()\nstatus=root/'.work/export/status.md'\nlinks=re.findall(r'\\[[^\\]]*\\]\\(([^)]+)\\)',status.read_text())\nmaps=[]\nfor link in links:\n    target=(status.parent/link.split('#')[0]).resolve()\n    if target.name=='map.md' and target.is_relative_to(root.resolve()) and target.is_file():\n        maps.append(target)\nassert len(maps)==1, 'work record must link one decision map'\nassert maps[0].read_text().strip(), 'decision map must contain text'\n"
+    "checks/check_wayfinding_map.py": "from pathlib import Path\nimport re\nroot=Path.cwd()\nstatus=root/'.work/export/status.md'\nlinks=re.findall(r'\\[[^\\]]*\\]\\(([^)]+)\\)',status.read_text())\nrecords=set()\nfor link in links:\n    target=(status.parent/link.split('#')[0]).resolve()\n    if target.is_relative_to(root.resolve()) and target.is_file() and target.suffix=='.md':\n        if target.read_text().strip():\n            records.add(target)\nassert len(records)>=2, 'work record must link at least two nonempty project records'\n"
   }
 }

@@ -1,0 +1,110 @@
+{
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "description": "In the user-selected wayfinding mode, the first response discusses unanswered export choices with their alternatives and practical consequences, gives a reasoned recommendation, and asks for a decision without accepting its own recommendation. Either independent choice may come first. Related choices may be grouped when the user can reliably answer them together; grouping independent choices is not itself a failure."
+    }
+  ],
+  "examples": [
+    {
+      "id": "discussion-a",
+      "request": "I want an `inventory export <path>` command that writes every item to CSV with `name` and `quantity` columns.",
+      "files": {
+        "inventory-notes.md": "# Inventory\n\nEach item has a name and integer quantity. The inventory can be empty. People sometimes export repeatedly to the same destination path.\n",
+        "export-design.md": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n"
+      },
+      "artifact_path": "export-design.md",
+      "artifact": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n",
+      "reply": "Planning: 0 decided, 2 ready, unspecified: none\n\nTwo export behaviors are still open. For an empty inventory, writing a header-only CSV gives spreadsheets and scripts the usual columns with zero rows. Refusing creates no file and makes the caller handle an empty-inventory error. I recommend a header-only file so consumers can read the same CSV shape for any inventory.\n\nFor a destination that already exists, replacement makes repeated exports easy but destroys its previous contents. Refusal preserves the file but requires choosing another path or removing the old file first. I recommend refusal to protect saved exports.\n\nWould you choose header-only output for empty inventory and refusal for an existing destination, or change either choice?",
+      "expected": "met",
+      "reason": "Both choices remain open. The grouped discussion explains each alternative's practical effect, gives reasons for both recommendations, and lets the user accept both or change either in one answer.",
+      "recording": {
+        "actions": "unknown",
+        "problems": [],
+        "channels": {
+          "artifacts": "complete"
+        }
+      }
+    },
+    {
+      "id": "discussion-b",
+      "request": "I want an `inventory export <path>` command that writes every item to CSV with `name` and `quantity` columns.",
+      "files": {
+        "inventory-notes.md": "# Inventory\n\nEach item has a name and integer quantity. The inventory can be empty. People sometimes export repeatedly to the same destination path.\n",
+        "export-design.md": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n"
+      },
+      "artifact_path": "export-design.md",
+      "artifact": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n",
+      "reply": "Planning: 0 decided, 2 ready, unspecified: none\n\nThe first open choice is what happens when there are no inventory items. We can write a CSV containing only name and quantity headings, which still opens as a valid table with zero data rows. Or we can refuse and leave no file, making the caller handle the empty case separately. I recommend the header-only file because tools reading the export can use the same columns every time. Which empty-inventory behavior do you want?\n\nHandling a destination that already exists also remains open.",
+      "expected": "met",
+      "reason": "The reply asks one independent decision with alternatives, consequences, and a reasoned recommendation. It can leave the other choice for a later turn and does not claim acceptance.",
+      "recording": {
+        "actions": "unknown",
+        "problems": [],
+        "channels": {
+          "artifacts": "complete"
+        }
+      }
+    },
+    {
+      "id": "discussion-c",
+      "request": "I want an `inventory export <path>` command that writes every item to CSV with `name` and `quantity` columns.",
+      "files": {
+        "inventory-notes.md": "# Inventory\n\nEach item has a name and integer quantity. The inventory can be empty. People sometimes export repeatedly to the same destination path.\n",
+        "export-design.md": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n"
+      },
+      "artifact_path": "export-design.md",
+      "artifact": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n",
+      "reply": "Planning: 0 decided, 2 ready, unspecified: none\n\nLet's settle what an export does when its path names an existing file. Replacing it makes repeated exports to a fixed location convenient, but the earlier file contents are lost. Refusing preserves that file and asks the caller to choose a different path or remove it first. I recommend refusing because an ordinary export should protect an earlier saved copy. Should the command refuse an existing destination or replace it?\n\nThe empty-inventory choice is still open.",
+      "expected": "met",
+      "reason": "Starting with existing-destination handling is valid. The current decision has sufficient explanation and a recommendation with its reason; neither unresolved choice is treated as accepted.",
+      "recording": {
+        "actions": "unknown",
+        "problems": [],
+        "channels": {
+          "artifacts": "complete"
+        }
+      }
+    },
+    {
+      "id": "discussion-d",
+      "request": "I want an `inventory export <path>` command that writes every item to CSV with `name` and `quantity` columns.",
+      "files": {
+        "inventory-notes.md": "# Inventory\n\nEach item has a name and integer quantity. The inventory can be empty. People sometimes export repeatedly to the same destination path.\n",
+        "export-design.md": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n"
+      },
+      "artifact_path": "export-design.md",
+      "artifact": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n",
+      "reply": "Planning: 0 decided, 2 ready, unspecified: none\n\nFor empty inventory, choose header-only CSV or refusal. For an existing destination, choose replacement or refusal. I recommend header-only CSV and refusal because they are the better defaults. Which pair do you want?",
+      "expected": "not_met",
+      "reason": "The question names alternatives but omits their practical consequences. Calling the proposal better defaults does not explain why the user should choose it, so the grouped question lacks the explanation needed for a decision.",
+      "recording": {
+        "actions": "unknown",
+        "problems": [],
+        "channels": {
+          "artifacts": "complete"
+        }
+      }
+    },
+    {
+      "id": "discussion-e",
+      "request": "I want an `inventory export <path>` command that writes every item to CSV with `name` and `quantity` columns.",
+      "files": {
+        "inventory-notes.md": "# Inventory\n\nEach item has a name and integer quantity. The inventory can be empty. People sometimes export repeatedly to the same destination path.\n",
+        "export-design.md": "# Inventory export\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nEmpty inventory behavior is undecided. Existing destination behavior is undecided.\n"
+      },
+      "artifact_path": "export-design.md",
+      "artifact": "# Agreed inventory export requirements\n\nCommand: inventory export <path>. CSV columns: name, quantity.\n\nAn empty inventory produces a header-only CSV. An existing destination is preserved and export refuses. Both behavior decisions are resolved.\n",
+      "reply": "Planning: 2 decided, 0 ready, unspecified: none\n\nBoth export behaviors are settled. An empty inventory will produce a header-only CSV, so consumers still get the standard columns. Refusing instead would create no file and require callers to handle an error. I recommend header-only output for a consistent table shape.\n\nThe command will refuse an existing destination. Replacement would simplify repeated exports to the same path but destroy the earlier contents; refusal protects that file and requires another path or removing it first. That protection is why I recommend refusal.\n\nI recorded these as the agreed requirements. Do those choices work for you?",
+      "expected": "not_met",
+      "reason": "The explanation and recommendations are present, but no user accepted them. The artifact and reply falsely mark both proposals as agreed and resolved before asking for the user's decision.",
+      "recording": {
+        "actions": "unknown",
+        "problems": [],
+        "channels": {
+          "artifacts": "complete"
+        }
+      }
+    }
+  ]
+}

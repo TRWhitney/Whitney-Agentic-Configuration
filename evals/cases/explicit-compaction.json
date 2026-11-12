@@ -98,7 +98,7 @@
     },
     {
       "id": "criterion-3",
-      "description": "Retains accepted CSV format and name/quantity columns and resumes the pending empty-inventory choice after compaction without treating any option as accepted."
+      "description": "Retains accepted CSV format and name/quantity columns and resumes the pending empty-inventory choice after compaction with a decision question, without treating any option as accepted. The summary-only reply is reserved for a requested summary."
     },
     {
       "id": "criterion-4",

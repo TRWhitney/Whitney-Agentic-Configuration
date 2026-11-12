@@ -134,7 +134,8 @@ class WorkSystemStructureTests(unittest.TestCase):
             {"local", "github"},
         )
         self.assertEqual(
-            [path for path in REFERENCES_ROOT.iterdir() if path.is_file()], []
+            {path.name for path in REFERENCES_ROOT.iterdir() if path.is_file()},
+            {"compaction-hooks.md"},
         )
         self.assertTrue(NAVIGATOR_PATH.is_file())
 

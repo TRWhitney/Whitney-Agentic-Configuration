@@ -24,6 +24,10 @@ implementation. All twelve final attempts are correct after 35 completed outputs
 attempts remain unknown and four unstarted slots are excluded. Original quota-related assessment
 errors and completed recovery remain in the same study.
 
+The [compaction recovery study](compaction-recovery-trials.md) closes the remaining planning-record
+finding with three correct final attempts. Its twelve final attempts cover native Codex recovery,
+pending review and a requested-summary control. Native Claude execution remains unverified.
+
 The earlier reconciliation recorded **3 named cases with a confirmed failure and no later case-level pass recorded**.
 Thirty-one other cases had an earlier failure followed by a pass. Three cases had disputed
 negative judgments. These are case counts, not attempt totals or a current 151-case failure rate.
@@ -36,11 +40,12 @@ the evidence and criteria used at the time.
 
 ## Failures needing follow-up
 
-### Planning records and workflow state
-
-| Case and evidence | Why it failed | Evidence needed to close the finding |
-| --- | --- | --- |
-| [agent-created-state-compaction](../../evals/cases/agent-created-state-compaction.json). [Assessment](evaluation-methods.md#validation), [later extension](workflow-connection-evals.md#outcomes). [Latest run](planning-state-corrections.md#approved-version). | Earlier attempts omitted planning records. The approved version created useful records and recovered the latest answer after compaction, but created a second work index and left the existing one stale. The saved-link check failed; the model judge missed the reuse failure. | Reuse the existing work record and link its map and feature requirements before asking. Preserve the latest accepted answer across compaction. |
+Earlier named findings have later targeted passes. The [compaction study](compaction-recovery-trials.md)
+also records an ungraded continuation omission: V7 agent-created attempts 2 and 3 acknowledge an
+answer without asking the next question before compaction, despite the reply command rejecting
+its absence. Both preserve the answer and ask the pending question after recovery. This finding
+limits broader wayfinding claims and is separate from the closed compaction finding.
+Context-clearing work remains deferred. These studies do not establish a current full-corpus pass rate.
 
 ## Earlier failures followed by a pass
 
@@ -48,6 +53,7 @@ Later success records observed variation or a tested change. It does not establi
 
 | Case | Earlier failure | Later evidence |
 | --- | --- | --- |
+| [agent-created-state-compaction](../../evals/cases/agent-created-state-compaction.json). [Earlier approved version](planning-state-corrections.md#approved-version). | Earlier attempts omit planning records; a later attempt creates a second index and leaves the existing index stale. Fresh trials also expose missing navigator record links and pending questions. | All three final attempts reuse and bind the original index, link its map and feature requirements, preserve the revised header-only answer through native compaction, and ask the pending existing-file decision. All twelve final case/control attempts meet the selected criteria. The [study](compaction-recovery-trials.md) retains earlier failures and grading repairs. |
 | [gui-state-changes](../../evals/cases/gui-state-changes.json) | Earlier trials omit corrected-input or restored-search inspection; some also retain narrow-search collapse. Four original wording versions and V5 to V15 remain inconsistent. | All three V16 attempts observe the required changes and pass product checks. Independent inspection and a blinded baseline comparison agree. V17 to V19 retain further inspection omissions. All three V20 attempts also pass; its exact tested method is applied in visual verification, with generic implementation restored. The [study](visual-inspection-coverage-trials.md) retains false passes, fixture clarification and earlier failures. |
 | [gui-state-selection](../../evals/cases/gui-state-selection.json) | An optional note-key rewrite hid existing notes; both original judges missed it. | A supplied saved visit and private retention check expose old-note loss. The fresh baseline and all twelve saved-visit wording attempts pass. All three V16 attempts also pass after independent inspection and blinded comparison; its guidance is applied. [Study](visual-inspection-coverage-trials.md). |
 | [github-pr-description](../../evals/cases/github-pr-description.json) | Both fresh baselines omit the required sections and separate rationale. | Three final attempts explain the export change, its consequences, examples and revision evidence in all seven sections. Earlier audience judgments and code-check corrections remain in the [study](pr-description-trials.md). |

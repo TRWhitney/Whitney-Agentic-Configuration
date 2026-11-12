@@ -51,8 +51,9 @@ indexes list per-turn artifact additions, changes and removals, distinguishing s
 from candidate turns.
 The [rework commit trials](research/rework-commit-trials.md) passed all 27 final attempts, three
 per case or control, with complete assessments. The [tested diff](research/rework-commit-proposal.diff)
-is applied. Navigator commit records support amendment, squash, removal and reset. Native
-compaction remains deferred.
+is applied. Navigator commit records support amendment, squash, removal and reset.
+That study deferred native compaction. The [compaction recovery trials](research/compaction-recovery-trials.md)
+now exercise recovery through application hooks and preservation of the existing work-record link.
 
 ## Run cases
 
@@ -168,6 +169,13 @@ evidence stays read-only. Preflight probes check outside-file denial, private sc
 Git metadata access and blocked tool network connections. Startup verifies the runtime selected
 the profile. A failed probe stops before model work; reports record `isolation_status` separately.
 Linux native execution requires the existing bubblewrap sandbox; no package is installed.
+
+When an installed work-system copy includes `compaction.py`, native candidates configure its
+recovery hook in their disposable home. Before enabling it, the runner checks that the runtime
+lists exactly that command and source, with no other hook. The pinned adapter uses the per-thread
+`config.bypass_hook_trust` setting; it does not change persisted trust. Judges keep hooks disabled.
+Completed hook events and their context are retained separately from agent commands. Native
+compaction and a successful recovery reply alone do not establish that a hook ran.
 
 Use `--review-dir PATH` with judging to keep temporary evidence for inspection. It must be a
 new directory outside instruction source checkouts. It saves complete observed outputs before
@@ -435,7 +443,7 @@ them into the project.
 | `temporary_files` | `paths`, `state` | Outside-checkout files are `present`, `absent`, or `unchanged` from their supplied contents |
 | `no_raw_evidence` | optional `paths` | Supplied temporary evidence and the named initial project captures have no copies in the checkout or new Git blobs, including staged files and replaced commits |
 | `command_regex` | `pattern`, optional `absent` | The current step's recorded command text matches the regex, or does not when `absent` is true |
-| `progress` | `workflow`, `state`, optional `substate`, `ignore_substate` | This conversation has the expected saved progress; `ignore_substate: true` allows any substate |
+| `progress` | `workflow`, `state`, optional `substate`, `ignore_substate`, `record` | This conversation has the expected saved progress; `ignore_substate: true` allows any substate; `record` requires the linked project-relative work record |
 | `navigation_text` | `text` | This conversation's saved navigation file has exactly this text, even when damaged |
 | `github_state` | optional `resource`, `count`, `number`, `body_pattern` | Saved fixture records have the expected count and at least one selected body matches; requires a count or body pattern |
 | `commit_count` | `count` | Git has that many commits and tracked files have no uncommitted changes |

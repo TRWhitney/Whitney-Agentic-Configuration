@@ -3,8 +3,9 @@
 Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
 here, not production code. Use the displayed format for the map and feature tickets.
 
-Before asking the first question, create any missing map or feature planning ticket and link
-them from the work record. Reuse the existing work record for the feature.
+Before asking the first question, create any missing map or feature planning ticket. Link both
+the map and the feature planning ticket from the work record. Reuse the existing work record
+for the feature.
 
 ## Define the goal
 
@@ -28,8 +29,9 @@ each final reply with:
 List the map's `Not yet specified` topics after `unspecified`.
 
 Use the displayed `reply` command to build each final reply and send its output unchanged.
-A requested summary without a new answer or correction uses `--recap` and needs no new question.
-Name the current decision and what it blocks. Give the facts and tradeoffs needed to decide,
+Use `--recap` only when I explicitly ask for a summary without giving a new answer or correction.
+That reply needs no new question. Otherwise, ask the next unresolved question, including after compaction.
+Name the current decision and what it blocks. Explain the relevant facts and the consequences of each option,
 recommend an answer with its reason, and ask one main question. Group questions that use the
 same facts and are clearer to answer together. Do not split questions I can reliably answer
 together. Separate questions do not need separate records.

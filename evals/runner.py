@@ -61,7 +61,7 @@ class CommandResult:
 
 @dataclass
 class ObservedAction:
-    kind: Literal["command", "agent", "image", "file"]
+    kind: Literal["command", "agent", "image", "file", "hook"]
     text: str
     exit_code: int | None = None
     tool: str | None = None
@@ -614,12 +614,15 @@ def check_result(
         }
         if not check.ignore_substate:
             expected["substate"] = check.substate
+        if check.record is not None:
+            expected["record"] = str(workspace.file(check.record))
         passed = progress is not None and all(
             progress.get(key) == value for key, value in expected.items()
         )
         return (
             passed,
-            f"Saved state: {check.workflow}.{check.state}, substate: {check.substate}",
+            f"Saved state: {check.workflow}.{check.state}, substate: {check.substate}; "
+            f"record: {progress.get('record') if progress else None}",
         )
     if isinstance(check, CommitCountCheck):
         count = int(git(workspace.root, "rev-list", "--count", "HEAD"))

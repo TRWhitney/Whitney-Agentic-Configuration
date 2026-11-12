@@ -25,7 +25,14 @@ class Session:
 
 
 def conversation_id(identifier: str | None) -> str:
-    value = identifier if identifier is not None else os.environ.get("CODEX_THREAD_ID")
+    value = (
+        identifier
+        if identifier is not None
+        else (
+            os.environ.get("CODEX_THREAD_ID")
+            or os.environ.get("CLAUDE_CODE_SESSION_ID")
+        )
+    )
     if value is None:
         raise core.NavigationError(
             "Conversation ID unavailable. Supply --conversation <id>."
@@ -36,7 +43,12 @@ def conversation_id(identifier: str | None) -> str:
 
 
 def location() -> Path:
-    home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+    if os.environ.get("CLAUDE_CODE_SESSION_ID") and not os.environ.get(
+        "CODEX_THREAD_ID"
+    ):
+        home = Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude"))
+    else:
+        home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
     return home.expanduser().resolve() / "work-system" / "state"
 
 

@@ -31,6 +31,7 @@ class FakeClient:
         self.compactions: list[str] = []
         self.closed = False
         self.starts: list[dict[str, object]] = []
+        self.hook_path: Path | None = None
 
     def thread_start(self, arguments: dict[str, object]) -> SimpleNamespace:
         self.starts.append(arguments)
@@ -41,7 +42,29 @@ class FakeClient:
 
     def request(
         self, method: str, params: dict[str, object], *, response_model: object
-    ) -> SimpleNamespace:
+    ) -> SimpleNamespace | RootModel[dict[str, object]]:
+        if method == "hooks/list":
+            assert self.hook_path is not None
+            configured = json.loads(self.hook_path.read_text())
+            handler = configured["hooks"]["SessionStart"][0]["hooks"][0]
+            return RootModel[dict[str, object]](
+                {
+                    "data": [
+                        {
+                            "errors": [],
+                            "hooks": [
+                                {
+                                    "command": handler["command"],
+                                    "sourcePath": str(self.hook_path),
+                                    "eventName": "sessionStart",
+                                    "matcher": "^compact$",
+                                    "enabled": True,
+                                }
+                            ],
+                        }
+                    ]
+                }
+            )
         assert method == "thread/start"
         return self.thread_start(params)
 
@@ -59,6 +82,9 @@ class FakeClient:
 
     def watch(self, thread: str) -> None:
         pass
+
+    def hook_runs(self, thread: str) -> list[dict[str, object]]:
+        return []
 
     def next_compaction_notification(self) -> SimpleNamespace:
         if not self.notifications:
@@ -92,6 +118,7 @@ class CodexAdapterTests(unittest.TestCase):
         self.workspace = context.__enter__()
         self.addCleanup(context.__exit__, None, None, None)
         self.client = FakeClient()
+        self.client.hook_path = self.workspace.home / "hooks.json"
         for replacement in (
             patch("evals.codex.ObservableClient", return_value=self.client),
             patch.object(self.workspace, "copy_credentials"),
@@ -113,6 +140,7 @@ class CodexAdapterTests(unittest.TestCase):
         worker = self.driver()
         worker.start()
         instructions = self.client.starts[-1]["developerInstructions"]
+        self.assertEqual(self.client.starts[-1]["config"], {"bypass_hook_trust": True})
         self.assertIsInstance(instructions, str)
         assert isinstance(instructions, str)
         self.assertIn("spawned implementation subagent", instructions)
@@ -129,6 +157,7 @@ class CodexAdapterTests(unittest.TestCase):
         self.assertEqual(
             self.client.starts[-1]["developerInstructions"], "Assess the evidence."
         )
+        self.assertNotIn("config", self.client.starts[-1])
 
     def stream(self, events: list[SimpleNamespace]) -> None:
         handle = SimpleNamespace(stream=lambda: iter(events))
@@ -217,6 +246,75 @@ class CodexAdapterTests(unittest.TestCase):
         self.assertTrue(result.completed)
         self.assertEqual(result.recording.actions, "partial")
         self.assertTrue(result.recording.problems)
+
+    def test_hook_context_is_recorded_separately_from_agent_commands(self) -> None:
+        self.stream(
+            [
+                event(
+                    "item/completed",
+                    item={
+                        "type": "hookPrompt",
+                        "fragments": [
+                            {
+                                "hookRunId": "recovery",
+                                "text": "Restored planning from the existing record.",
+                            }
+                        ],
+                    },
+                ),
+                event(
+                    "item/completed",
+                    item={
+                        "type": "commandExecution",
+                        "command": "read status",
+                        "exitCode": 0,
+                        "aggregatedOutput": "Pending overwrite decision",
+                    },
+                ),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        result = self.driver().message("thread", "Continue.")
+        self.assertEqual(result.recording.actions, "complete")
+        self.assertEqual(result.actions[0].kind, "hook")
+        self.assertIn("Restored planning", result.actions[0].text)
+        self.assertEqual(result.command_results[0].output, "Pending overwrite decision")
+
+    def test_native_hook_notifications_keep_conversation_identity(self) -> None:
+        from openai_codex.client import CodexConfig
+
+        client = self.real_client_type(CodexConfig())
+        self.addCleanup(client.close)
+        for identifier in ("one", "two"):
+            client._coerce_notification(
+                "hook/completed",
+                {
+                    "threadId": identifier,
+                    "turnId": "compact",
+                    "run": {
+                        "id": identifier + "-hook",
+                        "eventName": "sessionStart",
+                        "handlerType": "command",
+                        "executionMode": "sync",
+                        "scope": "thread",
+                        "sourcePath": "/home/hooks.json",
+                        "status": "completed",
+                        "source": "user",
+                        "startedAt": 1,
+                        "displayOrder": 0,
+                        "entries": [
+                            {
+                                "kind": "context",
+                                "text": "Saved record for " + identifier,
+                            }
+                        ],
+                    },
+                },
+            )
+        one = client.hook_runs("one")
+        self.assertEqual(one[0]["id"], "one-hook")
+        self.assertEqual(client.hook_runs("one"), [])
+        self.assertEqual(client.hook_runs("two")[0]["id"], "two-hook")
 
     def test_missing_viewed_image_is_a_capture_problem(self) -> None:
         self.stream(

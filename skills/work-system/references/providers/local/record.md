@@ -1,5 +1,8 @@
 # Local Work Store
 
+Search `.work/` with hidden files included before creating an effort. Reuse the existing record
+for the same work.
+
 An effort is the saved record for one novel-work goal. Store each effort under
 `.work/<effort-slug>/` and keep it as an uncommitted continuation record while the workflow is
 active. Commit the current effort record and its supporting documentation with the completed

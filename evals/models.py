@@ -189,6 +189,7 @@ class ProgressCheck(Definition):
     state: Identifier
     substate: Identifier | None = None
     ignore_substate: bool = False
+    record: RelativePath | None = None
 
 
 class CommitCountCheck(Definition):

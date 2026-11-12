@@ -6,6 +6,23 @@ The existing tests exercise navigation commands and saved files. They do not est
 an agent follows the workflow, respects a requested edit, or restores wayfinding after losing
 conversation context. Repeated skill changes need comparable behavioral evidence.
 
+## Compaction hooks
+
+Codex and Claude Code run one shared work-system recovery command after compaction. It restores
+the active conversation's workflow, substate and existing work-record link. Normal record updates
+preserve accepted decisions and the next action before context is lost. Recovery must reuse that
+record and retain evidence whose inspection or review remains unfinished.
+
+Application-specific setup registers the documented hooks and preserves other configuration.
+Keep shared workflow instructions independent of the application. Missing or damaged saved state
+must not cause guessed replacements or changes to another conversation.
+
+Use confirmed native Codex compaction for behavioral comparisons. Cover changed planning answers,
+supplied planning records and pending review evidence. Repeat the final version three times per
+case/control with gpt-6.1-sol candidates and a separate blinded judge, keeping definitions and
+allowances fixed. Test both applications' hook contracts; distinguish those checks from native
+execution. Keep existing runtime/model pins and installation boundaries.
+
 ## Solution
 
 Build a corpus of cases with shared setup, conversation execution, checks, and results. Start

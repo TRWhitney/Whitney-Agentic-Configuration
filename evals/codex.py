@@ -6,6 +6,8 @@ import base64
 import json
 import queue
 import re
+import subprocess
+import sys
 import threading
 from pathlib import Path
 from time import perf_counter
@@ -15,7 +17,11 @@ from openai_codex import LocalImageInput, TextInput
 from openai_codex._inputs import InputItem
 from openai_codex.api import Thread
 from openai_codex.client import CodexClient, CodexConfig
-from openai_codex.generated.v2_all import ActivePermissionProfile, ThreadStartResponse
+from openai_codex.generated.v2_all import (
+    ActivePermissionProfile,
+    HooksListResponse,
+    ThreadStartResponse,
+)
 from openai_codex.models import JsonObject, Notification
 from pydantic import BaseModel, Field, JsonValue, TypeAdapter
 
@@ -59,6 +65,7 @@ class ObservableClient(CodexClient):
     def __init__(self, config: CodexConfig) -> None:
         self.watched_thread: str | None = None
         self.compaction_events: queue.Queue[Notification | None] = queue.Queue()
+        self.hook_events: dict[str, queue.Queue[dict[str, object]]] = {}
         super().__init__(config)
 
     def watch(self, thread: str) -> None:
@@ -68,6 +75,12 @@ class ObservableClient(CodexClient):
 
     def _coerce_notification(self, method: str, params: object) -> Notification:
         event = super()._coerce_notification(method, params)
+        if method == "hook/completed":
+            data = event_data(event.payload)
+            identifier = str(data["threadId"])
+            self.hook_events.setdefault(identifier, queue.Queue()).put(
+                mapping(data["run"])
+            )
         if (
             self.watched_thread is not None
             and getattr(event.payload, "thread_id", None) == self.watched_thread
@@ -81,6 +94,13 @@ class ObservableClient(CodexClient):
         ):
             self.compaction_events.put(event)
         return event
+
+    def hook_runs(self, thread: str) -> list[dict[str, object]]:
+        events = self.hook_events.setdefault(thread, queue.Queue())
+        runs = []
+        while not events.empty():
+            runs.append(events.get_nowait())
+        return runs
 
     def next_compaction_notification(self) -> Notification:
         event = self.compaction_events.get()
@@ -114,7 +134,36 @@ class CodexDriver:
             "compaction_seconds": 0.0,
         }
         self.usage_by_thread: dict[str, dict[str, int]] = {}
+        hook_script = workspace.home / "skills/work-system/scripts/compaction.py"
+        hook_command: str | None = None
+        if not read_only and hook_script.is_file():
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(hook_script),
+                    "configure",
+                    "--application",
+                    "codex",
+                    "--config-home",
+                    str(workspace.home),
+                ],
+                cwd=workspace.root,
+                env=workspace.environment(),
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=20,
+            )
+            configured = mapping(
+                json.loads((workspace.home / "hooks.json").read_text())
+            )
+            groups = mapping(configured["hooks"])["SessionStart"]
+            assert isinstance(groups, list)
+            handlers = mapping(groups[0])["hooks"]
+            assert isinstance(handlers, list)
+            hook_command = str(mapping(handlers[0])["command"])
         workspace.copy_credentials()
+        self.subject_hooks = hook_command is not None
         self.workspace, self.model = workspace, model
         self.max_tokens = max_tokens
         self.read_only, self.instructions = read_only, instructions
@@ -147,6 +196,8 @@ class CodexDriver:
         )
         environment["TMPDIR"] = str(self.isolation.scratch)
         config.config_overrides = (*config.config_overrides, *self.isolation.overrides)
+        if read_only:
+            config.config_overrides = (*config.config_overrides, "features.hooks=false")
         self.isolation.verify(environment)
         self.client = ObservableClient(config)
         self.isolation_verified = False
@@ -156,6 +207,36 @@ class CodexDriver:
         try:
             self.client.start()
             self.client.initialize()
+            if hook_command is not None:
+                inventory = event_data(
+                    self.client.request(
+                        "hooks/list",
+                        {"cwds": [str(workspace.root)]},
+                        response_model=HooksListResponse,
+                    )
+                )
+                entries = inventory.get("data")
+                if not isinstance(entries, list):
+                    raise ValueError("Missing native hook inventory.")
+                hooks: list[dict[str, object]] = []
+                for entry in entries:
+                    group = mapping(entry)
+                    if group.get("errors"):
+                        raise ValueError("Native hook configuration has errors.")
+                    values = group.get("hooks")
+                    if not isinstance(values, list):
+                        raise ValueError("Missing native hooks.")
+                    hooks.extend(mapping(value) for value in values)
+                if len(hooks) != 1 or (
+                    hooks[0].get("command") != hook_command
+                    or hooks[0].get("sourcePath") != str(workspace.home / "hooks.json")
+                    or hooks[0].get("eventName") != "sessionStart"
+                    or hooks[0].get("matcher") != "^compact$"
+                    or hooks[0].get("enabled") is not True
+                ):
+                    raise ValueError(
+                        "Native hooks differ from the isolated subject hook."
+                    )
         except Exception as error:
             self.close()
             if self.expired.is_set() or isinstance(error, TimeoutError):
@@ -187,6 +268,11 @@ class CodexDriver:
                     "developerInstructions": self.instructions,
                     "approvalPolicy": "never",
                     "ephemeral": self.read_only,
+                    **(
+                        {"config": {"bypass_hook_trust": True}}
+                        if self.subject_hooks
+                        else {}
+                    ),
                 },
                 response_model=ProfiledThreadStartResponse,
             )
@@ -293,6 +379,17 @@ class CodexDriver:
         except Exception as error:
             return {identifier: {"unavailable": str(error)}}
 
+    def _hook_actions(self, thread: str) -> list[ObservedAction]:
+        return [
+            ObservedAction(
+                "hook",
+                json.dumps(run),
+                tool=str(run["eventName"]),
+                status=str(run["status"]),
+            )
+            for run in self.client.hook_runs(thread)
+        ]
+
     def message(self, thread: str, prompt: str) -> Observation:
         started = perf_counter()
         replies: list[str] = []
@@ -309,6 +406,7 @@ class CodexDriver:
         recording = Recording()
 
         def observation(*, completed: bool) -> Observation:
+            actions.extend(self._hook_actions(thread))
             return Observation(
                 "\n".join(replies),
                 self.tokens.get(thread) if reported else None,
@@ -350,6 +448,7 @@ class CodexDriver:
                 else native_thread.turn(content)
             )
             for event in handle.stream():
+                actions.extend(self._hook_actions(thread))
                 if event.method not in {
                     "thread/tokenUsage/updated",
                     "item/completed",
@@ -386,6 +485,7 @@ class CodexDriver:
                         "mcpToolCall",
                         "plan",
                         "contextCompaction",
+                        "hookPrompt",
                     }:
                         recording.actions = "partial"
                         recording.problems.append(
@@ -394,6 +494,20 @@ class CodexDriver:
                     identifier = item.get("id")
                     if isinstance(identifier, str):
                         pending.pop(identifier, None)
+                    if item.get("type") == "hookPrompt":
+                        fragments = item.get("fragments")
+                        if not isinstance(fragments, list):
+                            raise ValueError("Missing hook context fragments.")
+                        for fragment in fragments:
+                            value = mapping(fragment)
+                            actions.append(
+                                ObservedAction(
+                                    "hook",
+                                    str(value["text"]),
+                                    tool=str(value["hookRunId"]),
+                                    status="delivered",
+                                )
+                            )
                     if self.read_only and item.get("type") not in {
                         "agentMessage",
                         "reasoning",
@@ -658,7 +772,11 @@ class CodexDriver:
                         raise ValueError("No completed compaction item was reported.")
                     completed_turns.add(str(turn["id"]))
                 if compacted_turn in completed_turns:
-                    return Observation(tokens=self.tokens.get(thread), compacted=True)
+                    return Observation(
+                        tokens=self.tokens.get(thread),
+                        compacted=True,
+                        actions=tuple(self._hook_actions(thread)),
+                    )
         except Exception as error:
             partial = Observation(tokens=self.tokens.get(thread), completed=False)
             if self.expired.is_set():
