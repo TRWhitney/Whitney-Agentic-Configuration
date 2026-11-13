@@ -1,0 +1,66 @@
+{
+  "id": "unslop-technical-terms",
+  "tags": [
+    "unslop",
+    "writing-quality"
+  ],
+  "purpose": "control",
+  "project_name": "archive-vault",
+  "files": {
+    "sources/verification-manual.md": "# Vault verification manual\n\nThe archive stores a SHA-256 checksum for every snapshot file in its manifest. A checksum is a value calculated from file contents. The verification command calculates each stored file's checksum again and compares it with the manifest. A mismatch means the bytes differ from the recorded version. Verification does not identify why they differ.\n\nApproved command:\n\n```sh\nvaultctl verify --manifest snapshots/latest.json --read-only\n```\n\nThis command reads the snapshot and reports mismatches. It does not change or repair files. A restore rehearsal is a separate operation: staff restore a snapshot into a temporary empty store and check that the application can open it. A checksum match alone does not establish that a restore will succeed.\n\nThe manual's warning is: \"Verification checks stored bytes; it does not test a restore.\"\n",
+    "docs/verification-handout.md": "# Verify an archive snapshot\n\nUse the verification command to check the snapshot. It checks SHA-256 checksums and makes the result available to the operator.\n\n```sh\nvaultctl verify --manifest snapshots/latest.json --read-only\n```\n\n\"Verification checks stored bytes; it does not test a restore.\"\n"
+  },
+  "artifacts": [
+    "docs/verification-handout.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Revise docs/verification-handout.md for a technician doing their first archive check, using sources/verification-manual.md. Explain SHA-256 checksums and how verification differs from a restore rehearsal. Keep the approved command and the quoted manual warning exactly as supplied.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "file_regex",
+          "path": "docs/verification-handout.md",
+          "pattern": "vaultctl\\ verify\\ \\-\\-manifest\\ snapshots/latest\\.json\\ \\-\\-read\\-only"
+        },
+        {
+          "kind": "file_regex",
+          "path": "docs/verification-handout.md",
+          "pattern": "Verification\\ checks\\ stored\\ bytes;\\ it\\ does\\ not\\ test\\ a\\ restore\\."
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "precise-terms-explained",
+      "description": "Keep useful precise terms including SHA-256 checksum, manifest, and restore rehearsal, explaining them in context for a first-time technician. Describe recalculating each file's checksum and comparing it with the manifest. Fail if the guide removes the distinctions in favor of a generic health check, leaves the mechanism unexplained, or changes the meaning of these terms. Clear alternative explanations are valid."
+    },
+    {
+      "id": "limits-and-consequences",
+      "description": "Every delivered guide says a mismatch means stored bytes differ from the recorded version without claiming to diagnose the cause. Distinguish this read-only check from restoring into a temporary empty store and checking whether the application opens it. Fail for automatic repair, an assertion that a checksum match proves recovery, omission of the restore limitation, or invented operational instructions."
+    },
+    {
+      "id": "exact-command-and-quotation",
+      "description": "Keep the complete approved command and the complete quoted manual warning unchanged in every delivered guide. Code fences, inline code, quotation marks or a block quote may present them. Fail if editing punctuation, spelling, flags, the path or the warning changes their exact supplied text. Surrounding explanatory prose can change freely."
+    },
+    {
+      "id": "technician-facing-flow",
+      "description": "Connect the command, comparison result and separate restore rehearsal so the technician understands what verification can establish. Fail if the revision is mostly unexplained terminology, substitutes vague reassurance for actions, or adds reports about following style directions. Accept paragraphs or a useful procedure without requiring a particular heading pattern or sentence rhythm."
+    },
+    {
+      "id": "observed-unslop-use",
+      "description": "Assess observed access to the installed unslop guidance before relevant delivered writing, separately from writing quality. A successful read through any supported recorded tool counts; an earlier read in the same conversation counts for later revisions without rereading. A command merely mentioning the path, an intention to read, or a claim of use is not access. Mark met when access is observed. Mark not_met only when the relevant access record is complete and no access occurred before the writing. Mark uncertain when relevant recording is missing or incomplete. This criterion measures use only and does not establish writing quality.",
+      "required": false
+    }
+  ]
+}

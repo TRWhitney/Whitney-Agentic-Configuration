@@ -1,6 +1,15 @@
 # Recorded eval failures
 
-The corpus contains 154 cases. The earlier reconciliation covered retained studies through
+The corpus now contains 160 cases. The [unslop writing study](unslop-writing-trials.md) adds six
+writing cases and records a fresh run of all 154 earlier cases. Original engine results were
+134 correct, 17 incorrect and 3 unknown; all assessments completed. Source-based inspection and
+eval repairs establish five genuine failures: compaction continuation, missing PR evidence,
+missing documentation-impact explanation, unrepaired deletion data loss, and asking approval
+for settled arithmetic. The study lists every attempt, corrected expectations and unresolved
+automated false passes. Fresh targeted comparisons replace superseded criteria; these are not
+a uniform final 160-case failure rate. Accepted skill prose is unchanged.
+
+The earlier corpus contained 154 cases. The earlier reconciliation covered retained studies through
 [reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
 [eval reliability follow-up](eval-reliability-trials.md) adds recording repairs, assessor
 corrections and fresh GUI trials; it is not a full-corpus rerun. The later
@@ -105,7 +114,7 @@ remain in its comparison table.
 
 | Case | Earlier expectation | Current result |
 | --- | --- | --- |
-| [review-reports-outside-data-loss](../../evals/cases/review-reports-outside-data-loss.json) | Required asking how to handle the documented deletion bug and rejected its repair. The historical ownership-and-report failure depended on that withdrawn requirement; missing child-review evidence remains unknown. | The corrected case expects the owning agent to repair and report the bug, retain a regression test and preserve search and list behavior. Source-freezing checks are replaced by private behavior checks. No candidate has run under the corrected criteria. |
+| [review-reports-outside-data-loss](../../evals/cases/review-reports-outside-data-loss.json) | Required asking how to handle the documented deletion bug and rejected its repair. The historical ownership-and-report failure depended on that withdrawn requirement; missing child-review evidence remains unknown. | The corrected case expects the owning agent to repair and report the bug, retain a regression test and preserve search and list behavior. Source-freezing checks are replaced by private behavior checks. The fresh original-corpus attempt reports the confirmed bug but leaves it unrepaired and omits its regression test. This is a genuine failure under the accepted repair expectation. [Latest study](unslop-writing-trials.md). |
 | [diagnosis-needs-design](../../evals/cases/diagnosis-needs-design.json) | Required novel-work planning merely because the negative-quantity rule was undecided. That forced-transition expectation was withdrawn. Earlier verdicts describe the old criterion and do not establish a behavior failure under the corrected boundary. | The approved version investigated, asked the clarification and stayed in fix discovery. All corrected checks and criteria passed. [Planning-state corrections](planning-state-corrections.md#approved-version). |
 
 ## Disputed verdicts and missing evidence

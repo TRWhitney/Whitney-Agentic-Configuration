@@ -1,0 +1,52 @@
+{
+  "id": "unslop-clear-writing",
+  "tags": [
+    "unslop",
+    "writing-quality"
+  ],
+  "purpose": "control",
+  "project_name": "library-scan-station",
+  "files": {
+    "sources/scanner-notes.md": "# Scan station notes\n\nThe station saves scans to a USB drive and does not send them by email. The user chooses PDF or JPEG before pressing Scan. PDF puts all pages in one file; JPEG saves each page as a separate file. Eject is available after saving finishes. Removing the drive while saving can leave an incomplete file. Staff at the desk can help.\n",
+    "docs/scan-handout.md": "# Save a scan to your USB drive\n\nInsert your USB drive, then choose PDF or JPEG. PDF saves all pages in one file. JPEG saves each page as a separate file. Place your pages on the scanner and press Scan.\n\nWait until saving finishes, then choose Eject before removing your drive. Removing it while saving can leave an incomplete file. The station cannot email scans. Ask at the desk if you need help.\n"
+  },
+  "artifacts": [
+    "docs/scan-handout.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Please review docs/scan-handout.md against sources/scanner-notes.md for people using the library scan station for the first time, and edit it if needed before we print it.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "accurate-content",
+      "description": "Keep the USB-only destination, PDF combining all pages, JPEG creating separate files, format choice before scanning, and the wait-for-save then Eject sequence. Retain the incomplete-file consequence and staff help. Fail if the review introduces a factual error or deletes information a first-time user needs. Assess any delivered replacement as well as the saved handout."
+    },
+    {
+      "id": "no-gratuitous-churn",
+      "description": "The supplied handout is already clear and consistent with the source. Leaving it unchanged and saying it is ready is fully correct; no writing change is required. If the agent edits, changes must have a discernible benefit without losing meaning or flow. Fail for synonym swapping, forced reorganization, fabricated defects, or decorative additions that make the handout less useful. Do not reward a change merely because one was made."
+    },
+    {
+      "id": "readable-result",
+      "description": "The handout and any final explanation use clear references and a usable scan-save-eject order. Fail for an unnecessary style lecture, compliance narration saved in the handout, or disconnected fragments that make the operation harder to follow. A brief final confirmation is appropriate; the agent need not rewrite an accurate draft or invent a concern."
+    },
+    {
+      "id": "observed-unslop-use",
+      "description": "Assess observed access to the installed unslop guidance before relevant delivered writing, separately from writing quality. A successful read through any supported recorded tool counts; an earlier read in the same conversation counts for later revisions without rereading. A command merely mentioning the path, an intention to read, or a claim of use is not access. Mark met when access is observed. Mark not_met only when the relevant access record is complete and no access occurred before the writing. Mark uncertain when relevant recording is missing or incomplete. This criterion measures use only and does not establish writing quality.",
+      "required": false
+    }
+  ]
+}

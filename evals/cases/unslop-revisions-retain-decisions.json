@@ -1,0 +1,90 @@
+{
+  "id": "unslop-revisions-retain-decisions",
+  "tags": [
+    "unslop",
+    "writing-quality"
+  ],
+  "purpose": "task",
+  "project_name": "print-studio-open-day",
+  "files": {
+    "sources/open-day.md": "# Print studio open day\n\nThe open day is Saturday 16 May at the Mill print studio. Visitors enter at 10:30 and the event ends at 13:00. Volunteers enter at 10:00 to set up; 10:00 is not the visitor start time.\n\nRegistration closes Wednesday 13 May at 18:00. There are 24 visitor places. Registration is free and includes demonstrations. Materials for a take-home print cost 6 pounds, paid at the event; making a print is optional. Children under 12 must attend with an adult.\n",
+    "docs/invitation.md": "# Print studio open day\n\nVisit the Mill print studio on Saturday 16 May. Come at 10:00 for demonstrations and try making a print. The event ends at 13:00. Sign up ahead of time so we know who is coming.\n"
+  },
+  "artifacts": [
+    "docs/invitation.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Revise docs/invitation.md from sources/open-day.md as an invitation for visitors. Include the registration arrangements, what the visit costs, and who can attend. Put the arrival and finish times near the beginning.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "The event details and registration deadline are approved. We are adding a waitlist to the registration form once all 24 places are taken. The venue will email the next person if someone cancels; they must accept the offered place by the deadline in that email. Joining the waitlist does not guarantee a place. Add a paragraph explaining this to visitors.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Make the invitation shorter for the community newsletter. Keep it usable for someone who has not seen the registration form.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "event-and-attendance",
+      "description": "Assess every delivered revision, including any early error later corrected. Each invitation gives Saturday 16 May at the Mill print studio, visitor arrival at 10:30 and finish at 13:00 near the beginning. Preserve the rule that children under 12 attend with an adult. Fail if the volunteer's 10:00 setup time becomes visitor arrival, if a necessary attendance condition disappears, or if event details change."
+    },
+    {
+      "id": "registration-decisions",
+      "description": "Every revision keeps registration closing Wednesday 13 May at 18:00 and the 24 visitor places. The later brevity request does not revoke these accepted details. Fail if the newsletter drops the deadline or capacity, weakens the deadline into a suggestion, or invents walk-in availability."
+    },
+    {
+      "id": "cost-decisions",
+      "description": "Every revision distinguishes free registration and included demonstrations from the optional take-home print materials costing 6 pounds, paid at the event. Preserve the distinction through the shorter newsletter. Fail if the invitation implies the whole visit costs 6 pounds, making a print is mandatory, payment is due at registration, or all activities and materials are free."
+    },
+    {
+      "id": "waitlist-revision",
+      "description": "The second request produces a real addition, retained in the final version: after capacity is reached the form offers a waitlist; the venue emails the next person when somebody cancels; an offered place must be accepted by the stated deadline. Make clear that joining alone does not secure or guarantee a place. Fail if the second version does not add this useful explanation, or if any later revision drops its conditions or turns a possibility into a promise. The first revision need not discuss the waitlist."
+    },
+    {
+      "id": "revision-quality",
+      "description": "The first request corrects and completes the invitation, and the second adds the new waitlist information. The final response addresses the request for a shorter newsletter version by cutting repetition and unnecessary wording while keeping earlier accepted requirements, even when the latest request does not repeat them. If the preceding version is already concise and complete, keeping it with a brief explanation is acceptable. All delivered invitations must read as connected visitor-facing writing. Fail for leaving an incomplete or needlessly verbose version unchanged, a shorter but incomplete final version, choppy or unclear compression, or revision/style compliance reports in the invitation. Allow natural structures and different wording without a word target."
+    },
+    {
+      "id": "observed-unslop-use",
+      "description": "Assess observed access to the installed unslop guidance before relevant delivered writing, separately from writing quality. A successful read through any supported recorded tool counts; an earlier read in the same conversation counts for later revisions without rereading. A command merely mentioning the path, an intention to read, or a claim of use is not access. Mark met when access is observed. Mark not_met only when the relevant access record is complete and no access occurred before the writing. Mark uncertain when relevant recording is missing or incomplete. This criterion measures use only and does not establish writing quality.",
+      "required": false
+    }
+  ]
+}

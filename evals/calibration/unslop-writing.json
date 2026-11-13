@@ -1,0 +1,142 @@
+{
+  "rubric": [
+    {
+      "id": "clear-faithful-writing",
+      "description": "The delivered writing answers the request in a clear, self-contained way for its intended reader. It names the relevant things, actions, conditions, and practical consequences so the reader can understand the point without guessing at vague ordinary-language labels or unexplained internal terminology. Necessary relationships remain understandable across sentences, lists, and commands. It preserves the supplied facts, required content, accepted decisions from earlier turns, and distinctions between certainty, possibility, recommendation, and requirement. Examples and supporting claims must follow the supplied evidence. Brevity should remove repetition rather than necessary meaning. Assess the whole explanation for useful content and natural flow, not a banned-word list, fixed length, required sentence shape, or preferred recommendation. Technical terms, exact commands, and code are welcome when their meaning is clear in context; an already clear, accurate passage may be returned unchanged. Do not require gratuitous rewriting, a glossary, added opinions, or additional unsupported details. Evidence of reading a skill is separate from writing quality and cannot make an unclear or unfaithful answer pass."
+    }
+  ],
+  "examples": [
+    {
+      "id": "reservation-fix-final-reply",
+      "request": "Give me the final update on the reservation fix. I manage the venue and do not work on the code.",
+      "files": {
+        "sources/context.md": "The venue website lets a visitor reserve a room for a chosen time. Previously, two visitors submitting at the same time could both receive confirmation for the same room and time. The change makes the server accept only the first reservation; the other visitor sees 'That time has just been booked' and can choose another time. All 9 reservation tests passed, including simultaneous submissions. The change has not been deployed to the public website."
+      },
+      "reply": "The reservation fix prevents two visitors from booking the same room and time. The first reservation is confirmed; the other visitor sees \"That time has just been booked\" and can choose another time. All 9 reservation tests passed, including simultaneous bookings. The fix still needs to be deployed before visitors will see it.",
+      "expected": "met",
+      "reason": "The final reply introduces the reservation problem, explains both visitors' outcomes, and preserves the test result and deployment limitation. It is concise without depending on an earlier message or requiring technical knowledge."
+    },
+    {
+      "id": "parcel-update-familiar-labels",
+      "request": "Explain the parcel notification change to a shop owner who is deciding what to tell customers.",
+      "files": {
+        "sources/context.md": "Previously the shop's parcel app emailed a customer when the shop printed a shipping label. Printing a label did not mean the carrier had collected the parcel, so customers sometimes expected movement while it was still in the shop. The app now emails the customer only after the carrier scans the parcel at collection. Customers who already received the old email will not receive another email for that parcel."
+      },
+      "reply": "Parcel notifications now give customers a better picture of where things stand. The change improves the handoff and brings the message into line with actual progress. Existing messages are handled separately, so the transition stays clear for customers.",
+      "commands": [
+        {
+          "command": "cat skills/unslop/SKILL.md",
+          "exit_code": 0,
+          "output": "Write clearly and preserve meaning."
+        }
+      ],
+      "expected": "not_met",
+      "reason": "Familiar words such as picture, handoff, progress, and handled separately conceal when the email is sent and what happens to customers already notified. The shop owner cannot tell customers what to expect. Observing a skill read does not supply those missing meanings."
+    },
+    {
+      "id": "membership-note-shortened-away-limit",
+      "request": "Shorten the draft membership notice for our club email.",
+      "files": {
+        "sources/context.md": "The club's annual membership renews on 1 March. Members can prevent renewal by selecting Cancel renewal in their account before 1 March. Cancelling renewal keeps membership active through the final day of February. Membership fees already paid are not refunded. These are the details the club wants members to receive.",
+        "draft.md": "Your annual club membership renews on 1 March. If you do not want to renew, choose Cancel renewal in your account before that date. You can continue using your membership through the end of February after cancelling renewal. Fees you have already paid will not be refunded."
+      },
+      "reply": "Your membership renews on 1 March. To stop renewal, choose Cancel renewal in your account before then.",
+      "expected": "not_met",
+      "reason": "The shorter notice keeps the date and action but drops the explicitly required remaining access and no-refund consequence. Concision does not justify losing information members need when deciding whether to cancel."
+    },
+    {
+      "id": "database-upgrade-disconnected-commands",
+      "request": "Write the upgrade instructions for an administrator who knows how to run shell commands but has not upgraded this app before.",
+      "files": {
+        "sources/context.md": "The app is called Ledgerlane. Its upgrade requires a saved backup from `ledgerlane backup`. Stop the service with `ledgerlane stop` before running `ledgerlane migrate`. If migration succeeds, run `ledgerlane start` to resume service. If migration fails, keep the service stopped and run `ledgerlane restore backup.zip` before starting it. Starting after a failed migration without restoring can expose incomplete records. The backup command in this release writes backup.zip."
+      },
+      "reply": "Run these Ledgerlane commands:\n\n```sh\nledgerlane backup\nledgerlane stop\nledgerlane migrate\nledgerlane start\nledgerlane restore backup.zip\n```\n\nThe backup is `backup.zip`. A failed migration can leave incomplete records. Restore before starting after failure.",
+      "expected": "not_met",
+      "reason": "The ordered command block tells an administrator to start before restore even though restore is only appropriate after failure and must precede starting in that branch. The closing warning does not resolve the contradictory sequence. Necessary success/failure relationships are obscured despite retaining all command names and a warning."
+    },
+    {
+      "id": "support-search-dense-correct-terms",
+      "request": "Explain why the support inbox search is faster now. The reader leads our support team and does not know how the search code works.",
+      "files": {
+        "sources/context.md": "The support inbox contains customer messages. Previously a search loaded and scanned every message. It now uses a lookup file listing the messages containing each word, reads the lists for the searched words, intersects those lists, and loads only matching messages. Developers call the word lists posting lists and the intersection a conjunctive query. On the supplied 20,000-message dataset, searching for two words took 0.3 seconds instead of 2.4 seconds. Other datasets were not timed."
+      },
+      "reply": "Search latency fell from 2.4 seconds to 0.3 seconds on the 20,000-message dataset because conjunctive query evaluation now intersects posting lists before message materialization rather than performing an exhaustive scan, reducing the materialized candidate set to the intersection. No other datasets were timed.",
+      "expected": "not_met",
+      "reason": "The timing and implementation are correct, but the dense sentence substitutes unexplained posting lists, materialization, and conjunctive evaluation for how the app avoids reading unrelated messages. The intended reader cannot follow the mechanism from the whole passage. The failure concerns understanding, not the mere presence of technical words."
+    },
+    {
+      "id": "workshop-update-invented-support",
+      "request": "Write a short public update about the workshop registration change using the supplied notes.",
+      "files": {
+        "sources/context.md": "The woodworking workshop had one registration form for both morning and afternoon sessions. The form now asks participants to select a session before entering their contact details. The selected session appears in the confirmation email. There is no evidence about completion rates or participant feedback."
+      },
+      "reply": "Workshop registration now starts by asking whether you want the morning or afternoon session. Your confirmation email includes that choice. In our trial, every participant selected the right session on the first try, so the change should prevent booking mistakes.",
+      "expected": "not_met",
+      "reason": "The opening explains the change clearly, but the trial and its result have no supplied support. The conclusion depends on invented evidence. Clear, concrete prose must still be faithful to the facts."
+    },
+    {
+      "id": "reading-room-uncertainty-promised-away",
+      "request": "Make this draft shorter for a notice on the reading room door.",
+      "files": {
+        "sources/context.md": "An electrical fault has closed the reading room. An electrician is booked for Thursday. Staff do not know whether the fault can be repaired during that visit. The room must remain closed until it passes the electrical inspection.",
+        "draft.md": "The reading room is closed because of an electrical fault. An electrician will visit on Thursday, but we do not yet know whether the repair will be completed then. We can reopen only after the room passes its electrical inspection."
+      },
+      "reply": "The reading room is closed for electrical repairs and will reopen after Thursday's electrician visit.",
+      "expected": "not_met",
+      "reason": "The edit converts an uncertain repair date into a reopening promise and removes the required inspection condition. The sentence is easy to read, but its meaning no longer matches the draft or source."
+    },
+    {
+      "id": "api-rate-limit-useful-terms",
+      "request": "Write a brief troubleshooting note for a developer seeing HTTP 429 from the Estuary API. Include the example command from the source.",
+      "files": {
+        "sources/context.md": "HTTP 429 means an Estuary API client has sent more requests than its allowance. The response's Retry-After header contains the number of seconds to wait before sending another request. Retrying immediately can produce another 429. `curl -i https://api.estuary.example/v1/readings` includes response headers in its output. The client must also supply its usual authentication; the example intentionally omits credentials. No increase in allowance is promised."
+      },
+      "reply": "HTTP 429 means your client has sent more requests than its allowance. Read the response's `Retry-After` header and wait that many seconds before trying again. An immediate retry may return another 429.\n\nUse this command with your usual authentication to see the response headers:\n\n```sh\ncurl -i https://api.estuary.example/v1/readings\n```",
+      "expected": "met",
+      "reason": "The note keeps useful status/header terminology and the exact command while explaining the trigger, action, waiting unit, and consequence. The command is readable in context. A separate definition of HTTP, curl, or authentication is unnecessary for the stated developer audience."
+    },
+    {
+      "id": "cloakroom-clear-draft-unchanged",
+      "request": "Check this cloakroom notice and return the text for printing.",
+      "files": {
+        "sources/context.md": "The museum cloakroom accepts bags until 16:30. Visitors must collect them before the museum closes at 17:00. There is no charge. The supplied draft is factually current.",
+        "draft.md": "You can leave bags in the cloakroom free of charge until 16:30. Please collect them before the museum closes at 17:00."
+      },
+      "reply": "You can leave bags in the cloakroom free of charge until 16:30. Please collect them before the museum closes at 17:00.",
+      "expected": "met",
+      "reason": "The unchanged text already gives the reader the service, price, acceptance cutoff, and collection deadline in connected sentences. Checking clear writing does not require changing its wording or adding an explanation of the editing process."
+    },
+    {
+      "id": "rental-revision-loses-accepted-condition",
+      "request": "Use our latest changes to give me the revised bike rental notice for the counter.",
+      "files": {
+        "sources/context.md": "Bike rental costs $18 per day. Renters must return the bike by 18:00. Helmets are included. A renter under 16 must have an adult present when collecting the bike.",
+        "conversation.md": "User: Draft a counter notice with the price, return deadline, helmets, and the collection rule for children.\nAssistant: Bike rental is $18 per day, including a helmet. Return your bike by 18:00. Renters under 16 need an adult present at collection.\nUser: Change the return deadline to 17:30, which is our new closing time. Keep the collection rule.\nAssistant: Bike rental is $18 per day, including a helmet. Return your bike by 17:30. Renters under 16 need an adult present at collection.\nUser: Make the opening sound friendlier."
+      },
+      "reply": "Enjoy a day out by bike for $18, with a helmet included. Please return your bike by 17:30.",
+      "expected": "not_met",
+      "reason": "The final version adopts the accepted 17:30 correction and the requested friendlier opening but silently drops the adult-at-collection requirement. The later tone request did not revoke that explicit earlier decision."
+    },
+    {
+      "id": "market-revision-preserves-decisions",
+      "request": "Return the final market vendor instructions with the changes we agreed.",
+      "files": {
+        "sources/context.md": "The market initially planned setup from 07:00 to 08:30 at the east gate. Vendors bring their own tables. The organizer later changed entry to the north gate and setup to 07:30 through 08:30. The market opens to customers at 09:00.",
+        "conversation.md": "User: Write setup instructions. Include when to arrive, which gate, and that vendors bring tables.\nAssistant: Set up between 07:00 and 08:30. Enter through the east gate and bring your own table. The market opens at 09:00.\nUser: Entry is now through the north gate, and setup cannot start until 07:30.\nAssistant: Set up between 07:30 and 08:30. Enter through the north gate and bring your own table. The market opens at 09:00.\nUser: Use a short list so vendors can check it on arrival."
+      },
+      "reply": "For market setup:\n\n- Arrive between 07:30 and 08:30 and enter through the north gate.\n- Bring your own table.\n\nThe market opens to customers at 09:00.",
+      "expected": "met",
+      "reason": "The list follows the requested form while retaining the corrected gate and setup window, the table requirement, and the customer opening time. The two bullets naturally fit the content; no particular paragraph shape or longer explanation is needed."
+    },
+    {
+      "id": "community-event-recommendation-with-tradeoff",
+      "request": "Which room would you choose for our 40-person community talk? Give a brief recommendation and the drawback using the room notes.",
+      "files": {
+        "sources/context.md": "The meeting has 40 attendees, including two people who use wheelchairs. Room A seats 50 and has step-free access, but it costs $90. Room B seats 45 and costs $40, but its only entrance is up a flight of stairs. No lift, ramp, assistance arrangement, or remote attendance option is available. The total room budget is $100."
+      },
+      "reply": "I would choose Room A. It seats all 40 attendees and has step-free access, so everyone can enter. At $90, it fits the $100 budget, though it costs $50 more than Room B. Room B's stairs would prevent the two wheelchair users from attending in person.",
+      "expected": "met",
+      "reason": "The recommendation connects the supplied capacity, access, and price facts to the attendees' needs. It states the material drawback without inventing accommodations or adding a manufactured opinion. Different structures that make these relationships clear would also pass."
+    }
+  ]
+}

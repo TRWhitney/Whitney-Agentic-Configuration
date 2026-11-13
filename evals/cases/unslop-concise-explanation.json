@@ -1,0 +1,60 @@
+{
+  "id": "unslop-concise-explanation",
+  "tags": [
+    "unslop",
+    "writing-quality"
+  ],
+  "purpose": "task",
+  "project_name": "parcel-lockers",
+  "files": {
+    "sources/collection-rules.md": "# Parcel locker collection\n\nA collection code starts working only after the recipient receives the ready email. The code expires 48 hours after that email, even if the recipient reads it later. Locker access is available from 07:00 to 22:00 every day. The building closing does not pause or extend the 48-hour period.\n\nBefore expiry, a recipient can request one 24-hour extension through the link in the ready email. An extension is available only if nobody is waiting for that locker size. Sending the request does not extend the code: the recipient must receive the extension confirmation. Staff cannot predict approval from the request alone.\n\nAnyone with the code can collect the parcel. After expiry, the code stops working and staff move the parcel to the staffed counter during the next staffed shift. Counter hours are Monday to Friday, 09:00 to 17:00. The ready email does not say exactly when the move will happen; a second email tells the recipient when counter collection is ready.\n",
+    "docs/collection-email.md": "# Collect your parcel\n\nIn order to collect your parcel from our parcel lockers, the first thing that you will need to do is wait until the email telling you that your parcel is ready has arrived. Receiving that ready email is the event that starts the collection period. Before the ready email arrives, the code does not yet work. Once the email has arrived, you have a period of 48 hours to collect the parcel, and that period is measured from the arrival of the email rather than from the time when you happen to open it and read it.\n\nYou can enter the building to use the lockers between 07:00 and 22:00 each day. Those are the hours when access is available. Although the building is closed outside those hours, the time remaining on your collection code continues to run while it is closed. The closing of the building does not stop the clock and does not give you extra time.\n\nIf you would like a little longer to collect your parcel, you can ask for an extension using the link that appears in your ready email. You must make that request before the code expires, and you may request one extension of 24 hours. Whether an extension can be approved depends on whether someone else is waiting for the same size of locker. We cannot tell you from the request alone whether it will be approved. Merely requesting extra time does not give you extra time; please wait for the message confirming the extension before relying on it.\n\nYou may give the collection code to another person to collect the parcel for you. Anyone with the code can collect it, so take that into account when sharing it. If the code expires, it will no longer open the locker. Staff will move the parcel to the counter on the next staffed shift, but this email cannot tell you precisely when that move will be complete. Another email will tell you when it is ready at the counter, which is open Monday to Friday from 09:00 to 17:00.\n"
+  },
+  "artifacts": [
+    "docs/collection-email.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Shorten docs/collection-email.md for the ready email we send to parcel recipients. Use sources/collection-rules.md for the collection rules. People need enough information to decide when to collect or ask for more time.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "meaningful-concision",
+      "description": "The delivered email is materially shorter and easier to follow than the supplied repetitive draft. Remove duplicated explanations and filler while retaining useful connections between sentences. Fail if it remains essentially as long and repetitive, or if shortening produces a disconnected string of labels or fragments. Do not impose a word count, fixed structure, or a shortest-possible answer."
+    },
+    {
+      "id": "clock-and-access",
+      "description": "Keep the code starting with the ready email, expiry 48 hours after that email rather than after reading it, daily access from 07:00 to 22:00, and the fact that closure does not extend expiry. Fail if any of these necessary conditions disappears or changes, including a suggestion that the recipient can collect at any hour or that the expiry clock pauses overnight."
+    },
+    {
+      "id": "conditional-extension",
+      "description": "Retain the before-expiry request through the ready-email link, the single 24-hour extension, dependence on no waiting recipient for that locker size, and the need for confirmation before relying on extra time. Preserve uncertainty about approval. Fail if a request is described as an automatic extension or a possibility becomes a promise, or if brevity removes a condition needed to make the decision."
+    },
+    {
+      "id": "sharing-and-expiry",
+      "description": "Retain that anyone with the code can collect, that expiry disables it, that staff move the parcel during the next staffed shift, and that a second email confirms counter readiness. Preserve the uncertain move time and Monday-to-Friday 09:00-to-17:00 counter hours. Fail if the email guarantees immediate counter availability, changes hours, loses the sharing consequence, or invents an action or assurance not in the source."
+    },
+    {
+      "id": "recipient-facing-writing",
+      "description": "Every delivered email stands on its own as connected instructions for a recipient, with clear references to the collection code, ready email and extension confirmation. Fail if unexplained references require the recipient to consult the author conversation, or if revision reports, instructions about writing, or unsupported recommendations replace subject content. Allow clear alternatives in organization and wording."
+    },
+    {
+      "id": "observed-unslop-use",
+      "description": "Assess observed access to the installed unslop guidance before relevant delivered writing, separately from writing quality. A successful read through any supported recorded tool counts; an earlier read in the same conversation counts for later revisions without rereading. A command merely mentioning the path, an intention to read, or a claim of use is not access. Mark met when access is observed. Mark not_met only when the relevant access record is complete and no access occurred before the writing. Mark uncertain when relevant recording is missing or incomplete. This criterion measures use only and does not establish writing quality.",
+      "required": false
+    }
+  ]
+}

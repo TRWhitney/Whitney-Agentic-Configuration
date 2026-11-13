@@ -8,6 +8,13 @@
 
 ## Current state
 
+[Unslop coverage](tickets/26-unslop-evals.md) adds six writing cases, independent calibration,
+a fixed comparison with Poteto's version and a full original 154-case run. All 298 candidate
+assessments completed; all eighteen new-case attempts using our version are correct. Older
+cases still expose five genuine failures. The [study](../../docs/research/unslop-writing-trials.md)
+records every attempt, eval repairs, unknowns and automated false passes. All 548 framework tests
+and quality checks pass. Independent intent and engineering reviews pass. Raw evidence was inspected, reviewed and deleted.
+
 Complete. [Compaction recovery](tickets/25-compaction-recovery.md) is applied from the
 [exact tested diff](../../docs/research/compaction-recovery-proposal.diff). All twelve final
 attempts meet the selected criteria, three per case/control. The [study](../../docs/research/compaction-recovery-trials.md)

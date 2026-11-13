@@ -118,7 +118,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 154 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 160 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -229,6 +229,36 @@ clear short descriptions, missing consequences and unsupported claims.
 
 The [trial study](research/pr-description-trials.md) records grading corrections, earlier
 failures and the final comparison.
+
+## Unslop writing
+
+The `unslop` tag selects six cases: a final-reply question, a vague invoice explanation, a shorter
+parcel email, successive invitation revisions, an already clear handout, and a technical guide
+with an exact command and quotation. Writing quality is assessed privately. The optional
+`observed-unslop-use` criterion reports access to the skill separately; a read does not establish
+that the writing is good, and unavailable access records remain uncertain.
+
+Compare copies of the instructions that differ only in `skills/unslop/SKILL.md`:
+
+```sh
+.venv/bin/python -m evals run --tag unslop \
+  --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --variant poteto=/path/to/poteto --variant ours=/path/to/ours --repeat 3 \
+  --calibration evals/calibration/unslop-writing.json \
+  --timeout 1800 --judge-timeout 1200 --max-tokens 0 --judge-max-tokens 0 \
+  --review-dir /tmp/unslop-review --report /tmp/unslop-report.json
+```
+
+The independently authored calibration includes clear concise answers, vague familiar language,
+unexplained technical prose, lost consequences, invented facts, changed uncertainty, retained
+technical terms, unchanged clear writing, and earlier decisions preserved or lost in revisions.
+Existing PR, narrow-correction, and prose-boundary cases provide regression coverage.
+[Source-limit calibration](../evals/calibration/source-limits.json) separates useful statements
+about missing information from reports of following writing instructions, including passages
+that contain both. [PR evidence examples](../evals/calibration/pr-evidence.json) distinguish
+material validation limits that belong in the filed description from unrelated failed metadata
+requests. The [writing study](research/unslop-writing-trials.md) preserves the comparisons,
+regression findings, and assessor disagreements.
 
 ## Visual state selection
 

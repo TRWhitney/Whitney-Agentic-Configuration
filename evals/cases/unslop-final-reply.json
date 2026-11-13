@@ -1,0 +1,53 @@
+{
+  "id": "unslop-final-reply",
+  "tags": [
+    "unslop",
+    "writing-quality"
+  ],
+  "purpose": "task",
+  "project_name": "studio-bookings",
+  "files": {
+    "sources/room-booking.md": "# Studio bookings\n\nA confirmed booking reserves a studio for its named holder. A pending hold temporarily prevents another booking while the holder completes confirmation. If the hold expires without confirmation, it is released. Expiry does not create a confirmed booking. A person needs a confirmed booking before entering a studio.\n\nMira placed a pending hold on Studio B for 15:00 to 16:00. Her hold expired at 14:55 and was never confirmed. The previous confirmed booking ends at 15:00. These notes were exported at 14:56 and do not show later bookings or current occupancy.\n"
+  },
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Based on sources/room-booking.md, does the previous booking ending at 15:00 mean Mira's booking is confirmed and she can enter Studio B then?",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "answer-and-cause",
+      "description": "The final reply directly answers that Mira has no confirmed booking: her unconfirmed hold expired at 14:55 and was released. Explain that the previous booking ending does not confirm or reserve the room for her. Fail if expiry is treated as confirmation, or if the answer leaves the relationship between the two bookings unexplained."
+    },
+    {
+      "id": "permission-and-uncertainty",
+      "description": "Explain that Mira needs a confirmed booking before entering. Preserve the limit of the 14:56 notes: they do not establish later availability or current occupancy. Fail if the reply guarantees entry or availability at 15:00, invents a booking or fee, or turns the missing live information into certainty."
+    },
+    {
+      "id": "standalone-final-reply",
+      "description": "Assess the final answer as ordinary explanatory writing even though no prose file was requested. Make clear whose hold expired and why the earlier booking does not give Mira permission, with enough context to understand the reply by itself. Fail for unexplained status labels, ambiguous references that obscure the outcome, disconnected fragments, canned praise, or an empty answer that only points at the source. Allow different concise paragraph or list structures."
+    },
+    {
+      "id": "question-scope",
+      "description": "The question is answered in the final reply without repository content edits or an unnecessary writing artifact. Fail if the agent rewrites the source, creates a guide instead of answering, or adds a report about following writing guidance rather than answering the booking question."
+    },
+    {
+      "id": "observed-unslop-use",
+      "description": "Assess observed access to the installed unslop guidance before relevant delivered writing, separately from writing quality. A successful read through any supported recorded tool counts; an earlier read in the same conversation counts for later revisions without rereading. A command merely mentioning the path, an intention to read, or a claim of use is not access. Mark met when access is observed. Mark not_met only when the relevant access record is complete and no access occurred before the writing. Mark uncertain when relevant recording is missing or incomplete. This criterion measures use only and does not establish writing quality.",
+      "required": false
+    }
+  ]
+}

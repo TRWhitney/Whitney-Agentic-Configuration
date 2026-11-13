@@ -1,0 +1,56 @@
+{
+  "id": "unslop-vague-explanation",
+  "tags": [
+    "unslop",
+    "writing-quality"
+  ],
+  "purpose": "task",
+  "project_name": "invoice-desk",
+  "files": {
+    "sources/invoice-routing.md": "# Invoice routing\n\nThe invoice desk removes leading and trailing spaces from an invoice number, then compares the remaining characters with the purchase-order register. Comparison is case-sensitive. It does not match abbreviations or similar spellings. A match attaches the purchase order to the invoice for a reviewer. It does not approve payment.\n\nIf no number matches, the invoice goes to the review queue and cannot enter the payment run. A reviewer can link it to an existing purchase order or reject it. The nightly payment run includes only invoices that a reviewer has approved and whose payment date has arrived. It never creates a purchase order.\n",
+    "docs/invoice-desk.md": "# The invoice desk\n\nThe matching layer normalizes invoice identifiers and resolves the purchase-order association for downstream processing. It checks the invoice against the register and gets everything into the right place. This means the important details stay close at hand, so the next step is taken care of.\n\nWhen something does not line up, the exception workflow lets the reviewer handle it separately. The reviewer gets a clear picture and can move things forward with confidence. The nightly run keeps the process on track and makes sure the outcome is ready when it matters.\n"
+  },
+  "artifacts": [
+    "docs/invoice-desk.md"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Rewrite docs/invoice-desk.md for a new accounts-payable clerk using sources/invoice-routing.md. The clerk needs to understand how an invoice reaches payment and what to do when its number does not match.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "comparison-mechanism",
+      "description": "Every delivered guide explains that only leading and trailing spaces are removed, comparison is case-sensitive, and similar spellings or abbreviations are not matched. Fail if normalization is generalized to case-insensitive or approximate matching, or if the comparison is hidden behind undefined technical abstractions."
+    },
+    {
+      "id": "review-and-payment",
+      "description": "Every delivered guide distinguishes attaching a matched purchase order from approving payment. State that unmatched invoices wait in review, that a reviewer can link an existing purchase order or reject the invoice, and that only approved invoices with an arrived payment date enter the nightly run. Fail for automatic approval or payment, invented purchase-order creation, or omission that makes the clerk unable to distinguish review from payment."
+    },
+    {
+      "id": "concrete-explanation",
+      "description": "Replace both the draft's technical abstractions and its familiar vague promises with the actual actions and their consequences. Fail if the rewrite merely swaps fancy words for claims such as getting things in place or taking care of the next step without saying what happens. Useful precise terms are allowed; assess what the clerk can understand, rather than the presence of a vocabulary blacklist."
+    },
+    {
+      "id": "flow-and-support",
+      "description": "The delivered explanation connects number comparison, review, and payment in an order a new clerk can follow. Fail for unexplained pronouns or labels, a string of fragments that obscures these relationships, unsupported claims about speed or reliability, or commentary about the author's style instructions in the guide. Accept natural prose, a useful sequence, or a combination without requiring fixed headings or wording."
+    },
+    {
+      "id": "observed-unslop-use",
+      "description": "Assess observed access to the installed unslop guidance before relevant delivered writing, separately from writing quality. A successful read through any supported recorded tool counts; an earlier read in the same conversation counts for later revisions without rereading. A command merely mentioning the path, an intention to read, or a claim of use is not access. Mark met when access is observed. Mark not_met only when the relevant access record is complete and no access occurred before the writing. Mark uncertain when relevant recording is missing or incomplete. This criterion measures use only and does not establish writing quality.",
+      "required": false
+    }
+  ]
+}

@@ -6,6 +6,21 @@ The existing tests exercise navigation commands and saved files. They do not est
 an agent follows the workflow, respects a requested edit, or restores wayfinding after losing
 conversation context. Repeated skill changes need comparable behavioral evidence.
 
+## Unslop behavior
+
+Evaluate the repository-owned unslop skill against Poteto's version using identical ordinary
+tasks, fixed gpt-6.1-sol settings, and a separate blinded judge. Cover final replies without
+skill reminders, vague explanations using technical and familiar language, brevity with useful
+information and sentence flow, and successive revisions that retain earlier decisions.
+Include controls for clear writing, necessary technical terms, and exact text. Reuse existing
+PR, narrow-correction, and prose-boundary cases rather than duplicating their coverage.
+
+Assess observed skill loading separately from the quality of the writing. Calibrate judgments
+with independently authored good and bad examples. Judge comprehension, factual support,
+necessary consequences, concision, and flow without requiring fixed wording or a word count.
+Repeat the compared writing cases three times per condition. Run the full existing corpus
+against the replacement and preserve every failure, assessment limit, and unresolved judgment.
+
 ## Compaction hooks
 
 Codex and Claude Code run one shared work-system recovery command after compaction. It restores
