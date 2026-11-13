@@ -11,6 +11,10 @@ skills declared in `config/external-skills.json` into the Codex home. It records
 content hashes in `.whitney-workflow-deployment.json` so later runs can update or
 remove only content managed by this repository.
 
+Unslop is maintained in `skills/unslop/`. Deployment replaces the previously managed external
+copy with this version. Its upstream attribution and license notice are in
+`skills/unslop/attribution.txt`.
+
 ## Compaction recovery
 
 Deployment configures the Codex compaction hook automatically, including when work-system is

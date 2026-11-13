@@ -19,18 +19,18 @@ REPO_ROOT = Path(__file__).parents[1]
 
 
 class SkillPackagingTests(unittest.TestCase):
-    def test_only_root_system_skills_are_discoverable(self) -> None:
+    def test_only_root_skills_are_discoverable(self) -> None:
         skills_root = REPO_ROOT / "skills"
         self.assertEqual(
             {
                 path.relative_to(skills_root).as_posix()
                 for path in skills_root.rglob("SKILL.md")
             },
-            {"note-system/SKILL.md", "work-system/SKILL.md"},
+            {"note-system/SKILL.md", "unslop/SKILL.md", "work-system/SKILL.md"},
         )
         self.assertEqual(
             {path.name for path in skills_root.iterdir() if path.is_dir()},
-            {"note-system", "work-system"},
+            {"note-system", "unslop", "work-system"},
         )
 
     def test_each_skill_navigates_when_installed_alone(self) -> None:
