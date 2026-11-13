@@ -1,0 +1,12 @@
+--- a/skills/work-system/references/providers/github/delivery.md
++++ b/skills/work-system/references/providers/github/delivery.md
+@@ -62,7 +62,8 @@
+ ### Validation
+ 
+ State what was checked, at which revision, and what the results establish. Distinguish completed
+-checks from pending or unavailable evidence. Include links to the documentation, runnable
++checks from pending checks. Say which check results you could not obtain, even if already
++reported elsewhere. Include links to the documentation, runnable
+ examples, and tests that support the claims, using the reviewed revision in each link. Explain
+ what they demonstrate. Do not dump command histories,
+ resolved temporary setup problems, or unexplained test counts.

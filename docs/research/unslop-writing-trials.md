@@ -3,6 +3,10 @@
 Six new writing cases and controls pass all eighteen repository-version attempts. Existing evals
 still expose failures. No accepted skill prose changed.
 
+The [PR follow-up](pr-verification-limits-trials.md) records six correct final PR attempts after
+targeted wording trials. The no-impact rename is accepted without a separate documentation
+explanation; its earlier negative judgment below is preserved.
+
 ## Method
 
 Sources start at `8373b87`: accepted unslop versus Poteto `18e0e90`, with no other instruction

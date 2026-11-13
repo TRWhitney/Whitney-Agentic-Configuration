@@ -229,6 +229,8 @@ clear short descriptions, missing consequences and unsupported claims.
 
 The [trial study](research/pr-description-trials.md) records grading corrections, earlier
 failures and the final comparison.
+The [verification-limits follow-up](research/pr-verification-limits-trials.md) records later
+result-disclosure failures, source trials, corrected judgments and six correct final attempts.
 
 ## Unslop writing
 

@@ -8,6 +8,12 @@
 
 ## Current state
 
+[PR verification limits](tickets/27-pr-verification-limits.md): the reviewed fifth diff is applied.
+All six final PR attempts are correct, three per case/control. The
+[study](../../docs/research/pr-verification-limits-trials.md) preserves all 32 PR attempts and earlier
+false judgments. The no-impact rename criterion is corrected as accepted. Checks and independent intent/engineering
+review pass. Raw trial captures were deleted.
+
 [Unslop coverage](tickets/26-unslop-evals.md) adds six writing cases, independent calibration,
 a fixed comparison with Poteto's version and a full original 154-case run. All 298 candidate
 assessments completed; all eighteen new-case attempts using our version are correct. Older

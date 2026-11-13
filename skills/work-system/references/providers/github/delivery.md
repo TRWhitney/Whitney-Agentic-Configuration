@@ -9,6 +9,7 @@ URL, check GitHub for a PR with the same head and base branches before retrying.
 
 Save the PR URL, head revision, base, and next action on the work item. Read the repository's
 required checks and reviews, including review bots that run after a push.
+Before sending me the PR link, update the PR description with the check results and verification limits.
 
 ## PR title and description
 
@@ -62,7 +63,8 @@ may need only a brief statement that no new setup is required.
 ### Validation
 
 State what was checked, at which revision, and what the results establish. Distinguish completed
-checks from pending or unavailable evidence. Include links to the documentation, runnable
+checks from pending checks. Say which check results you could not obtain and which check requirements
+you could not read, even if already reported in chat or elsewhere. Include links to the documentation, runnable
 examples, and tests that support the claims, using the reviewed revision in each link. Explain
 what they demonstrate. Do not dump command histories,
 resolved temporary setup problems, or unexplained test counts.

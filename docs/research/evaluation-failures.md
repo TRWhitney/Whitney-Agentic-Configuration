@@ -8,6 +8,10 @@ missing documentation-impact explanation, unrepaired deletion data loss, and ask
 for settled arithmetic. The study lists every attempt, corrected expectations and unresolved
 automated false passes. Fresh targeted comparisons replace superseded criteria; these are not
 a uniform final 160-case failure rate. Accepted skill prose is unchanged.
+The [PR follow-up](pr-verification-limits-trials.md) records six correct final PR attempts. The
+no-impact rename is accepted without a separate documentation explanation. Remaining fresh
+findings concern compaction continuation, deletion repair and settled planning choices. The
+earlier judgments below remain historical.
 
 The earlier corpus contained 154 cases. The earlier reconciliation covered retained studies through
 [reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
