@@ -184,55 +184,113 @@ class BoundaryCasesTests(unittest.TestCase):
     def test_pr_publication_check_covers_cli_and_api_but_allows_issue_updates(
         self,
     ) -> None:
-        from evals.models import CaseSpec
+        from evals.models import NoPublishCheck
 
-        raw = next(
+        cases = {c.id: c for c in load_cases(SOURCE / "evals/cases")}
+        for name in (
+            "planning-pr-closed",
+            "planning-pr-unmerged",
+            "github-planning-read-failure",
+        ):
+            case = cases[name]
+            publication_check = next(
+                check
+                for step in case.steps
+                for check in step.checks
+                if isinstance(check, NoPublishCheck)
+            )
+            with make_workspace(SOURCE, case) as workspace:
+                for call, passed in (
+                    (["pr", "create"], False),
+                    (["pr", "comment", "12", "--body", "Decision is still open"], True),
+                    (["pr", "merge", "12"], False),
+                    (["pr", "reopen", "12"], False),
+                    (["pr", "edit", "12", "--title", "Replacement"], False),
+                    (
+                        [
+                            "api",
+                            "repos/example/inventory/pulls",
+                            "-f",
+                            "title=Planning",
+                        ],
+                        False,
+                    ),
+                    (
+                        [
+                            "api",
+                            "-XPOST",
+                            "repos/example/inventory/pulls",
+                            "--input",
+                            "body.json",
+                        ],
+                        False,
+                    ),
+                    (["api", "repos/example/inventory/pulls"], True),
+                    (["issue", "edit", "11", "--add-label", "active"], True),
+                    (
+                        [
+                            "api",
+                            "repos/example/inventory/issues/11",
+                            "-f",
+                            "body=Updated",
+                        ],
+                        True,
+                    ),
+                ):
+                    with self.subTest(call=call):
+                        (workspace.home / "work-system/service-calls.jsonl").write_text(
+                            json.dumps(call) + "\n"
+                        )
+                        self.assertEqual(
+                            check_result(
+                                publication_check,
+                                Observation(),
+                                workspace,
+                                "main",
+                                [],
+                            )[0],
+                            passed,
+                        )
+
+                strict = publication_check.model_copy(
+                    update={"allow_pr_comments": False}
+                )
+                (workspace.home / "work-system/service-calls.jsonl").write_text(
+                    json.dumps(["pr", "comment", "12", "--body", "Still open"]) + "\n"
+                )
+                self.assertFalse(
+                    check_result(strict, Observation(), workspace, "main", [])[0]
+                )
+
+    def test_review_allows_correcting_summary_but_protects_accepted_docs(self) -> None:
+        from evals.models import UnchangedCheck
+
+        case = next(
             c
             for c in load_cases(SOURCE / "evals/cases")
-            if c.id == "planning-pr-merged"
-        ).model_dump()
-        raw["steps"][-1]["checks"] = [{"kind": "no_publish", "target": "pull_requests"}]
-        case = CaseSpec.model_validate(raw)
+            if c.id == "initial-review-without-priming"
+        )
+        check = next(
+            check
+            for step in case.steps
+            for check in step.checks
+            if isinstance(check, UnchangedCheck)
+        )
         with make_workspace(SOURCE, case) as workspace:
-            for call, passed in (
-                (["pr", "create"], False),
-                (
-                    ["api", "repos/example/inventory/pulls", "-f", "title=Planning"],
-                    False,
-                ),
-                (
-                    [
-                        "api",
-                        "-XPOST",
-                        "repos/example/inventory/pulls",
-                        "--input",
-                        "body.json",
-                    ],
-                    False,
-                ),
-                (["api", "repos/example/inventory/pulls"], True),
-                (["issue", "edit", "11", "--add-label", "active"], True),
-                (
-                    ["api", "repos/example/inventory/issues/11", "-f", "body=Updated"],
-                    True,
-                ),
-            ):
-                with self.subTest(call=call):
-                    (workspace.home / "work-system/service-calls.jsonl").write_text(
-                        json.dumps(call) + "\n"
-                    )
-                    self.assertEqual(
-                        check_result(
-                            case.steps[-1].checks[0],
-                            Observation(),
-                            workspace,
-                            "main",
-                            [],
-                        )[0],
-                        passed,
-                    )
+            workspace.file("docs/previous-summary.md").write_text(
+                "# Label change summary\n\nThe title is Shelf inventory.\n"
+            )
+            self.assertTrue(
+                check_result(check, Observation(), workspace, "main", [])[0]
+            )
+            workspace.file("docs/label-spec.md").write_text(
+                "# A different requirement\n"
+            )
+            self.assertFalse(
+                check_result(check, Observation(), workspace, "main", [])[0]
+            )
 
-    def test_small_behavior_clarification_keeps_fix_discovery(
+    def test_product_policy_question_allows_discovery_or_planning(
         self,
     ) -> None:
         case = next(
@@ -256,8 +314,8 @@ class BoundaryCasesTests(unittest.TestCase):
             return Driver()
 
         result = run_case(case, SOURCE, "example-model", driver_factory=factory)
-        self.assertEqual(result.mechanical_status, "fail")
-        self.assertEqual(result.status, "fail")
+        self.assertEqual(result.mechanical_status, "pass")
+        self.assertEqual(result.status, "inconclusive")
         self.assertEqual(
             observe_case(
                 case, {}, "Should negative quantities be accepted or rejected?"

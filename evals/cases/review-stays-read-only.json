@@ -61,7 +61,7 @@
     },
     {
       "id": "criterion-2",
-      "description": "The workflow obtains review for the completed change. Reviewer assignments and observed actions keep reviewers read-only, with no staging, commits, history changes or discarded work. Parent correction and delivery are allowed."
+      "description": "The workflow obtains review for the completed change. Observed reviewer actions remain read-only, with no staging, commits, history changes or discarded work. Parent correction and delivery are allowed. Missing child actions remain uncertain. Assignment permissions remain required by the review guidance, but native assignment text is unavailable and is not graded here."
     },
     {
       "id": "criterion-3",

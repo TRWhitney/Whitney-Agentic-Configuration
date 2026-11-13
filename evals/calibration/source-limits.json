@@ -1,0 +1,76 @@
+{
+  "rubric": [
+    {
+      "id": "reader-content",
+      "description": "The saved artifact contains the requested reader content. Instructions about how the agent should do the work do not become compliance reports or new rules for the reader. Requested methods, useful source uncertainty, and instructions for the intended reader remain valid content."
+    }
+  ],
+  "examples": [
+    {
+      "id": "seed-catalogue-sowing-dates",
+      "request": "Write a brief introduction for gardeners using our seed catalogue.",
+      "files": {
+        "sources/context.md": "The catalogue lists the mature height, packet size, and price of each plant variety. It has no sowing dates. Sowing dates depend on the gardener's local frost conditions, which the catalogue does not cover. The gardening desk can help customers choose dates for their area."
+      },
+      "artifact_path": "docs/catalogue-introduction.md",
+      "artifact": "Use this catalogue to compare plant heights, packet sizes, and prices. The catalogue does not give sowing dates because the right dates depend on local frost conditions. Ask the gardening desk for help choosing dates for your area.",
+      "expected": "met",
+      "reason": "Referring to what the catalogue does not provide helps gardeners use it correctly and find the missing information. The limitation comes from the supplied source and concerns planting decisions, rather than how the author followed drafting instructions."
+    },
+    {
+      "id": "sound-study-hours-covered",
+      "request": "Write the findings summary for residents reading the community sound study.",
+      "files": {
+        "sources/context.md": "Volunteers measured sound outside the community hall on five weekdays between 10:00 and 16:00. During those periods, readings ranged from 48 to 61 decibels. They collected no readings at night or on weekends. The study cannot establish nighttime or weekend sound levels."
+      },
+      "artifact_path": "docs/sound-study-summary.md",
+      "artifact": "Sound outside the community hall ranged from 48 to 61 decibels during the five weekdays measured, between 10:00 and 16:00. This report does not establish how loud the hall is at night or on weekends, when no readings were taken.",
+      "expected": "met",
+      "reason": "The report's stated limit prevents residents from applying daytime observations to periods that were not measured. Describing that evidence boundary through a reference to the report is reader content, not a report of the assistant's process."
+    },
+    {
+      "id": "archive-guide-unidentified-people",
+      "request": "Write an opening paragraph for researchers using the mill photograph guide.",
+      "files": {
+        "sources/context.md": "The guide describes 120 photographs of buildings at Alder Mill. Each description gives the building name and the photographer's recorded date, where available. The archive has not identified the people shown in the photographs, and the guide cannot be used to identify them. Researchers can request full-size scans from the reading-room desk."
+      },
+      "artifact_path": "docs/mill-photograph-guide.md",
+      "artifact": "This guide describes 120 photographs of buildings at Alder Mill, with building names and recorded dates where available. It cannot identify the people in the photographs because the archive has not established their names. To examine a photograph more closely, request a full-size scan from the reading-room desk.",
+      "expected": "met",
+      "reason": "The guide reference explains the archive's actual knowledge and the uses the descriptions can support. The scan instruction addresses researchers. Neither sentence exposes an instruction about drafting or claims that the author complied with one."
+    },
+    {
+      "id": "equipment-guide-limit-plus-style-report",
+      "request": "Write an introduction to the equipment hire guide. Keep it brief and avoid promotional language.",
+      "files": {
+        "sources/context.md": "The guide lists equipment available for hire and the dimensions of each item. Hire prices change during the year and are not listed in the guide. Customers can obtain a current quote from the hire desk."
+      },
+      "artifact_path": "docs/equipment-hire-introduction.md",
+      "artifact": "Use this guide to find equipment and check its dimensions. This guide does not list hire prices; ask the hire desk for a current quote. The introduction has been kept brief and free of promotional language as requested.",
+      "expected": "not_met",
+      "reason": "The price limitation and quote instruction are supported, useful reader content. The final sentence separately reports compliance with the author's length and style directions. A legitimate guide limitation does not excuse that actual process leakage."
+    },
+    {
+      "id": "cleaning-guide-limit-plus-drafting-choice",
+      "request": "Write a customer introduction to the coffee grinder cleaning guide. Use everyday wording rather than technical language.",
+      "files": {
+        "sources/context.md": "The guide shows customers how to remove and wash the grinder's grounds container and wipe its exterior. The grinder must be unplugged before cleaning. The guide contains no repair instructions. Repairs are handled by the service desk."
+      },
+      "artifact_path": "docs/grinder-cleaning-introduction.md",
+      "artifact": "Unplug the grinder before cleaning it. This guide explains how to wash the grounds container and wipe the outside. It does not explain repairs; contact the service desk for those. Technical language has been replaced with everyday wording to follow the requested style.",
+      "expected": "not_met",
+      "reason": "The repair boundary directs customers to the right help, and the cleaning information belongs in the guide. The final sentence concerns the author's wording changes and the instruction governing them. It remains leakage even though the preceding reference to the guide's scope is legitimate."
+    },
+    {
+      "id": "survey-report-limit-plus-reader-restriction",
+      "request": "Write the public summary of the market-stall survey. Leave our internal drafting assignments out of it.",
+      "files": {
+        "sources/context.md": "The survey asked 86 Saturday market visitors which stall categories they visited. Produce stalls were visited by 64 respondents and craft stalls by 39. Respondents could choose several categories. No weekday visitors were surveyed, so the report does not describe weekday shopping."
+      },
+      "artifact_path": "docs/market-survey-summary.md",
+      "artifact": "Of 86 Saturday market visitors surveyed, 64 visited produce stalls and 39 visited craft stalls. Respondents could select more than one category. This report does not describe weekday shopping because no weekday visitors were surveyed. Readers should keep discussion of this report focused on the survey and avoid asking about internal drafting assignments.",
+      "expected": "not_met",
+      "reason": "The weekday limitation explains the evidence and is valid public content. The closing sentence turns a private exclusion about what the author should write into a new restriction on readers' questions. The source supplies no such reader rule."
+    }
+  ]
+}

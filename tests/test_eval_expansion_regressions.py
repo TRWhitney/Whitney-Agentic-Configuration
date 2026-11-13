@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 
 from evals.fixtures import make_workspace
@@ -54,6 +55,51 @@ class ExpansionRegressionTests(unittest.TestCase):
             wrong = check.model_copy(update={"state": "implementation"})
             self.assertFalse(check_result(wrong, Observation(), w, "thread", [])[0])
 
+    def test_progress_alternatives_preserve_record_and_substate_requirements(
+        self,
+    ) -> None:
+        case = self.case("diagnosis-needs-design")
+        check = ProgressCheck.model_validate(
+            {
+                "workflow": "fix",
+                "state": "discovery",
+                "alternatives": [{"workflow": "novel-work", "state": "planning"}],
+                "record": ".work/totals/status.md",
+            }
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            path = workspace.progress_path("thread")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            record = str(workspace.file(".work/totals/status.md"))
+            for workflow, state, substate, saved_record, expected in (
+                ("fix", "discovery", None, record, True),
+                ("novel-work", "planning", None, record, True),
+                ("novel-work", "implementation", None, record, False),
+                ("fix", "planning", None, record, False),
+                ("novel-work", "planning", "wayfinding", record, False),
+                ("novel-work", "planning", None, "/project/other.md", False),
+            ):
+                with self.subTest(workflow=workflow, state=state, record=saved_record):
+                    path.write_text(
+                        json.dumps(
+                            {
+                                "workflow": workflow,
+                                "state": state,
+                                "substate": substate,
+                                "record": saved_record,
+                            }
+                        )
+                    )
+                    passed, detail = check_result(
+                        check, Observation(), workspace, "thread", []
+                    )
+                    self.assertEqual(passed, expected)
+                    self.assertIn(f"{workflow}.{state}", detail)
+            path.unlink()
+            self.assertFalse(
+                check_result(check, Observation(), workspace, "thread", [])[0]
+            )
+
     def test_service_error_output_can_be_checked_inside_a_successful_shell_call(
         self,
     ) -> None:
@@ -74,6 +120,33 @@ class ExpansionRegressionTests(unittest.TestCase):
                 self.assertEqual(
                     check_result(check, observation, w, "thread", [])[0], expected
                 )
+
+    def test_search_failure_remains_observable_in_compound_shell(self) -> None:
+        case = self.case("reproducible-bug")
+        check = next(
+            c for c in case.steps[-1].checks if isinstance(c, CommandSequenceCheck)
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            for initial_code, output, expected in (
+                (0, "AssertionError: Unicode case folding", True),
+                (1, "AssertionError: Unicode case folding", True),
+                (0, "No failure", False),
+                (1, "ModuleNotFoundError", False),
+            ):
+                results = (
+                    CommandResult(
+                        "python3 checks/check_search.py; echo done",
+                        initial_code,
+                        output,
+                    ),
+                    CommandResult("python3 checks/check_search.py", 0, "Checks passed"),
+                )
+                with self.subTest(initial_code=initial_code, output=output):
+                    observation = Observation(command_results=results)
+                    self.assertEqual(
+                        check_result(check, observation, workspace, "thread", [])[0],
+                        expected,
+                    )
 
     def test_cycle_explanations_are_preserved_for_hidden_assessment(self) -> None:
         case = self.case("cyclic-ticket-dependencies")

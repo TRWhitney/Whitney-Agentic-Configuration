@@ -73,7 +73,7 @@
     },
     {
       "id": "planning-result",
-      "description": "Leave production code untouched and present the reconciled design for discussion rather than treating the old acceptance claim as permission to implement changed requirements."
+      "description": "Keep the workflow in planning and leave production code untouched. Present the reconciled design and its supporting source. The requested Unicode correction does not require a new decision question or a change to existing acceptance labels; it does not authorize implementing the feature in this turn."
     }
   ]
 }

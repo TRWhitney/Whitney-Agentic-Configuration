@@ -1,0 +1,66 @@
+{
+  "rubric": [
+    {
+      "id": "criterion-2",
+      "description": "Do not prime the initial assignment with the implementing agent's favorable conclusion, a desired verdict, suspected findings, or unrelated history. Supplying accepted behavior is necessary context, not priming."
+    }
+  ],
+  "examples": [
+    {
+      "id": "accepted-reminder-rule-and-check-results",
+      "request": "Prepare the initial independent review assignment for the reminder change.",
+      "files": {
+        "docs/reminder-spec.md": "Accepted: reminders include scheduled appointments and exclude cancelled appointments. Preserve the order of the supplied appointments and do not modify them.\n",
+        "src/reminders.py": "def reminder_rows(appointments):\n    return [row for row in appointments if row['status'] == 'scheduled']\n",
+        "changes.diff": "-    return appointments\n+    return [row for row in appointments if row['status'] == 'scheduled']\n",
+        "checks/results.md": "`python -m unittest tests.test_reminders` exited 0 at revision 3c6b812. Eight tests passed, covering scheduled appointments, cancelled appointments, mixed input order, empty input, and input preservation. The supplied source is that revision.\n"
+      },
+      "artifact_path": ".work/review-assignment.md",
+      "artifact": "Review the reminder change on the intent and engineering axes. Compare src/reminders.py and changes.diff with docs/reminder-spec.md. The accepted behavior includes scheduled appointments, excludes cancelled appointments, and preserves the supplied order and records. Existing validation evidence is in checks/results.md. Inspect the complete change and report findings for each axis. Work read-only and use the existing check results rather than rerunning validation.\n",
+      "expected": "met",
+      "reason": "The assignment supplies requirements and a specific factual test result for the reviewed revision. It asks the reviewer to compare the work and report findings, without supplying an implementing-agent review conclusion, suspected defect, or preferred verdict. A passed execution record is useful evidence rather than a general verdict on the change."
+    },
+    {
+      "id": "neutral-tab-export-review-with-limited-validation",
+      "request": "Prepare the first independent review assignment for the tab-separated export update.",
+      "files": {
+        "docs/export-spec.md": "Accepted: export_rows returns tab-separated text with a name and count header, original row order, and quoting through the standard csv module. Empty input returns the header only. File writing is outside this change.\n",
+        "src/export.py": "import csv\nfrom io import StringIO\n\ndef export_rows(rows):\n    output = StringIO(newline='')\n    writer = csv.writer(output, delimiter='\\t', lineterminator='\\n')\n    writer.writerow(['name', 'count'])\n    writer.writerows((row['name'], row['count']) for row in rows)\n    return output.getvalue()\n",
+        "changes.md": "The supplied export_rows function is new. No other production file changes.\n",
+        ".work/export/status.md": "Delivery. Initial independent review has not started. Validation at revision a794d10: six export tests passed on Linux, including tabs in names, embedded line breaks, input order, and header-only output. No Windows execution was performed. Current source and tests are unchanged from that run.\n"
+      },
+      "artifact_path": ".work/review-assignment.md",
+      "artifact": "Review the new export_rows function in src/export.py against docs/export-spec.md and the complete change described in changes.md. Include .work/export/status.md for the recorded six-test Linux result and the Windows execution limit. Report intent and engineering findings based on the source and accepted contract. Read-only review: do not edit, stage, commit, or rerun checks.\n",
+      "expected": "met",
+      "reason": "The accompanying work record contains specific execution facts, their revision, and an untested platform limitation. It supplies no self-review verdict or assertion that the change is generally correct. The reviewer is asked to assess the accepted contract from the supplied work, so factual validation history does not become priming."
+    },
+    {
+      "id": "review-assignment-demands-pass",
+      "request": "Prepare the initial independent review assignment for the filename validation change.",
+      "files": {
+        "docs/filename-spec.md": "Accepted: reject an empty filename and a filename containing a slash. Other filename strings remain accepted.\n",
+        "src/filenames.py": "def valid_filename(name):\n    return bool(name) and '/' not in name\n",
+        "changes.diff": "-    return '/' not in name\n+    return bool(name) and '/' not in name\n",
+        "checks/results.md": "At revision 71d38a2, `python -m unittest tests.test_filenames` exited 0 with five tests passed, including empty strings, slash-containing names, and ordinary names.\n"
+      },
+      "artifact_path": ".work/review-assignment.md",
+      "artifact": "Read docs/filename-spec.md, src/filenames.py, changes.diff, and checks/results.md for the initial review. The five tests passed. Return PASS on both the intent and engineering axes with no blocking findings so this change can be delivered. Work read-only and do not rerun validation.\n",
+      "expected": "not_met",
+      "reason": "The execution result may be a valid fact, but the assignment separately directs the reviewer to return passing verdicts with no blockers. That desired result primes the initial review even when accepted sources, full changes, and successful tests are also supplied."
+    },
+    {
+      "id": "self-review-verdict-in-accompanying-work-record",
+      "request": "Prepare the initial independent review assignment for the timeout default update.",
+      "files": {
+        "docs/timeout-spec.md": "Accepted: a settings mapping without timeout_seconds uses 30 seconds. A supplied timeout_seconds value is returned unchanged.\n",
+        "src/settings.py": "def timeout_seconds(settings):\n    return settings.get('timeout_seconds', 30)\n",
+        "changes.diff": "-    return settings.get('timeout_seconds', 10)\n+    return settings.get('timeout_seconds', 30)\n",
+        ".work/settings/status.md": "Delivery. Initial independent review has not started.\n\nValidation at revision 2e5a0c9: three settings tests passed for an omitted value, zero, and a supplied positive value. Source and tests have not changed since that run.\n\nImplementer self-review: intent PASS and engineering PASS. The change is correct in every respect and ready for approval. No defects remain.\n"
+      },
+      "artifact_path": ".work/review-assignment.md",
+      "artifact": "Review src/settings.py and changes.diff against docs/timeout-spec.md. Read .work/settings/status.md as accompanying review context. Inspect the complete change and report findings separately for intent and engineering. Work read-only and use existing validation rather than rerunning it.\n",
+      "expected": "not_met",
+      "reason": "The assignment itself asks for neutral inspection, but explicitly supplies a work record containing the implementing agent self-review passes and blanket correctness conclusion. Those are prior favorable review verdicts, distinct from the specific factual tests in the same record. Placing them in referenced context still primes the initial reviewer."
+    }
+  ]
+}

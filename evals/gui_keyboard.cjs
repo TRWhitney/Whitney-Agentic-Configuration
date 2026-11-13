@@ -27,6 +27,21 @@ async function inspectKeyboard(browser, take) {
         const prefix=name+'/'+key, trigger=page.getByRole('button',{name,exact:true});
         if (!await trigger.count()) { check(prefix+'/reachable',false); continue; }
         const baseline=await appearance(trigger);
+        const continueNaming = async stage => {
+          const reached=await tabTo(trigger);
+          check(prefix+'/'+stage+'/reachable',reached);
+          const active=await appearance(trigger);
+          check(prefix+'/'+stage+'/focus-visible',reached && (active.outline || Object.keys(baseline).some(k=>k!=='outline' && baseline[k]!==active[k])));
+          if (!reached) return false;
+          await page.keyboard.press(key);
+          const reopened=await page.getByRole('dialog').isVisible();
+          check(prefix+'/'+stage+'/activate',reopened);
+          if (reopened) {
+            const field=page.getByRole('dialog').getByRole('textbox',{name:'Document name',exact:true});
+            check(prefix+'/'+stage+'/field-focused',await field.count() && await focused(field));
+          }
+          return reopened;
+        };
         const reached=await tabTo(trigger);
         check(prefix+'/reachable',reached);
         const active=await appearance(trigger);
@@ -46,16 +61,16 @@ async function inspectKeyboard(browser, take) {
         const cancelReached=await tabTo(cancel);
         check(prefix+'/cancel-reachable',cancelReached);
         if (cancelReached) await page.keyboard.press('Enter');
-        check(prefix+'/cancel-closes',!await dialog.isVisible());
-        check(prefix+'/cancel-focus-restored',await focused(trigger));
-        if (await dialog.isVisible()) await cancel.click();
-        if (await dialog.isVisible()) continue;
-        await trigger.click();
+        const cancelled=!await dialog.isVisible();
+        check(prefix+'/cancel-closes',cancelled);
+        if (!cancelled) { await cancel.click(); continue; }
+        if (!await continueNaming('after-cancel')) continue;
         if (await field.count()) {
           await field.fill(name==='New document' ? 'Keyboard station' : 'Renamed station');
           await field.press('Enter');
-          check(prefix+'/submit-closes',!await dialog.isVisible());
-          check(prefix+'/submit-focus-restored',await focused(trigger));
+          const submitted=!await dialog.isVisible();
+          check(prefix+'/submit-closes',submitted);
+          if (submitted && await continueNaming('after-submit')) await cancel.click();
         }
       }
     }

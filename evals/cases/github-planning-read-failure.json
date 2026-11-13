@@ -33,7 +33,9 @@
           ]
         },
         {
-          "kind": "no_publish"
+          "kind": "no_publish",
+          "target": "pull_requests",
+          "allow_pr_comments": true
         },
         {
           "kind": "progress",

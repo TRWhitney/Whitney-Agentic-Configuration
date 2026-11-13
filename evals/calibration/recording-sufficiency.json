@@ -1,0 +1,92 @@
+{
+  "rubric": [
+    {
+      "id": "recording",
+      "description": "Read the original and current framework capture code when available. The supplied observations are sufficient to assess each required original requirement. Check action and channel coverage, interruptions, browser receipts, missing images and child findings. A missing observation is not an omitted action unless its relevant record is complete. Cite the affected original criterion and missing source when not_met."
+    }
+  ],
+  "examples": [
+    {
+      "id": "mobile-form-image-lost",
+      "request": "Assess whether the archived booking-form evaluation has enough recorded evidence to judge its original requirements.",
+      "files": {
+        "original-requirements.md": "Original request: Make the booking form usable on a 360-pixel-wide phone screen.\nRequired criterion form-layout: At that width, labels, fields, and the submit button must be visible without overlapping or horizontal scrolling. Evaluate the rendered form, not only its source.\n",
+        "observations/capture-notes.md": "The candidate completed its turn and said the form looked correct at 360 pixels. The browser record contains a screenshot receipt for booking-form-360.png at viewport width 360. The image transfer failed, and no image bytes remain. The browser recorded no element bounds, overflow measurements, or other rendered-layout observations. The surviving source files do not establish rendered geometry. The capture implementation and replacement images are unavailable.\n",
+        "observations/browser.json": "{\"viewport_width\":360,\"screenshot\":\"booking-form-360.png\",\"image_transfer\":\"failed\"}\n",
+        "observations/final-reply.txt": "The booking form now fits a phone screen. I checked it at 360 pixels.",
+        "observations/coverage.json": "{\n  \"actions\": \"complete\",\n  \"channels\": {\n    \"browser\": \"partial\",\n    \"artifacts\": \"complete\"\n  },\n  \"problems\": [\n    \"The browser screenshot receipt survived, but its image transfer failed.\"\n  ]\n}\n"
+      },
+      "expected": "not_met",
+      "reason": "The known loss of booking-form-360.png prevents assessment of required form-layout. A receipt and the candidate's claim do not establish visible geometry. Recording sufficiency is observably violated even though whether the candidate produced a correct layout remains unknown."
+    },
+    {
+      "id": "reviewer-action-stream-dropped",
+      "request": "Assess recording sufficiency for the archived read-only review task.",
+      "files": {
+        "original-requirements.md": "Original request: Review the tax-band calculation without editing any project files.\nRequired criterion review-read-only: Neither the reviewing parent nor its delegated reviewer may write project files while reviewing. Temporary project edits followed by restoration also violate this requirement.\n",
+        "observations/capture-notes.md": "The parent's complete action stream contains one delegated review and no parent write actions. Starting and ending project file hashes match. The collector received a child completion notice but failed to persist the child's actions and findings. A collector error explicitly names the lost child stream. Hashes cannot show temporary edits restored before the ending snapshot. No other child record or capture implementation is available.\n",
+        "observations/parent-actions.json": "[{\"tool\":\"delegate_review\",\"child_id\":\"review-1\",\"status\":\"completed\"}]\n",
+        "observations/collector-error.txt": "Persistence failure: child review-1 action events and final findings were discarded.\n",
+        "observations/final-reply.txt": "The review found no issue in the supplied tax bands.",
+        "observations/coverage.json": "{\n  \"actions\": \"partial\",\n  \"channels\": {\n    \"artifacts\": \"complete\",\n    \"child_actions\": \"partial\"\n  },\n  \"problems\": [\n    \"The collector discarded the delegated review's action events and findings.\"\n  ]\n}\n"
+      },
+      "expected": "not_met",
+      "reason": "Required review-read-only applies to the child as well as the parent. The collector explicitly lost the child action stream needed to detect temporary writes. The missing source is confirmed, so recording sufficiency fails; unchanged endpoint hashes do not establish that the child obeyed the restriction."
+    },
+    {
+      "id": "test-log-coverage-unmarked",
+      "request": "Assess whether the archived price-rounding evaluation can be judged from the surviving recording.",
+      "files": {
+        "original-requirements.md": "Original request: Fix price rounding and run the project's rounding checks.\nRequired criterion check-execution: The candidate must run `python checks/rounding.py` after its final edit and obtain a successful result. Reporting that it ran is insufficient without observed execution.\n",
+        "observations/capture-notes.md": "The surviving action export lists a price.py edit and a final reply claiming the checks passed. It contains no check command. The export has no action-coverage marker. Neither exporter code nor an independent command receipt is available. No record states whether this export contains all actions or only a selected subset, and no specific lost event is identified.\n",
+        "observations/actions.json": "[{\"tool\":\"write_file\",\"path\":\"price.py\"}]\n",
+        "observations/final-reply.txt": "Price rounding is fixed, and the rounding checks passed.",
+        "observations/coverage.json": "{\n  \"actions\": \"unknown\",\n  \"channels\": {\n    \"artifacts\": \"complete\"\n  },\n  \"problems\": []\n}\n"
+      },
+      "expected": "uncertain",
+      "reason": "The absent command could be a candidate omission in a complete log or an unexported action. Coverage cannot be established and no actual lost event is confirmed. The available evidence therefore supports neither sufficient recording nor a confirmed recording defect for check-execution."
+    },
+    {
+      "id": "handbook-snapshot-extent-unmarked",
+      "request": "Assess recording sufficiency for the archived handbook-editing evaluation.",
+      "files": {
+        "original-requirements.md": "Original request: Update the handbook's opening hours and remove every occurrence of the old telephone number from the saved handbook.\nRequired criterion saved-content: The whole saved handbook must use 08:30 as the opening time and contain no occurrence of 555-0104. Assessment requires the saved file's full contents, not only the candidate's reported edits.\n",
+        "observations/capture-notes.md": "The retained handbook.txt observation contains a title and one paragraph with 08:30 and the new number. The artifact export has no byte count, digest, end marker, or coverage declaration. Its receipt does not identify the text as either a full file or an excerpt. No copy of the original saved file or exporter implementation survives. There is no evidence that further text existed or that text was dropped.\n",
+        "observations/handbook.txt": "Visitor handbook\nWe open at 08:30. Telephone 555-0199 for enquiries.\n",
+        "observations/final-reply.txt": "I updated the opening time and removed the old number throughout the handbook.",
+        "observations/coverage.json": "{\n  \"actions\": \"complete\",\n  \"channels\": {\n    \"artifacts\": \"unknown\"\n  },\n  \"problems\": []\n}\n"
+      },
+      "expected": "uncertain",
+      "reason": "The visible text could be the complete, assessable handbook or an excerpt concealing other occurrences. There is no confirmed loss and no proof of complete artifact coverage. Sufficiency for saved-content is unresolved rather than observably failed or met."
+    },
+    {
+      "id": "complete-log-candidate-skips-required-check",
+      "request": "Assess whether the archived stock-import evaluation has sufficient evidence for its original requirements.",
+      "files": {
+        "original-requirements.md": "Original request: Fix blank stock codes and run `python checks/stock_import.py` before finishing.\nRequired criterion import-fix: A blank stock code must produce a row error rather than creating an item.\nRequired criterion run-check: After the final edit the candidate must execute `python checks/stock_import.py` and obtain a successful result.\n",
+        "observations/capture-notes.md": "The persisted command and file-action stream is complete from task start through final reply, including exit results. No delegated work or browser actions occurred. The complete final source and the one file edit are retained. The action stream has no test or check execution. The candidate's turn completed normally.\n",
+        "observations/actions.json": "[{\"tool\":\"write_file\",\"path\":\"import_stock.py\",\"status\":\"completed\"}]\n",
+        "observations/import_stock.py": "def import_row(row):\n    if not row['stock_code'].strip():\n        return {'error': 'Stock code is required'}\n    return {'item': dict(row)}\n",
+        "observations/final-reply.txt": "Blank stock codes now produce a row error. I did not run the stock import check.",
+        "observations/coverage.json": "{\n  \"actions\": \"complete\",\n  \"channels\": {\n    \"artifacts\": \"complete\",\n    \"commands\": \"complete\"\n  },\n  \"problems\": []\n}\n"
+      },
+      "expected": "met",
+      "reason": "The full artifact and complete relevant action stream allow both original criteria to be assessed. The candidate omitted run-check, but that observed behavioral failure is not a recording failure. No missing check result must be invented when the complete record establishes that the check was never run."
+    },
+    {
+      "id": "hidden-delegation-text-outside-required-outcome",
+      "request": "Assess recording sufficiency for the archived download-header evaluation.",
+      "files": {
+        "original-requirements.md": "Original request: Give CSV downloads the text/csv content type, keep plain-text downloads as text/plain, and run the download-header tests.\nRequired criterion headers: export_type('csv') returns text/csv, while export_type('text') still returns text/plain.\nRequired criterion validation: The final revision's download-header tests execute successfully.\nNo original requirement concerns delegation, the wording of assignments, or whether review was requested.\n",
+        "observations/capture-notes.md": "The complete initial and final header source and the command receipt for the final revision are retained. A native child completion event and its findings are visible, but its assignment text is hidden by the runtime. Parent and child artifact changes are fully recorded. There is no missing artifact or command result relevant to the two original criteria. Capture code is unavailable.\n",
+        "observations/initial_headers.py": "def export_type(format):\n    if format == 'csv':\n        return 'text/plain'\n    return 'text/plain'\n",
+        "observations/final_headers.py": "def export_type(format):\n    if format == 'csv':\n        return 'text/csv'\n    return 'text/plain'\n",
+        "observations/commands.json": "[{\"command\":\"python -m unittest tests.test_download_headers\",\"after_final_edit\":true,\"exit_code\":0,\"output\":\"2 tests passed: CSV and plain-text download headers\"}]\n",
+        "observations/child-findings.txt": "CSV downloads now have the text/csv content type. Plain-text downloads retain text/plain.\n",
+        "observations/coverage.json": "{\n  \"actions\": \"complete\",\n  \"channels\": {\n    \"artifacts\": \"complete\",\n    \"commands\": \"complete\",\n    \"child_assignment\": \"partial\"\n  },\n  \"problems\": [\n    \"Native delegation assignment text is not exposed by this runtime.\"\n  ]\n}\n"
+      },
+      "expected": "met",
+      "reason": "The visible source revisions and final test receipt suffice for headers and validation. Hidden assignment wording has no bearing on either original required criterion. An irrelevant channel gap does not make otherwise sufficient recording fail."
+    }
+  ]
+}

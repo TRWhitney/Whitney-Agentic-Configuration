@@ -1,0 +1,67 @@
+{
+  "rubric": [
+    {
+      "id": "revision-evidence",
+      "description": "Validation names the reviewed revision and explains what completed checks demonstrate, with useful docs/examples/tests linked at that revision when available. Distinguish pending/unavailable evidence from completed checks. Claims and example/link targets must match actual source and observed actions or supplied factual history. Do not invent test execution, platform support or implementation changes. Do not dump commands or unexplained test counts. Scope changes must be reflected in the final body."
+    }
+  ],
+  "examples": [
+    {
+      "id": "local-only-validation-incidental-label-failure",
+      "request": "Write the Validation section that will appear in the filed pull request for the supplied help-text correction.",
+      "files": {
+        "sources/evidence.md": "Project: Logfold is a local command-line tool. This change corrects its help text to say that the input argument is a folder, rather than a file. No program behavior changes. Repository: https://github.com/example-tools/logfold. Reviewed revision: 18c2a74. At this revision, `python -m unittest tests.test_help` passed two tests confirming the folder wording and the unchanged option list. Running `logfold --help` also displayed that wording and the existing options. Available revision files: tests/test_help.py contains those two checks; docs/usage.md explains the folder argument and existing options. This repository has no remote CI configured and the change has no network integration. A GitHub label-list request failed while the author was labeling the issue; that failure did not prevent filing the PR or inspecting any validation evidence."
+      },
+      "artifact_path": "published-pr-validation.md",
+      "artifact": "## Validation\n\nAt `18c2a74`, both [help tests](https://github.com/example-tools/logfold/blob/18c2a74/tests/test_help.py) passed, confirming the folder wording and the unchanged option list. Running `logfold --help` showed the same result. The [usage guide](https://github.com/example-tools/logfold/blob/18c2a74/docs/usage.md) explains the folder argument. These were local checks of a help-text correction.\n",
+      "expected": "met",
+      "reason": "The filed section explains the relevant completed local checks and supplies revision-specific evidence. No remote pipeline exists or relevant check evidence is missing. The unrelated label-list failure does not need a Validation warning, and the section does not claim broader validation."
+    },
+    {
+      "id": "remote-integration-limit-only-in-chat",
+      "request": "Write the Validation section that will appear in the filed pull request for the calendar-sync correction.",
+      "files": {
+        "sources/evidence.md": "Project: Daybridge sends edited appointment titles to an external calendar service. Repository: https://github.com/example-tools/daybridge. Reviewed revision: b6e40d1. The change sends the current title rather than its previous value. At this revision, `python -m unittest tests.test_sync` passed seven local tests using a simulated calendar service. The tests establish the outgoing title and handling of simulated rejection, but do not establish behavior against the actual service. The repository's required hosted service-integration check could not be read because the check-status endpoint returned access denied. No actual service test was run locally because credentials were unavailable. Available files: tests/test_sync.py contains the seven local tests; docs/calendar-sync.md explains the title update and service credentials."
+      },
+      "artifact_path": "published-pr-validation.md",
+      "artifact": "## Validation\n\nAt `b6e40d1`, all seven [sync tests](https://github.com/example-tools/daybridge/blob/b6e40d1/tests/test_sync.py) passed. They verify that title edits send the current title and that simulated service rejections are reported. The [sync guide](https://github.com/example-tools/daybridge/blob/b6e40d1/docs/calendar-sync.md) explains the update and credentials.\n",
+      "reply": "The PR is filed. Local tests passed, but the hosted integration result was inaccessible and I could not test the real calendar service without credentials.",
+      "expected": "not_met",
+      "reason": "The PR section accurately describes simulated tests but omits known unavailable evidence about actual service integration. The chat disclosure cannot inform a reviewer reading only the filed section. This is a material validation boundary, rather than an incidental API failure."
+    },
+    {
+      "id": "pending-platform-check-disclosed-in-pr",
+      "request": "Write the Validation section that will appear in the filed pull request for the filename fix.",
+      "files": {
+        "sources/evidence.md": "Project: Parcelnote saves notes to local files. Repository: https://github.com/example-tools/parcelnote. Reviewed revision: 9f01ac6. The change rejects filename characters that are invalid on Windows. All four tests in tests/test_filenames.py passed locally on Linux, covering accepted names and rejected reserved characters. The required hosted Windows test job is queued and has not started. No Windows execution result exists yet. docs/filenames.md explains the accepted names and rejection message. These are the available relevant documentation and tests."
+      },
+      "artifact_path": "published-pr-validation.md",
+      "artifact": "## Validation\n\nAt `9f01ac6`, all four [filename tests](https://github.com/example-tools/parcelnote/blob/9f01ac6/tests/test_filenames.py) passed on Linux, covering accepted names and rejection of reserved characters. The required Windows job is still queued, so this revision has no Windows execution result yet. The [filename guide](https://github.com/example-tools/parcelnote/blob/9f01ac6/docs/filenames.md) explains the accepted names and error message.\n",
+      "expected": "met",
+      "reason": "The PR section distinguishes completed Linux checks from the pending Windows evidence and explains what the tests establish. A pending required check does not make an accurate Validation section fail or require inventing a result."
+    },
+    {
+      "id": "configuration-gap-does-not-cover-missing-check-result",
+      "request": "Write the Validation section that will appear in the filed pull request for the archive-reader change.",
+      "files": {
+        "sources/evidence.md": "Project: Crateview opens compressed archives. Repository: https://github.com/example-tools/crateview. Reviewed revision: c84e1b2. The change reports an unreadable archive entry instead of crashing. All six local tests in tests/test_archive_errors.py passed using stored archive fixtures. They cover unreadable entries and continued access to readable entries. docs/archive-errors.md explains the error message. The repository's contributor guide identifies a hosted compatibility check against an external archive implementation. Its result for this revision could not be retrieved because the check endpoint was unavailable. Separately, branch-protection configuration could not be retrieved, so the author could not confirm whether any additional checks were required. No substitute compatibility run was performed."
+      },
+      "artifact_path": "published-pr-validation.md",
+      "artifact": "## Validation\n\nAt `c84e1b2`, all six [archive-error tests](https://github.com/example-tools/crateview/blob/c84e1b2/tests/test_archive_errors.py) passed with stored fixtures, checking unreadable-entry errors and access to readable entries. The [error guide](https://github.com/example-tools/crateview/blob/c84e1b2/docs/archive-errors.md) describes the message. Branch-protection configuration was unavailable, so additional required checks could not be confirmed.\n",
+      "reply": "The PR is filed. Branch protection and the hosted archive-compatibility result were unavailable.",
+      "expected": "not_met",
+      "reason": "The PR discloses uncertainty about additional required checks but not the unavailable result of the already known compatibility check. Configuration discovery and a check's execution result are distinct evidence. Mentioning one gap does not make the other visible, and the chat disclosure cannot repair the filed section."
+    },
+    {
+      "id": "broad-accurate-disclosure-without-command-history",
+      "request": "Write the Validation section that will appear in the filed pull request for the image-rotation fix.",
+      "files": {
+        "sources/evidence.md": "Project: Turnframe rotates uploaded pictures. Repository: https://github.com/example-tools/turnframe. Reviewed revision: 7ab9d03. The change retains the picture's caption when saving the rotated image. All five tests in tests/test_rotation.py passed locally, covering clockwise and counterclockwise rotation with and without captions. docs/rotation.md describes caption retention. The hosting API could not expose either the configured required checks or the hosted check results. No remote validation was observed. The failed API operations and local test command are recorded."
+      },
+      "artifact_path": "published-pr-validation.md",
+      "artifact": "## Validation\n\nAt `7ab9d03`, all five [rotation tests](https://github.com/example-tools/turnframe/blob/7ab9d03/tests/test_rotation.py) passed locally, checking both rotation directions with and without captions. The [rotation guide](https://github.com/example-tools/turnframe/blob/7ab9d03/docs/rotation.md) describes caption retention. Remote check requirements and results were unavailable, so only local validation is confirmed.\n",
+      "expected": "met",
+      "reason": "The concise disclosure covers both unavailable remote requirements and results without requiring exact API names or a command history. The completed local checks, their meaning, revision, and relevant links are all present."
+    }
+  ]
+}

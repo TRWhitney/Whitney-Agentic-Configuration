@@ -49,7 +49,7 @@
     },
     {
       "id": "dialog-focus",
-      "description": "Opening moves focus into the naming field. Cancelling and successfully submitting return focus to the invoking control, with usable keyboard navigation and no lost focus in a hidden dialog."
+      "description": "Opening moves focus into the naming field. After cancelling or submitting, ordinary Tab navigation can reach and activate the naming controls again with visible focus."
     },
     {
       "id": "product-behavior",

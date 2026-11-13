@@ -21,7 +21,9 @@
       "prompt": "Implement name search from issue #11.",
       "checks": [
         {
-          "kind": "no_publish"
+          "kind": "no_publish",
+          "target": "pull_requests",
+          "allow_pr_comments": true
         },
         {
           "kind": "unchanged",

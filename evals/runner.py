@@ -229,6 +229,11 @@ def publication_request(arguments: list[str]) -> bool:
     return bool(action and action[0] in mutations.get(arguments[0], set()))
 
 
+def pull_request_comment(arguments: list[str]) -> bool:
+    parts = _positionals(arguments)
+    return parts[:1] == ["pr"] and _positionals(parts[1:])[:1] == ["comment"]
+
+
 def pull_request_target(arguments: list[str]) -> bool:
     parts = _positionals(arguments)
     return bool(
@@ -391,6 +396,11 @@ def check_result(
             for commit in commits
         ]
         expected_groups = [frozenset(paths) for paths in check.groups]
+        normalized_groups = [
+            group
+            - {path for path, owner in check.optional_paths.items() if owner in group}
+            for group in groups
+        ]
         dirty = set(git(workspace.root, "diff", "HEAD", "--name-only").splitlines())
         dirty.update(
             git(
@@ -398,7 +408,7 @@ def check_result(
             ).splitlines()
         )
         return (
-            sorted(groups, key=sorted) == sorted(expected_groups, key=sorted)
+            sorted(normalized_groups, key=sorted) == sorted(expected_groups, key=sorted)
             and dirty == set(check.uncommitted),
             f"Commit path groups: {[sorted(group) for group in groups]}; "
             f"uncommitted: {sorted(dirty)}",
@@ -608,21 +618,29 @@ def check_result(
         return matched != check.absent, f"File pattern: {check.path}"
     if isinstance(check, ProgressCheck):
         progress = workspace.progress(thread)
-        expected: dict[str, str | None] = {
-            "workflow": check.workflow,
-            "state": check.state,
+        states = {
+            (check.workflow, check.state),
+            *((state.workflow, state.state) for state in check.alternatives),
         }
+        expected: dict[str, str | None] = {}
         if not check.ignore_substate:
             expected["substate"] = check.substate
         if check.record is not None:
             expected["record"] = str(workspace.file(check.record))
-        passed = progress is not None and all(
-            progress.get(key) == value for key, value in expected.items()
+        passed = (
+            progress is not None
+            and (progress.get("workflow"), progress.get("state")) in states
+            and all(progress.get(key) == value for key, value in expected.items())
         )
         return (
             passed,
-            f"Saved state: {check.workflow}.{check.state}, substate: {check.substate}; "
-            f"record: {progress.get('record') if progress else None}",
+            (
+                f"Saved state: {progress.get('workflow')}.{progress.get('state')}, "
+                f"substate: {progress.get('substate')}; "
+                f"record: {progress.get('record')}"
+                if progress is not None
+                else "No saved workflow state."
+            ),
         )
     if isinstance(check, CommitCountCheck):
         count = int(git(workspace.root, "rev-list", "--count", "HEAD"))
@@ -649,6 +667,7 @@ def check_result(
     mutation = any(
         publication_request(call)
         and (check.target == "all" or pull_request_target(call))
+        and not (check.allow_pr_comments and pull_request_comment(call))
         for call in calls
     )
     return (

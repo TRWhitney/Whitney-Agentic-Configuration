@@ -18,6 +18,9 @@
       "checks": [
         {
           "kind": "commit_groups",
+          "optional_paths": {
+            ".work/limit/status.md": "src/limits.py"
+          },
           "groups": [
             [
               "src/labels.py",

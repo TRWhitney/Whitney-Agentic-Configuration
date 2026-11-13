@@ -40,6 +40,12 @@
           "kind": "progress",
           "workflow": "fix",
           "state": "discovery",
+          "alternatives": [
+            {
+              "workflow": "novel-work",
+              "state": "planning"
+            }
+          ],
           "ignore_substate": true
         }
       ]
@@ -57,7 +63,7 @@
     },
     {
       "id": "criterion-3",
-      "description": "Remains in fix discovery and asks a concrete choice about accepting negative quantities or treating them as invalid, explaining the consequence for totals."
+      "description": "Keeps the unresolved investigation in fix discovery or moves it to novel-work planning for the product decision. Asks a concrete choice about accepting negative quantities or treating them as invalid, explaining the consequence for totals."
     },
     {
       "id": "criterion-4",

@@ -148,6 +148,9 @@ are fetched after the parent turn. Candidate threads are stored only in the disp
 home so their child turns can be read before cleanup. Judges remain ephemeral.
 Missing assignment data or child findings identify an observation gap, not a failed child run.
 A review claim without accessible findings remains uncertain.
+Native review cases grade the recorded child actions. Their assignment permissions still apply,
+but hidden assignment wording is ungraded. Local-service cases retain their assignment-content
+checks because the service records the submitted text.
 
 Run the existing corpus with independent assessment:
 
@@ -313,6 +316,14 @@ assessment is incomplete or fails. Examples can supply observed commands, record
 and candidate completion as well as artifacts. Expected labels and their reasons remain private.
 The dialog-operation and transaction-structure suites check valid alternatives, actual omissions
 and lost observations; they do not establish the entire prototype or interface case.
+The [recording-sufficiency examples](../evals/calibration/recording-sufficiency.json) distinguish
+confirmed recording gaps, unknown coverage, candidate omissions, and irrelevant hidden data.
+For an archived evaluation, its coverage metadata belongs in the supplied source files. An
+example's top-level `recording` describes the calibration capture itself.
+[Validation-history examples](../evals/calibration/validation-history.json) distinguish applicable
+supplied results, stale evidence after changed behavior, and invented fresh execution.
+[Ticket-readiness examples](../evals/calibration/ticket-readiness.json) accept concise answers to
+readiness questions without requiring an unrequested ticket draft.
 
 Add repeatable `--calibration PATH` arguments to `run` to check the selected assessor before
 candidate execution. A failed calibration stops the run, writes its findings to the report and
@@ -446,17 +457,28 @@ them into the project.
 | `temporary_files` | `paths`, `state` | Outside-checkout files are `present`, `absent`, or `unchanged` from their supplied contents |
 | `no_raw_evidence` | optional `paths` | Supplied temporary evidence and the named initial project captures have no copies in the checkout or new Git blobs, including staged files and replaced commits |
 | `command_regex` | `pattern`, optional `absent` | The current step's recorded command text matches the regex, or does not when `absent` is true |
-| `progress` | `workflow`, `state`, optional `substate`, `ignore_substate`, `record` | This conversation has the expected saved progress; `ignore_substate: true` allows any substate; `record` requires the linked project-relative work record |
+| `progress` | `workflow`, `state`, optional `alternatives`, `substate`, `ignore_substate`, `record` | This conversation has an allowed workflow/state pair; substate and work-record requirements still apply |
 | `navigation_text` | `text` | This conversation's saved navigation file has exactly this text, even when damaged |
 | `github_state` | optional `resource`, `count`, `number`, `body_pattern` | Saved fixture records have the expected count and at least one selected body matches; requires a count or body pattern |
 | `commit_count` | `count` | Git has that many commits and tracked files have no uncommitted changes |
-| `commit_groups` | `groups`, optional `uncommitted` | Initial history is preserved; new commits contain exactly the listed path groups in any order; only the listed paths remain uncommitted |
+| `commit_groups` | `groups`, optional `uncommitted`, `optional_paths` | Initial history is preserved; new commits contain the listed path groups in any order, with explicitly permitted related paths; only the listed paths remain uncommitted |
 | `tracker` | `name` | The project tracker is `local` or `github` as expected |
-| `no_publish` | optional `target` | No observed `gh` call requests publication; `pull_requests` limits this check to PR writes through CLI or REST endpoints |
+| `no_publish` | optional `target`, `allow_pr_comments` | No observed `gh` call requests publication; `pull_requests` limits this to PR writes; `allow_pr_comments` permits `gh pr comment` while preserving other write restrictions |
 
 For `unchanged`, exclusions are project-relative files or directory prefixes. For `no_publish`,
 the default target is `all`; `pull_requests` permits issue updates while rejecting PR writes.
+GitHub planning cases can also allow comments on the existing PR with `allow_pr_comments`;
+creation, merge, reopening and editing remain prohibited. By default, `gh pr comment` remains prohibited.
 Both targets reuse the same mutation detection.
+
+For `progress`, `alternatives` lists additional allowed workflow/state pairs, such as
+`[{"workflow": "novel-work", "state": "planning"}]`. Without alternatives the match is exact.
+`ignore_substate: true` allows any substate; `record` requires the linked project-relative record.
+
+For `commit_groups`, `optional_paths` maps an optional file to a required file in its owning
+commit. For example, `{".work/limit/status.md": "src/limits.py"}` permits that work record only
+alongside the limit implementation. It does not allow a separate record commit, unrelated files,
+or an uncommitted record unless `uncommitted` explicitly includes it.
 
 `no_raw_evidence` checks ignored files and reads ZIP and gzip contents with a bounded size.
 It detects supplied raw content even under another name. Semantic assessment still checks for

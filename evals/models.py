@@ -183,10 +183,14 @@ class ProseCheck(Definition):
     forbidden_patterns: list[RegexPattern] = Field(default_factory=list)
 
 
-class ProgressCheck(Definition):
-    kind: Literal["progress"] = "progress"
+class ProgressState(Definition):
     workflow: Identifier
     state: Identifier
+
+
+class ProgressCheck(ProgressState):
+    kind: Literal["progress"] = "progress"
+    alternatives: list[ProgressState] = Field(default_factory=list)
     substate: Identifier | None = None
     ignore_substate: bool = False
     record: RelativePath | None = None
@@ -201,11 +205,23 @@ class CommitGroupsCheck(Definition):
     kind: Literal["commit_groups"] = "commit_groups"
     groups: list[Annotated[list[RelativePath], Field(min_length=1)]]
     uncommitted: list[RelativePath] = Field(default_factory=list)
+    optional_paths: dict[RelativePath, RelativePath] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def optional_paths_have_owners(self) -> CommitGroupsCheck:
+        required = {path for group in self.groups for path in group}
+        if any(
+            path in required or owner not in required
+            for path, owner in self.optional_paths.items()
+        ):
+            raise ValueError("Optional commit paths must name a required owner path.")
+        return self
 
 
 class NoPublishCheck(Definition):
     kind: Literal["no_publish"] = "no_publish"
     target: Literal["all", "pull_requests"] = "all"
+    allow_pr_comments: bool = False
 
 
 class TrackerCheck(Definition):

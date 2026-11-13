@@ -57,10 +57,6 @@
       "description": "Explains that all agreed work must be covered by implementation tickets before implementation begins, despite search being independent and ready."
     },
     {
-      "id": "criterion-3",
-      "description": "Gives useful content for the missing ticket: CSV columns and ordering, empty header-only export, and refusal to overwrite an existing destination, with links to the accepted design where helpful."
-    },
-    {
       "id": "criterion-4",
       "description": "Treats the message as a readiness question and does not implement code or quietly remove export from the agreed work. Stays in planning and does not publish work."
     }

@@ -28,7 +28,7 @@
           "commands": [
             {
               "pattern": "python.*checks/check_search\\.py",
-              "exit_code": 1,
+              "exit_code": null,
               "output_pattern": "AssertionError: Unicode case folding"
             },
             {

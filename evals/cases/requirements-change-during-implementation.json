@@ -53,7 +53,7 @@
   "rubric": [
     {
       "id": "criterion-1",
-      "description": "Recognizes that the second format and caller-selection interface are unspecified product/API choices, returns the effort to planning, and asks a concrete question to settle them."
+      "description": "Recognizes that the second format and caller-selection interface are unspecified product/API choices, returns the effort to planning, and asks a concrete next question while leaving other undecided choices open."
     },
     {
       "id": "criterion-2",

@@ -157,55 +157,35 @@ class ProcedureCoverageTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stderr)
             self.assertIn("Saved", run.stdout)
 
-    def test_keyboard_check_rejects_pointer_only_and_lost_focus(self) -> None:
+    def keyboard_failures(self, result: dict[str, JsonValue]) -> list[str]:
+        rows = TypeAdapter(list[dict[str, JsonValue]]).validate_python(
+            result["measurements"]
+        )
+        return [str(row["name"]) for row in rows if not row["matched"]]
+
+    def native_naming_controls(self, w: Workspace) -> None:
+        files = json.loads(
+            (SOURCE / "evals/cases/fixtures/gui-project.json").read_text()
+        )
+        w.file("app/components/toolbar.js").write_text(
+            files["app/components/toolbar.js"]
+        )
+
+    def test_keyboard_check_accepts_source_behavior_and_rejects_pointer_only(
+        self,
+    ) -> None:
         from evals.gui import collect_browser
 
         case = self.case("gui-keyboard-naming")
-
-        def failures(result: dict[str, JsonValue]) -> list[str]:
-            rows = TypeAdapter(list[dict[str, JsonValue]]).validate_python(
-                result["measurements"]
-            )
-            return [str(row["name"]) for row in rows if not row["matched"]]
-
         with make_workspace(SOURCE, case) as w:
-            bad = collect_browser(w, "keyboard")
-            self.assertTrue(any("activate" in n for n in failures(bad)), failures(bad))
-            self.assertTrue(
-                any("focus-restored" in n for n in failures(bad)), failures(bad)
-            )
-            files = json.loads(
-                (SOURCE / "evals/cases/fixtures/gui-project.json").read_text()
-            )
-            w.file("app/components/toolbar.js").write_text(
-                files["app/components/toolbar.js"]
-            )
-            naming = w.file("app/components/naming.js")
-            naming.write_text(
-                naming.read_text()
-                .replace(
-                    "const render = event => {",
-                    "let invoker, wasOpen=false;\n  const render = event => {",
-                )
-                .replace(
-                    "const dialog = notebook.dialog;",
-                    "const dialog = notebook.dialog;\n"
-                    "    if (dialog && !wasOpen) invoker=document.activeElement;",
-                )
-                .replace(
-                    "if (!dialog) return;",
-                    "if (!dialog) { if(wasOpen) invoker?.focus();"
-                    " wasOpen=false; return; }\n    wasOpen=true;",
-                )
-            )
-            self.assertEqual(failures(collect_browser(w, "keyboard")), [])
+            bad = self.keyboard_failures(collect_browser(w, "keyboard"))
+            self.assertTrue(any("activate" in name for name in bad), bad)
+            self.native_naming_controls(w)
+            # The accepted naming source closes without restoring its invoker.
+            self.assertEqual(self.keyboard_failures(collect_browser(w, "keyboard")), [])
             toolbar = w.file("app/components/toolbar.js")
             toolbar.write_text(
-                case.files["app/components/toolbar.js"]
-                + "\n// Keyboard semantics for the custom control.\n"
-            )
-            toolbar.write_text(
-                toolbar.read_text().replace(
+                case.files["app/components/toolbar.js"].replace(
                     "root.querySelector('#new').onclick",
                     "root.querySelector('#new').onkeydown = event => {"
                     " if(['Enter',' '].includes(event.key)){event.preventDefault();"
@@ -218,7 +198,78 @@ class ProcedureCoverageTests(unittest.TestCase):
                 css.read_text() + "\n#new:focus-visible {outline:2px solid #1859a6;"
                 "outline-offset:2px;}\n"
             )
-            self.assertEqual(failures(collect_browser(w, "keyboard")), [])
+            self.assertEqual(self.keyboard_failures(collect_browser(w, "keyboard")), [])
+
+    def test_keyboard_check_allows_another_usable_post_close_focus_target(
+        self,
+    ) -> None:
+        from evals.gui import collect_browser
+
+        case = self.case("gui-keyboard-naming")
+        with make_workspace(SOURCE, case) as w:
+            self.native_naming_controls(w)
+            naming = w.file("app/components/naming.js")
+            naming.write_text(
+                naming.read_text().replace(
+                    "if (!dialog) return;",
+                    "if (!dialog) { document.querySelector('textarea').focus();"
+                    " return; }",
+                )
+            )
+            self.assertEqual(self.keyboard_failures(collect_browser(w, "keyboard")), [])
+
+    def test_keyboard_check_rejects_unusable_post_close_navigation(self) -> None:
+        from evals.gui import collect_browser
+
+        case = self.case("gui-keyboard-naming")
+        for phase in ("cancel", "submit"):
+            with self.subTest(phase=phase), make_workspace(SOURCE, case) as w:
+                self.native_naming_controls(w)
+                setup = "let wasOpen = false, trapOnClose = "
+                setup += "true;\n" if phase == "cancel" else "false;\n"
+                if phase == "submit":
+                    setup += (
+                        "root.addEventListener('submit', "
+                        "() => {trapOnClose=true;}, true);\n"
+                    )
+                naming = w.file("app/components/naming.js")
+                naming.write_text(
+                    naming.read_text()
+                    .replace("const input =", setup + "  const input =")
+                    .replace(
+                        "if (!dialog) return;",
+                        "if (!dialog) { if(wasOpen && trapOnClose) "
+                        "document.addEventListener('keydown', event => {"
+                        "if(event.key==='Tab')event.preventDefault();}, true);"
+                        " return; } wasOpen=true;",
+                    )
+                )
+                bad = self.keyboard_failures(collect_browser(w, "keyboard"))
+                self.assertTrue(
+                    any("after-" + phase + "/reachable" in name for name in bad), bad
+                )
+
+    def test_keyboard_check_rejects_missing_control_or_field_focus(self) -> None:
+        from evals.gui import collect_browser
+
+        case = self.case("gui-keyboard-naming")
+        for defect in ("control", "field"):
+            with self.subTest(defect=defect), make_workspace(SOURCE, case) as w:
+                self.native_naming_controls(w)
+                if defect == "control":
+                    css = w.file("app/app.css")
+                    css.write_text(
+                        css.read_text()
+                        + "\nbutton:focus-visible {outline:none!important;"
+                        "box-shadow:none!important;}\n"
+                    )
+                    failure = "focus-visible"
+                else:
+                    naming = w.file("app/components/naming.js")
+                    naming.write_text(naming.read_text().replace("input.focus();", ""))
+                    failure = "field-focused"
+                bad = self.keyboard_failures(collect_browser(w, "keyboard"))
+                self.assertTrue(any(failure in name for name in bad), bad)
 
     def test_refactor_oracle_accepts_shared_writer_and_rejects_output_drift(
         self,

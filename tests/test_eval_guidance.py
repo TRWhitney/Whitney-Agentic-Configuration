@@ -90,6 +90,84 @@ class GuidanceTests(unittest.TestCase):
                     mode == "separate",
                 )
 
+    def test_completed_result_can_include_its_existing_work_record(self) -> None:
+        case = self.cases()["commit-completed-work-across-tree"]
+        check = next(
+            c for c in case.steps[0].checks if isinstance(c, CommitGroupsCheck)
+        )
+        with make_workspace(SOURCE, case) as workspace:
+            record = workspace.root / ".work/limit/status.md"
+            record.write_text(record.read_text() + "\nVerified limit: 20 items.\n")
+            git(workspace.root, "add", "src/labels.py", "docs/labels.md")
+            git(workspace.root, "commit", "-qm", "Label")
+            git(
+                workspace.root,
+                "add",
+                "src/limits.py",
+                "docs/limits.md",
+                ".work/limit/status.md",
+            )
+            git(workspace.root, "commit", "-qm", "Limit")
+            passed, detail = check_result(check, Observation(), workspace, "thread", [])
+            self.assertTrue(passed, detail)
+
+    def test_missing_prerequisite_allows_approved_repair_before_export(self) -> None:
+        case = self.cases()["completed-prerequisite-is-missing"]
+        with make_workspace(SOURCE, case) as workspace:
+            source = workspace.file("src/app.py").read_text()
+        search = (
+            "\ndef search_items(items, query):\n"
+            "    return [item for item in items "
+            "if query.casefold() in item['name'].casefold()]\n"
+        )
+        for export in ("", "\ndef export_matches(items, query):\n    return ''\n"):
+            with self.subTest(export=bool(export)):
+                result, _ = capture_case(
+                    case,
+                    {"src/app.py": source + search + export},
+                    "Repaired the approved prerequisite; export remains pending.",
+                )
+                self.assertEqual(
+                    result.mechanical_status,
+                    "fail" if export else "pass",
+                    str(result.checks),
+                )
+
+    def test_optional_work_record_stays_with_its_result(self) -> None:
+        case = self.cases()["commit-completed-work-across-tree"]
+        check = next(
+            c for c in case.steps[0].checks if isinstance(c, CommitGroupsCheck)
+        )
+        for mode in ("unchanged", "wrong-result", "separate", "dirty", "unrelated"):
+            with self.subTest(mode=mode), make_workspace(SOURCE, case) as workspace:
+                record = ".work/limit/status.md"
+                if mode != "unchanged":
+                    path = workspace.root / record
+                    path.write_text(path.read_text() + "\nVerified limit: 20 items.\n")
+                label_paths = ["src/labels.py", "docs/labels.md"]
+                if mode == "wrong-result":
+                    label_paths.append(record)
+                git(workspace.root, "add", *label_paths)
+                git(workspace.root, "commit", "-qm", "Label")
+                limit_paths = ["src/limits.py", "docs/limits.md"]
+                if mode == "unrelated":
+                    workspace.file("extra.md").write_text("Unrelated work.\n")
+                    limit_paths.extend([record, "extra.md"])
+                git(workspace.root, "add", *limit_paths)
+                git(workspace.root, "commit", "-qm", "Limit")
+                if mode == "separate":
+                    git(workspace.root, "add", record)
+                    git(workspace.root, "commit", "-qm", "Record")
+                passed, detail = check_result(
+                    check, Observation(), workspace, "thread", []
+                )
+                self.assertEqual(passed, mode == "unchanged", detail)
+
+    def test_optional_commit_path_requires_an_existing_group_owner(self) -> None:
+        for optional in ({"record.md": "missing.py"}, {"app.py": "app.py"}):
+            with self.subTest(optional=optional), self.assertRaises(ValueError):
+                CommitGroupsCheck(groups=[["app.py"]], optional_paths=optional)
+
     def test_history_case_accepts_correct_records_and_rejects_wrong_folding(
         self,
     ) -> None:
