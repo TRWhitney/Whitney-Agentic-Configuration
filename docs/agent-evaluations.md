@@ -303,6 +303,9 @@ restoration from that input. The integration case requests native compaction in 
 conversation and waits for its completed compaction item and completed turn before continuing.
 It uses a short conversation and does not fill the context window.
 
+Native sleep events are retained as `native_item` actions. Unsupported native events retain their
+payloads and still mark action coverage partial, so diagnosis can inspect what was captured.
+
 ## Repair an eval
 
 Calibration exits 0 only when every expected judgment agrees, 1 on disagreement, and 2 when
@@ -557,6 +560,14 @@ until assessment finishes, outside the project. A local worker runs Chromium out
 candidate sandbox and serves the disposable project on a private loopback origin. It blocks other browser origins and sockets. The candidate keeps
 its usual sandbox. The same browser launcher supports private reference comparisons. Private
 observations are labeled separately and do not count as verification performed by the candidate.
+
+Browser receipts include a `navigation` record with `status` (`complete`, `partial`, or
+`unavailable`), `events`, and any observer error. Main-document commits receive an opaque
+`document_sequence`; loads retain their commit attribution. Same-document URL changes do not
+create another identity. Events identify the action during which they were observed and, for
+loads, the commit action. A key press alone does not establish a reload. Inspect the relevant
+navigation status and later UI observations before accepting a navigation claim. Observer
+failure remains explicit in the retained journal, including when the browser command fails.
 
 The judge opens PNG files alongside complete browser observations as needed. Images with
 identical contents share a file. Each browser record keeps its origin, actions, and capture

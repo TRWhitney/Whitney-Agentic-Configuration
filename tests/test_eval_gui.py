@@ -398,6 +398,156 @@ class GuiTests(unittest.TestCase):
 
 
 class BrowserEvidenceTests(unittest.TestCase):
+    def test_document_load_receipts_distinguish_navigation_from_keys_and_urls(
+        self,
+    ) -> None:
+        import subprocess
+        import tempfile
+        from pathlib import Path
+
+        from evals.gui import candidate_browser, install_browser
+        from evals.models import CaseSpec
+
+        page = (
+            '<!doctype html><a id="next" href="page.html?again">Open again</a>'
+            "<script>sessionStorage.loads=Number(sessionStorage.loads||0)+1;</script>"
+        )
+        case = CaseSpec.model_validate(
+            {
+                "id": "document-load-receipts",
+                "tags": [],
+                "files": {"page.html": page},
+                "steps": [
+                    {
+                        "kind": "message",
+                        "prompt": "Inspect the page.",
+                        "checks": [{"kind": "no_publish"}],
+                    }
+                ],
+            }
+        )
+        steps = [
+            {
+                "action": "evaluate",
+                "script": "window.marker='original'; Number(sessionStorage.loads)",
+            },
+            {"action": "press", "key": "Control+r"},
+            {
+                "action": "evaluate",
+                "script": (
+                    "({marker:window.marker, loads:Number(sessionStorage.loads)})"
+                ),
+            },
+            {
+                "action": "evaluate",
+                "script": (
+                    "location.hash='section'; history.pushState({}, '', '#other'); "
+                    "Number(sessionStorage.loads)"
+                ),
+            },
+            {
+                "action": "evaluate",
+                "script": (
+                    "(async()=>{await new Promise(resolve=>{"
+                    "const f=document.createElement('iframe');f.srcdoc='<p>Child</p>';"
+                    "f.onload=resolve;document.body.append(f)});"
+                    "return Number(sessionStorage.loads)})()"
+                ),
+            },
+            {"action": "click", "selector": "#next"},
+            {
+                "action": "evaluate",
+                "script": (
+                    "({marker:window.marker||null, loads:Number(sessionStorage.loads)})"
+                ),
+            },
+        ]
+        for fail in (False, True):
+            with (
+                self.subTest(fail=fail),
+                make_workspace(SOURCE, case) as workspace,
+                tempfile.TemporaryDirectory() as raw,
+            ):
+                install_browser(workspace)
+                scenario = Path(raw) / "scenario.json"
+                scenario.write_text(
+                    json.dumps(
+                        {
+                            "page": "page.html",
+                            "steps": steps
+                            + (
+                                [
+                                    {
+                                        "action": "evaluate",
+                                        "script": (
+                                            "throw Error('receipt probe failure')"
+                                        ),
+                                    }
+                                ]
+                                if fail
+                                else []
+                            ),
+                        }
+                    )
+                )
+                result = subprocess.run(
+                    [str(workspace.home / "bin/browser-run"), str(scenario), raw],
+                    cwd=workspace.root,
+                    env=workspace.environment(),
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(result.returncode, int(fail), result.stderr)
+                records = candidate_browser(workspace)
+                self.assertEqual(len(records), 1)
+                record = records[0]
+                self.assertEqual(record["status"], "failed" if fail else "completed")
+                self.assertEqual(
+                    record["observations"],
+                    [
+                        1,
+                        {"marker": "original", "loads": 1},
+                        1,
+                        1,
+                        {"marker": None, "loads": 2},
+                    ],
+                )
+                self.assertIn("navigation", record)
+                navigation = TypeAdapter(dict[str, JsonValue]).validate_python(
+                    record["navigation"]
+                )
+                self.assertEqual(navigation["status"], "complete")
+                events = TypeAdapter(list[dict[str, JsonValue]]).validate_python(
+                    navigation["events"]
+                )
+                commits = [e for e in events if e["kind"] == "main_document_commit"]
+                loads = [e for e in events if e["kind"] == "main_document_load"]
+                self.assertEqual([e["document_sequence"] for e in commits], [1, 2])
+                self.assertEqual([e["document_sequence"] for e in loads], [1, 2])
+                self.assertEqual(
+                    [e["committed_during_action_index"] for e in loads], [None, 5]
+                )
+                self.assertTrue(str(commits[0]["url"]).endswith("/page.html"))
+                self.assertTrue(str(commits[1]["url"]).endswith("/page.html?again"))
+                same_document = [
+                    e for e in events if e["kind"] == "same_document_navigation"
+                ]
+                self.assertEqual(len(same_document), 2)
+                self.assertTrue(all(e["document_sequence"] == 1 for e in same_document))
+                if not fail:
+                    self.assertEqual(
+                        json.loads(result.stdout)["navigation"], navigation
+                    )
+                run = EvidenceRun(case.id, "candidate", "condition")
+                run.observe(
+                    workspace,
+                    0,
+                    "opaque-navigation-thread-0190a624",
+                    "Inspect.",
+                    Observation(browser_evidence=records),
+                )
+                self.assertEqual(run.frames[0].browser[0]["navigation"], navigation)
+
     def test_rejected_browser_request_does_not_lose_recording(self) -> None:
         import subprocess
         import tempfile

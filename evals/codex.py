@@ -473,7 +473,7 @@ class CodexDriver:
                     self._usage(data, thread, enforce=not replies)
                 elif event.method == "item/completed":
                     item = mapping(data["item"])
-                    if item.get("type") not in {
+                    known_types = {
                         "agentMessage",
                         "reasoning",
                         "userMessage",
@@ -486,7 +486,18 @@ class CodexDriver:
                         "plan",
                         "contextCompaction",
                         "hookPrompt",
-                    }:
+                        "sleep",
+                    }
+                    if (
+                        item.get("type") == "sleep"
+                        or item.get("type") not in known_types
+                    ):
+                        actions.append(
+                            ObservedAction(
+                                "native", json.dumps(item, ensure_ascii=False)
+                            )
+                        )
+                    if item.get("type") not in known_types:
                         recording.actions = "partial"
                         recording.problems.append(
                             f"Unrecorded native item type: {item.get('type')}"

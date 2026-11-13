@@ -1,6 +1,7 @@
 /* Browser operations shared by disposable GUI projects and private observations. */
 const fs = require('fs');
 const path = require('path');
+const {observeNavigation} = require('./browser_navigation.cjs');
 
 async function launch() {
   if (!process.env.EVAL_PLAYWRIGHT_MODULE || !process.env.EVAL_BROWSER_EXECUTABLE)
@@ -51,17 +52,22 @@ async function run(scenarioPath, output) {
   const browser = await launch();
   const captures = [], observations = [], completed = [];
   let failure = null;
+  let navigation = {status:'unavailable', events:[], error:'Browser page was not initialized.'};
+  let navigationRecorder;
   try {
     const page = await projectPage(browser, {
       viewport: scenario.viewport || {width:1100,height:760},
       colorScheme: scenario.media?.colorScheme || 'light',
     });
+    navigationRecorder = await observeNavigation(page);
+    navigation = navigationRecorder.navigation;
     page.setDefaultTimeout(5000);
     const url = new URL(scenario.page, process.env.EVAL_BROWSER_ORIGIN);
     if (url.origin !== new URL(process.env.EVAL_BROWSER_ORIGIN).origin)
       throw new Error('Page leaves the project.');
     await page.goto(url.href);
     for (const [i, step] of scenario.steps.entries()) {
+      navigationRecorder.setActionIndex(i);
       if (step.action === 'click') await page.locator(step.selector).click();
       else if (step.action === 'fill') await page.locator(step.selector).fill(step.value);
       else if (step.action === 'select') await page.locator(step.selector).selectOption(step.value);
@@ -87,14 +93,16 @@ async function run(scenarioPath, output) {
     }
     const results = observations.map(o => o && o.capture ? {capture:o.capture,
       screenshot:path.join(output,o.capture+'.png'), structure:path.join(output,o.capture+'.json')} : o);
-    console.log(JSON.stringify({output, captures:captures.map(c=>c.name), observations:results}));
+    await navigationRecorder.finish();
+    console.log(JSON.stringify({output, captures:captures.map(c=>c.name), observations:results, navigation}));
   } catch (error) {
     failure = String(error.message || error);
     throw error;
   } finally {
+    if (navigationRecorder) await navigationRecorder.finish();
     const receipt = {origin:'candidate_browser', request_id:process.env.EVAL_BROWSER_REQUEST_ID, page:scenario.page,
       viewport:scenario.viewport, media:scenario.media, requested_steps:scenario.steps,
-      steps:completed, observations, images:captures,
+      steps:completed, observations, images:captures, navigation,
       status:failure ? 'failed' : 'completed', error:failure};
     const journal = process.env.EVAL_BROWSER_JOURNAL;
     try {

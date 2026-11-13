@@ -61,7 +61,7 @@ class CommandResult:
 
 @dataclass
 class ObservedAction:
-    kind: Literal["command", "agent", "image", "file", "hook"]
+    kind: Literal["command", "agent", "image", "file", "hook", "native"]
     text: str
     exit_code: int | None = None
     tool: str | None = None

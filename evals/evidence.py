@@ -129,7 +129,9 @@ class EvidenceRun:
         commands: list[dict[str, object]] = []
         results = iter(observation.command_results)
         for action in observation.actions:
-            if action.kind == "hook":
+            if action.kind == "native":
+                commands.append({"native_item": clean_value(json.loads(action.text))})
+            elif action.kind == "hook":
                 commands.append(
                     {
                         "hook": action.tool,

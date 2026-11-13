@@ -246,6 +246,37 @@ class CodexAdapterTests(unittest.TestCase):
         self.assertTrue(result.completed)
         self.assertEqual(result.recording.actions, "partial")
         self.assertTrue(result.recording.problems)
+        self.assertEqual(len(result.actions), 1)
+        self.assertEqual(
+            json.loads(result.actions[0].text), {"type": "unhandledTool", "id": "new"}
+        )
+
+    def test_sleep_event_is_retained_without_losing_next_command_result(self) -> None:
+        from evals.evidence import EvidenceRun
+
+        native = {"type": "sleep", "id": "pause", "durationMs": 25}
+        self.stream(
+            [
+                event("item/completed", item=native),
+                event(
+                    "item/completed",
+                    item={
+                        "type": "commandExecution",
+                        "command": "read status",
+                        "exitCode": 0,
+                        "aggregatedOutput": "Review complete",
+                    },
+                ),
+                event("turn/completed", turn={"status": "completed"}),
+            ]
+        )
+        observation = self.driver().message("thread", "Continue.")
+        self.assertEqual(observation.recording.actions, "complete")
+        self.assertEqual(observation.recording.problems, [])
+        run = EvidenceRun("adapter", "candidate", "condition")
+        run.observe(self.workspace, 0, "thread", "Continue.", observation)
+        self.assertEqual(run.frames[0].commands[0], {"native_item": native})
+        self.assertEqual(run.frames[0].commands[1]["output"], "Review complete")
 
     def test_hook_context_is_recorded_separately_from_agent_commands(self) -> None:
         self.stream(
