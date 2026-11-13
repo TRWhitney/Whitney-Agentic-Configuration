@@ -70,7 +70,7 @@
     },
     {
       "id": "finish-small-change",
-      "description": "Check the affected behavior, assess documentation impact accurately, review and commit the rename, and clear the completed workflow."
+      "description": "Check the affected behavior, review and commit the rename, and clear the completed workflow. Leaving the guide unchanged is sufficient when the rename changes no information its readers need; a separate documentation explanation is not required."
     }
   ],
   "grader_files": {
