@@ -54,6 +54,12 @@ per case or control, with complete assessments. The [tested diff](research/rewor
 is applied. Navigator commit records support amendment, squash, removal and reset.
 That study deferred native compaction. The [compaction recovery trials](research/compaction-recovery-trials.md)
 now exercise recovery through application hooks and preservation of the existing work-record link.
+The [planning continuation follow-up](research/planning-continuation-trials.md) adds a private check
+for the next question after each answer or correction, before compaction as well as after it.
+The [instruction-justification follow-up](research/instruction-justification-trials.md) adds a
+private writing criterion to the existing search-decision case without changing its request.
+The [search judgment correction](research/search-judgment-correction.md) permits a reasonable
+implementation while protecting the existing inventory contract with private checks.
 
 ## Run cases
 
@@ -231,6 +237,8 @@ The [trial study](research/pr-description-trials.md) records grading corrections
 failures and the final comparison.
 The [verification-limits follow-up](research/pr-verification-limits-trials.md) records later
 result-disclosure failures, source trials, corrected judgments and six correct final attempts.
+The [remaining-failure study](research/remaining-failure-trials.md) records known-bug repair
+trials and the corrected documentation check.
 
 ## Unslop writing
 

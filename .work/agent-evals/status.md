@@ -8,6 +8,31 @@
 
 ## Current state
 
+Complete. [Remaining failure follow-up](tickets/28-remaining-failures.md) applies the approved unslop and
+review additions. All 15 final review attempts meet their criteria; all 44 assessments completed.
+The [study](../../docs/research/remaining-failure-trials.md) preserves earlier misses and the
+corrected documentation-freeze rejection. All three capacity baselines meet their criteria; [planning controls](../../docs/research/settled-planning-followup.md)
+expose missing reply prefixes and an unrelated fixture check. The [factual-reply trial](../../docs/research/wayfinding-factual-reply-trials.md)
+then reproduces approval of settled arithmetic and misses a factual prefix once. Native recovery
+passes, but pre-compaction continuation still omits questions. Approved planning and same-reply
+wording passes fifteen of eighteen [new trials](../../docs/research/planning-continuation-trials.md).
+All three native trajectories still stop after an answer, despite later recovery succeeding.
+The [extra-sentence trial](../../docs/research/open-decisions-trials.md) has fifteen correct and
+three disputed attempts: “Leave the existing-file decision open” can sound like postponement.
+Automated grading and diagnosis accept the failures; primary and independent inspection dispute
+that reading. The approved sentence removal and planning/wayfinding guidance are applied. No
+new model runs followed the request edit; the revised request and combined newer instruction
+version have no new model trials. All 551 framework tests pass on the completed changes.
+The [instruction-justification trial](../../docs/research/instruction-justification-trials.md)
+applies the approved seven-word unslop addition and private writing check. All three main trial
+replies avoid the justifications. Original overall C/I/C is retained, but the search implementation
+is subsequently accepted as reasonable; the question-only eval is corrected with a private
+contract check and red/green regression. All thirteen saved search outputs pass that check. The booking
+answers are accepted without an extra explicit-release statement. All fourteen
+new assessments and joint judgments complete. Component review supports the bounded writing
+change. Independent whole-task intent and engineering reviews pass with no findings. Raw evidence
+was inspected, reviewed and deleted. Changes are committed by independent result.
+
 [PR verification limits](tickets/27-pr-verification-limits.md): the reviewed fifth diff is applied.
 All six final PR attempts are correct, three per case/control. The
 [study](../../docs/research/pr-verification-limits-trials.md) preserves all 32 PR attempts and earlier

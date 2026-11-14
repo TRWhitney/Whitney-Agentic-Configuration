@@ -12,6 +12,20 @@ The [PR follow-up](pr-verification-limits-trials.md) records six correct final P
 no-impact rename is accepted without a separate documentation explanation. Remaining fresh
 findings concern compaction continuation, deletion repair and settled planning choices. The
 earlier judgments below remain historical.
+The [known-bug follow-up](remaining-failure-trials.md) adds three correct final deletion-repair
+attempts and twelve correct final control attempts after the approved review wording change.
+The [planning/continuation trial](planning-continuation-trials.md) passes all three calculation
+attempts; its planning changes and the later wayfinding diff are now applied as approved.
+Original native grades record stopped discussion, later disputed because of the supplied request.
+The [extra-sentence trial](open-decisions-trials.md) disputes first-answer grades because the
+supplied request can sound like postponement. That sentence is now removed without model reruns;
+earlier grades remain preserved and the revised request has no new candidate evidence.
+The [writing follow-up](instruction-justification-trials.md) removes instruction justifications
+in all three main replies, but one trial chooses broader accent matching without approval. That
+implementation is subsequently accepted as a reasonable assumption, so the question-only eval
+expectation is [corrected](search-judgment-correction.md). Its regression and all thirteen saved
+source-output rechecks pass. Booking answers are also accepted without explicit-release wording.
+Original negative grades remain historical; they are not newly confirmed agent failures.
 
 The earlier corpus contained 154 cases. The earlier reconciliation covered retained studies through
 [reviewed interface and prototype trials](interface-prototype-trials.md). The targeted
