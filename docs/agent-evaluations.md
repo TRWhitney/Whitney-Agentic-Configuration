@@ -61,6 +61,10 @@ private writing criterion to the existing search-decision case without changing 
 The [search judgment correction](research/search-judgment-correction.md) permits a reasonable
 implementation while protecting the existing inventory contract with private checks.
 
+The [project planning trials](research/project-decisions-trials.md) add seven cases for shared
+agreements, support commitments, optional releases, versioning and changed plans. The study
+preserves earlier failures and eval repairs; all 36 final attempts meet their selected criteria.
+
 ## Run cases
 
 Install the optional runtime and validate the corpus without model calls:
@@ -124,7 +128,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 160 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 167 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural

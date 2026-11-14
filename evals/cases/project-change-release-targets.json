@@ -1,0 +1,79 @@
+{
+  "id": "project-change-release-targets",
+  "purpose": "task",
+  "project_name": "field-shelf",
+  "tags": [
+    "project-decisions"
+  ],
+  "files": {
+    "docs/project.md": "# Field shelf\n\nThe project will support Linux and Windows. The first public pilot includes both platforms.\nNo numbering policy, release version or date is agreed. Existing inventory features remain.\n",
+    "docs/releases/public-pilot.md": "# Public pilot\n\nAgreed audience: a small group of workshop owners. Required platforms: Linux and Windows.\nUse the existing item-name, quantity and CSV workflows offline. Linux and Windows installation\nand integration checks are required. Version and date remain undecided.\n",
+    ".work/pilot/status.md": "# Public pilot\n\nCurrent state: novel-work planning.\n\n[Project](../../docs/project.md). [Release](../../docs/releases/public-pilot.md). [Specification](spec.md). [Linux](tickets/01-linux.md), [Windows](tickets/02-windows.md), [Integration](tickets/03-integration.md).\n",
+    ".work/pilot/spec.md": "# Public pilot\n\n**Status:** accepted\n\nDeliver the existing inventory workflows installed and offline on Linux and Windows. Both platforms are required for this pilot. Version and date remain undecided.\n",
+    ".work/pilot/tickets/01-linux.md": "# Linux installation\n\n**Status:** complete\n\nThe existing inventory CLI installs and operates offline on Linux. The installation and name/quantity/import workflow checks pass.\n",
+    ".work/pilot/tickets/02-windows.md": "# Windows installation\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nInstall and exercise the existing inventory CLI offline on Windows for the public pilot.\n",
+    ".work/pilot/tickets/03-integration.md": "# Pilot workflow verification\n\n**Status:** ready-for-agent\n**Blocked by:** Linux installation and Windows installation\n\nVerify the existing name/quantity/CSV workflow in both installed platform distributions before the public pilot.\n"
+  },
+  "artifacts": [
+    "docs/project.md",
+    "docs/releases/public-pilot.md",
+    ".work/pilot/status.md",
+    ".work/pilot/spec.md",
+    ".work/pilot/tickets/01-linux.md",
+    ".work/pilot/tickets/02-windows.md",
+    ".work/pilot/tickets/03-integration.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/pilot/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Move Windows support to later work. The public pilot should be Linux only; Windows remains a project goal. Keep the existing inventory workflows, and leave the pilot version and date undecided.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            ".work/pilot/tickets/01-linux.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "shared-decision-update",
+      "description": "Record the requested Linux-only public pilot in the shared project and release documents, preserving Windows as a later project goal and leaving version/date unresolved. Distinguish the new pilot decision from the older superseded both-platforms requirement."
+    },
+    {
+      "id": "dependent-work-update",
+      "description": "Update the pilot specification, Windows ticket, integration ticket and continuation so Windows is not a prerequisite or required test target for this pilot. Preserve useful Windows work as later work; cancellation, deferral or reassignment are acceptable if current requirements and dependencies are clear."
+    },
+    {
+      "id": "preserve-valid-work",
+      "description": "Preserve the completed Linux ticket/evidence and existing inventory behavior. Keep required Linux integration checks; do not treat the changed target as proof those unfinished checks passed or erase valid earlier work."
+    },
+    {
+      "id": "no-extra-choices",
+      "description": "Apply the explicit change without redundant approval requests. Do not invent dates, versions, versioning policy, additional platforms, new features or publication authority. Keep planning and the final account consistent with the saved change."
+    }
+  ],
+  "fixtures": [
+    "inventory"
+  ]
+}

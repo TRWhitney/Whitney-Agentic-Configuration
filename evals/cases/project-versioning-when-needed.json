@@ -1,0 +1,98 @@
+{
+  "id": "project-versioning-when-needed",
+  "purpose": "task",
+  "project_name": "field-shelf",
+  "tags": [
+    "project-decisions"
+  ],
+  "files": {
+    "docs/project.md": "# Field shelf\n\nA local inventory command-line application for Whitney. Keep item names and quantities offline.\nCurrent agreed development work targets Linux. Windows and macOS support are possible later\nwork; their inclusion and timing have not been decided. No public release, date, versioning\npolicy or compatibility promise has been agreed.\n",
+    "pyproject.toml": "[project]\nname = \"field-shelf\"\nversion = \"0.7.0\"\n",
+    ".work/pilot/status.md": "# Public pilot\n\nCurrent state: novel-work planning.\n\n[Project agreements](../../docs/project.md). The existing Linux inventory workflow is implemented. No public pilot or versioning policy has been agreed.\n",
+    "sources/current-build.md": "# Current build\n\nThe CLI in src/__main__.py has name/quantity storage and CSV import, described in docs/cli.md.\nCurrent internal package metadata is 0.7.0. Linux source execution is observed; Windows and\nmacOS have not been exercised. No earlier public release or compatibility promise exists.\n"
+  },
+  "artifacts": [
+    "docs/project.md",
+    "pyproject.toml",
+    ".work/pilot/status.md",
+    "sources/current-build.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/pilot/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "I want to prepare a first public pilot of the existing Linux inventory tool for a few workshop owners. Help me work out what needs to be ready.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "pyproject.toml"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Use three-part versions: fixes change the last number, added features change the middle number, and incompatible saved-data changes change the first number. Call this pilot 0.8.0. Keep older inventory files readable. Do not change the current internal build metadata yet. We can decide the date later.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "pyproject.toml"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "plan-real-pilot",
+      "description": "Make useful progress planning the requested public pilot around the existing Linux inventory behavior and intended audience. Save the release-specific audience, included work, readiness questions and selected version in a release document under docs/releases/, linked from the effort; an effort decision ticket or a section in docs/project.md alone is insufficient. Keep shared project agreements in docs/project.md. Keep proposals distinct from accepted commitments; reasonable technical checks do not require separate approval."
+    },
+    {
+      "id": "accepted-version-policy",
+      "description": "After the follow-up, record the chosen three-part policy once in the project agreements and reference it from the pilot plan. Record 0.8.0 as the pilot version and preserving readability of older inventory files as an accepted requirement; do not substitute another compatibility policy."
+    },
+    {
+      "id": "open-decisions-and-metadata",
+      "description": "Keep release timing undecided and current internal build metadata at 0.7.0. Do not infer Windows/macOS inclusion, present old Linux execution as proof of all pilot requirements, or invent a personal approval gate. Different useful remaining release questions are acceptable."
+    },
+    {
+      "id": "consistent-continuation",
+      "description": "Update affected plan records and any tickets already created so the accepted policy and selected release agree. Keep still-open release work visibly unfinished without reopening the explicit follow-up decisions or publishing/implementing prematurely."
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "inventory-cli"
+  ]
+}

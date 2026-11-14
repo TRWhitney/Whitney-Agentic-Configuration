@@ -3,9 +3,10 @@
 Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
 here, not production code. Use the displayed format for the map and feature tickets.
 
-Before asking the first question, create any missing map or feature planning ticket. Link both
-the map and the feature planning ticket from the work record. Reuse the existing work record
-for the feature.
+Before asking the first question, create any missing map and planning record. Project-wide
+questions belong in the project document; release questions belong in their release plan;
+feature questions belong in the existing feature planning ticket. Link the map and those records
+from the work record. Reuse the existing records for the work.
 
 ## Define the goal
 
@@ -13,7 +14,7 @@ Describe the finished result in one or two sentences. Agree on the full scope an
 checks. Put excluded work under `Out of scope`.
 Keep unclear topics under `Not yet specified` until their effect on the design is settled.
 
-Group questions by feature. Keep each feature's questions, research, detailed requirements,
+Group feature questions by feature. Keep each feature's questions, research, detailed requirements,
 refinements, and agreed answers in one combined research-and-planning ticket. Create another
 planning ticket only for a distinct feature under the tracker's rules. Identify how to answer
 its open questions and what blocks them. Do not add speculative questions just to fill the map.
@@ -21,8 +22,8 @@ its open questions and what blocks them. Do not add speculative questions just t
 ## Continue after each answer or correction
 
 Choose precise, unanswered, unblocked questions that prevent specifying or building the agreed
-scope. They may be sections of one design issue. Claim a ticket before working on it. Start
-each final reply with:
+scope. They may be sections of one document or design issue. Claim a feature ticket before
+working on it. Start each final reply with:
 
 `Planning: <n> decided, <n> ready, unspecified: <topics or none>`
 
@@ -46,23 +47,25 @@ fixed question count, since an answer can reveal or remove work.
 Use research for factual questions and prototypes when trying something will help us decide. A
 `task` is an action needed to answer a question, never production implementation. Use project
 conventions and delegated judgment for reversible details within the agreed behavior. Record the
-choice in its feature ticket without a separate approval ticket. Leave decisions that need my
-judgment to me. While research runs, work on another unblocked decision if one is available.
+choice in its existing planning record without a separate approval ticket. Leave decisions that
+need my judgment to me. While research runs, work on another unblocked decision if one is available.
 
 ## Update the map and tickets
 
-After each answer or correction, update the requirements and supporting sources in the feature
-ticket. Before replying, check that the map lists only unanswered questions as open. Check that
-the reply starts with a progress line matching the map and asks the next ready question. Keep its
+After each answer or correction, update the requirements and supporting sources in the document
+or feature ticket linked from the map. Before replying, check that the map lists only unanswered
+questions as open. Check that the reply starts with a progress line matching the map and asks
+the next ready question. Keep its
 planning open while a blocking question remains. Once settled, mark it resolved, update its
 issue state under the tracker's rules, and link the conclusion from the map.
 
-Reassess the next decisions and unspecified topics. Add a question to its feature ticket when it
-is precise and blocks the agreed scope. Create a new planning ticket only for a distinct feature.
+Reassess the next decisions and unspecified topics. Add a precise question that blocks the
+agreed scope to the document or feature ticket linked from the map. Create a new planning ticket
+only for a distinct feature.
 
 When requirements settle and before a planning handoff, move useful decisions, reasons, and
-source links from redundant records into the existing feature ticket. Close or remove redundant
-records under the tracker's rules and update map links and blockers. Merely renesting or closing
+source links from redundant records into the document or feature ticket for those decisions.
+Close or remove redundant records under the tracker's rules and update map links and blockers. Merely renesting or closing
 issues does not combine their useful content.
 
 Link research and agreed prototypes instead of copying them. Use domain modeling to document

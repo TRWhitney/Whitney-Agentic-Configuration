@@ -1,0 +1,70 @@
+{
+  "id": "project-approved-platform-work",
+  "purpose": "control",
+  "project_name": "field-shelf",
+  "tags": [
+    "project-decisions"
+  ],
+  "files": {
+    "docs/project.md": "# Field shelf\n\nA local inventory CLI. Linux and Windows installation and offline operation are accepted targets\nfor the current portability effort. macOS is not part of that effort. Project versioning and a\npublic release schedule remain undecided.\n",
+    ".work/import/spec.md": "# Installable offline CLI\n\n**Status:** accepted\n\nProvide installable Linux and Windows distributions of the existing inventory CLI, preserving\nits name/quantity behavior and offline operation. Verify actual installation and the inventory\nworkflow on both agreed targets. Packaging uses the existing Python runtime and available tool.\nNo macOS work, public publishing, new dependencies or feature changes are included.\n",
+    ".work/import/status.md": "# Installable CLI\n\nCurrent state: novel-work planning.\n\n[Project](../../docs/project.md). [Accepted portability plan](spec.md). No implementation tickets exist.\n",
+    "sources/packaging.md": "# Available tooling\n\nThe existing CLI is src/__main__.py; its commands and saved format are described in docs/cli.md.\nUse the existing Python 3.11+ standard-library zipapp tool: python -m zipapp src -o field-shelf.pyz.\nInstallation copies field-shelf.pyz into a chosen directory; run it with Python and an explicit\ninventory path, for example python field-shelf.pyz inventory.json list. The accepted targets are\n64-bit Ubuntu 24.04 and Windows 11 with Python 3.11+. Both use that installation format.\nLinux source execution has been observed. Packaged installation and offline operation on either\ntarget have not yet been verified. No third-party packaging dependency is needed.\n",
+    "pyproject.toml": "[project]\nname = \"field-shelf\"\nversion = \"0.7.0\"\n"
+  },
+  "artifacts": [
+    "docs/project.md",
+    ".work/import/spec.md",
+    ".work/import/status.md",
+    "sources/packaging.md",
+    "pyproject.toml"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/import/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Prepare the implementation tickets for the accepted installable CLI plan.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "accepted-targets",
+      "description": "Plan useful independently verifiable work for both accepted Linux and Windows installation/offline targets, including production workflow checks. A combined ticket or separate platform tickets are valid. Do not cancel or postpone approved Windows work merely because this run is on Linux."
+    },
+    {
+      "id": "no-redundant-approval",
+      "description": "Use the accepted platform decision without asking Whitney to choose Linux versus Windows again. Report factual environment/prerequisite limits when relevant while preserving the requirement; such a report must not replace the requested ticket plan."
+    },
+    {
+      "id": "bounded-plan",
+      "description": "Keep macOS, new product features and public publishing out of the accepted work. Do not force release timing or versioning decisions that do not affect writing these tickets."
+    },
+    {
+      "id": "saved-consistency",
+      "description": "Link shared project agreements and the accepted effort design from useful saved tickets, preserving their requirements and genuine dependencies. Keep production source unchanged and do not publish."
+    }
+  ],
+  "fixtures": [
+    "inventory",
+    "inventory-cli"
+  ]
+}

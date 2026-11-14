@@ -47,12 +47,18 @@ EXPECTED_PROCEDURES = {
     "documentation",
     "interface-design",
     "prototype",
+    "project-planning",
     "research",
     "review",
     "subagent-testing",
     "testing",
 }
-EXPECTED_FORMATS = {"domain-modeling", "planning-artifacts", "wayfinding"}
+EXPECTED_FORMATS = {
+    "domain-modeling",
+    "planning-artifacts",
+    "project-records",
+    "wayfinding",
+}
 EXPECTED_WORKFLOWS = {
     "fix",
     "novel-work",
@@ -127,7 +133,12 @@ class WorkSystemStructureTests(unittest.TestCase):
         )
         self.assertEqual(
             {path.name for path in FORMATS_ROOT.iterdir()},
-            {"domain-modeling.md", "planning-artifacts.md", "wayfinding.md"},
+            {
+                "domain-modeling.md",
+                "planning-artifacts.md",
+                "project-records.md",
+                "wayfinding.md",
+            },
         )
         self.assertEqual(
             {path.name for path in PROVIDERS_ROOT.iterdir()},
@@ -135,7 +146,7 @@ class WorkSystemStructureTests(unittest.TestCase):
         )
         self.assertEqual(
             {path.name for path in REFERENCES_ROOT.iterdir() if path.is_file()},
-            {"compaction-hooks.md"},
+            {"compaction-hooks.md", "project-agreements.md"},
         )
         self.assertTrue(NAVIGATOR_PATH.is_file())
 
@@ -347,6 +358,7 @@ class WorkflowManifestTests(unittest.TestCase):
                 "interface-design",
                 "prototype",
                 "research",
+                "project-planning",
             },
         )
         self.assertNotIn("testing", cast(dict[str, object], planning["procedures"]))

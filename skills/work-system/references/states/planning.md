@@ -9,7 +9,8 @@ Read the request, relevant code and architecture, and agreed sources. Inspect th
 implementation before planning changes to it.
 
 Describe the problem, who is affected, expected behavior, constraints, failure and edge cases,
-and what is out of scope.
+and what is out of scope. Use the project agreements and relevant release plan when defining
+this effort. Use project planning when those agreements need to be established or changed.
 
 Keep one combined research-and-planning ticket per distinct feature. Its questions, detailed
 requirements, architecture concerns, experiments, and agreed answers belong together. A change
@@ -28,8 +29,9 @@ supported and what callers must handle when that affects acceptance.
 Separate facts you can check, product and interaction choices that need my judgment, important
 architecture and data decisions, and reversible implementation details. Settle the first three
 enough that implementation will not need to guess my intent. Use project conventions and
-judgment I have delegated for reversible details. Record decisions in the existing feature
-ticket without creating approval tickets for incidental details.
+judgment I have delegated for reversible details. Record project-wide decisions in the project
+document, release decisions in their release plan, and feature decisions in the existing feature
+ticket. Do not create approval tickets for incidental details.
 
 ## Settle decisions
 
@@ -46,8 +48,9 @@ during planning.
 
 Record agreed conclusions and their reasons, not a transcript. Link research, prototypes,
 decisions, and domain documentation instead of copying them. If a requirement or decision changes,
-update the specification and every ticket that depends on it before replying. Mark tickets
-blocked when implementing them still needs a design decision.
+update its shared source, affected specifications and tickets, dependencies and acceptance checks
+before replying. Keep completed work and evidence that remain valid. Mark only work that depends
+on an unresolved design decision as blocked.
 
 Before creating a ticket, check the current design issue or work record and the tracker's
 creation rules. Put related refinements into the existing design. Before leaving planning, move

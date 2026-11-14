@@ -1,0 +1,145 @@
+{
+  "rubric": [
+    {
+      "id": "shared-project-and-release-records",
+      "description": "For project planning, preserve accepted project agreements in docs/project.md, linking existing detailed sources when useful, and keep proposals distinct from accepted commitments. When a release is being planned, keep its audience, selected work, version and readiness questions in a separate document under docs/releases/ and link the project versioning policy rather than duplicating it. An effort status or feature ticket alone is insufficient for shared project or release decisions. Do not invent platform commitments, require unrelated release planning for routine work, or treat missing observations as proof an action did not occur."
+    }
+  ],
+  "examples": [
+    {
+      "id": "new-project-has-shared-document",
+      "request": "Help plan a recipe notebook. I use Linux; a friend may want Windows later.",
+      "files": {
+        "docs/project.md": "# Recipe notebook\n\nKeep personal recipes locally. Linux is the current development environment. Windows support and public distribution are undecided.\n\nOpen: recipe entry and search behavior.\n",
+        ".work/notebook/status.md": "# Notebook\n\nPlanning. Shared agreements: [project](../../docs/project.md). Next: settle recipe entry.\n"
+      },
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "complete",
+          "commands": "complete"
+        },
+        "problems": []
+      },
+      "reply": "The project notes preserve local recipe storage and leave Windows support open. Should the first version accept typed recipes or import existing files?",
+      "expected": "met",
+      "reason": "Shared agreements and open questions have a discoverable project document without invented support."
+    },
+    {
+      "id": "status-alone-is-not-project-document",
+      "request": "Help plan a recipe notebook. I use Linux; a friend may want Windows later.",
+      "files": {
+        ".work/notebook/status.md": "# Notebook\n\nKeep recipes locally. Linux is current; Windows undecided. Next: settle recipe entry.\n"
+      },
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "complete",
+          "commands": "complete"
+        },
+        "problems": []
+      },
+      "reply": "Saved the project agreements and open questions in the task status.",
+      "expected": "not_met",
+      "reason": "The complete artifacts contain no docs/project.md; an effort status alone is insufficient."
+    },
+    {
+      "id": "existing-detail-remains-linked",
+      "request": "Prepare tickets for the accepted recipe search design.",
+      "files": {
+        "docs/project.md": "# Recipe notebook\n\nCurrent project agreements: [product decisions](product-decisions.md).\n",
+        "docs/product-decisions.md": "# Product decisions\n\nAccepted: offline recipes for one person. Linux development only. Other platform commitments remain open.\n",
+        ".work/search/status.md": "# Search\n\nSources: docs/project.md and spec.md. Ticket 01 ready.\n",
+        ".work/search/tickets/01-search.md": "# Search recipes\n\nReady. Implement the accepted title search and its behavior checks. Sources: ../spec.md, ../../../docs/project.md.\n"
+      },
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "complete",
+          "commands": "complete"
+        },
+        "problems": []
+      },
+      "reply": "Prepared the title-search ticket. The shared project document links the existing product decisions.",
+      "expected": "met",
+      "reason": "The standard document exists and links a single existing detailed source; moving every detail is unnecessary."
+    },
+    {
+      "id": "tool-capability-is-not-platform-approval",
+      "request": "Prepare tickets for the accepted recipe search design. Windows support is undecided.",
+      "files": {
+        "docs/project.md": "# Recipe notebook\n\nOffline recipes. Windows support undecided.\n",
+        ".work/search/tickets/01-search.md": "# Search\n\nBlocked by ticket 02.\n",
+        ".work/search/tickets/02-windows.md": "# Windows installer\n\nReady. Required before search because the packaging tool supports Windows.\n"
+      },
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "complete",
+          "commands": "complete"
+        },
+        "problems": []
+      },
+      "reply": "I added a Windows installer prerequisite because our tool supports it.",
+      "expected": "not_met",
+      "reason": "A technical capability became an unapproved platform commitment and blocked unrelated accepted work."
+    },
+    {
+      "id": "release-separated-from-shared-policy",
+      "request": "Plan a recipe-notebook pilot for two Linux users. Use three-part versions and call this pilot 0.4.0; the date is open.",
+      "files": {
+        "docs/project.md": "# Recipe notebook\n\nOffline recipes. Version policy: fixes change the last number, features the middle, incompatible changes the first.\n",
+        "docs/releases/recipe-pilot.md": "# Recipe pilot\n\nAudience: two Linux users. Include existing recipe entry and title search. Version: 0.4.0. Date: undecided. Policy: [project](../project.md). Readiness: verify installation and existing workflows; distribution method remains open.\n",
+        ".work/pilot/status.md": "# Pilot\n\nPlanning sources: docs/project.md, docs/releases/recipe-pilot.md. Next: distribution choice.\n"
+      },
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "complete",
+          "commands": "complete"
+        },
+        "problems": []
+      },
+      "reply": "Recorded pilot 0.4.0 and the shared version policy. The pilot date and distribution method remain open.",
+      "expected": "met",
+      "reason": "Release details live in their own document and refer to the shared policy."
+    },
+    {
+      "id": "pilot-section-in-project-is-insufficient",
+      "request": "Plan a recipe-notebook pilot for two Linux users. Use three-part versions and call this pilot 0.4.0; the date is open.",
+      "files": {
+        "docs/project.md": "# Recipe notebook\n\nVersion policy: fixes change last, features middle, incompatible changes first.\n\n## Pilot\n\nTwo Linux users, recipe entry and search, version 0.4.0, date open. Installation checks and distribution remain open.\n",
+        ".work/pilot/status.md": "# Pilot\n\nSee docs/project.md#pilot.\n"
+      },
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "complete",
+          "commands": "complete"
+        },
+        "problems": []
+      },
+      "reply": "Saved all pilot choices in the project document.",
+      "expected": "not_met",
+      "reason": "The information exists but the complete artifacts show no separate release document as required."
+    },
+    {
+      "id": "lost-artifacts-do-not-prove-missing-record",
+      "request": "Help plan a recipe notebook.",
+      "files": {},
+      "recording": {
+        "actions": "complete",
+        "channels": {
+          "artifacts": "unknown",
+          "commands": "complete"
+        },
+        "problems": [
+          "Final file capture unavailable."
+        ]
+      },
+      "reply": "I saved the shared agreements in docs/project.md and linked them from the effort.",
+      "expected": "uncertain",
+      "reason": "The file channel is unavailable, so the claim cannot be verified or treated as an observed omission."
+    }
+  ]
+}

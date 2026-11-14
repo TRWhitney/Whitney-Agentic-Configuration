@@ -21,6 +21,9 @@ effort needs. Keep planning maps, research, and prototype notes in repository do
 link them from the effort record. Move existing copies out of the effort directory and update
 their links.
 
+Shared project agreements and release plans live in repository documentation, outside individual
+effort directories. Link applicable sources from the effort record and specifications.
+
 ## Status
 
 Use `status.md` as the compact continuation index:

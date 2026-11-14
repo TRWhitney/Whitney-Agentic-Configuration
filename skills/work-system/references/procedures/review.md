@@ -9,7 +9,8 @@ Give reviewers the complete work for the accepted outcome, including every chang
 task. If the task scope cannot be identified, do not dispatch review.
 
 Gather my request, acceptance checks, specification or ticket, agreed decisions and prototype
-requirements, current verification evidence, and affected public interfaces.
+requirements, applicable project agreements and release plan, current verification evidence,
+and affected public interfaces.
 
 Give reviewers temporary evidence paths and keep the files until review is done. Include the
 retention rules and explicit exceptions in each assignment. Do not require committed captures

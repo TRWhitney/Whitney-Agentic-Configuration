@@ -1,6 +1,11 @@
 # Recorded eval failures
 
-The corpus now contains 160 cases. The [unslop writing study](unslop-writing-trials.md) adds six
+The corpus now contains 167 cases. The [project planning trials](project-decisions-trials.md)
+add seven cases. Three wording versions retain earlier missing-record and duplicated-agreement
+failures. All 36 final attempts meet the selected criteria; the tested guidance is applied.
+The study separately records a corrected shell-result check and an ungraded ticket-label omission.
+
+The [unslop writing study](unslop-writing-trials.md) adds six
 writing cases and records a fresh run of all 154 earlier cases. Original engine results were
 134 correct, 17 incorrect and 3 unknown; all assessments completed. Source-based inspection and
 eval repairs establish five genuine failures: compaction continuation, missing PR evidence,

@@ -6,7 +6,8 @@ missing requirements or expand the assignment.
 ## Check the assignment
 
 Start with the requested result, acceptance checks, agreed sources, writable paths, named
-checks, and supplied test when behavior changes. Inspect the affected code and interfaces.
+checks, and supplied test when behavior changes. Read the applicable project agreements and
+release plan supplied with the assignment. Inspect the affected code and interfaces.
 
 Check that these instructions agree and the permitted paths allow the required change. If a
 source, check, or permission is missing, contradictory, or impossible to follow, report what you

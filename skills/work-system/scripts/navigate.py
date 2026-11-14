@@ -159,6 +159,15 @@ def provider_command(workflow: str, state: str) -> str:
     return " ".join(shlex.quote(value) for value in arguments) + " <provider>"
 
 
+def render_project_context() -> str:
+    record = project.project_record()
+    status = "Project record" if record.is_file() else "Project record not present"
+    guidance = core.read_markdown(
+        core.REFERENCES_ROOT / "project-agreements.md", "project agreements"
+    )
+    return f"{guidance}\n\n{status}: `{record}`"
+
+
 def render_state(
     provider: project.Provider,
     settings: Path,
@@ -174,6 +183,7 @@ def render_state(
     procedures = core.procedures_for(workflow, state_name)
     sections = [
         core.read_markdown(core.STATES_ROOT / f"{state_name}.md", state_name),
+        render_project_context(),
         "## Procedures",
     ]
     for procedure in procedures:
@@ -288,6 +298,7 @@ def build_parser() -> argparse.ArgumentParser:
         "substate",
         "reply",
         "commit",
+        "project",
     ):
         item = commands.add_parser(name)
         item.add_argument("--conversation")
@@ -319,7 +330,7 @@ def build_parser() -> argparse.ArgumentParser:
         elif name == "substate":
             item.add_argument("action", choices=("enter", "leave"))
             item.add_argument("name", nargs="?")
-        elif name != "cancel":
+        elif name not in {"cancel", "project"}:
             item.add_argument("workflow")
             item.add_argument("state")
             if name == "move":
@@ -384,6 +395,8 @@ def run(arguments: list[str]) -> str:
         )
 
     args = build_parser().parse_args(arguments)
+    if args.command == "project":
+        return render_project_context()
     if args.command == "commit":
         repository = str(Path(git_value("rev-parse", "--git-common-dir")).resolve())
         with sessions.locked_store(args.conversation) as store:
@@ -510,7 +523,7 @@ def run_saved(
         elif session is None:
             if args.command == "resume":
                 return (
-                    "No active workflow. "
+                    render_project_context() + "\n\nNo active workflow. "
                     "Use the work-system skill to choose a workflow."
                 )
             raise core.NavigationError("No active workflow. Start one first.")

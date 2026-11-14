@@ -63,9 +63,9 @@ it, run:
 python3 <skill-directory>/scripts/navigate.py resume
 ```
 
-The navigator restores this conversation's saved workflow state. Read its linked work record before
-continuing when one is saved. If there is no active workflow, route the prompt. Named-location
-resume loads guidance without changing the saved workflow state.
+The navigator identifies the project record and restores this conversation's saved workflow state.
+Read its project guidance and linked records before continuing when present. If there is no active
+workflow, route the prompt. Named-location resume loads guidance without changing the saved state.
 
 For automatic recovery, see [compaction hooks](references/compaction-hooks.md).
 
@@ -85,7 +85,10 @@ Run the script with Python and the path relative to this `SKILL.md`:
 python3 <skill-directory>/scripts/navigate.py start <workflow>
 python3 <skill-directory>/scripts/navigate.py resume <workflow> <state>
 python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destination>
+python3 <skill-directory>/scripts/navigate.py project
 ```
+
+`project` shows the reference to `docs/project.md`.
 
 Use `question`, `tweak`, `fix`, or `novel-work` as standard workflows. Use
 `subagent-implementation` only under the spawned-implementation-subagent rule.

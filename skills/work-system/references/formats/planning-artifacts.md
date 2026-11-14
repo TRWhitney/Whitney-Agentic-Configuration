@@ -1,8 +1,9 @@
 # Planning documents
 
 A specification records the accepted problem, outcome, user stories, design decisions, testing,
-and scope. Use the project glossary and link the decisions that constrain the work. Keep check
-results and reasons in the records that already cover them.
+and scope. Link applicable project agreements and release decisions. Use the project glossary
+and link the decisions that constrain the work. Keep check results and reasons in the records
+that already cover them.
 
 Each implementation ticket describes one observable result, its acceptance checks,
 prerequisites, accepted sources, and completion evidence. Size it for one fresh implementation

@@ -1,0 +1,408 @@
+--- a/skills/work-system/SKILL.md
++++ b/skills/work-system/SKILL.md
+@@ -63,9 +63,9 @@
+ python3 <skill-directory>/scripts/navigate.py resume
+ ```
+
+-The navigator restores this conversation's saved workflow state. Read its linked work record before
+-continuing when one is saved. If there is no active workflow, route the prompt. Named-location
+-resume loads guidance without changing the saved workflow state.
++The navigator identifies the project record and restores this conversation's saved workflow state.
++Read its project guidance and linked records before continuing when present. If there is no active
++workflow, route the prompt. Named-location resume loads guidance without changing the saved state.
+
+ For automatic recovery, see [compaction hooks](references/compaction-hooks.md).
+
+@@ -85,7 +85,10 @@
+ python3 <skill-directory>/scripts/navigate.py start <workflow>
+ python3 <skill-directory>/scripts/navigate.py resume <workflow> <state>
+ python3 <skill-directory>/scripts/navigate.py move <workflow> <state> <destination>
++python3 <skill-directory>/scripts/navigate.py project
+ ```
++
++`project` shows the reference to `docs/project.md`.
+
+ Use `question`, `tweak`, `fix`, or `novel-work` as standard workflows. Use
+ `subagent-implementation` only under the spawned-implementation-subagent rule.
+--- /dev/null
++++ b/skills/work-system/references/project-agreements.md
+@@ -0,0 +1,17 @@
++# Project agreements
++
++Read the project record identified by the navigator and the relevant release plan linked from
++this effort's accepted sources. Use their agreed requirements throughout the work and include
++the relevant sources in delegated assignments.
++
++When planning a project or preparing implementation tickets, create `docs/project.md` if it is
++missing. Link existing detailed sources instead of repeating their agreements. Save agreed
++decisions and open questions before replying.
++
++Discuss new or changed project commitments with me before making them requirements or tickets.
++Technical capability and available test machines do not decide which platforms we support.
++Apply existing agreements and delegated judgment without asking for repeated approval.
++
++A release plan is optional. Work can proceed before release timing, versioning or other release
++choices are settled when those choices do not affect its requirements. Finishing an effort does
++not establish release readiness or permission to publish.
+--- a/skills/work-system/references/states/planning.md
++++ b/skills/work-system/references/states/planning.md
+@@ -9,7 +9,8 @@
+ implementation before planning changes to it.
+
+ Describe the problem, who is affected, expected behavior, constraints, failure and edge cases,
+-and what is out of scope.
++and what is out of scope. Use the project agreements and relevant release plan when defining
++this effort. Use project planning when those agreements need to be established or changed.
+
+ Keep one combined research-and-planning ticket per distinct feature. Its questions, detailed
+ requirements, architecture concerns, experiments, and agreed answers belong together. A change
+@@ -28,8 +29,9 @@
+ Separate facts you can check, product and interaction choices that need my judgment, important
+ architecture and data decisions, and reversible implementation details. Settle the first three
+ enough that implementation will not need to guess my intent. Use project conventions and
+-judgment I have delegated for reversible details. Record decisions in the existing feature
+-ticket without creating approval tickets for incidental details.
++judgment I have delegated for reversible details. Record project-wide decisions in the project
++document, release decisions in their release plan, and feature decisions in the existing feature
++ticket. Do not create approval tickets for incidental details.
+
+ ## Settle decisions
+
+@@ -46,8 +48,9 @@
+
+ Record agreed conclusions and their reasons, not a transcript. Link research, prototypes,
+ decisions, and domain documentation instead of copying them. If a requirement or decision changes,
+-update the specification and every ticket that depends on it before replying. Mark tickets
+-blocked when implementing them still needs a design decision.
++update its shared source, affected specifications and tickets, dependencies and acceptance checks
++before replying. Keep completed work and evidence that remain valid. Mark only work that depends
++on an unresolved design decision as blocked.
+
+ Before creating a ticket, check the current design issue or work record and the tracker's
+ creation rules. Put related refinements into the existing design. Before leaving planning, move
+--- a/skills/work-system/references/formats/planning-artifacts.md
++++ b/skills/work-system/references/formats/planning-artifacts.md
+@@ -1,8 +1,9 @@
+ # Planning documents
+
+ A specification records the accepted problem, outcome, user stories, design decisions, testing,
+-and scope. Use the project glossary and link the decisions that constrain the work. Keep check
+-results and reasons in the records that already cover them.
++and scope. Link applicable project agreements and release decisions. Use the project glossary
++and link the decisions that constrain the work. Keep check results and reasons in the records
++that already cover them.
+
+ Each implementation ticket describes one observable result, its acceptance checks,
+ prerequisites, accepted sources, and completion evidence. Size it for one fresh implementation
+--- a/skills/work-system/references/providers/local/planning-artifacts.md
++++ b/skills/work-system/references/providers/local/planning-artifacts.md
+@@ -1,4 +1,7 @@
+ # Planning document formats
++
++Link applicable project agreements and release plans from the specification and ticket sources.
++Keep their shared requirements in those documents rather than copying them into each effort.
+
+ ## Specification
+
+--- a/skills/work-system/references/providers/github/planning-artifacts.md
++++ b/skills/work-system/references/providers/github/planning-artifacts.md
+@@ -1,4 +1,7 @@
+ # Planning document formats
++
++Link applicable project agreements and release plans from the specification and ticket sources.
++Keep their shared requirements in those documents rather than copying them into each effort.
+
+ ## Specification
+
+--- a/skills/work-system/references/substates/wayfinding.md
++++ b/skills/work-system/references/substates/wayfinding.md
+@@ -3,9 +3,10 @@
+ Turn a broad or unclear request into agreed requirements using a decision map. Plan decisions
+ here, not production code. Use the displayed format for the map and feature tickets.
+
+-Before asking the first question, create any missing map or feature planning ticket. Link both
+-the map and the feature planning ticket from the work record. Reuse the existing work record
+-for the feature.
++Before asking the first question, create any missing map and planning record. Project-wide
++questions belong in the project document; release questions belong in their release plan;
++feature questions belong in the existing feature planning ticket. Link the map and those records
++from the work record. Reuse the existing records for the work.
+
+ ## Define the goal
+
+@@ -13,7 +14,7 @@
+ checks. Put excluded work under `Out of scope`.
+ Keep unclear topics under `Not yet specified` until their effect on the design is settled.
+
+-Group questions by feature. Keep each feature's questions, research, detailed requirements,
++Group feature questions by feature. Keep each feature's questions, research, detailed requirements,
+ refinements, and agreed answers in one combined research-and-planning ticket. Create another
+ planning ticket only for a distinct feature under the tracker's rules. Identify how to answer
+ its open questions and what blocks them. Do not add speculative questions just to fill the map.
+@@ -21,8 +22,8 @@
+ ## Continue after each answer or correction
+
+ Choose precise, unanswered, unblocked questions that prevent specifying or building the agreed
+-scope. They may be sections of one design issue. Claim a ticket before working on it. Start
+-each final reply with:
++scope. They may be sections of one document or design issue. Claim a feature ticket before
++working on it. Start each final reply with:
+
+ `Planning: <n> decided, <n> ready, unspecified: <topics or none>`
+
+@@ -46,23 +47,25 @@
+ Use research for factual questions and prototypes when trying something will help us decide. A
+ `task` is an action needed to answer a question, never production implementation. Use project
+ conventions and delegated judgment for reversible details within the agreed behavior. Record the
+-choice in its feature ticket without a separate approval ticket. Leave decisions that need my
+-judgment to me. While research runs, work on another unblocked decision if one is available.
++choice in its existing planning record without a separate approval ticket. Leave decisions that
++need my judgment to me. While research runs, work on another unblocked decision if one is available.
+
+ ## Update the map and tickets
+
+-After each answer or correction, update the requirements and supporting sources in the feature
+-ticket. Before replying, check that the map lists only unanswered questions as open. Check that
+-the reply starts with a progress line matching the map and asks the next ready question. Keep its
++After each answer or correction, update the requirements and supporting sources in the document
++or feature ticket linked from the map. Before replying, check that the map lists only unanswered
++questions as open. Check that the reply starts with a progress line matching the map and asks
++the next ready question. Keep its
+ planning open while a blocking question remains. Once settled, mark it resolved, update its
+ issue state under the tracker's rules, and link the conclusion from the map.
+
+-Reassess the next decisions and unspecified topics. Add a question to its feature ticket when it
+-is precise and blocks the agreed scope. Create a new planning ticket only for a distinct feature.
++Reassess the next decisions and unspecified topics. Add a precise question that blocks the
++agreed scope to the document or feature ticket linked from the map. Create a new planning ticket
++only for a distinct feature.
+
+ When requirements settle and before a planning handoff, move useful decisions, reasons, and
+-source links from redundant records into the existing feature ticket. Close or remove redundant
+-records under the tracker's rules and update map links and blockers. Merely renesting or closing
++source links from redundant records into the document or feature ticket for those decisions.
++Close or remove redundant records under the tracker's rules and update map links and blockers. Merely renesting or closing
+ issues does not combine their useful content.
+
+ Link research and agreed prototypes instead of copying them. Use domain modeling to document
+--- a/skills/work-system/references/formats/wayfinding.md
++++ b/skills/work-system/references/formats/wayfinding.md
+@@ -4,7 +4,8 @@
+
+ Store the map in the repository's planning documentation. Follow its existing layout, or use
+ `docs/planning/<effort-slug>/map.md`. Link decisions to the combined research-and-planning
+-ticket for their feature. Several decisions may link to sections of the same ticket:
++ticket for their feature. Link project-wide decisions to the project document and release
++decisions to their release plan. Several decisions may link to sections of the same record:
+
+ ```markdown
+ # <Effort name>
+--- a/skills/work-system/references/procedures/delegate.md
++++ b/skills/work-system/references/procedures/delegate.md
+@@ -8,7 +8,8 @@
+ Give the subagent one task it can finish on its own. Include:
+
+ - The observable result and its acceptance checks.
+-- Agreed decisions and source documents or code needed to work without repeating discovery.
++- Agreed decisions and source documents or code needed to work without repeating discovery,
++  including the applicable project agreements and release plan.
+ - Genuine blockers and dependencies.
+ - Explicit writable file scope.
+ - The existing tests or other checks the subagent must make pass.
+--- a/skills/work-system/references/states/subagent-implementation.md
++++ b/skills/work-system/references/states/subagent-implementation.md
+@@ -6,7 +6,8 @@
+ ## Check the assignment
+
+ Start with the requested result, acceptance checks, agreed sources, writable paths, named
+-checks, and supplied test when behavior changes. Inspect the affected code and interfaces.
++checks, and supplied test when behavior changes. Read the applicable project agreements and
++release plan supplied with the assignment. Inspect the affected code and interfaces.
+
+ Check that these instructions agree and the permitted paths allow the required change. If a
+ source, check, or permission is missing, contradictory, or impossible to follow, report what you
+--- a/skills/work-system/references/states/validation.md
++++ b/skills/work-system/references/states/validation.md
+@@ -7,7 +7,8 @@
+ ## Define the evidence
+
+ Review all changes made for the task, its requirements and acceptance checks, implementation
+-test results, reported symptoms, and agreed documents or prototypes.
++test results, reported symptoms, applicable project and release requirements, and agreed
++documents or prototypes.
+
+ Confirm that the checks cover the accepted outcome and can be proven against the implementation.
+ Do not invent criteria or reinterpret a check to fit the result. Route incomplete,
+@@ -33,7 +34,8 @@
+
+ Run the selected checks against the completed work. Every check must pass. Treat failing or
+ flaky tests as implementation failures, including unrelated or pre-existing failures. Record
+-missing proof and its impact when a check cannot run; unavailable evidence is not a pass.
++missing proof and its impact when a check cannot run; unavailable evidence is not a pass. An
++unavailable environment does not cancel an agreed support or release requirement.
+
+ For a reported symptom, repeat the same action through the same interface with the relevant data
+ and environment, and observe the expected result directly.
+--- a/skills/work-system/references/procedures/review.md
++++ b/skills/work-system/references/procedures/review.md
+@@ -9,7 +9,8 @@
+ task. If the task scope cannot be identified, do not dispatch review.
+
+ Gather my request, acceptance checks, specification or ticket, agreed decisions and prototype
+-requirements, current verification evidence, and affected public interfaces.
++requirements, applicable project agreements and release plan, current verification evidence,
++and affected public interfaces.
+
+ Give reviewers temporary evidence paths and keep the files until review is done. Include the
+ retention rules and explicit exceptions in each assignment. Do not require committed captures
+--- a/skills/work-system/references/states/delivery.md
++++ b/skills/work-system/references/states/delivery.md
+@@ -6,8 +6,9 @@
+ ## Gather the work
+
+ Include all code, tests, agreed documents or prototypes, and check results needed for this task.
+-Update documentation and any work record before review. Include these updates in the review. Do
+-not use delivery edits to hide defects, missing checks, or unresolved decisions.
++Update documentation and any work record before review, including shared project or release
++records affected by the change. Include these updates in the review. Do not use delivery edits
++to hide defects, missing checks, or unresolved decisions.
+
+ ## Handle failures
+
+--- a/skills/work-system/references/providers/local/record.md
++++ b/skills/work-system/references/providers/local/record.md
+@@ -20,6 +20,9 @@
+ effort needs. Keep planning maps, research, and prototype notes in repository documentation and
+ link them from the effort record. Move existing copies out of the effort directory and update
+ their links.
++
++Shared project agreements and release plans live in repository documentation, outside individual
++effort directories. Link applicable sources from the effort record and specifications.
+
+ ## Status
+
+--- a/skills/work-system/references/providers/github/record.md
++++ b/skills/work-system/references/providers/github/record.md
+@@ -35,6 +35,10 @@
+ After failed GitHub reads, state what to retry or how to restore access.
+
+ ## Records
++
++Keep shared project agreements and release plans in repository documentation. Link them from
++effort and feature issues without copying their requirements. Project-wide questions stay in
++those shared documents; feature questions keep the issue ownership described below.
+
+ Use one parent issue for the effort's specification and status. Each feature has one combined
+ research-and-planning issue containing its questions, investigations, requirements, and agreed
+--- /dev/null
++++ b/skills/work-system/references/procedures/project-planning.md
+@@ -0,0 +1,48 @@
++# Project planning
++
++Establish or revise decisions that apply across a project, or plan a release. Use this within
++planning and return to the effort's discussion afterward.
++
++## Establish the agreements
++
++Use `scripts/navigate.py project` to locate `docs/project.md`.
++
++Read existing specifications, decisions, documentation and relevant implementation. Distinguish
++accepted commitments from proposals, observed capabilities and unknowns. Link existing detailed
++documentation from `docs/project.md`. Discuss conflicting sources rather than choosing
++whichever permits the work to continue.
++
++Discuss the choices needed for the requested work: its purpose and intended users, support
++commitments, shared constraints, and release or versioning decisions when relevant. Explain the
++practical consequences and recommend an answer when the facts support one. Keep other choices
++open without making them blockers for unrelated work.
++
++Record agreed conclusions and their reasons in the project document. Keep questions and
++recommendations visibly separate from agreement. Link detailed feature requirements, technical
++decisions and supporting evidence instead of copying them. Use the displayed `project-records`
++format.
++
++## Plan a release when needed
++
++Use an existing relevant release plan or a document under `docs/releases/`. A descriptive name
++can precede a chosen version. Record its audience, included work, supported environments,
++required checks, and version and timing when agreed. Keep unanswered choices explicit.
++
++Record versioning policy once in the project document and link it from releases. Apply an
++existing policy within the judgment already delegated. An existing version string does not
++itself establish a future release, numbering policy or compatibility promise.
++
++## Carry changes into the work
++
++After agreement, update the shared decision and affected specifications, tickets, dependencies
++and acceptance checks together. Link the project record and relevant release plan from the
++effort's accepted sources. Keep completed work and evidence that remain valid. Remove duplicate
++current requirements by linking their shared source; preserve useful reasons and history.
++
++Use the selected tracker's existing document review and publication rules. A draft
++or published file does not by itself establish my agreement.
++
++## Result
++
++Record the agreed decisions, remaining questions, affected work and source links. Return to the
++current effort with only its genuinely unresolved decisions blocking it.
+--- /dev/null
++++ b/skills/work-system/references/formats/project-records.md
+@@ -0,0 +1,30 @@
++# Project and release records
++
++Use these subjects as needed; omit empty sections.
++Keep current agreements and unresolved questions distinct. Link details that already have a home.
++
++## Project document
++
++Location: `docs/project.md`.
++
++- Purpose and intended users.
++- Agreed support commitments and constraints that apply across features.
++- Versioning policy and compatibility promises, when agreed.
++- Open project questions and proposals.
++- Links to relevant efforts, release plans, specifications and technical decisions.
++
++Record each agreement once, with its reason or decision source when needed to understand it.
++Feature specifications describe the feature and link applicable shared agreements.
++
++## Release plan
++
++Default location: `docs/releases/<release-name>.md`, created when a release is being planned.
++
++- Intended audience and included work, linked to its specifications or tickets.
++- Supported platforms and environments for this release.
++- Agreed readiness checks and links to their evidence or remaining gaps.
++- Version and timing, when chosen, with a link to the project's versioning policy.
++- Open release questions and links to decisions changing earlier plans.
++
++An open date, version or release choice remains open until needed. Do not create placeholder
++release plans merely to complete a project's records or finish unrelated work.
+--- a/skills/work-system/references/workflows/novel-work.json
++++ b/skills/work-system/references/workflows/novel-work.json
+@@ -37,6 +37,15 @@
+         "tracking": {
+           "status": "triggered",
+           "cue": "My request explicitly sets or changes this repository's tracker."
++        },
++        "project-planning": {
++          "status": "triggered",
++          "cue": "Use when establishing project agreements, changing project commitments, or planning a release.",
++          "formats": {
++            "project-records": {
++              "cue": "Use when recording shared project agreements or a release plan."
++            }
++          }
+         }
+       },
+       "transitions": {
+@@ -49,7 +58,8 @@
+             "research",
+             "prototype",
+             "domain-modeling",
+-            "interface-design"
++            "interface-design",
++            "project-planning"
+           ],
+           "formats": {
+             "wayfinding": {

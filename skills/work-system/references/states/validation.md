@@ -7,7 +7,8 @@ change requirements, production code, or tests.
 ## Define the evidence
 
 Review all changes made for the task, its requirements and acceptance checks, implementation
-test results, reported symptoms, and agreed documents or prototypes.
+test results, reported symptoms, applicable project and release requirements, and agreed
+documents or prototypes.
 
 Confirm that the checks cover the accepted outcome and can be proven against the implementation.
 Do not invent criteria or reinterpret a check to fit the result. Route incomplete,
@@ -33,7 +34,8 @@ behavior does not prove that the requested behavior works.
 
 Run the selected checks against the completed work. Every check must pass. Treat failing or
 flaky tests as implementation failures, including unrelated or pre-existing failures. Record
-missing proof and its impact when a check cannot run; unavailable evidence is not a pass.
+missing proof and its impact when a check cannot run; unavailable evidence is not a pass. An
+unavailable environment does not cancel an agreed support or release requirement.
 
 For a reported symptom, repeat the same action through the same interface with the relevant data
 and environment, and observe the expected result directly.

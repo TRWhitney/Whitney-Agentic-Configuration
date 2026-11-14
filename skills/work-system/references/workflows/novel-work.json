@@ -37,6 +37,15 @@
         "tracking": {
           "status": "triggered",
           "cue": "My request explicitly sets or changes this repository's tracker."
+        },
+        "project-planning": {
+          "status": "triggered",
+          "cue": "Use when establishing project agreements, changing project commitments, or planning a release.",
+          "formats": {
+            "project-records": {
+              "cue": "Use when recording shared project agreements or a release plan."
+            }
+          }
         }
       },
       "transitions": {
@@ -49,7 +58,8 @@
             "research",
             "prototype",
             "domain-modeling",
-            "interface-design"
+            "interface-design",
+            "project-planning"
           ],
           "formats": {
             "wayfinding": {

@@ -4,7 +4,8 @@
 
 Store the map in the repository's planning documentation. Follow its existing layout, or use
 `docs/planning/<effort-slug>/map.md`. Link decisions to the combined research-and-planning
-ticket for their feature. Several decisions may link to sections of the same ticket:
+ticket for their feature. Link project-wide decisions to the project document and release
+decisions to their release plan. Several decisions may link to sections of the same record:
 
 ```markdown
 # <Effort name>

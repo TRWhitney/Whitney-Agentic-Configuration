@@ -15,6 +15,23 @@ Unslop is maintained in `skills/unslop/`. Deployment replaces the previously man
 copy with this version. Its upstream attribution and license notice are in
 `skills/unslop/attribution.txt`.
 
+## Repository project records
+
+Work-system uses `docs/project.md` for shared project agreements. To inspect the reference,
+run from that repository:
+
+```sh
+python3 ~/.codex/skills/work-system/scripts/navigate.py project
+```
+
+The command identifies the document without creating files or changing tracker settings.
+Link existing detailed documentation from `docs/project.md`.
+
+Workflow start, resume and compaction recovery identify the project document alongside the
+effort record. Project planning appears among the planning state's procedures. Release plans
+are optional; link a relevant plan from the effort's accepted sources when one exists. Missing
+project or release records do not by themselves prevent otherwise specified routine work.
+
 ## Compaction recovery
 
 Deployment configures the Codex compaction hook automatically, including when work-system is

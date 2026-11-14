@@ -36,6 +36,10 @@ After failed GitHub reads, state what to retry or how to restore access.
 
 ## Records
 
+Keep shared project agreements and release plans in repository documentation. Link them from
+effort and feature issues without copying their requirements. Project-wide questions stay in
+those shared documents; feature questions keep the issue ownership described below.
+
 Use one parent issue for the effort's specification and status. Each feature has one combined
 research-and-planning issue containing its questions, investigations, requirements, and agreed
 design. For a single-feature effort, the parent may serve as that feature issue. For a

@@ -1,5 +1,8 @@
 # Planning document formats
 
+Link applicable project agreements and release plans from the specification and ticket sources.
+Keep their shared requirements in those documents rather than copying them into each effort.
+
 ## Specification
 
 Use the parent issue body for the specification:

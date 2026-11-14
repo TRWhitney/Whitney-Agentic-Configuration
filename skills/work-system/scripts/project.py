@@ -13,6 +13,17 @@ import navigation as core
 PROVIDERS_ROOT = core.REFERENCES_ROOT / "providers"
 
 
+def non_git_root() -> Path:
+    cwd = Path.cwd().resolve()
+    for candidate in (cwd, *cwd.parents):
+        if (candidate / ".work/project.json").exists():
+            return candidate
+    for candidate in (cwd, *cwd.parents):
+        if (candidate / "docs/project.md").is_file():
+            return candidate
+    return cwd
+
+
 def settings_path() -> Path:
     try:
         result = subprocess.run(
@@ -25,12 +36,7 @@ def settings_path() -> Path:
     except (OSError, subprocess.TimeoutExpired) as error:
         raise core.NavigationError(f"Cannot locate project: {error}") from error
     if result.returncode:
-        cwd = Path.cwd().resolve()
-        for candidate in (cwd, *cwd.parents):
-            path = candidate / ".work" / "project.json"
-            if path.exists():
-                return path
-        return cwd / ".work" / "project.json"
+        return non_git_root() / ".work/project.json"
     return Path(result.stdout.strip()) / "work-system.json"
 
 
@@ -39,6 +45,26 @@ def read_json(path: Path) -> dict[str, object]:
         return core.mapping(json.loads(path.read_text(encoding="utf-8")), str(path))
     except (OSError, json.JSONDecodeError) as error:
         raise core.NavigationError(f"Cannot read {path}: {error}") from error
+
+
+def project_root() -> Path:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise core.NavigationError(f"Cannot locate project: {error}") from error
+    if result.returncode == 0:
+        return Path(result.stdout.strip()).resolve()
+    return non_git_root()
+
+
+def project_record() -> Path:
+    return project_root() / "docs/project.md"
 
 
 @dataclass(frozen=True)

@@ -8,7 +8,8 @@ its scope and for combining the result with the rest of the work.
 Give the subagent one task it can finish on its own. Include:
 
 - The observable result and its acceptance checks.
-- Agreed decisions and source documents or code needed to work without repeating discovery.
+- Agreed decisions and source documents or code needed to work without repeating discovery,
+  including the applicable project agreements and release plan.
 - Genuine blockers and dependencies.
 - Explicit writable file scope.
 - The existing tests or other checks the subagent must make pass.

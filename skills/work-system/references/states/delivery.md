@@ -6,8 +6,9 @@ states for changes to requirements, implementation, or validation.
 ## Gather the work
 
 Include all code, tests, agreed documents or prototypes, and check results needed for this task.
-Update documentation and any work record before review. Include these updates in the review. Do
-not use delivery edits to hide defects, missing checks, or unresolved decisions.
+Update documentation and any work record before review, including shared project or release
+records affected by the change. Include these updates in the review. Do not use delivery edits
+to hide defects, missing checks, or unresolved decisions.
 
 ## Handle failures
 

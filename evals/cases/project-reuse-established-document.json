@@ -1,0 +1,69 @@
+{
+  "id": "project-reuse-established-document",
+  "purpose": "task",
+  "project_name": "field-shelf",
+  "tags": [
+    "project-decisions"
+  ],
+  "files": {
+    ".work/import/spec.md": "# Import inventory CSV\n\n**Status:** accepted\n\nImport UTF-8 CSV text with name,quantity headings through import_rows(text). Return name strings\nand validated nonnegative integer quantities in input order. Reject a missing heading or invalid\nquantity with ValueError before returning any records. Empty input with the headings returns an\nempty list. Use Python's standard library. This effort covers the parser and its caller-visible\nchecks on the current Linux development target. No interface, installation or publishing work\nis part of this effort.\n",
+    ".work/import/status.md": "# CSV import\n\nCurrent state: novel-work planning.\n\n[Project](../../docs/product-overview.md). [Accepted specification](spec.md). No implementation tickets exist.\n",
+    "sources/packaging.md": "# Available tooling\n\nPython runs the existing CLI. An experimental packaging tool can target Linux, Windows and macOS; it has not been used to establish supported environments or installation results.\n",
+    "pyproject.toml": "[project]\nname = \"field-shelf\"\nversion = \"0.7.0\"\n",
+    "docs/product-overview.md": "# Field shelf\n\nA local inventory command-line application for Whitney. Keep item names and quantities offline.\nCurrent agreed development work targets Linux. Windows and macOS support are possible later\nwork; their inclusion and timing have not been decided. No public release, date, versioning\npolicy or compatibility promise has been agreed.\n"
+  },
+  "artifacts": [
+    ".work/import/spec.md",
+    ".work/import/status.md",
+    "sources/packaging.md",
+    "pyproject.toml",
+    "docs/product-overview.md"
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/import/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue the CSV import plan and prepare its implementation tickets.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "reuse-project-source",
+      "description": "Preserve the accepted purpose and constraints in docs/product-overview.md when adopting docs/project.md as the shared project record. Keep one current statement of each agreement and update source links as needed. Detailed documentation may remain linked from docs/project.md. Do not introduce a custom document-path setting."
+    },
+    {
+      "id": "deliver-ticket-plan",
+      "description": "Prepare useful tickets for the accepted CSV parser with sufficient behavior, acceptance checks, sources and dependencies. Preserve the feature requirements and keep production implementation unstarted."
+    },
+    {
+      "id": "no-extra-product-commitments",
+      "description": "Leave future platform support, versioning, release timing and compatibility promises undecided. Do not infer their approval from available tooling or the 0.7.0 metadata value, or require them to finish this parser plan."
+    },
+    {
+      "id": "records-and-reply",
+      "description": "Keep shared requirements in docs/project.md or its linked detailed sources and feature detail in the effort. Save useful continuation and report what was actually planned without claiming release readiness."
+    }
+  ],
+  "fixtures": [
+    "inventory"
+  ]
+}
