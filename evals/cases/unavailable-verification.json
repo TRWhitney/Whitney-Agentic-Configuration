@@ -29,7 +29,8 @@
           "commands": [
             {
               "pattern": "python.*checks/check_search\\.py",
-              "exit_code": 0
+              "exit_code": null,
+              "output_pattern": "Seven inventory checks passed\\."
             }
           ]
         },

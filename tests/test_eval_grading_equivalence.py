@@ -16,6 +16,25 @@ class GradingEquivalenceTests(unittest.TestCase):
     def cases(self) -> dict[str, CaseSpec]:
         return {case.id: case for case in load_cases(SOURCE / "evals/cases")}
 
+    def test_unavailable_verifier_accepts_local_success_in_same_shell(self) -> None:
+        case = self.cases()["unavailable-verification"]
+        checks = [c for c in case.steps[1].checks if c.kind == "command_sequence"]
+        command = "python3 checks/check_search.py; python3 checks/check_release.py"
+        with make_workspace(SOURCE, case) as workspace:
+            for output, expected in (
+                ("Seven inventory checks passed.\nRelease verifier unavailable", True),
+                ("AssertionError\nRelease verifier unavailable", False),
+            ):
+                with self.subTest(output=output):
+                    observation = Observation(
+                        command_results=(CommandResult(command, 69, output),)
+                    )
+                    passed = all(
+                        check_result(c, observation, workspace, "thread", [])[0]
+                        for c in checks
+                    )
+                    self.assertEqual(passed, expected)
+
     def test_planning_accepts_either_optional_mode_but_not_implementation(self) -> None:
         for name in (
             "combine-related-planning-records",
