@@ -39,6 +39,10 @@ Preserve the difference between facts, possibilities, recommendations, and
 requirements. Do not turn uncertainty into a promise, weaken "must" to
 "should," or present an unresolved question as a decision.
 
+State requirements explicitly. Give a direct instruction, such as "Fix the bug,"
+or use "must" when naming who acts: "The agent must fix the bug."
+Do not leave the reader to infer an obligation from a description.
+
 Make only the requested edits. A one-word correction does not permit rewriting
 the passage. Keep exact quotations, commands, code, and required terms unchanged
 unless changing them is part of the task.
