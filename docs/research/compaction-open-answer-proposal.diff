@@ -1,0 +1,11 @@
+--- a/evals/cases/agent-created-state-compaction.json
++++ b/evals/cases/agent-created-state-compaction.json
+@@ -59,7 +59,7 @@
+     {
+       "kind": "message",
+       "conversation": "main",
+-      "prompt": "For an empty inventory, refuse the export and create no file. Leave the existing-file decision open.",
++      "prompt": "For an empty inventory, refuse the export and create no file.",
+       "checks": [
+         {
+           "kind": "unchanged",

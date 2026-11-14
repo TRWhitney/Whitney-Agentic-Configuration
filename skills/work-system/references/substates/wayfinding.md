@@ -28,9 +28,12 @@ each final reply with:
 
 List the map's `Not yet specified` topics after `unspecified`.
 
-Use the displayed `reply` command to build each final reply and send its output unchanged.
+Use the displayed `reply` command to build each final reply, including factual answers,
+and send its output unchanged.
 Use `--recap` only when I explicitly ask for a summary without giving a new answer or correction.
-That reply needs no new question. Otherwise, ask the next unresolved question, including after compaction.
+That reply needs no new question. Otherwise, ask the next unresolved question in the same reply,
+including after compaction.
+Keep asking about open decisions unless I ask to postpone the discussion.
 Name the current decision and what it blocks. Explain the relevant facts and the consequences of each option,
 recommend an answer with its reason, and ask one main question. Group questions that use the
 same facts and are clearer to answer together. Do not split questions I can reliably answer

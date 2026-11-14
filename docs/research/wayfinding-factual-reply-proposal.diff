@@ -1,0 +1,12 @@
+--- a/skills/work-system/references/substates/wayfinding.md
++++ b/skills/work-system/references/substates/wayfinding.md
+@@ -28,7 +28,8 @@
+ 
+ List the map's `Not yet specified` topics after `unspecified`.
+ 
+-Use the displayed `reply` command to build each final reply and send its output unchanged.
++Use the displayed `reply` command to build each final reply, including factual answers,
++and send its output unchanged.
+ Use `--recap` only when I explicitly ask for a summary without giving a new answer or correction.
+ That reply needs no new question. Otherwise, ask the next unresolved question, including after compaction.
+ Name the current decision and what it blocks. Explain the relevant facts and the consequences of each option,

@@ -33,6 +33,9 @@ ticket without creating approval tickets for incidental details.
 
 ## Settle decisions
 
+Work out what the accepted requirements already determine. Record those conclusions
+without asking me to approve them.
+
 Keep discussing choices that need my judgment. Recommend an answer when the facts support one,
 explain tradeoffs, and ask only about decisions I need to make. Update the plan as we decide. A
 draft does not replace discussion or agreement.

@@ -59,7 +59,7 @@
     {
       "kind": "message",
       "conversation": "main",
-      "prompt": "For an empty inventory, refuse the export and create no file. Leave the existing-file decision open.",
+      "prompt": "For an empty inventory, refuse the export and create no file.",
       "checks": [
         {
           "kind": "unchanged",
@@ -184,6 +184,10 @@
     {
       "id": "criterion-4",
       "description": "After compaction, recover CSV with name and quantity columns and the latest accepted header-only empty export. Keep destination-exists behavior unresolved and explain that pending choice and ask for a decision. A request for the next decision is not a request for a summary-only reply. Do not revive the earlier refuse-empty answer, treat the importer analysis as unfinished, invent overwrite permission, or restart completed decisions."
+    },
+    {
+      "id": "continue-after-feedback",
+      "description": "After each answer or correction, update the records and ask the next open question in the same reply."
     },
     {
       "id": "criterion-5",
