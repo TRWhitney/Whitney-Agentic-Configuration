@@ -28,9 +28,9 @@ is applied exactly as tested. Global installation and real GitHub publication we
 
 - [Specification](spec.md) and [tested guidance](../../docs/research/project-decisions-proposal.diff).
 - [Eval authoring](../../docs/eval-authoring.md) and [runner](../../docs/agent-evaluations.md).
-- Pstack's existing [plan](../../external/pstack/skills/poteto-mode/references/plan.md),
-  [orchestration](../../external/pstack/skills/poteto-mode/playbooks/orchestrate.md) and
-  [autonomy principle](../../external/pstack/skills/principle-never-block-on-the-human/SKILL.md)
+- Pstack's existing [plan](https://github.com/backnotprop/pstack/blob/18e0e908a13553b0e58d065ab26dbc9a972ec8ba/skills/poteto-mode/references/plan.md),
+  [orchestration](https://github.com/backnotprop/pstack/blob/18e0e908a13553b0e58d065ab26dbc9a972ec8ba/skills/poteto-mode/playbooks/orchestrate.md) and
+  [autonomy principle](https://github.com/backnotprop/pstack/blob/18e0e908a13553b0e58d065ab26dbc9a972ec8ba/skills/principle-never-block-on-the-human/SKILL.md)
   informed this adaptation; it is not an existing pstack project-setup procedure.
 
 ## Verification
