@@ -21,6 +21,26 @@ class ProcedureFollowupTests(unittest.TestCase):
     def case(self, name: str) -> CaseSpec:
         return next(c for c in load_cases(SOURCE / "evals/cases") if c.id == name)
 
+    def test_quantity_label_project_checks_cover_the_accepted_feature(self) -> None:
+        case = self.case("choose-reversible-implementation-detail")
+        with make_workspace(SOURCE, case) as workspace:
+            app = workspace.file("src/app.py")
+            app.write_text(
+                app.read_text()
+                + '\n\ndef quantity_label(value):\n    return f"{value} items"\n'
+            )
+            for check in sorted((workspace.root / "checks").glob("*.py")):
+                with self.subTest(check=check.name):
+                    result = subprocess.run(
+                        ["python3", str(check)],
+                        cwd=workspace.root,
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(
+                        result.returncode, 0, result.stdout + result.stderr
+                    )
+
     def test_prototype_selection_checks_allow_separate_production_source(self) -> None:
         case = self.case("interactive-prototype-comparison")
         with make_workspace(SOURCE, case) as workspace:

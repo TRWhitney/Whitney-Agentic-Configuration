@@ -4,10 +4,10 @@
     "expansion"
   ],
   "fixtures": [
-    "inventory",
-    "search-export-ready"
+    "inventory"
   ],
   "files": {
+    ".gitignore": "__pycache__/\n",
     ".work/inventory/spec.md": "# Quantity label\n\n**Status:** accepted\n\nquantity_label(value) returns the validated nonnegative integer followed by a space and items, for example 0 items or 12 items. Existing inventory behavior stays unchanged. There are no interface or dependency changes.\n",
     ".work/inventory/tickets/01-search.md": "# Quantity label\n\n**Status:** ready-for-agent\n**Blocked by:** none\n\nImplement quantity_label from [specification](../spec.md). Examples: 0 items and 12 items.\n",
     ".work/inventory/tickets/02-export.md": "# Unused draft\n\n**Status:** cancelled\n\nNot included in this effort.\n",
