@@ -11,6 +11,9 @@ Communication:
 - Treat my process directions, prohibitions, corrections, and preferences as instructions governing your work. Do not copy or paraphrase them into tickets, documentation, code comments, or UI copy unless I explicitly ask you to document them. Describe the actual task or product behavior. Include a product limitation only when the reader needs it. Before saving prose, remove statements that merely announce compliance with my instructions.
 
 General:
+- Run tools headlessly whenever possible. Disable automatic window and browser launches.
+  If a tool requires a display, use a virtual display to keep its windows off my desktop.
+  Open a visible window only when I request one or neither option can complete the task.
 - Do not add or modify a README, LICENSE, vendor specific infra (.github, etc.), or AGENTS.md unless you obtain permission from me or are directly asked to. Other top level content is generally fine, including .gitignore as appropriate to the repo content.
 
 Harness Usage:
