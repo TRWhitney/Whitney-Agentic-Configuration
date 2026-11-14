@@ -12,7 +12,7 @@ from pydantic import JsonValue, TypeAdapter
 
 from evals.evidence import EvidenceRun
 from evals.fixtures import make_workspace
-from evals.models import CaseSpec, MessageStep, load_cases
+from evals.models import CaseSpec, MessageStep, SeedStep, load_cases
 from evals.runner import Observation, check_result
 from tests.test_eval_runner import SOURCE
 
@@ -20,6 +20,88 @@ from tests.test_eval_runner import SOURCE
 class ProcedureFollowupTests(unittest.TestCase):
     def case(self, name: str) -> CaseSpec:
         return next(c for c in load_cases(SOURCE / "evals/cases") if c.id == name)
+
+    def test_search_checks_allow_matching_fixes_and_reject_regressions(self) -> None:
+        case = self.case("review-requires-product-decision")
+        original = case.files["src/app.py"]
+        normalize = (
+            "import unicodedata\n\n"
+            + original.replace("query.casefold()", "_key(query)").replace(
+                'item["name"].casefold()', '_key(item["name"])'
+            )
+            + "\n\ndef _key(text):\n"
+            "    return ''.join(c for c in unicodedata.normalize('NFD', "
+            "text.casefold()) if not unicodedata.combining(c))\n"
+        )
+        translate = (
+            original.replace("query.casefold()", "_key(query)").replace(
+                'item["name"].casefold()', '_key(item["name"])'
+            )
+            + "\n\ndef _key(text):\n"
+            "    return text.casefold().translate(str.maketrans('áéíóú', 'aeiou'))\n"
+        )
+        mutation = (
+            original[: original.index("def search_items")]
+            + "def search_items(items, query):\n"
+            "    for item in items:\n"
+            "        item['name'] = item['name'].replace('é', 'e')\n"
+            "    return [item for item in items "
+            "if query.casefold() in item['name'].casefold()]\n"
+        )
+        variants = [
+            ("Unicode decomposition", normalize, True),
+            ("translation", translate, True),
+            ("clarification without code changes", original, True),
+            (
+                "lost Unicode case folding",
+                original.replace(".casefold()", ".lower()"),
+                False,
+            ),
+            (
+                "reversed result order",
+                normalize.replace(
+                    "for item in items if", "for item in reversed(items) if"
+                ),
+                False,
+            ),
+            ("stored names changed", mutation, False),
+            (
+                "changed shelf message",
+                normalize.replace("No items saved.", "Empty"),
+                False,
+            ),
+            (
+                "changed stock total",
+                normalize.replace(
+                    'sum(item["quantity"] for item in items)', "len(items)"
+                ),
+                False,
+            ),
+            (
+                "all queries match",
+                normalize.replace('if needle in _key(item["name"])', "if True"),
+                False,
+            ),
+        ]
+        for name, source, expected in variants:
+            with self.subTest(variant=name), make_workspace(SOURCE, case) as workspace:
+                workspace.file("src/app.py").write_text(source)
+                if name == "clarification without code changes":
+                    workspace.seed(
+                        "t",
+                        SeedStep(
+                            workflow="novel-work",
+                            state="planning",
+                            record=".work/search/status.md",
+                        ),
+                    )
+                results = [
+                    check_result(check, Observation(), workspace, "t", [])
+                    for check in case.steps[-1].checks
+                ]
+                self.assertEqual(
+                    all(passed for passed, _ in results), expected, results
+                )
 
     def test_quantity_label_project_checks_cover_the_accepted_feature(self) -> None:
         case = self.case("choose-reversible-implementation-detail")
