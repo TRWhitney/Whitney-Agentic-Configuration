@@ -191,6 +191,27 @@ class ProcedureFollowupTests(unittest.TestCase):
             )
             self.assertIn("spawned implementation subagent", evidence.frames[0].prompt)
 
+    def test_deletion_repair_allows_accurate_search_documentation(self) -> None:
+        case = self.case("review-reports-outside-data-loss")
+        with make_workspace(SOURCE, case) as workspace:
+            deletion = workspace.file("src/delete.py")
+            deletion.write_text(
+                deletion.read_text().replace(
+                    "    items = store.load()",
+                    "    if not selected: return\n    items = store.load()",
+                )
+            )
+            guide = workspace.file("docs/actions.md")
+            guide.write_text(
+                guide.read_text() + "\nAn empty search query returns all items. "
+                "No match or an empty inventory returns an empty list.\n"
+            )
+            results = [
+                check_result(check, Observation(), workspace, "t", [])
+                for check in case.steps[-1].checks
+            ]
+            self.assertTrue(all(passed for passed, _ in results), results)
+
     def test_deletion_check_accepts_repairs_and_rejects_behavior_regressions(
         self,
     ) -> None:

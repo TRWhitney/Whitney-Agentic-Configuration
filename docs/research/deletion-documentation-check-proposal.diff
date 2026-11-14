@@ -1,0 +1,10 @@
+--- a/evals/cases/review-reports-outside-data-loss.json
++++ b/evals/cases/review-reports-outside-data-loss.json
+@@ -45,7 +45,6 @@
+         {
+           "kind": "unchanged",
+           "paths": [
+-            "docs/actions.md",
+             ".work/search/spec.md"
+           ]
+         },

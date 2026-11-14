@@ -45,7 +45,6 @@
         {
           "kind": "unchanged",
           "paths": [
-            "docs/actions.md",
             ".work/search/spec.md"
           ]
         },

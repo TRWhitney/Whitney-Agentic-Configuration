@@ -78,6 +78,9 @@ Report a credible security or data-loss concern immediately even when its owners
 the accepted outcome. Treat uncertainty about which task covers a problem or which uses are
 supported as a judgment for me rather than silently expanding the work.
 
+Fix confirmed bugs that contradict the accepted requirements, including bugs outside
+the current change.
+
 Do not modify the work while reviewing it. An admitted blocking finding makes the review fail.
 After corrections and validation, perform a correction review of the admitted findings, the
 correction, and affected conclusions. Admit a new blocker during correction review only when the
