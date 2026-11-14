@@ -48,8 +48,9 @@ the passage. Keep exact quotations, commands, code, and required terms unchanged
 unless changing them is part of the task.
 
 Follow instructions about your work without repeating or paraphrasing them
-in what you write, unless asked to include them. If told to use plain language,
-write plainly. Do not add "This guide uses plain language."
+in what you write or using them to justify your actions, unless asked to include
+them. If told to use plain language, write plainly.
+Do not add "This guide uses plain language."
 
 ## Write naturally
 

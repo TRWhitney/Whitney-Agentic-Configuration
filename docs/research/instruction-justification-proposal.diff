@@ -1,0 +1,27 @@
+--- a/skills/unslop/SKILL.md
++++ b/skills/unslop/SKILL.md
+@@ -48,8 +48,9 @@
+ unless changing them is part of the task.
+ 
+ Follow instructions about your work without repeating or paraphrasing them
+-in what you write, unless asked to include them. If told to use plain language,
+-write plainly. Do not add "This guide uses plain language."
++in what you write or using them to justify your actions, unless asked to include
++them. If told to use plain language, write plainly.
++Do not add "This guide uses plain language."
+ 
+ ## Write naturally
+ 
+--- a/evals/cases/review-requires-product-decision.json
++++ b/evals/cases/review-requires-product-decision.json
+@@ -66,6 +66,10 @@
+     {
+       "id": "preserve-current",
+       "description": "Leave existing correct Unicode case-fold search unchanged while the accent choice is pending. Do not add normalization, reject imported names, or rewrite requirements on the user's behalf."
++    },
++    {
++      "id": "task-reasons",
++      "description": "Explain the search decision without quoting, linking or paraphrasing the agent's instructions to justify its actions. Reporting what remains undecided and why that prevents implementation is allowed."
+     }
+   ]
+ }
