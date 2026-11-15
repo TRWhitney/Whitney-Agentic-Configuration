@@ -128,7 +128,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 167 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 171 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -273,6 +273,19 @@ that contain both. [PR evidence examples](../evals/calibration/pr-evidence.json)
 material validation limits that belong in the filed description from unrelated failed metadata
 requests. The [writing study](research/unslop-writing-trials.md) preserves the comparisons,
 regression findings, and assessor disagreements.
+
+Run the detail and length suite with:
+
+```sh
+uv run --group eval python -m evals run \
+  --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --case unslop-recommendation-revisions \
+  --case unslop-first-explanation --case unslop-concise-explanation \
+  --case unslop-brief-recommendation --case unslop-form-labels \
+  --repeat 3 --timeout 1800 --judge-timeout 1200 \
+  --calibration evals/calibration/unslop-writing.json \
+  --calibration evals/calibration/unslop-short-copy.json
+```
 
 ## Visual state selection
 

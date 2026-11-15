@@ -1,0 +1,49 @@
+{
+  "id": "unslop-brief-recommendation",
+  "tags": [
+    "unslop",
+    "writing-quality",
+    "meaning-retention"
+  ],
+  "purpose": "control",
+  "project_name": "mosaic-planning",
+  "fixtures": [
+    "workflow-practices"
+  ],
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Using sources/fieldwork.md and sources/mosaic-workflow.md, give me a three-sentence recommendation on whether Mosaic should adopt Fieldwork's app recipe. I need a short note for our planning agenda, not the full comparison.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "brief-agenda-note",
+      "description": "Deliver the requested three-sentence recommendation rather than a full comparison, checklist, extended explanation, or request to waive the length constraint. Optional source links do not count as sentences. Use connected understandable sentences rather than three overloaded sentences disguising a long report."
+    },
+    {
+      "id": "mechanism-and-benefit",
+      "description": "Give a supported recommendation explaining that the app recipe saves working instructions for operating/checking Mosaic and that reuse avoids repeated discovery. Fail for generic claims to improve verification/productivity without saying what gets saved and reused. All launch/drive/cleanup details are not necessary in this brief note."
+    },
+    {
+      "id": "fit-and-tradeoff",
+      "description": "Identify the project-local skills/validation fit and the cost of keeping the recipe current. Adoption remains a proposal. Fail for claiming Mosaic lacks regression validation or a startup command or inventing measured benefits."
+    },
+    {
+      "id": "scope",
+      "description": "Answer in conversation without changing project files or creating an unrequested document. Do not spend the note on reading skills, compliance, or the editing process."
+    }
+  ]
+}

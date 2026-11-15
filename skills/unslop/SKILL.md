@@ -35,8 +35,8 @@ be brief.
 
 When explaining something, say who does what, how it works, and why it
 matters where those details are needed. Connect actions to their results
-and recommendations to their reasons. Keep headings, form labels,
-buttons, and similar short text focused on their purpose.
+and recommendations to their reasons and tradeoffs. Make costs explicit.
+Keep headings, form labels, buttons, and similar short text focused on their purpose.
 
 Check each revision against the whole request and earlier agreed decisions.
 

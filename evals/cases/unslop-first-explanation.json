@@ -1,0 +1,49 @@
+{
+  "id": "unslop-first-explanation",
+  "tags": [
+    "unslop",
+    "writing-quality",
+    "meaning-retention"
+  ],
+  "purpose": "task",
+  "project_name": "maple-newsroom",
+  "files": {
+    "sources/import-notes.md": "# Newsroom import change\n\nThe newsroom imports a folder of interview transcripts. A reporter chooses the folder and starts Import. Previously, the importer committed every transcript only after the whole folder was read. If any transcript could not be read, none of the folder appeared in the library. The new importer saves each readable transcript as it goes. It stops at the first unreadable file and names that file in the error. Earlier saved transcripts remain in the library; later files are not attempted. Import does not delete source files. A retry of the same unchanged folder skips the transcripts already saved, so it does not duplicate them. This skip depends on the source files keeping the same content. Editing a transcript makes it a new import. Reporters must correct the unreadable file before retrying if they want to reach later files. The interface reports how many transcripts were imported and where processing stopped.\n\nThe developer calls this incremental persistence with content-addressed idempotency. The previous whole-folder rollback has been removed. The library includes a source-file link for each imported transcript. No comparison of speed was performed. These notes describe the new behavior, not a proposal. There is no new background task or automatic retry.\n"
+  },
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Explain the import change in sources/import-notes.md to our newsroom editor. She needs to decide what instructions to give reporters when an import stops. Give her the explanation here.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "concrete-initial-explanation",
+      "description": "From this first answer, explain old all-or-nothing import versus new save-as-it-goes behavior, including stopping at the first unreadable file, naming it, retaining earlier saves, and not attempting later files. Fail for technical shorthand or vague reassurance that conceals what reporters actually see and keep. A definition of every implementation term is unnecessary if the mechanism is explained plainly."
+    },
+    {
+      "id": "retry-and-limit",
+      "description": "Explain that a reporter fixes the unreadable file and retries; unchanged already-saved transcripts are skipped, while edited content is treated as a new import. Preserve that source files are not deleted and there is no automatic retry. Fail for promising unconditional duplicate prevention or omitting a condition needed to instruct reporters correctly."
+    },
+    {
+      "id": "readable-proportionate",
+      "description": "Give the editor a connected explanation usable for instructing reporters. Use paragraphs or a useful list to avoid an unnecessarily dense block. Fail for a long repetitive report, headings for every sentence, terse labels that lose the mechanism, or a full technical implementation walkthrough. No word limit or mandatory structure; necessary detail is allowed."
+    },
+    {
+      "id": "faithful-scope",
+      "description": "Do not invent performance measurements, background automation, changed source-file handling, or a new decision for the editor to approve about already-implemented behavior. Answer in conversation without changing files or saving an unrequested guide."
+    }
+  ]
+}

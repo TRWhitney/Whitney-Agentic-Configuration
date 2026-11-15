@@ -1,0 +1,59 @@
+{
+  "id": "unslop-form-labels",
+  "tags": [
+    "unslop",
+    "writing-quality",
+    "short-copy"
+  ],
+  "purpose": "control",
+  "project_name": "harbor-workshops",
+  "files": {
+    "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+    "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+  },
+  "artifacts": [
+    "docs/form-copy.json"
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "checks/form-copy.py"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "short-functional-copy",
+      "description": "Replace bureaucratic wording with compact natural form titles, labels, buttons, and a success title. The words should identify the control/action, not turn each string into an explanatory sentence or paragraph. Fail for bloated copy, policy explanations embedded in field labels, or unrequested headings/help paragraphs. Do not impose exact words or a fixed word count."
+    },
+    {
+      "id": "correct-actions",
+      "description": "The submit control communicates booking/registering/reserving a workshop place and the waitlist control communicates joining a waitlist, without implying that waitlisting confirms a place. Name, email, and session controls remain identifiable. The success title may confirm registration or neutrally identify its result; a clear neutral result heading is a valid wording choice because the confirmation screen explains the result. Fail for changed product behavior, payment instructions, false status, or an incorrect guarantee. Do not require a particular success-title wording."
+    },
+    {
+      "id": "usable-artifact",
+      "description": "Retain valid JSON and the existing keys so the form can use the strings. No changes to the source or unrequested app implementation. Do not require a particular synonym; clear concise alternatives are valid."
+    },
+    {
+      "id": "useful-delivery",
+      "description": "Deliver edited strings and a concise final update appropriate to the small copy task. Fail for a lengthy essay about each obvious word choice or a report claiming style compliance. A short explanation of a substantive choice is allowed."
+    }
+  ],
+  "grader_files": {
+    "checks/form-copy.py": "import json\nfrom pathlib import Path\ncopy = json.loads(Path(\"docs/form-copy.json\").read_text())\nassert isinstance(copy, dict)\nassert set(copy) == {\"title\", \"name_label\", \"email_label\", \"session_label\", \"submit_button\", \"waitlist_button\", \"success_title\"}\nassert all(isinstance(value, str) and value.strip() for value in copy.values())\n"
+  }
+}

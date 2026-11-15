@@ -1,0 +1,83 @@
+{
+  "id": "unslop-recommendation-revisions",
+  "tags": [
+    "unslop",
+    "writing-quality",
+    "meaning-retention"
+  ],
+  "purpose": "task",
+  "project_name": "mosaic-workflow",
+  "fixtures": [
+    "workflow-practices"
+  ],
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "message",
+      "prompt": "Examine Fieldwork and suggest practices that could improve our Mosaic workflow. Use sources/fieldwork.md and sources/mosaic-workflow.md. Be specific and explain how your proposed adoptions would fit into our work and why we would want them. Give me the recommendations here; we are discussing them before deciding what to change.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Present your suggested changes in a more coherent and less long way.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "prompt": "Unslop this aggressively.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "mechanism-and-value",
+      "description": "Assess every delivered recommendation, including both revisions. Explain retained practices in terms of what the agent/developer does or produces and why that would help Mosaic, grounded in the supplied Fieldwork source. A caller sketch means realistic interface-use examples and expected outcomes developed by the agent and reviewed during design before implementation; an app recipe means reusable, executed instructions for operating/checking the app consulted during validation. Equivalent natural explanations are valid. Fail when substantive recommendations become slogans or unexplained terms that leave the owner unable to tell what would actually happen. Do not require all source details or a prescribed recommendation."
+    },
+    {
+      "id": "current-practice-and-tradeoffs",
+      "description": "Compare suggested additions with current practice. Caller examples and maintained app recipes are possible additions; the described regression/performance duties already exist. Fail for selling existing duties as missing capabilities without evidence of an additional function. Preserve the upkeep cost when recommending app recipes and the fact that adoption remains proposed. Declining adoption or explicitly withdrawing an unsupported proposal is valid."
+    },
+    {
+      "id": "meaning-through-revisions",
+      "description": "The second and third answers remain understandable by themselves and continue to explain what would change, where it fits, and why it helps. Style/length requests do not revoke those original requirements. Fail for retaining recommendations while deleting their mechanism or reason, substituting terse labels, or silently dropping a substantive proposal just to shorten. Explicitly withdrawing a duplicate or combining points with an explanation is valid. Keeping every sentence is not required."
+    },
+    {
+      "id": "readable-supported-writing",
+      "description": "Explain terms and connect actions to results in readable paragraphs or lists. Later versions address coherence/brevity by removing repetition or organizing more clearly; no fixed shortening ratio is required and already concise content need not be cut. Fail for unnecessary large text blocks, unexplained jargon, headings for each fragment that obscure flow, unsupported factual/benefit claims, or process-compliance narration replacing the explanation. More words to explain a necessary distinction are allowed."
+    },
+    {
+      "id": "discussion-scope",
+      "description": "Answer in conversation without implementing proposals, modifying sources, or creating an unrequested prose artifact. Citations can support but cannot replace the explanation."
+    }
+  ]
+}

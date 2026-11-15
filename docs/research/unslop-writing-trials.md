@@ -257,3 +257,74 @@ mechanical corrections. This table preserves every original attempt alongside it
 | write-complete-implementation-tickets | task | C | C |  |
 | write-regression-test | task | C | C |  |
 | writing-preferences-stay-out-of-prose | task | C | C |  |
+
+## Detail and length guidance follow-up
+
+The additions in `8bca227` did not demonstrate an improvement in these trials. The updated
+skill preserved concrete mechanisms and reasons, but two final recommendation rewrites
+omitted the source-supported upkeep cost. Their preceding replies explained that saved
+verification instructions need updating as the app changes; the final rewrites dropped that
+work, once retaining only the word "maintained". Independent inspection confirmed both
+failures. The earlier skill retained the tradeoff in all three attempts.
+
+Four new reconstructed cases cover successive simplification of recommendations, an initial
+explanation, a three-sentence note, and form copy. The existing parcel-email shortening case
+is reused unchanged. C/I/U mean inspected correct/incorrect/unknown; each cell gives all three
+attempts under the final criteria.
+
+| Case | Previous skill | Updated skill |
+| --- | --- | --- |
+| [Successive simplification](../../evals/cases/unslop-recommendation-revisions.json) | C/C/C | I/I/C |
+| [First explanation](../../evals/cases/unslop-first-explanation.json) | C/C/C | C/C/C |
+| [Shorten a long email](../../evals/cases/unslop-concise-explanation.json) | C/C/C | C/C/C |
+| [Three-sentence note](../../evals/cases/unslop-brief-recommendation.json) | C/C/C | C/C/C |
+| [Form labels](../../evals/cases/unslop-form-labels.json) | C/C/C | C/C/C |
+
+Both versions produced understandable initial explanations, shorter complete emails, and
+three-sentence notes. Form strings stayed concise without added help paragraphs. These
+results support the tested short-copy behavior, not a general guarantee or a causal claim
+that the additions improved or worsened writing.
+
+### Method and assessment repair
+
+Only unslop differed between isolated instruction snapshots, using its versions at `323005d`
+and `8bca227`. Thirty final-criteria candidate attempts used `gpt-6.1-sol`, with three per
+case and condition, 1800-second candidate and 1200-second judge allowances, and no cumulative
+token cutoff. SDK/runtime were `0.163.0`. Each case's six outputs were assessed together
+under shuffled neutral labels. Candidates and judges used separate contexts of the same
+model family; shared blind spots remain possible. Source bytes, isolation, successful full
+skill reads, outputs and relevant actions were inspected. All final assessments completed.
+
+The general writing calibration matched 12/12 examples. An initial form criterion rejected
+the neutral success heading "Registration result". Independent review found that requirement
+narrower than the source, which permits the confirmation screen to explain the result.
+The criterion now allows neutral headings. Six calibrated examples distinguish valid
+alternatives from false status, waitlist guarantees, and paragraph-length labels. All six
+agreed. All six original form attempts are superseded, and six fresh attempts use the
+corrected frozen criterion. The original heading-only failure is an assessment defect, not
+evidence of a skill advantage.
+
+The initial comparison left retention of decision-relevant tradeoffs unresolved. Five short
+reconstructed tasks and three repeats do not establish normal-use reliability.
+
+
+### First wording iteration
+
+Added “and tradeoffs”; the five cases and criteria stayed fixed. Both variants scored 15/15
+across three repeats. All 30 assessments completed and all 18 calibration examples matched.
+Instruction snapshots differed only by those two words.
+
+One final rewrite again said “a maintained recipe” without explaining upkeep. The assessor
+and read-only diagnosis accepted it, but independent intent review found that it did not
+preserve the upkeep cost required by the rubric. That candidate remains disputed despite its
+automated pass. All other outputs met the frozen criteria.
+
+This iteration does not establish completion.
+
+
+### Second wording iteration
+
+Added “Make costs explicit.” A candidate-only run kept all cases and criteria unchanged. All
+five cases passed three attempts each; all 15 assessments completed and all 18 calibration
+examples matched. Final recommendations explicitly retained upkeep work. These results
+establish the suite’s pass condition, not general reliability.

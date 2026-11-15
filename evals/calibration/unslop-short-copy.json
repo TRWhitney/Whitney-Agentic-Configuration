@@ -1,0 +1,88 @@
+{
+  "rubric": [
+    {
+      "id": "short-accurate-form-copy",
+      "description": "The requested form strings are compact, natural titles, field labels, and buttons. Controls remain identifiable and distinguish registering/reserving a free workshop place from joining a waitlist, which does not reserve a place. The confirmation screen explains the result, so its heading may explicitly confirm registration or neutrally identify that result. Accept valid concise wording alternatives; do not demand a particular heading. Fail for paragraph-length field labels, false status, invented payment operations, or a guarantee that waitlisting reserves a place."
+    }
+  ],
+  "examples": [
+    {
+      "id": "neutral-result-heading",
+      "request": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "files": {
+        "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+        "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+      },
+      "reply": "Updated the form strings.",
+      "expected": "met",
+      "reason": "The source allows the confirmation screen to explain the result. A concise neutral heading is compatible with that task.",
+      "artifact_path": "docs/form-copy.json",
+      "artifact": "{\n  \"title\": \"Register for a workshop\",\n  \"name_label\": \"Name\",\n  \"email_label\": \"Email address\",\n  \"session_label\": \"Workshop session\",\n  \"submit_button\": \"Reserve my place\",\n  \"waitlist_button\": \"Join the waitlist\",\n  \"success_title\": \"Registration result\"\n}\n"
+    },
+    {
+      "id": "explicit-registration",
+      "request": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "files": {
+        "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+        "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+      },
+      "reply": "Updated the form strings.",
+      "expected": "met",
+      "reason": "Compact labels and correct, distinct reservation and waitlist actions.",
+      "artifact_path": "docs/form-copy.json",
+      "artifact": "{\n  \"title\": \"Register for a workshop\",\n  \"name_label\": \"Name\",\n  \"email_label\": \"Email address\",\n  \"session_label\": \"Workshop session\",\n  \"submit_button\": \"Reserve my place\",\n  \"waitlist_button\": \"Join the waitlist\",\n  \"success_title\": \"You're registered\"\n}\n"
+    },
+    {
+      "id": "alternate-neutral-heading",
+      "request": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "files": {
+        "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+        "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+      },
+      "reply": "Updated the form strings.",
+      "expected": "met",
+      "reason": "This alternative neutral heading is concise and does not claim a false state.",
+      "artifact_path": "docs/form-copy.json",
+      "artifact": "{\n  \"title\": \"Register for a workshop\",\n  \"name_label\": \"Name\",\n  \"email_label\": \"Email address\",\n  \"session_label\": \"Workshop session\",\n  \"submit_button\": \"Reserve my place\",\n  \"waitlist_button\": \"Join the waitlist\",\n  \"success_title\": \"Your registration\"\n}\n"
+    },
+    {
+      "id": "paid-status",
+      "request": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "files": {
+        "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+        "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+      },
+      "reply": "Updated the form strings.",
+      "expected": "not_met",
+      "reason": "Registration is free and no payment is due; these strings invent a payment operation.",
+      "artifact_path": "docs/form-copy.json",
+      "artifact": "{\n  \"title\": \"Register for a workshop\",\n  \"name_label\": \"Name\",\n  \"email_label\": \"Email address\",\n  \"session_label\": \"Workshop session\",\n  \"submit_button\": \"Pay now\",\n  \"waitlist_button\": \"Join the waitlist\",\n  \"success_title\": \"Payment received\"\n}\n"
+    },
+    {
+      "id": "waitlist-guarantee",
+      "request": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "files": {
+        "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+        "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+      },
+      "reply": "Updated the form strings.",
+      "expected": "not_met",
+      "reason": "The source expressly says joining a waitlist does not reserve a place.",
+      "artifact_path": "docs/form-copy.json",
+      "artifact": "{\n  \"title\": \"Register for a workshop\",\n  \"name_label\": \"Name\",\n  \"email_label\": \"Email address\",\n  \"session_label\": \"Workshop session\",\n  \"submit_button\": \"Reserve my place\",\n  \"waitlist_button\": \"Join the waitlist and reserve my place\",\n  \"success_title\": \"You're registered\"\n}\n"
+    },
+    {
+      "id": "explanations-in-labels",
+      "request": "The workshop registration form sounds bureaucratic. Clean up docs/form-copy.json using sources/registration.md. These strings are the title, labels, and buttons people see on the form.",
+      "files": {
+        "sources/registration.md": "# Workshop registration\n\nA participant chooses a workshop session and enters their name and email address. The options show date and time. Registration is free. The Save action records a place immediately and sends a confirmation email. If the session is full, the visitor may join a waitlist instead; this does not reserve a place. The confirmation screen explains the result. The form already shows that no payment is due. A clear form label is ordinarily a few words; the app puts policy details in its existing registration guide, not additional help paragraphs on the form.\n",
+        "docs/form-copy.json": "{\n  \"title\": \"Participant registration facilitation\",\n  \"name_label\": \"Participant identity designation\",\n  \"email_label\": \"Electronic correspondence endpoint\",\n  \"session_label\": \"Session allocation preference\",\n  \"submit_button\": \"Execute registration finalization\",\n  \"waitlist_button\": \"Initiate waiting-list enrollment\",\n  \"success_title\": \"Registration outcome realization\"\n}\n"
+      },
+      "reply": "Updated the form strings.",
+      "expected": "not_met",
+      "reason": "The form fields have become unnecessary explanatory sentences instead of concise labels; the task asks for short functional form copy.",
+      "artifact_path": "docs/form-copy.json",
+      "artifact": "{\n  \"title\": \"Register for a workshop\",\n  \"name_label\": \"Enter your full name here so the system can identify you as the person who will be participating in the workshop session you select below.\",\n  \"email_label\": \"Provide the electronic address where you would like to receive the confirmation message after your registration has been successfully recorded.\",\n  \"session_label\": \"Workshop session\",\n  \"submit_button\": \"Reserve my place\",\n  \"waitlist_button\": \"Join the waitlist\",\n  \"success_title\": \"You're registered\"\n}\n"
+    }
+  ]
+}
