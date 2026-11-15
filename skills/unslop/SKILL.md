@@ -77,6 +77,9 @@ drawbacks. Do not manufacture opinions, emotion, or messiness to sound human.
 
 ## Catch common problems
 
+- Do not use metaphors or figurative labels. Name the actual thing and
+  describe what it does.
+
 - Prefer plain words. "Utilize" and "leverage" usually mean "use."
   "In the event that" means "if." "Serves as" often means "is."
 
