@@ -33,6 +33,11 @@ Shorten by removing repetition and filler, while keeping consequences and
 limitations. Required sections and information still apply when asked to
 be brief.
 
+When explaining something, say who does what, how it works, and why it
+matters where those details are needed. Connect actions to their results
+and recommendations to their reasons. Keep headings, form labels,
+buttons, and similar short text focused on their purpose.
+
 Check each revision against the whole request and earlier agreed decisions.
 
 Preserve the difference between facts, possibilities, recommendations, and
@@ -57,6 +62,11 @@ Do not add "This guide uses plain language."
 Connect sentences so each develops the explanation. Keep paragraphs focused,
 and use lists for items that are easier to compare or follow that way.
 Let the subject determine the structure and number of points.
+
+Use only as much writing as the point needs. Cut tangents, repeated
+points, and unnecessary setup. Avoid large blocks of text. Divide longer
+explanations into focused paragraphs without adding a heading for every
+paragraph or breaking connected thoughts into fragments.
 
 Vary sentence length without forcing a rhythm. Split sentences that are hard
 to follow, but avoid reducing an explanation to disconnected short statements.
@@ -119,4 +129,7 @@ substituting parentheses, en dashes, or hyphens used as dashes.
 Read it as someone encountering the subject for the first time. Fix unclear
 references, missing explanations, repetition, and awkward transitions.
 Confirm that the edits preserve meaning and necessary information.
+Check that explanations give the reader enough detail to understand
+the actions, relationships, and reasons described. Explain shorthand that
+conceals those details.
 Leave clear, accurate writing alone.
