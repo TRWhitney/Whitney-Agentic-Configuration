@@ -9,8 +9,7 @@ import zipapp
 from pathlib import Path
 
 FIXTURE = (
-    Path(__file__).resolve().parents[1]
-    / "evals/cases/fixtures/inventory-cli.json"
+    Path(__file__).resolve().parents[1] / "evals/cases/fixtures/inventory-cli.json"
 )
 
 
