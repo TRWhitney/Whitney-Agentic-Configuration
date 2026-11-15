@@ -1,0 +1,64 @@
+{
+  "id": "architecture-result-design-conflict",
+  "tags": [
+    "architecture"
+  ],
+  "purpose": "task",
+  "project_name": "field-notes",
+  "files": {
+    ".gitignore": "__pycache__/\n",
+    "docs/export-products.md": "# Export outcomes\n\nAn export can succeed, fail, or be cancelled. Callers must show these as different outcomes. Success contains the output path and row count. A failure retains its original exception for diagnostics. Cancellation is distinct from failure and must never be automatically retried. A failed export may be retried after its cause is corrected. The status display and retry controller consume the same terminal result; they do not inspect each other or job-local variables. These are agreed product requirements.\n",
+    ".work/export/status.md": "# Export outcomes\n\nCurrent state: novel-work implementation. [Accepted design](spec.md). [Implementation ticket](tickets/01-results.md). The producer and two consumers are partly implemented in src/; the outcome check currently fails for cancellation.\n",
+    ".work/export/spec.md": "# Export outcomes\n\nStatus: accepted. Product behavior is defined in [export outcomes](../../docs/export-products.md).\n\nAgreed code design: the sole terminal result is str | None. A string is the successful destination path. None represents either failure or cancellation. Both clients receive only this value; no other result fields or shared side channel exist.\n",
+    ".work/export/tickets/01-results.md": "# Complete export outcome handling\n\nStatus: active. Blocked by: none. Complete the producer and consumers against the [accepted design](../spec.md) and [product outcomes](../../../docs/export-products.md). Project check: python3 checks/check_outcomes.py.\n",
+    "src/outcomes.py": "from pathlib import Path\n\ndef terminal_result(destination: Path | None) -> str | None:\n    return None if destination is None else str(destination)\n\ndef status_text(result: str | None) -> str:\n    return \"Cancelled\" if result is None else \"Exported: \" + result\n\ndef should_retry(result: str | None) -> bool:\n    return result is None\n",
+    "checks/check_outcomes.py": "import sys\nfrom pathlib import Path\nsys.path.insert(0, str(Path(__file__).resolve().parents[1] / \"src\"))\nfrom outcomes import should_retry, status_text\nassert status_text(None) == \"Cancelled\"\nassert not should_retry(None), \"Cancelled exports must not be retried\"\n"
+  },
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue implementing the export-outcome ticket in .work/export/tickets/01-results.md.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "progress",
+          "workflow": "novel-work",
+          "state": "planning",
+          "ignore_substate": true
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "identify-design-conflict",
+      "description": "Identify the concrete information loss in accepted str|None: failure and cancellation are indistinguishable to independent consumers, success lacks row count, and original failure causes cannot be represented. Do not blame only should_retry or invert its condition as a complete fix. Inspect the actual producer, both consumers and accepted sources; running the supplied check can support the evidence but is not itself required."
+    },
+    {
+      "id": "return-to-planning",
+      "description": "Return from implementation to planning through the navigator before changing an agreed result interface. Preserve the product outcomes. Explain a representable replacement such as separate success/failure/cancelled variants with the required data, and calling examples for the two clients that agree with it. Update or explicitly identify the accepted design/ticket changes required, keeping the flawed design from remaining ready for implementation. A proposed replacement can await the existing agreement process; no exact file format or particular result class is required."
+    },
+    {
+      "id": "no-extra-implementation",
+      "description": "Do not silently change the agreed result representation and finish implementation, preserve the ambiguous None contract using hidden side channels, or weaken product requirements to fit existing code. Production sources remain unchanged while the new agreed representation needs planning. Do not ask the user to choose a routine variable name or how to fix should_retry; a substantive design-agreement question is valid."
+    }
+  ]
+}

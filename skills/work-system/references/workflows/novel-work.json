@@ -10,6 +10,10 @@
         }
       },
       "procedures": {
+        "architecture": {
+          "status": "triggered",
+          "cue": "Use when planning new or changed function interfaces, calls between functions, or which component performs an operation or writes shared data."
+        },
         "domain-modeling": {
           "status": "triggered",
           "cue": "Use when the project agrees on shared terms or an important architecture decision.",
@@ -55,6 +59,7 @@
         "wayfinding": {
           "cue": "Use when there are too many open decisions to track reliably in conversation.",
           "related-procedures": [
+            "architecture",
             "research",
             "prototype",
             "domain-modeling",

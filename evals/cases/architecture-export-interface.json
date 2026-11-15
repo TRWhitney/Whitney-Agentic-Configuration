@@ -1,0 +1,59 @@
+{
+  "id": "architecture-export-interface",
+  "tags": [
+    "architecture"
+  ],
+  "purpose": "task",
+  "project_name": "field-notes",
+  "files": {
+    "docs/exports.md": "# Field Notes exports\n\nThe Python library currently returns UTF-8 CSV text through export_rows. Existing callers must keep working. Add a file export operation for local desktop callers. Its product requirements are settled: accept an iterable of already validated note records and a destination path; consume records once; preserve order; use the existing CSV headings and quoting; refuse an existing destination. Empty input creates a headings-only file. A successful result identifies the destination and exported row count. Failure must preserve its original exception and leave no partial destination file. No progress UI, background jobs, cancellation, remote storage, or new formats. We have not chosen a Python function interface or how the existing CSV formatter and file-writing code divide the work.\n",
+    "src/exporting.py": "import csv\nimport io\n\ndef export_rows(rows):\n    output = io.StringIO(newline=\"\")\n    writer = csv.writer(output, lineterminator=\"\\n\")\n    writer.writerow([\"title\", \"body\"])\n    for row in rows:\n        writer.writerow([row[\"title\"], row[\"body\"]])\n    return output.getvalue()\n",
+    "src/desktop.py": "from exporting import export_rows\n\ndef copy_notes(rows, clipboard):\n    clipboard.set_text(export_rows(rows))\n",
+    ".work/export/status.md": "# File exports\n\nCurrent state: novel-work planning. Product requirements are in [exports](../../docs/exports.md). We are deciding the Python interface and implementation responsibilities.\n"
+  },
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Work out the design for adding file exports described in docs/exports.md. The current formatter and desktop caller are in src/.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "useful-design",
+      "description": "Produce a concrete design with realistic calling-code examples and corresponding types or function declarations that agree. Show normal use and relevant failure/cancellation outcomes. Examples can be in the same design write as declarations; do not infer private drafting order. Fail for only naming desired qualities, listing files, or declarations with no usable calling example."
+    },
+    {
+      "id": "export-contract",
+      "description": "Show enough interface/error detail to implement and use the feature: one-pass iterable input, existing CSV behavior, refusal of an existing destination, headings-only empty export, success path and row count, original exception preservation, and no partial file after failure. Keep export_rows and its clipboard caller working. Error handling can use exceptions or an explicit result type; no particular signature or file-creation mechanism is required. Do not invent cancellation/background work or require buffering all input without acknowledging its cost. Include handled secondary cleanup failure: a partially written destination left when deletion fails violates the contract, even if the original error is preserved. A leftover staging file is distinct from a partial destination. Do not require resilience to process termination, hardware corruption, or arbitrary outside replacement, or mandate a publication primitive."
+    },
+    {
+      "id": "design-without-extra-pause",
+      "description": "Work through the requested design, including the examples, without stopping only to request approval of an interface example or a choice among routine internal helpers. Asking for acceptance of a substantive completed design or a genuinely unresolved product choice is valid. No required number of alternatives, separate architecture document, panel, prototype, or particular API names. Fail for replacing the requested design with a promise to design after approval."
+    },
+    {
+      "id": "grounded-clear-design",
+      "description": "Read the affected code and preserve supported behavior. Explain what each component does and the costs or reasons for meaningful choices. Keep useful technical terms but explain unfamiliar naming; fail for unexplained invented labels or metaphorical names in place of types, calls, or responsibilities. Exact existing code identifiers and quotations can remain. Keep design in the existing feature record when one exists; a concise design in the normal planning record is valid. Production implementation is not requested."
+    }
+  ]
+}

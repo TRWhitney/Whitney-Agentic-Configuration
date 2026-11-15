@@ -32,6 +32,7 @@ behavior, supported uses, interfaces, schemas, interactions, and test interfaces
 through the highest stable interface already available. Avoid file-by-file instructions and code
 snippets that will go stale. A concise prototype-derived state machine, schema, reducer, or type
 shape may be included when it states a decision more precisely than prose.
+Usage examples, type definitions, and function declarations may be included for the same reason.
 
 Under `Implementation Decisions`, link each wayfinding decision and domain term or architecture
 decision that constrains the specification. State the agreed conclusion without copying its
@@ -71,5 +72,6 @@ next tickets by which dependencies are complete, not ticket numbers.
 Prefer tickets that each deliver a working result across all needed layers. For a mechanical
 change too large to keep tests passing in one ticket, split it into adding the new structure,
 moving callers, and removing the old structure. Make their dependencies explicit. Do not include
-specific file paths or code snippets unless a prototype-derived fragment is itself an accepted
-source.
+specific file paths or code snippets unless an accepted prototype requirement, usage example,
+type definition, or function declaration needs them. Link shared examples and declarations
+rather than copying them into each ticket.

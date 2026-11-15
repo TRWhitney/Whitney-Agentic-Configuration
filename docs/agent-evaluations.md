@@ -128,7 +128,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 171 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 174 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -243,6 +243,24 @@ The [verification-limits follow-up](research/pr-verification-limits-trials.md) r
 result-disclosure failures, source trials, corrected judgments and six correct final attempts.
 The [remaining-failure study](research/remaining-failure-trials.md) records known-bug repair
 trials and the corrected documentation check.
+
+## Code architecture
+
+Three `architecture` task cases cover file-export calling examples and declarations,
+coordinated updates to shared records, and an accepted result type that loses required
+failure and cancellation information. Two existing cases check routine implementation
+judgment and unresolved product decisions. [Trial findings](research/architecture-trials.md).
+
+```sh
+uv run --group eval python -m evals run \
+  --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --case architecture-export-interface --case architecture-shared-records \
+  --case architecture-result-design-conflict \
+  --case choose-reversible-implementation-detail --case incomplete-design \
+  --repeat 3 --timeout 1800 --judge-timeout 1200 \
+  --max-tokens 0 --judge-max-tokens 0 \
+  --calibration evals/calibration/architecture-design.json
+```
 
 ## Unslop writing
 

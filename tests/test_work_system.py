@@ -353,6 +353,7 @@ class WorkflowManifestTests(unittest.TestCase):
         self.assertEqual(
             set(cast(dict[str, object], planning["procedures"])),
             {
+                "architecture",
                 "tracking",
                 "domain-modeling",
                 "interface-design",
@@ -723,6 +724,7 @@ class NavigatorTests(unittest.TestCase):
         output = self.run_navigator("start", "novel-work").stdout
 
         for procedure_name in {
+            "architecture",
             "domain-modeling",
             "interface-design",
             "prototype",
@@ -799,6 +801,7 @@ class NavigatorTests(unittest.TestCase):
         ).stdout
 
         for procedure_name in {
+            "architecture",
             "research",
             "prototype",
             "domain-modeling",

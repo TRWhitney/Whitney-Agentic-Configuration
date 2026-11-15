@@ -20,6 +20,11 @@ code for cleanup opportunities or start a separate refactoring effort without my
 
 Keep behavior outside the agreed change unchanged and keep affected tests passing.
 
+Investigate repeated special cases, calling code that must reproduce another component's
+internal steps, or repeated casts or disabled type checks. If the agreed types or division of
+responsibilities cause the problem, return to planning and use the architecture procedure to
+revise that decision. Keep choices that do not change the agreed design within implementation.
+
 ## Build the change
 
 Use the testing procedure when changing behavior or refactoring.

@@ -1,0 +1,60 @@
+{
+  "id": "architecture-shared-records",
+  "tags": [
+    "architecture"
+  ],
+  "purpose": "task",
+  "project_name": "field-notes",
+  "files": {
+    "docs/updates.md": "# Field Notes record updates\n\nThe web handler and scheduled tagging job use one local process and the same notes.json file. Each note has id, title, body, and tags. Saving edited title/body and updating tags are independent operations; concurrent updates of different fields on the same note must both survive. Each completed operation must be durable, return the updated note, and retain unrelated fields. Errors must preserve their underlying cause. Same-field edits may serialize in arrival order. IDs and incoming values are already validated. No other process writes this file, and distributed coordination is outside this feature. Keep the existing JSON file readable. Choose how callers update records and how the code reads and writes them; we have not agreed that code design.\n",
+    "src/web.py": "import json\n\ndef edit_note(path, note_id, title, body):\n    rows = json.loads(path.read_text())\n    for note in rows:\n        if note[\"id\"] == note_id:\n            note.update(title=title, body=body)\n    path.write_text(json.dumps(rows))\n",
+    "src/tagger.py": "import json\n\ndef set_tags(path, note_id, tags):\n    rows = json.loads(path.read_text())\n    for note in rows:\n        if note[\"id\"] == note_id:\n            note[\"tags\"] = tags\n    path.write_text(json.dumps(rows))\n",
+    "data/notes.json": "[{\"id\":\"n1\",\"title\":\"Oaks\",\"body\":\"Old tree survey\",\"tags\":[\"trees\"]}]\n",
+    ".work/export/status.md": "# Record updates\n\nCurrent state: novel-work planning. [Product requirements](../../docs/updates.md) are settled. The web handler and tagging job currently write the same JSON file independently. Their replacement design is not chosen.\n"
+  },
+  "artifacts": [],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "planning",
+      "record": ".work/export/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Plan the record-update change in docs/updates.md for the web handler and tagging job in src/.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "useful-design",
+      "description": "Produce a concrete design with realistic calling-code examples and a matching usable function interface. Specify the proposed operations, their inputs, returned note values or types, and relevant failure behavior. Calls together with precise prose may define that interface; no separate formal declaration block or literal sample records are required. Inputs taken from existing caller parameters are valid examples. Fail when the interface is actually underspecified or the examples contradict it, not solely for its presentation. Do not infer private drafting order."
+    },
+    {
+      "id": "coordinated-writes",
+      "description": "Identify the read-modify-write lost-update problem in the supplied web and tagging code. Specify who performs read-modify-write, how all in-process writers share coordination for a given file, and when durability and success are established. Calling examples cover both clients and identify the fields submitted and updated note returned. Accept a shared repository, coordinated writes with proper lock lifetime, a single writer, or another valid design; do not mandate a class or a lock. A lock per request or per independent client that leaves writers uncoordinated fails. Preserve unrelated fields and existing JSON readability. State useful costs of the chosen solution rather than claiming that a small interface alone fixes concurrency. Assess these coordination facts separately from interface presentation."
+    },
+    {
+      "id": "design-without-extra-pause",
+      "description": "Work through the requested design, including the examples, without stopping only to request approval of an interface example or a choice among routine internal helpers. Asking for acceptance of a substantive completed design or a genuinely unresolved product choice is valid. No required number of alternatives, separate architecture document, panel, prototype, or particular API names. Fail for replacing the requested design with a promise to design after approval."
+    },
+    {
+      "id": "grounded-clear-design",
+      "description": "Read the affected code and preserve supported behavior. Explain what each component does and the costs or reasons for meaningful choices. Keep useful technical terms but explain unfamiliar naming; fail for unexplained invented labels or metaphorical names in place of types, calls, or responsibilities. Exact existing code identifiers and quotations can remain. Keep design in the existing feature record when one exists; a concise design in the normal planning record is valid. Production implementation is not requested."
+    }
+  ]
+}
