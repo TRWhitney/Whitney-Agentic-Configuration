@@ -56,6 +56,7 @@ EXPECTED_PROCEDURES = {
 EXPECTED_FORMATS = {
     "domain-modeling",
     "planning-artifacts",
+    "project-operations",
     "project-records",
     "wayfinding",
 }
@@ -136,6 +137,7 @@ class WorkSystemStructureTests(unittest.TestCase):
             {
                 "domain-modeling.md",
                 "planning-artifacts.md",
+                "project-operations.md",
                 "project-records.md",
                 "wayfinding.md",
             },

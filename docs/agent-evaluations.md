@@ -128,7 +128,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 174 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 179 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -260,6 +260,23 @@ uv run --group eval python -m evals run \
   --repeat 3 --timeout 1800 --judge-timeout 1200 \
   --max-tokens 0 --judge-max-tokens 0 \
   --calibration evals/calibration/architecture-design.json
+```
+
+## Project operating documentation
+
+Five task cases cover operating-guide authorship and guided reuse by a fresh conversation,
+repairing a stale command separately from a product regression, sufficient existing guidance,
+unavailable supplier prerequisites, and operating-document upkeep during an ordinary CLI change.
+They use the real inventory CLI with disposable state and private behavior checks.
+[Trial findings](research/project-operations-trials.md).
+
+```sh
+uv run --group eval python -m evals run \
+  --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --tag project-operations --repeat 3 \
+  --timeout 1800 --judge-timeout 1200 \
+  --max-tokens 0 --judge-max-tokens 0 \
+  --calibration evals/calibration/project-operations.json
 ```
 
 ## Unslop writing

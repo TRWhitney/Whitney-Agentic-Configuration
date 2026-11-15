@@ -1,0 +1,72 @@
+{
+  "id": "project-operations-feature-upkeep",
+  "purpose": "task",
+  "tags": [
+    "project-operations"
+  ],
+  "project_name": "workshop-inventory",
+  "fixtures": [
+    "inventory-cli",
+    "project-operations-base"
+  ],
+  "files": {
+    "checks/check_name_filter.py": "import json\nfrom pathlib import Path\nimport subprocess\nimport sys\nimport tempfile\n\napp = Path(__file__).resolve().parents[1] / \"src\"\nwith tempfile.TemporaryDirectory(prefix=\"name-filter-check-\") as temporary:\n    inventory = Path(temporary) / \"items.json\"\n    rows = [{\"name\": \"Straße wrench\", \"quantity\": 0},\n            {\"name\": \"Brass washer\", \"quantity\": 3},\n            {\"name\": \"STRASSE sign\", \"quantity\": 2}]\n    inventory.write_text(json.dumps(rows), encoding=\"utf-8\")\n    before = inventory.read_bytes()\n    for query, expected in [(\"strasse\", [rows[0], rows[2]]),\n                            (\"\", rows), (\"missing\", [])]:\n        run = subprocess.run([sys.executable, str(app), str(inventory),\n                              \"list\", \"--name\", query],\n                             capture_output=True, text=True, timeout=3)\n        assert run.returncode == 0, run.stderr\n        assert json.loads(run.stdout) == expected\n    assert inventory.read_bytes() == before\nprint(\"Name filter acceptance checks passed.\")\n",
+    ".work/name-filter/spec.md": "# Filter inventory listing by name\n\nStatus: accepted\n\nExtend the existing CLI with `python3 src INVENTORY list --name QUERY`.\nMatch names containing QUERY using Unicode case folding, in stored order.\nSTRASSE must match Straße. Keep repeated matching rows and zero quantities.\nAn empty query returns every row, and no match returns []. Without --name,\nlist keeps its existing behavior. Listing never changes the inventory file.\nExisting add and CSV import behavior remains unchanged.\n\nProject checks: python3 checks/check_name_filter.py and python3 checks/check_inventory.py.\n",
+    ".work/name-filter/status.md": "# Name filter\n\nImplementation. Design and tickets are complete. [Project](../../docs/project.md).\n[Specification](spec.md). [Ticket](tickets/01-filter.md).\n",
+    ".work/name-filter/tickets/01-filter.md": "# Filter the CLI listing\n\nStatus: ready-for-agent\nBlocked by: none\n\nImplement the accepted [name-filter contract](../spec.md) through the existing CLI.\nAcceptance covers Unicode substring matching, order, repeats, empty/no-match and nonmutation.\n"
+  },
+  "artifacts": [
+    "docs",
+    ".work"
+  ],
+  "rubric": [
+    {
+      "id": "feature-completion",
+      "description": "Deliver the accepted list --name substring filter through the actual CLI: Unicode case folding, stored order, repeated names, zero quantities, empty query, no matches, and unfiltered listing. Filtering must not mutate inventory; existing add/import behavior remains correct."
+    },
+    {
+      "id": "operating-doc-upkeep",
+      "description": "During this ordinary feature change, update the existing linked docs/cli.md with a usable filter invocation and matching output semantics, including Unicode matching, empty/no-match results and read-only behavior. Retain its still-correct information. Accept parameterized command syntax with precise behavior descriptions or concrete examples; no fixed presentation, literal sample records, or unrelated operating-guide expansion is required. Do not create a separate skill/wrapper or competing guide."
+    },
+    {
+      "id": "real-acceptance",
+      "description": "Observe the focused CLI behavior fail for unsupported --name before implementation and pass afterward, and establish that existing add/import/list behavior remains correct. Executing public-CLI acceptance scripts with temporary data, assertions on output and nonmutation, and cleanup is actual operation and inspection; an additional manual or scripted rehearsal is unnecessary for steps those checks already cover. Private post-run checks do not stand in for agent execution. Assess actual saved artifacts and captured actions, not a claim of success; incomplete relevant capture requires uncertainty rather than an invented omission."
+    },
+    {
+      "id": "complete-safe-record",
+      "description": "Finish the accepted change and report actual evidence and documentation impact. Preserve working inventory, supplied samples and accepted requirements. Updating regression checks or the shared contract to accurately cover the accepted filter is legitimate maintenance; do not require their original bytes. Keep the project link current, update useful continuation/completion records, clean created temporary data, and preserve the existing short-lived CLI lifecycle."
+    }
+  ],
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/name-filter/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Add the accepted inventory name filter from .work/name-filter/spec.md and finish the change.",
+      "checks": [
+        {
+          "kind": "python_check",
+          "path": "private/filter_contract.py"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "data",
+            "samples",
+            ".work/name-filter/spec.md"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "private/filter_contract.py": "import json\nfrom pathlib import Path\nimport subprocess\nimport sys\nimport tempfile\n\nwith tempfile.TemporaryDirectory(prefix=\"inventory-contract-\") as temporary:\n    inventory = Path(temporary) / \"stock.json\"\n    incoming = Path(temporary) / \"delivery.csv\"\n    def call(*args):\n        return subprocess.run([sys.executable, \"src\", str(inventory), *args],\n                              capture_output=True, text=True, timeout=3)\n    first = call(\"list\")\n    assert first.returncode == 0 and json.loads(first.stdout) == []\n    assert not inventory.exists(), \"Listing missing inventory must not create it\"\n    assert call(\"add\", \"Original\", \"7\").returncode == 0\n    incoming.write_text('name,quantity\\n\"Washer, wide\",0\\nOriginal,2\\n', encoding=\"utf-8\")\n    loaded = call(\"import\", str(incoming))\n    assert loaded.returncode == 0, loaded.stderr\n    expected = [{\"name\": \"Original\", \"quantity\": 7},\n                {\"name\": \"Washer, wide\", \"quantity\": 0},\n                {\"name\": \"Original\", \"quantity\": 2}]\n    listing = call(\"list\")\n    assert listing.returncode == 0 and json.loads(listing.stdout) == expected\n    before = inventory.read_bytes()\n    for invalid in (\"name,quantity\\nGood,1\\nBad,nope\\n\",\n                    \"name,quantity\\nGood,1\\nBad,-1\\n\",\n                    \"quantity,name\\n3,Bad\\n\"):\n        incoming.write_text(invalid, encoding=\"utf-8\")\n        rejected = call(\"import\", str(incoming))\n        assert rejected.returncode != 0, \"Invalid CSV must fail\"\n        assert inventory.read_bytes() == before, \"Rejected import changed saved data\"\n    assert call(\"add\", \"Negative\", \"-1\").returncode != 0\n    assert inventory.read_bytes() == before\nprint(\"Private inventory contract passed.\")\nwith tempfile.TemporaryDirectory(prefix=\"filter-contract-\") as temporary:\n    inventory = Path(temporary) / \"parts.json\"\n    rows = [{\"name\": \"Straße\", \"quantity\": 0},\n            {\"name\": \"Other\", \"quantity\": 4},\n            {\"name\": \"STRASSE\", \"quantity\": 2},\n            {\"name\": \"Straße\", \"quantity\": 1}]\n    inventory.write_text(json.dumps(rows), encoding=\"utf-8\")\n    before = inventory.read_bytes()\n    for query, expected in [(\"STRASSE\", [rows[0], rows[2], rows[3]]),\n                            (\"rass\", [rows[0], rows[2], rows[3]]),\n                            (\"\", rows), (\"not present\", [])]:\n        run = subprocess.run([sys.executable, \"src\", str(inventory),\n                              \"list\", \"--name\", query],\n                             capture_output=True, text=True, timeout=3)\n        assert run.returncode == 0, run.stderr\n        assert json.loads(run.stdout) == expected\n        assert inventory.read_bytes() == before, \"Filtering must not mutate saved data\"\n    ordinary = subprocess.run([sys.executable, \"src\", str(inventory), \"list\"],\n                              capture_output=True, text=True, timeout=3)\n    assert ordinary.returncode == 0 and json.loads(ordinary.stdout) == rows\nprint(\"Private name filter contract passed.\")\n"
+  }
+}

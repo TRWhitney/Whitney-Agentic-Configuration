@@ -46,6 +46,11 @@
         "implemented": "validation",
         "misunderstood-requirement": "discovery",
         "scope-outgrew-fix": "novel-work.planning"
+      },
+      "formats": {
+        "project-operations": {
+          "cue": "Use when establishing or changing reusable project setup and operating instructions."
+        }
       }
     },
     "validation": {
@@ -62,7 +67,12 @@
       "procedures": {
         "documentation": {
           "status": "required",
-          "cue": "Update documentation affected by the implementation."
+          "cue": "Update documentation affected by the implementation.",
+          "formats": {
+            "project-operations": {
+              "cue": "Use when creating or maintaining project setup and operating documentation."
+            }
+          }
         },
         "review": {
           "status": "required",

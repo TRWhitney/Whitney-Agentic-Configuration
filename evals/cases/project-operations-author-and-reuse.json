@@ -1,0 +1,101 @@
+{
+  "id": "project-operations-author-and-reuse",
+  "purpose": "task",
+  "tags": [
+    "project-operations"
+  ],
+  "project_name": "workshop-inventory",
+  "fixtures": [
+    "inventory-cli",
+    "project-operations-base"
+  ],
+  "files": {
+    "docs/cli.md": "# Inventory commands\n\nWorkshop inventory is a local command-line application. The application contract describes its data behavior.\n"
+  },
+  "artifacts": [
+    "docs",
+    ".work"
+  ],
+  "rubric": [
+    {
+      "id": "usable-operating-guide",
+      "description": "Author substantive operating instructions in the existing docs/cli.md, linked from docs/project.md, that let a new reader start from the checkout, select a disposable inventory path, run add/list/import, and recognize the expected saved and printed results. Ground commands and prerequisites in source and the accepted application contract. Do not invent installation, services or platform promises."
+    },
+    {
+      "id": "state-and-failure-semantics",
+      "description": "Explain explicit per-command inventory selection, directory creation, missing-file behavior, persistence between separate invocations, append semantics, repeated names, CSV headings/quoting, zero quantities, and rejected-import atomicity. Give a useful way to recognize an error and remove only the disposable data. No daemon lifecycle is needed for this short-lived CLI."
+    },
+    {
+      "id": "author-observed-proof",
+      "description": "The author actually exercises representative successful and failing application operations with isolated data and checks their observable results before delivering the guide. Saved examples must be executable from the stated working directory. A command pasted into Markdown without an observed execution is not proof. Assess actual saved artifacts and captured actions, not a claim of successful execution. If relevant observations are unavailable, record an observation gap for investigation rather than treating missing capture as a behavioral failure."
+    },
+    {
+      "id": "fresh-consumer",
+      "description": "The rehearsal conversation has no earlier author transcript. It must discover and read the resulting saved project/operating documentation and use the actual application to load samples/rehearsal.csv into out/rehearsal.json, observe its list output including the quoted name and zero quantity, and accurately report that outcome. A hand-written JSON result or source-only rediscovery without using the saved guide does not establish reuse. Assess actual saved artifacts and captured actions, not a claim of successful execution. If relevant observations are unavailable, record an observation gap for investigation rather than treating missing capture as a behavioral failure."
+    },
+    {
+      "id": "preserve-and-clean",
+      "description": "Both conversations preserve Whitney's existing data/workshop.json, the supplied CSV and application behavior. Keep the requested rehearsal output, clean up other created disposable data/captures, and keep operating knowledge in ordinary linked project docs without a new skill or competing wrapper. Final reports must distinguish proof actually observed from any remaining limitation."
+    }
+  ],
+  "steps": [
+    {
+      "kind": "message",
+      "conversation": "guide-author",
+      "prompt": "Write docs/cli.md so someone joining this workshop inventory project can set it up and use its add, list and CSV import commands without walking through the source with me. I want a practical guide for trying the application and understanding what it saves. The project overview is docs/project.md.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "data",
+            "samples",
+            "checks",
+            "docs/inventory-contract.md",
+            "src"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "prose",
+          "paths": [
+            "docs/cli.md"
+          ],
+          "required_patterns": [
+            "(?i)import",
+            "(?i)list",
+            "(?i)python"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "message",
+      "conversation": "workshop-rehearsal",
+      "prompt": "Prepare next week's workshop rehearsal from samples/rehearsal.csv using the project guide. Put the sample inventory at out/rehearsal.json, show me what the application lists, and leave my working inventory alone.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "data",
+            "samples",
+            "checks",
+            "docs/inventory-contract.md",
+            "src"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "python_check",
+          "path": "private/rehearsal.py"
+        }
+      ]
+    }
+  ],
+  "grader_files": {
+    "private/rehearsal.py": "import json\nfrom pathlib import Path\nactual = json.loads(Path(\"out/rehearsal.json\").read_text(encoding=\"utf-8\"))\nassert actual == [\n    {\"name\": \"Bolts, brass\", \"quantity\": 0},\n    {\"name\": \"Straße wrench\", \"quantity\": 3},\n    {\"name\": \"Bolts\", \"quantity\": 5},\n], actual\n"
+  }
+}

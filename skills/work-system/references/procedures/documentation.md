@@ -35,6 +35,15 @@ documentation to justify the implementation.
 Check changed links, names, commands, and examples against the completed behavior. This check
 covers the documentation changes; it does not repeat implementation validation.
 
+## Preserve project operations
+
+Keep reusable project setup and operating instructions current when work establishes or changes
+them. Use existing developer or operating documentation, adding a document only when needed.
+Use the `project-operations` format for detailed authoring and maintenance guidance.
+
+Link these instructions from the project record when one exists. Keep executable helper changes
+in implementation; use validation for additional execution needed to check the instructions.
+
 ## Result
 
 State whether documentation needed changes, which documents changed, and any work-record

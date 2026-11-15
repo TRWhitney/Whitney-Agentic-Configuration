@@ -2,7 +2,8 @@
 
 Read the project record identified by the navigator and the relevant release plan linked from
 this effort's accepted sources. Use their agreed requirements throughout the work and include
-the relevant sources in delegated assignments.
+the relevant sources in delegated assignments. Read relevant setup and operating instructions
+linked from the project record.
 
 When planning a project or preparing implementation tickets, create `docs/project.md` if it is
 missing. Link existing detailed sources instead of repeating their agreements. Save agreed
