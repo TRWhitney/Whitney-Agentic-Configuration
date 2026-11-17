@@ -48,6 +48,7 @@ EXPECTED_PROCEDURES = {
     "interface-design",
     "prototype",
     "project-planning",
+    "performance",
     "research",
     "review",
     "subagent-testing",
@@ -329,21 +330,22 @@ class WorkflowManifestTests(unittest.TestCase):
         question_states = cast(dict[str, object], workflows["question"]["states"])
         question_discovery = cast(dict[str, object], question_states["discovery"])
         self.assertEqual(
-            set(cast(dict[str, object], question_discovery["procedures"])), {"research"}
+            set(cast(dict[str, object], question_discovery["procedures"])),
+            {"research", "performance"},
         )
 
         tweak_states = cast(dict[str, object], workflows["tweak"]["states"])
         tweak_discovery = cast(dict[str, object], tweak_states["discovery"])
         self.assertEqual(
             set(cast(dict[str, object], tweak_discovery["procedures"])),
-            {"research", "tracking"},
+            {"research", "tracking", "performance"},
         )
 
         fix_states = cast(dict[str, object], workflows["fix"]["states"])
         fix_discovery = cast(dict[str, object], fix_states["discovery"])
         self.assertEqual(
             set(cast(dict[str, object], fix_discovery["procedures"])),
-            {"diagnose", "research", "tracking"},
+            {"diagnose", "research", "tracking", "performance"},
         )
 
         novel = workflows["novel-work"]
@@ -444,7 +446,7 @@ class WorkflowManifestTests(unittest.TestCase):
 
         implementation = cast(dict[str, object], states["subagent-implementation"])
         procedures = cast(dict[str, object], implementation["procedures"])
-        self.assertEqual(set(procedures), {"subagent-testing"})
+        self.assertEqual(set(procedures), {"subagent-testing", "performance"})
         self.assertEqual(
             cast(dict[str, object], procedures["subagent-testing"])["status"],
             "required",
@@ -564,6 +566,41 @@ class NavigatorTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, expected_returncode, result.stderr)
         return result
+
+    def test_performance_is_selectively_loaded_in_working_states(self) -> None:
+        expected = {
+            (name, state)
+            for name in ("fix", "tweak", "novel-work")
+            for state in ("discovery", "implementation", "validation")
+            if name != "novel-work" or state != "discovery"
+        } | {
+            ("question", "discovery"),
+            ("subagent-implementation", "subagent-implementation"),
+        }
+        for name, workflow in load_workflows().items():
+            states = cast(dict[str, object], workflow["states"])
+            for state_name in states:
+                with self.subTest(workflow=name, state=state_name):
+                    output = self.run_navigator("resume", name, state_name).stdout
+                    if (name, state_name) in expected:
+                        self.assertIn(
+                            f"procedure {name} {state_name} performance", output
+                        )
+                        body = (PROCEDURES_ROOT / "performance.md").read_text().strip()
+                        self.assertNotIn(body, output)
+                        loaded = self.run_navigator(
+                            "procedure", name, state_name, "performance"
+                        ).stdout
+                        self.assertIn(body, loaded)
+                    else:
+                        self.assertNotIn("`performance`", output)
+                        self.run_navigator(
+                            "procedure",
+                            name,
+                            state_name,
+                            "performance",
+                            expected_returncode=2,
+                        )
 
     def test_default_local_and_saved_github_select_the_store(self) -> None:
         local = (PROVIDERS_ROOT / "local" / "record.md").read_text().strip()

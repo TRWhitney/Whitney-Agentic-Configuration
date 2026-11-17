@@ -91,6 +91,10 @@
         "testing": {
           "status": "required",
           "cue": "Write a failing test before changing behavior and keep focused regression tests."
+        },
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
         }
       },
       "transitions": {
@@ -106,7 +110,12 @@
       }
     },
     "validation": {
-      "procedures": {},
+      "procedures": {
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
+        }
+      },
       "transitions": {
         "passed": "delivery",
         "implementation-defect": "implementation",

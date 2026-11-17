@@ -12,6 +12,10 @@
         "tracking": {
           "status": "triggered",
           "cue": "My request explicitly sets or changes this repository's tracker."
+        },
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
         }
       },
       "transitions": {
@@ -36,6 +40,10 @@
         "testing": {
           "status": "triggered",
           "cue": "Use when the tweak changes production behavior or refactors production code."
+        },
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
         }
       },
       "transitions": {
@@ -50,7 +58,12 @@
       }
     },
     "validation": {
-      "procedures": {},
+      "procedures": {
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
+        }
+      },
       "transitions": {
         "passed": "delivery",
         "implementation-defect": "implementation",

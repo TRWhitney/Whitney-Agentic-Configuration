@@ -1,0 +1,61 @@
+{
+  "id": "performance-completed-work-discovery",
+  "purpose": "task",
+  "tags": [
+    "performance"
+  ],
+  "project_name": "dispatch",
+  "fixtures": [
+    "performance-labels"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "question",
+      "state": "discovery",
+      "record": ".work/report/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Continue investigating label rollout readiness. Determine whether the demo result in sources/label-rollout.md supports enabling the 120-order batch, and explain the next decision we need to make.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "data",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "completed-work",
+      "description": "Inspect the operation and measurement code and identify that only 12 of 120 orders receive labels while the rate numerator counts 120. The reported submitted-order rate cannot establish completed-label throughput or rollout readiness."
+    },
+    {
+      "id": "supported-conclusion",
+      "description": "Report the missing-label correctness defect and that the rollout requirement is not demonstrated. A source-derived bound is sufficient: 120 sequential 1ms waits alone cannot reach 5,000 completed labels/s. Alternatively execute a complete, correctness-checked measurement. Do not require repeat benchmarking or profiling once these facts settle the question."
+    },
+    {
+      "id": "scope-and-conditions",
+      "description": "Distinguish observed runs from source bounds and the local modeled printer wait from production measurements. Check arithmetic when explaining the misleading rate; do not invent successful completions, failures, or timing evidence."
+    },
+    {
+      "id": "discovery",
+      "description": "Continue the supplied discovery state and preserve the investigation boundary: explain the unresolved defect and needed next decision without implementing a repair or silently relaxing the accepted workload. This case does not assess initial workflow selection."
+    }
+  ],
+  "artifacts": [
+    ".work/report/status.md"
+  ]
+}

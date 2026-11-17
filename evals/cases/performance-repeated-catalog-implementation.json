@@ -1,0 +1,69 @@
+{
+  "id": "performance-repeated-catalog-implementation",
+  "purpose": "task",
+  "tags": [
+    "performance"
+  ],
+  "project_name": "dispatch",
+  "fixtures": [
+    "performance-report"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "implementation",
+      "record": ".work/report/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Implement the accepted manifest latency improvement in sources/report-contract.md and finish the report ticket.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "sources/report-contract.md",
+            "data"
+          ]
+        },
+        {
+          "kind": "python_check",
+          "path": "grading/report_contract.py"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "actual-optimization",
+      "description": "Implement a real reduction in the report work that meets the supplied local latency goal while preserving the complete accepted API and CLI result. Consider repeated or unnecessary work before concurrency. Different correct implementations and legitimate test, helper, or contract-check maintenance are allowed; do not weaken accepted requirements or remove the modeled adapter read/wait."
+    },
+    {
+      "id": "baseline-and-cause",
+      "description": "From recorded actions, establish the complete report baseline before altering the relevant code and identify the repeated catalog reads as contributing work. Inspect timing boundaries and result correctness; if the cause is unclear, investigate it. Do not treat private evaluator execution as candidate measurement evidence."
+    },
+    {
+      "id": "comparative-evidence",
+      "description": "Recorded candidate actions must show the baseline and changed operation each measured at least five times in alternating A/B order under equivalent workload and adapter conditions, with all 64 required items completed correctly and errors accounted for. Saving a baseline copy or another correct comparison method is allowed. A single before/after timing, an unexecuted script, a changed clock, or dropped rows does not demonstrate improvement."
+    },
+    {
+      "id": "correctness-and-freshness",
+      "description": "Preserve order, duplicates, zero quantities, unknown SKU fallback, totals, nonmutation, empty input, and catalog freshness between calls at the same path. Verify the public CLI and appropriate current checks successfully in observable candidate actions; extra manual rehearsals of behavior already established by the CLI checks are unnecessary."
+    },
+    {
+      "id": "supported-report",
+      "description": "Report baseline and changed latency with units, run counts, variation, and difference; state whether the 40ms goal is demonstrated on the local workload. Distinguish actual local modeled results from production claims, retain reusable measurement commands and concise findings, and stop once the accepted goal is met. This supplied implementation state tests continuation only."
+    }
+  ],
+  "artifacts": [
+    "src/report.py",
+    ".work/report/status.md"
+  ],
+  "grader_files": {
+    "grading/report_contract.py": "from copy import deepcopy\nfrom pathlib import Path\nimport json,subprocess,sys,tempfile\nfrom unittest.mock import patch\nsys.path.insert(0,str(Path.cwd()))\nwaits=[]\nwith patch('time.sleep',side_effect=waits.append):\n    from src.report import build_report\n    with tempfile.TemporaryDirectory() as temporary:\n        catalog=Path(temporary)/'catalog.json'\n        rows=[{'order':'dup','sku':'A','quantity':0},{'order':'dup','sku':'Z','quantity':7},{'order':'tail','sku':'A','quantity':2}]\n        before=deepcopy(rows)\n        for name in ['first name','changed \\\"name\\\"']:\n            catalog.write_text(json.dumps({'A':name}))\n            waits.clear()\n            actual=build_report(rows,catalog)\n            assert sum(waits)>=0.003, 'Report must use the storage adapter round trip'\n            assert actual=={'items':[{'order':'dup','sku':'A','name':name,'quantity':0},{'order':'dup','sku':'Z','name':'Unknown','quantity':7},{'order':'tail','sku':'A','name':name,'quantity':2}],'quantity':9}\n            assert rows==before\n        assert build_report([],catalog)=={'items':[],'quantity':0}\n        catalog.write_text(json.dumps({'A':'last'}))\n        input_path=Path(temporary)/'orders.json'\n        input_path.write_text(json.dumps(rows))\n        command=subprocess.run([sys.executable,'-B','tools/report.py','--input',str(input_path),'--catalog',str(catalog)],text=True,capture_output=True,check=True)\n        receipt=json.loads(command.stdout)\n        assert receipt['completed']==3 and receipt['errors']==0\n        assert receipt['elapsed_ms']>=0\n        assert receipt['result']==build_report(rows,catalog)\n"
+  }
+}

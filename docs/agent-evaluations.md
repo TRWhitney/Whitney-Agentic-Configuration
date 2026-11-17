@@ -128,7 +128,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 179 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+All 184 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -277,6 +277,23 @@ uv run --group eval python -m evals run \
   --timeout 1800 --judge-timeout 1200 \
   --max-tokens 0 --judge-max-tokens 0 \
   --calibration evals/calibration/project-operations.json
+```
+
+## Performance measurement
+
+The `performance` cases cover discovery, implementation, validation, close comparisons, and a
+requested single-run estimate. They exercise runnable local workloads and inspect completed
+work, correctness, timing boundaries, comparative evidence, and the scope of reported conclusions.
+Local timing models do not establish production performance.
+[Trial findings](research/performance-procedure-trials.md).
+
+```sh
+uv run --group eval python -m evals run \
+  --model gpt-6.1-sol --judge-model gpt-6.1-sol \
+  --tag performance --repeat 3 \
+  --timeout 1800 --judge-timeout 1200 \
+  --max-tokens 0 --judge-max-tokens 0 \
+  --calibration evals/calibration/performance-measurement.json
 ```
 
 ## Unslop writing

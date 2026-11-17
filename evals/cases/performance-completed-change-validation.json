@@ -1,0 +1,61 @@
+{
+  "id": "performance-completed-change-validation",
+  "purpose": "task",
+  "tags": [
+    "performance"
+  ],
+  "project_name": "dispatch",
+  "fixtures": [
+    "performance-validation"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "novel-work",
+      "state": "validation",
+      "record": ".work/report/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish validation of the invoice export change and its handoff claims against sources/export-requirements.md.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "data",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "claim-boundary",
+      "description": "Read the tool and implementation and distinguish the recorded renderer improvement from the claimed complete-export improvement. The helper excludes lease acquisition; helper observations cannot establish the whole-operation percentage or budget."
+    },
+    {
+      "id": "target-and-correctness",
+      "description": "Determine that the 90ms modeled lease wait alone exceeds the accepted 50ms local budget, from inspected source bounds or valid complete-export observations. Establish that the required CSV and completion/error counts are preserved, using the available evidence or appropriate checks; merely faster formatting is insufficient."
+    },
+    {
+      "id": "comparison-method",
+      "description": "If reporting a new measured before/after difference, recorded candidate actions must show at least five measurements per variant in alternating order of the complete operation, equivalent inputs/configuration, correct consumed outputs, errors, and relevant conditions. A source-bound answer may instead reject the extrapolated claim and budget while leaving the unmeasured full-operation speed difference unresolved; do not fail that legitimate alternative for omitting benchmarks."
+    },
+    {
+      "id": "validation-result",
+      "description": "Report the target as unmet and the handoff full-operation claim as unsupported unless valid complete comparative evidence establishes a narrower measured difference. Explain local modeled conditions, units and uncertainty, keep code changes in implementation, and use the active workflow route for the failed requirement. Do not silently edit the application or relax the budget. This supplied state tests validation continuation only."
+    }
+  ],
+  "artifacts": [
+    ".work/report/status.md"
+  ]
+}

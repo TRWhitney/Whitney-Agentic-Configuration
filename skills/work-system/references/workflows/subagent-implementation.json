@@ -8,6 +8,10 @@
         "subagent-testing": {
           "status": "required",
           "cue": "Use the supplied focused test and run the named assignment checks."
+        },
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
         }
       },
       "transitions": {

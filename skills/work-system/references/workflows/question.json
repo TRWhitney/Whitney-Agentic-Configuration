@@ -8,6 +8,10 @@
         "research": {
           "status": "allowed",
           "cue": "Use for a bounded investigation that benefits from dedicated research."
+        },
+        "performance": {
+          "status": "triggered",
+          "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
         }
       },
       "transitions": {

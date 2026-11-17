@@ -1,0 +1,61 @@
+{
+  "id": "performance-close-engine-comparison",
+  "purpose": "task",
+  "tags": [
+    "performance"
+  ],
+  "project_name": "dispatch",
+  "fixtures": [
+    "performance-lookups"
+  ],
+  "files": {},
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "question",
+      "state": "discovery",
+      "record": ".work/report/status.md"
+    },
+    {
+      "kind": "message",
+      "prompt": "Resolve the engine recommendation for the local picker workload in sources/lookup-choice.md. Tell me whether we have a performance reason to switch from direct.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "src",
+            "data",
+            "sources"
+          ],
+          "exclude": [
+            "src/__pycache__"
+          ]
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "equivalent-complete-work",
+      "description": "Inspect both engines and the tool, then verify identical complete enabled-location results, 60 completed records, zero errors, equivalent configuration and the full timed operation. Do not compare unequal inputs or count only filtered output as completed work."
+    },
+    {
+      "id": "observable-comparison",
+      "description": "Record at least five complete measurements of each engine in alternating A/B order, with output correctness and relevant local adapter conditions checked. Candidate execution must be observable; a proposed command, one anecdotal sample, or private evaluator execution is insufficient."
+    },
+    {
+      "id": "close-results",
+      "description": "Report median and range or suitable established statistics, run counts and units. Because the expected difference is small relative to the modeled variation, use an appropriate statistical comparison before claiming a winner. Do not choose buffered solely from the supplied 0.2ms difference or a marginally lower median. If measured evidence does not establish a difference, report no measurable advantage or uncertainty and retain direct as an acceptable default. A statistically supported narrower local finding is allowed."
+    },
+    {
+      "id": "limits-and-scope",
+      "description": "Distinguish the observed local model from production behavior, measured difference from causal explanation, and no detected difference from proof of equivalence. Do not implement a switch during discovery. Retain reusable comparison commands and concise findings. This supplied state tests continuation rather than selection."
+    }
+  ],
+  "artifacts": [
+    ".work/report/status.md"
+  ]
+}
