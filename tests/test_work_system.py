@@ -119,7 +119,15 @@ class WorkSystemStructureTests(unittest.TestCase):
     def test_root_delegates_navigation_without_exposing_manifests(self) -> None:
         self.assertEqual(
             {path.name for path in REFERENCES_ROOT.iterdir() if path.is_dir()},
-            {"formats", "procedures", "states", "substates", "providers", "workflows"},
+            {
+                "formats",
+                "procedures",
+                "providers",
+                "reviewers",
+                "states",
+                "substates",
+                "workflows",
+            },
         )
         self.assertEqual(
             {path.name for path in WORKFLOWS_ROOT.iterdir()},

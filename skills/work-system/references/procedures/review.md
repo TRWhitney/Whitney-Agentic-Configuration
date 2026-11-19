@@ -28,8 +28,8 @@ merely because the first review found a blocker.
 
 Prefer separate fresh-context subagents for the intent and engineering axes when available. One
 fresh reviewer may cover both for a genuinely small, low-risk change if it reports each axis
-separately. If fresh contexts are unavailable, perform both reviews yourself and do not claim
-independent review.
+separately. Assign the comment axis to its own fresh-context subagent. If fresh contexts are
+unavailable, perform the reviews yourself and do not claim independent review.
 
 Give every reviewer the files they may read and Git operations they may use. Reviewers must work
 read-only: they must not edit or format files, stage or commit changes, alter repository
@@ -42,6 +42,8 @@ not rerun validation checks or turn review into another validation pass.
 - **Engineering axis:** Compare the change with applicable engineering constraints. Inspect
   architecture and dependency boundaries, maintainability, types, error handling, security,
   focused test quality, and unnecessary complexity.
+- **Comment axis:** Review comments using the [comment reviewer instructions](../reviewers/comment-reviewer.md).
+  Include existing comments in the affected code, even when the diff leaves them unchanged.
 
 For changes to a user interface, compare the inspected views, states, and conditions with the
 agreed requirements and accepted prototypes. Trace the recorded actions and observations through

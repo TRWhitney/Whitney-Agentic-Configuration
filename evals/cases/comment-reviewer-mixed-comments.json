@@ -1,0 +1,60 @@
+{
+  "id": "comment-reviewer-mixed-comments",
+  "purpose": "task",
+  "tags": [
+    "comment-reviewer"
+  ],
+  "project_name": "receipt",
+  "files": {
+    "receipt.py": "# SPDX-License-Identifier: MIT\ndef make_receipt(subtotal: int, ticket_id: int, include_label: bool = False) -> str:\n    \"\"\"Return the receipt in cents, ending with CRLF as required by the send API.\"\"\"\n    # Calculate the receipt total in cents.\n    total = subtotal + 1\n    # total = subtotal + old_fee(subtotal)\n\n    # Do not remove: the old numeric ticket ID does not match our label formatter.\n    label = format_label(ticket_id) if include_label else \"\"  # type: ignore[arg-type]\n\n    # The version 2 gateway requires a CRLF line ending.\n    result = f\"{total}{label}\\r\\n\"\n    # Printer firmware 7 requires the first receipt field to be ASCII.\n    return result\n\n\ndef format_label(ticket_id: str) -> str:\n    return ticket_id.zfill(6)\n",
+    "docs/project.md": "# Receipt generator\n\nReceipts use the version 2 gateway. See the [gateway contract](gateway-v2.md).\n",
+    "docs/gateway-v2.md": "# Gateway version 2\n\nEvery receipt payload sent to version 2 must end in CRLF.\n"
+  },
+  "uncommitted_files": {
+    "receipt.py": "# SPDX-License-Identifier: MIT\ndef make_receipt(subtotal: int, ticket_id: int, include_label: bool = False) -> str:\n    \"\"\"Return the receipt in cents, ending with CRLF as required by the send API.\"\"\"\n    # Calculate the receipt total in cents.\n    total = subtotal + 2\n    # total = subtotal + old_fee(subtotal)\n\n    # Do not remove: the old numeric ticket ID does not match our label formatter.\n    label = format_label(ticket_id) if include_label else \"\"  # type: ignore[arg-type]\n\n    # The version 2 gateway requires a CRLF line ending.\n    result = f\"{total}{label}\\r\\n\"\n    # Printer firmware 7 requires the first receipt field to be ASCII.\n    return result\n\n\ndef format_label(ticket_id: str) -> str:\n    return ticket_id.zfill(6)\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "delivery"
+    },
+    {
+      "kind": "message",
+      "prompt": "Review the receipt fee change as it stands and tell me what you find. Hold any edits until I review the findings.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "unchanged",
+          "paths": [
+            "receipt.py",
+            "docs"
+          ],
+          "exclude": [
+            "**/__pycache__"
+          ]
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "dedicated-review",
+      "description": "The complete review dispatches comment review in a distinct child alongside intent and engineering review, using the comment reviewer instructions. Receipt code changed without editing any comments. Distinct child work must be observed. If child assignment or results are unavailable and the candidate claims dispatch, score uncertainty rather than assuming the claim."
+    },
+    {
+      "id": "removal-findings",
+      "description": "The comment reviewer recommends removing the narration and commented-out old fee code. It identifies the internal numeric-ID workaround and the type suppression as removals and names the current format_label mismatch and the relevant symbol or call. Keep this distinction tied to the actual comments."
+    },
+    {
+      "id": "exceptions",
+      "description": "The comment reviewer preserves the MIT notice and API contract, verifies the CRLF constraint against the supplied gateway specification, and quotes the firmware claim as pending verification. Treat silence on valid kept comments as acceptable if findings do not target them and the reasoning shows the applicable exceptions."
+    },
+    {
+      "id": "read-only",
+      "description": "The child reviewer reports findings without changes or validation reruns. The parent reports what it found and honors the hold on edits. Base read-only judgment on observed evidence. Missing child actions remain uncertain."
+    }
+  ]
+}

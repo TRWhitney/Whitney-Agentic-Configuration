@@ -1,0 +1,49 @@
+{
+  "id": "comment-reviewer-documentation-control",
+  "purpose": "task",
+  "tags": [
+    "comment-reviewer"
+  ],
+  "project_name": "warehouse",
+  "files": {
+    "layout.md": "# Warehouse layout\n\nBoxes are sorted in aisle order.\n"
+  },
+  "uncommitted_files": {
+    "layout.md": "# Warehouse layout\n\nBoxes are sorted in bay order.\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "delivery"
+    },
+    {
+      "kind": "message",
+      "prompt": "Finish the layout wording change. The warehouse now sorts boxes in bay order.",
+      "checks": [
+        {
+          "kind": "no_publish"
+        },
+        {
+          "kind": "file_regex",
+          "path": "layout.md",
+          "pattern": "sorted in bay order"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "standing-assignment",
+      "description": "During complete review, observe a dedicated comment reviewer separate from intent and engineering review even though this diff is Markdown prose with no comments. Do not infer dispatch merely from the final reply. If relevant child evidence is unavailable, score uncertainty."
+    },
+    {
+      "id": "bounded-review",
+      "description": "The comment reviewer reports no findings on the assigned prose and does not audit unrelated material or treat the paragraph as a source comment. Unobserved child actions remain uncertain."
+    },
+    {
+      "id": "delivery",
+      "description": "Preserve the requested wording and complete review and delivery, with an accurate distinction between independent review and self-review if fresh contexts are unavailable."
+    }
+  ]
+}
