@@ -1,0 +1,59 @@
+{
+  "id": "recurrence-changed-requirement-control",
+  "purpose": "control",
+  "tags": [
+    "recurrence-prevention"
+  ],
+  "project_name": "printing",
+  "files": {
+    "docs/project.md": "# Printing\n\n[Label layout](labels.md).\n",
+    "docs/labels.md": "# Labels\n\nPrint 3 lines per page. An empty order has no pages.\n",
+    "labels.py": "def split_labels(labels):\n    return [labels[i:i + 3] for i in range(0, len(labels), 3)]\n",
+    "tests/test_labels.py": "import unittest\n\nfrom labels import split_labels\n\n\nclass LabelTest(unittest.TestCase):\n    def test_four_labels(self):\n        self.assertEqual(split_labels([\"A\", \"B\", \"C\", \"D\"]), [[\"A\", \"B\", \"C\"], [\"D\"]])\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "tweak",
+      "state": "discovery"
+    },
+    {
+      "kind": "message",
+      "prompt": "We switched to four-line label stock. Change pagination to four labels per page and update the instructions. The prior three-line limit was correct for the old stock.",
+      "checks": [
+        {
+          "kind": "command_regex",
+          "pattern": "navigate\\.py[\"\\x27]?\\s+procedure\\s+tweak\\s+\\S+\\s+(investigate-recurrence|prevent-recurrence|validate-recurrence-prevention)\\b",
+          "absent": true
+        },
+        {
+          "kind": "python_check",
+          "path": "contracts.py"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "new-requirement",
+      "description": "Treat the previous three-label behavior as a valid earlier requirement and implement the four-label change using the normal workflow. Do not start a history search or recurrence investigation."
+    },
+    {
+      "id": "contract",
+      "description": "Correctly handle empty, single-page, and multi-page input in order. Keep the existing function and update tests to reflect the new requirement."
+    },
+    {
+      "id": "docs",
+      "description": "Document four lines per page and retain empty behavior. Do not invent a prior incident or create a rule table for this ordinary requirement change."
+    }
+  ],
+  "grader_files": {
+    "contracts.py": "import sys\nfrom pathlib import Path\n\nsys.path.insert(0, str(Path.cwd()))\nfrom labels import split_labels\n\nassert split_labels([]) == []\nassert split_labels([\"A\", \"B\", \"C\", \"D\"]) == [[\"A\", \"B\", \"C\", \"D\"]]\nassert split_labels(list(\"ABCDEFGHI\")) == [list(\"ABCD\"), list(\"EFGH\"), list(\"I\")]\n"
+  },
+  "artifacts": [
+    "docs/labels.md"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": "recurrence-csv-validation",
+  "purpose": "task",
+  "tags": [
+    "recurrence-prevention"
+  ],
+  "project_name": "stockroom",
+  "files": {
+    "docs/project.md": "# Stockroom\n\n[CSV export requirements](export.md).\n",
+    "docs/export.md": "# CSV export\n\nThe stockroom takes calls to export_rows(items). Each item starts as (name, count).\nOutput uses CSV with a header of name,count. Each name must survive intact, including\ncommas and quotes. Preserve order and all records. The tool uses Python's standard library.\n\n| Rule | What prevents or detects a violation |\n| --- | --- |\n| Export preserves names including punctuation | The export round-trip test in tests/test_stock.py. |\n\n## Release notes\n\nThe February export split names containing commas. The release candidate should cover\nthe same failure so it does not come back. Reproduction name: Large, blue.\n",
+    "stock.py": "def export_rows(items):\n    return \"name,count\\n\" + \"\".join(f\"{name},{count}\\n\" for name, count in items)\n",
+    "tests/test_stock.py": "import csv\nimport io\nimport unittest\n\nfrom stock import export_rows\n\n\nclass ExportTest(unittest.TestCase):\n    def test_round_trip(self):\n        text = export_rows([(\"Blue\", 2)])\n        self.assertEqual(list(csv.reader(io.StringIO(text))), [\n            [\"name\", \"count\"], [\"Blue\", \"2\"],\n        ])\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "validation"
+    },
+    {
+      "kind": "message",
+      "prompt": "The release candidate is supposed to prevent the February CSV mistake. Check it against the export requirements and finish the fix if needed.",
+      "checks": [
+        {
+          "kind": "command_regex",
+          "pattern": "navigate\\.py[\"\\x27]?\\s+procedure\\s+fix\\s+validation\\s+validate-recurrence-prevention\\b",
+          "absent": false
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "navigate\\.py[\"\\x27]?\\s+procedure\\s+fix\\s+implementation\\s+prevent-recurrence\\b",
+          "absent": false
+        },
+        {
+          "kind": "python_check",
+          "path": "contracts.py"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "actual-failure",
+      "description": "Use the real historical record name with a comma and a CSV reader, or equivalent direct evidence, to show the initial exporter loses the two-column structure despite the plain-name check passing."
+    },
+    {
+      "id": "state-boundary",
+      "description": "Load and apply validation guidance before editing production or tests. Observe the mistaken outcome, navigate to implementation before the first fix edit, and go back to validation afterward."
+    },
+    {
+      "id": "reliable-prevention",
+      "description": "Use suitable standard-library CSV handling that preserves comma and quote characters, plus meaningful regression coverage for the historic failure. Observe evidence of the failure before the fix and a passing check afterward."
+    },
+    {
+      "id": "current-docs",
+      "description": "Maintain the existing rule-table entry with links or references that accurately identify the enforcing code or regression check. Preserve the accepted export format, order and header."
+    }
+  ],
+  "grader_files": {
+    "contracts.py": "import csv\nimport io\nimport sys\nfrom pathlib import Path\n\nsys.path.insert(0, str(Path.cwd()))\nfrom stock import export_rows\n\nitems = [(\"Large, blue\", 3), ('Screw \"A\"', 4), (\"Washers\", 9)]\nrecords = list(csv.reader(io.StringIO(export_rows(items))))\nassert records == [[\"name\", \"count\"], *[[name, str(count)] for name, count in items]], records\n"
+  },
+  "artifacts": [
+    "docs/export.md"
+  ]
+}

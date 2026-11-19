@@ -44,6 +44,21 @@ Use the `project-operations` format for detailed authoring and maintenance guida
 Link these instructions from the project record when one exists. Keep executable helper changes
 in implementation; use validation for additional execution needed to check the instructions.
 
+## Maintain the rule table
+
+When work corrects a violation of an existing project rule or changes what enforces it, add or
+update the affected entry during delivery. Put the table in the existing developer or architecture
+document that covers the rule. If no such document exists, put the table in `docs/project.md`.
+Link tables kept elsewhere from `docs/project.md` when it exists.
+
+| Rule | What prevents or detects a violation |
+| --- | --- |
+
+Link the existing rule when it is documented elsewhere. Name the enforcing code or check and
+link to it in Markdown. Give the command if it can be run directly. State when a rule depends on
+judgment. Keep entries current when rules or checks change. Remove retired entries and
+reminders made redundant by enforcement. Preserve any reason needed to understand the rule.
+
 ## Result
 
 State whether documentation needed changes, which documents changed, and any work-record

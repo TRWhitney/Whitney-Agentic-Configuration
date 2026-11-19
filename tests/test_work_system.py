@@ -338,14 +338,20 @@ class WorkflowManifestTests(unittest.TestCase):
         tweak_discovery = cast(dict[str, object], tweak_states["discovery"])
         self.assertEqual(
             set(cast(dict[str, object], tweak_discovery["procedures"])),
-            {"research", "tracking", "performance"},
+            {"research", "tracking", "performance", "investigate-recurrence"},
         )
 
         fix_states = cast(dict[str, object], workflows["fix"]["states"])
         fix_discovery = cast(dict[str, object], fix_states["discovery"])
         self.assertEqual(
             set(cast(dict[str, object], fix_discovery["procedures"])),
-            {"diagnose", "research", "tracking", "performance"},
+            {
+                "diagnose",
+                "research",
+                "tracking",
+                "performance",
+                "investigate-recurrence",
+            },
         )
 
         novel = workflows["novel-work"]
@@ -601,6 +607,45 @@ class NavigatorTests(unittest.TestCase):
                             "performance",
                             expected_returncode=2,
                         )
+
+    def test_recurrence_procedures_load_only_for_their_states(self) -> None:
+        procedures = {
+            "discovery": "investigate-recurrence",
+            "implementation": "prevent-recurrence",
+            "validation": "validate-recurrence-prevention",
+        }
+        bodies = {
+            name: (PROCEDURES_ROOT / f"{name}.md").read_text().strip()
+            for name in procedures.values()
+        }
+        for workflow, manifest in load_workflows().items():
+            for state in cast(dict[str, object], manifest["states"]):
+                with self.subTest(workflow=workflow, state=state):
+                    expected = (
+                        procedures.get(state)
+                        if workflow in {"fix", "tweak", "novel-work"}
+                        else None
+                    )
+                    output = self.run_navigator("resume", workflow, state).stdout
+                    for name, body in bodies.items():
+                        self.assertNotIn(body, output)
+                        available = name == expected
+                        if available:
+                            self.assertIn(f"`{name}` (triggered):", output)
+                        else:
+                            self.assertNotIn(f"`{name}`", output)
+                        loaded = self.run_navigator(
+                            "procedure",
+                            workflow,
+                            state,
+                            name,
+                            expected_returncode=0 if available else 2,
+                        ).stdout
+                        if available:
+                            self.assertIn(body, loaded)
+                            for other, other_body in bodies.items():
+                                if other != name:
+                                    self.assertNotIn(other_body, loaded)
 
     def test_default_local_and_saved_github_select_the_store(self) -> None:
         local = (PROVIDERS_ROOT / "local" / "record.md").read_text().strip()

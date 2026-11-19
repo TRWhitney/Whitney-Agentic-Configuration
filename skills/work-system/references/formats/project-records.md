@@ -12,6 +12,7 @@ Location: `docs/project.md`.
 - Versioning policy and compatibility promises, when agreed.
 - Open project questions and proposals.
 - Links to relevant efforts, release plans, specifications and technical decisions.
+- Project rule tables or links to them, when maintained.
 
 Record each agreement once, with its reason or decision source when needed to understand it.
 Feature specifications describe the feature and link applicable shared agreements.

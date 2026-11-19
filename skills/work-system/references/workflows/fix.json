@@ -20,6 +20,10 @@
         "performance": {
           "status": "triggered",
           "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
+        },
+        "investigate-recurrence": {
+          "status": "triggered",
+          "cue": "Use when I correct a violation of an existing repository requirement or you find evidence that separate mistakes share the same cause."
         }
       },
       "transitions": {
@@ -48,6 +52,10 @@
         "performance": {
           "status": "triggered",
           "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
+        },
+        "prevent-recurrence": {
+          "status": "triggered",
+          "cue": "Use when I correct a violation of an existing repository requirement or you find evidence that separate mistakes share the same cause. Continue prevention already started for this change."
         }
       },
       "transitions": {
@@ -66,6 +74,10 @@
         "performance": {
           "status": "triggered",
           "cue": "Use when investigating performance, evaluating an optimization, or checking a measured performance claim or requirement."
+        },
+        "validate-recurrence-prevention": {
+          "status": "triggered",
+          "cue": "Use to check a change made to prevent recurrence, or when I point out a missed requirement or a check reveals a repeated mistake."
         }
       },
       "transitions": {

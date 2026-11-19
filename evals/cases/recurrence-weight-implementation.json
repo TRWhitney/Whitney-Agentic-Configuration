@@ -1,0 +1,78 @@
+{
+  "id": "recurrence-weight-implementation",
+  "purpose": "task",
+  "tags": [
+    "recurrence-prevention"
+  ],
+  "project_name": "parcel",
+  "files": {
+    "docs/project.md": "# Parcel\n\nDeveloper rules and checks are in [dispatch](dispatch.md).\n",
+    "docs/dispatch.md": "# Dispatch\n\nA booked parcel must weigh at most 8 kg. This applies to both the counter screen and\nspreadsheet imports. Both entry points return their existing result formats.\n\n| Rule | What prevents or detects a violation |\n| --- | --- |\n| Booked weight is at most 8 kg | Counter validation in counter.py. Staff check bulk imports manually. |\n\n## Incident notes\n\n- June 7: After the limit changed from 10 kg to 8 kg, the counter screen still accepted\n  9 kg because it had its own copy of the limit. That screen was corrected.\n- September 3: Spreadsheet imports accepted a 10 kg parcel. The import handler still had\n  the old 10 kg limit.\n",
+    "counter.py": "def book(weight_kg):\n    if weight_kg > 8:\n        return \"too heavy\"\n    return \"booked\"\n",
+    "bulk.py": "def import_weights(weights_kg):\n    return [weight <= 10 for weight in weights_kg]\n",
+    "tests/test_booking.py": "import unittest\n\nfrom bulk import import_weights\nfrom counter import book\n\n\nclass BookingTest(unittest.TestCase):\n    def test_book_parcel(self):\n        self.assertEqual(book(8), \"booked\")\n\n    def test_import_parcels(self):\n        self.assertEqual(import_weights([1, 8]), [True, True])\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "implementation"
+    },
+    {
+      "kind": "message",
+      "prompt": "The import still accepts a 10 kg parcel. The 8 kg limit was already agreed and applies to both paths. Finish the fix.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "docs/project.md"
+          ],
+          "exclude": [
+            "**/__pycache__"
+          ]
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "navigate\\.py[\"\\x27]?\\s+procedure\\s+fix\\s+implementation\\s+prevent-recurrence\\b",
+          "absent": false
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "navigate\\.py[\"\\x27]?\\s+procedure\\s+fix\\s+validation\\s+validate-recurrence-prevention\\b",
+          "absent": false
+        },
+        {
+          "kind": "python_check",
+          "path": "contracts.py"
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "shared-rule",
+      "description": "Use one authoritative weight rule that both existing entry points consult. Changing only 10 to 8 while leaving a separately maintained limit in each path fails. Accept any sound shared design that preserves results."
+    },
+    {
+      "id": "regression-proof",
+      "description": "Observe a focused check fail on a rejected historical weight before the repair and pass afterward. Exercise both entry points at or near the boundary and preserve the result formats."
+    },
+    {
+      "id": "maintained-table",
+      "description": "Update the row in docs/dispatch.md to identify and link the actual shared enforcement and remove the obsolete manual-check claim. Preserve the accepted weight limit and incident history."
+    },
+    {
+      "id": "validation",
+      "description": "Observe passing checks on the completed change after moving into validation. No unrelated cleanup or expanded project commitments."
+    }
+  ],
+  "grader_files": {
+    "contracts.py": "import sys\nfrom pathlib import Path\n\nsys.path.insert(0, str(Path.cwd()))\n\nfrom bulk import import_weights\nfrom counter import book\n\nweights = [1, 7, 8, 9, 10, 11]\nassert import_weights(weights) == [True, True, True, False, False, False]\nassert [book(weight) for weight in weights] == [\"booked\"] * 3 + [\"too heavy\"] * 3\n"
+  },
+  "artifacts": [
+    "docs/dispatch.md"
+  ]
+}

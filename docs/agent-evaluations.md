@@ -128,7 +128,7 @@ This does not test GitHub itself.
 ## Assess complete tasks
 
 Use the [authoring standards](eval-authoring.md) when creating or revising evaluations.
-All 184 cases have hidden criteria. Requests supply product goals; necessary user-selected modes
+Cases have hidden criteria. Requests supply product goals; necessary user-selected modes
 remain in focused cases and controls. Case identifiers remain in place. Focused checks and complete tasks answer different
 questions. Select them with
 `--purpose focused`, `--purpose task`, or `--purpose control`. The audit reports structural
@@ -295,6 +295,12 @@ uv run --group eval python -m evals run \
   --max-tokens 0 --judge-max-tokens 0 \
   --calibration evals/calibration/performance-measurement.json
 ```
+
+## Recurrence prevention
+
+Four cases check read-only discovery, a shared rule enforced across two entry points, a return
+from validation to implementation after reproducing a regression, and an ordinary requirement
+change. [Trial findings and run command](research/recurrence-prevention-trials.md).
 
 ## Unslop writing
 

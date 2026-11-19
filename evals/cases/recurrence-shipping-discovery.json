@@ -1,0 +1,58 @@
+{
+  "id": "recurrence-shipping-discovery",
+  "purpose": "task",
+  "tags": [
+    "recurrence-prevention"
+  ],
+  "project_name": "parcel",
+  "files": {
+    "docs/project.md": "# Parcel quoting\n\n[Service rules and dispatch incident notes](shipping.md).\n",
+    "docs/shipping.md": "# Shipping\n\nPickup is unavailable once the five checkout slots are full. Each checkout counts once,\nincluding orders that have paid but are still being packed.\n\n## Incident notes\n\n- September 10: The order import left paid orders out of its count. That led to pickup\n  being offered with five reservations already placed.\n- September 12: Support added another report about the same order batch. No new incident.\n- October 19: Carrier tracking failed to refresh. Pickup counts were accurate.\n",
+    "parcel.py": "def pickup_available(orders):\n    return sum(order[\"state\"] == \"open\" for order in orders) < 5\n"
+  },
+  "steps": [
+    {
+      "kind": "seed",
+      "workflow": "fix",
+      "state": "discovery"
+    },
+    {
+      "kind": "message",
+      "prompt": "Pickup is available with four open and one paid order again. Find out whether it is the same problem as September. I want to review the cause before anyone makes a fix.",
+      "checks": [
+        {
+          "kind": "unchanged",
+          "paths": [
+            "parcel.py",
+            "docs"
+          ],
+          "exclude": [
+            "**/__pycache__"
+          ]
+        },
+        {
+          "kind": "command_regex",
+          "pattern": "navigate\\.py[\"\\x27]?\\s+procedure\\s+fix\\s+discovery\\s+investigate-recurrence\\b",
+          "absent": false
+        },
+        {
+          "kind": "no_publish"
+        }
+      ]
+    }
+  ],
+  "rubric": [
+    {
+      "id": "direct-reproduction",
+      "description": "Observe pickup_available return true with four open orders and one paid order, through the existing callable or an equivalent direct execution. Explain that five reservations should make pickup unavailable."
+    },
+    {
+      "id": "shared-cause",
+      "description": "Explain that the current predicate and September import both omitted paid orders. Count only separate incidents with the same cause. The duplicate report and unrelated carrier incident may be omitted. Preserve the five-slot rule."
+    },
+    {
+      "id": "state-boundary",
+      "description": "Keep discovery read-only and give the maintainer the cause and evidence. Do not enter implementation or apply a fix before the requested review."
+    }
+  ]
+}
